@@ -1,0 +1,26 @@
+{
+  "name": "synthetics-recorder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "synthetics",
+    "recorder",
+    "script"
+  ],
+  "author": "Vignesh Shanmugam <vignesh.shanmugam22@gmail.com> (https://vigneshh.in)",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^11.2.3"
+  },
+  "dependencies": {
+    "@elastic/synthetics": "0.0.1-alpha.9",
+    "electron-debug": "^3.2.0",
+    "electron-unhandled": "^3.0.2",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
+  }
+}
