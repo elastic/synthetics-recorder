@@ -8,9 +8,18 @@
       content="script-src 'self' 'unsafe-inline';"
     />
   </head>
-  <body style="background-color: white;">
-    <button id="journey">Start Test</button>
-    <div id="results"></button>
-    <script type="module" src="./script.js"></script>
+  <body style="background-color: white">
+    <button id="start">Run Journey</button>
+    <button id="record">Record</button>
+    <button id="stop">Stop</button> </br>
+    <textarea id="results"></textarea>
+    <table style="text-align: center;" id="records">
+      <thead>
+        <th>Command</th>
+        <th>Target</th>
+        <th>Value</th>
+      </thead>
+    </table>
+    <script src="./script.js"></script>
   </body>
 </html>
