@@ -7,12 +7,33 @@
       http-equiv="Content-Security-Policy"
       content="script-src 'self' 'unsafe-inline';"
     />
+    <style>
+      #results {
+        display: block;
+        width: 500px;
+        height: 100px;
+        overflow: scroll;
+        border: 1px solid gray;
+      }
+      .btn-groups {
+        margin: 10px 0px;
+      }
+    </style>
   </head>
+ 
   <body style="background-color: white">
-    <button id="start">Run Journey</button>
-    <button id="record">Record</button>
-    <button id="stop">Stop</button> </br>
-    <textarea id="results"></textarea>
+    <h3>
+      Synthetics Recorder
+    </h3>
+    <div class="btn-groups">
+      <button id="start">Play</button>
+      <button id="record">Record</button>
+      <button id="stop">Stop</button> </br>
+    </div>
+    <div id="results"></div>
+    <h4>
+      Recorder Table
+    </h4>
     <table style="text-align: center;" id="records">
       <thead>
         <th>Command</th>

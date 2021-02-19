@@ -14,7 +14,8 @@
   "author": "Vignesh Shanmugam <vignesh.shanmugam22@gmail.com> (https://vigneshh.in)",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^11.2.3"
+    "electron": "^11.2.3",
+    "electron-builder": "^22.9.1"
   },
   "dependencies": {
     "@elastic/synthetics": "0.0.1-alpha.9",

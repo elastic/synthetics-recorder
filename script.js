@@ -8,7 +8,9 @@ const records = document.getElementById("records");
 
 start.addEventListener("click", () => {
   ipcRenderer.on("done", (event, data) => {
-    results.innerText = JSON.stringify(data);
+    const text = document.createElement("p");
+    text.innerHTML = data.replace(/\n/g, "");
+    results.appendChild(text);
   });
   ipcRenderer.send("start", true);
 });
