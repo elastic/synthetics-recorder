@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "electron ."
+    "postinstall": "electron-builder install-app-deps",
+    "start": "electron .",
+    "pack": "npx electron-builder --dir",
+    "dist": "npx electron-builder --macos"
   },
   "keywords": [
     "synthetics",
@@ -17,6 +20,13 @@
     "electron": "^11.2.3",
     "electron-builder": "^22.9.1"
   },
+  "files": [
+    "index.js",
+    "index.html",
+    "formatter",
+    "journeys",
+    "script.js"
+  ],
   "dependencies": {
     "@elastic/synthetics": "0.0.1-alpha.9",
     "electron-debug": "^3.2.0",

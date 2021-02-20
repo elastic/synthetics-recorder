@@ -1,16 +1,15 @@
 const path = require("path");
 const fs = require("fs");
-const { spawn } = require("child_process");
+const { fork } = require("child_process");
 const { EventEmitter } = require("events");
 const { app, BrowserWindow, ipcMain } = require("electron");
-const { run } = require("@elastic/synthetics");
 const unhandled = require("electron-unhandled");
 const debug = require("electron-debug");
 const { chromium } = require("playwright");
 const SyntheticsGenerator = require("./formatter/synthetics");
 
 unhandled();
-// debug();
+debug();
 
 async function launchContext() {
   const browser = await chromium.launch({ headless: false });
@@ -53,7 +52,8 @@ async function openPage(context, url) {
 
 // Prevent window from being garbage collected
 let mainWindow;
-const JOURNEY_DIR = path.join(__dirname, "journeys");
+const syntheticsCli = require.resolve("@elastic/synthetics/dist/cli");
+sconst JOURNEY_DIR = path.join(__dirname, "journeys");
 
 async function createWindow() {
   const win = new BrowserWindow({
@@ -162,9 +162,9 @@ async function createWindow() {
    * Run Test Journeys
    */
   ipcMain.on("start", async (event, data) => {
-    const syntheticsProcess = spawn(
-      "npx",
-      ["@elastic/synthetics", `${JOURNEY_DIR}`, "--no-headless"],
+    const syntheticsProcess = fork(
+      `${syntheticsCli}`,
+      [`${JOURNEY_DIR}`, "--no-headless"],
       {
         env: process.env,
         stdio: "pipe",
@@ -180,6 +180,7 @@ async function createWindow() {
   });
 
   await win.loadFile(path.join(__dirname, "index.html"));
+  mainWindow = win;
 }
 
 app.on("window-all-closed", () => {
