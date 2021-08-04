@@ -1,16 +1,15 @@
 import React, { useState } from "react";
 const { ipcRenderer } = window.require("electron");
 
-const scriptArea = document.getElementById("code");
-const results = document.getElementById("results");
-const records = document.getElementById("records");
-
 export function HeaderComponent() {
   const [url, setUrl] = useState("");
+  const scriptArea = document.getElementById("code");
+  const results = document.getElementById("results");
+  const records = document.getElementById("records");
 
   function onTest() {
     ipcRenderer.on("done", (event, data) => {
-      results.value += data.replace(/\n/g, "") + "\n";
+      results.innerHTML += data.replace(/\n/g, "") + "\n";
     });
     ipcRenderer.send("start", scriptArea.value);
   }

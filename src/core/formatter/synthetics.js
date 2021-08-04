@@ -3,11 +3,15 @@ const {
 } = require("playwright/lib/server/supplements/recorder/javascript");
 
 class SyntheticsGenerator extends JavaScriptLanguageGenerator {
+  constructor(isTest) {
+    super(true);
+  }
+
   generateAction(actionInContext) {
     const { action, pageAlias } = actionInContext;
     const formatter = new JavaScriptFormatter(2);
 
-    if (action.name === "openPage" || action.name === "closePage") {
+    if (action.name === "openPage") {
       if (
         action.url &&
         action.url !== "about:blank" &&
@@ -17,6 +21,21 @@ class SyntheticsGenerator extends JavaScriptLanguageGenerator {
       return formatter.format();
     }
     formatter.newLine();
+
+    formatter.newLine();
+    formatter.add("// " + actionTitle(action));
+
+    if (action.name === "openPage") {
+      if (this._isTest) return "";
+      formatter.add(`const ${pageAlias} = await context.newPage();`);
+      if (
+        action.url &&
+        action.url !== "about:blank" &&
+        action.url !== "chrome://newtab/"
+      )
+        formatter.add(`await ${pageAlias}.goto(${quote(action.url)});`);
+      return formatter.format();
+    }
 
     const subject = actionInContext.isMainFrame
       ? pageAlias
