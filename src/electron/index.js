@@ -3,13 +3,14 @@ const fs = require("fs");
 const { fork } = require("child_process");
 const { EventEmitter } = require("events");
 const { app, BrowserWindow, ipcMain } = require("electron");
+const isDev = require("electron-is-dev");
 const unhandled = require("electron-unhandled");
-const debug = require("electron-debug");
 const { chromium } = require("playwright");
-const SyntheticsGenerator = require("./formatter/synthetics");
+const SyntheticsGenerator = require("../formatter/synthetics");
 
 unhandled();
-// debug();
+
+const BUILD_DIR = path.join(__dirname, "../../", "build");
 
 async function launchContext() {
   const browser = await chromium.launch({ headless: false });
@@ -50,8 +51,6 @@ async function openPage(context, url) {
   return page;
 }
 
-// Prevent window from being garbage collected
-let mainWindow;
 const syntheticsCli = require.resolve("@elastic/synthetics/dist/cli");
 const JOURNEY_DIR = path.join(__dirname, "journeys");
 
@@ -59,7 +58,7 @@ async function createWindow() {
   const win = new BrowserWindow({
     title: "Synthetics Recorder",
     show: false,
-    width: 800,
+    width: 1000,
     height: 600,
     webPreferences: {
       nodeIntegration: true,
@@ -68,9 +67,6 @@ async function createWindow() {
   });
   win.on("ready-to-show", () => {
     win.show();
-  });
-  win.on("closed", () => {
-    mainWindow = null;
   });
 
   ipcMain.on("record", async (event, data) => {
@@ -183,8 +179,14 @@ async function createWindow() {
     syntheticsProcess.stdin.end();
   });
 
-  await win.loadFile(path.join(__dirname, "index.html"));
-  mainWindow = win;
+  isDev
+    ? win.loadURL("http://localhost:3000")
+    : win.loadFile(path.join(BUILD_DIR, "index.html"));
+
+  // Open the DevTools.
+  if (isDev) {
+    win.webContents.openDevTools({ mode: "detach" });
+  }
 }
 
 app.on("window-all-closed", () => {
@@ -196,5 +198,5 @@ app.on("window-all-closed", () => {
 app.whenReady().then(createWindow).catch(console.error);
 
 app.on("activate", () => {
-  if (mainWindow === null) createWindow();
+  if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
