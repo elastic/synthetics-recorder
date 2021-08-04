@@ -73,7 +73,7 @@ async function createWindow() {
     mainWindow = null;
   });
 
-  ipcMain.on("record", async (event) => {
+  ipcMain.on("record", async (event, data) => {
     const { browser, context } = await launchContext();
     const actionListener = new EventEmitter();
     const actions = [];
@@ -140,15 +140,15 @@ async function createWindow() {
       actionListener: actionListener,
     });
 
-    await openPage(context, "https://elastic-synthetics.vercel.app/");
+    await openPage(context, data.url);
 
     browser.on("disconnected", () => {
       const generator = new SyntheticsGenerator();
       // console.log("actions", actions);
-      const text = generator.generateText(actions);
-      // console.log(text);
+      const code = generator.generateText(actions);
+      event.sender.send("code", code);
 
-      fs.writeFileSync(`${JOURNEY_DIR}/recorded.journey.js`, text);
+      // fs.writeFileSync(`${JOURNEY_DIR}/recorded.journey.js`, code);
     });
 
     let closingBrowser = false;
@@ -163,15 +163,16 @@ async function createWindow() {
   /**
    * Run Test Journeys
    */
-  ipcMain.on("start", async (event, data) => {
+  ipcMain.on("start", async (event, code) => {
     const syntheticsProcess = fork(
       `${syntheticsCli}`,
-      [`${JOURNEY_DIR}`, "--no-headless"],
+      ["--inline", "--no-headless"],
       {
         env: process.env,
         stdio: "pipe",
       }
     );
+    syntheticsProcess.stdin.write(code);
     syntheticsProcess.stdout.on("data", (data) => {
       event.sender.send("done", data.toString());
     });
@@ -179,6 +180,7 @@ async function createWindow() {
     syntheticsProcess.stderr.on("data", (data) => {
       event.sender.send("done", data.toString());
     });
+    syntheticsProcess.stdin.end();
   });
 
   await win.loadFile(path.join(__dirname, "index.html"));

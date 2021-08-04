@@ -7,29 +7,34 @@
       http-equiv="Content-Security-Policy"
       content="script-src 'self' 'unsafe-inline';"
     />
-    <link rel="stylesheet" href="./index.css"/>
+    <link rel="stylesheet" href="./index.css" />
   </head>
- 
+
   <body style="background-color: white">
     <header>
       <h3>Elastic Synthetics Recorder</h3>
     </header>
     <div class="container">
       <div class="top">
-        <input class="url" type="text" placeholder="Enter URL to test" value=""/> 
+        <input
+          class="url"
+          type="text"
+          placeholder="Enter URL to test"
+          value=""
+        />
         <button id="start">Test</button>
         <button id="record">Record</button>
-        <button id="stop">Stop</button> </br>
+        <button id="stop">Stop</button>
       </div>
       <div class="steps">
-        <h4>Synthetics Scripts</h4>
+        <h4>Test Script</h4>
+        <textarea id="code"></textarea>
+        <h4>Test Result</h4>
         <textarea id="results"></textarea>
       </div>
       <div class="recorder-table">
-        <h4>
-          Recorder Table
-        </h4>
-        <table style="text-align: center;" id="records">
+        <h4>Recorder Table</h4>
+        <table style="text-align: center" id="records">
           <thead>
             <th>Command</th>
             <th>Target</th>

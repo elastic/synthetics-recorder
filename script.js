@@ -3,16 +3,15 @@ const { ipcRenderer } = require("electron");
 const start = document.getElementById("start");
 const record = document.getElementById("record");
 const stop = document.getElementById("stop");
+const scriptArea = document.getElementById("code");
 const results = document.getElementById("results");
 const records = document.getElementById("records");
 
 start.addEventListener("click", () => {
   ipcRenderer.on("done", (event, data) => {
-    const text = document.createElement("p");
-    text.innerHTML = data.replace(/\n/g, "");
-    results.appendChild(text);
+    results.value += data.replace(/\n/g, "") + "\n";
   });
-  ipcRenderer.send("start", true);
+  ipcRenderer.send("start", scriptArea.value);
 });
 
 record.addEventListener("click", () => {
@@ -32,9 +31,13 @@ record.addEventListener("click", () => {
       tRow.insertCell().appendChild(document.createTextNode(text));
     }
   });
-  ipcRenderer.send("record", true);
+
+  ipcRenderer.on("code", (event, code) => {
+    scriptArea.value += code;
+  });
+
+  const urlNode = document.querySelector(".url");
+  ipcRenderer.send("record", { url: urlNode.value });
 });
 
-stop.addEventListener("click", () => {
-  ipcRenderer.send("stop");
-});
+stop.addEventListener("click", () => ipcRenderer.send("stop"));
