@@ -7,41 +7,37 @@
       http-equiv="Content-Security-Policy"
       content="script-src 'self' 'unsafe-inline';"
     />
-    <style>
-      #results {
-        display: block;
-        width: 500px;
-        height: 100px;
-        overflow: scroll;
-        border: 1px solid gray;
-      }
-      .btn-groups {
-        margin: 10px 0px;
-      }
-    </style>
+    <link rel="stylesheet" href="./index.css"/>
   </head>
  
   <body style="background-color: white">
-    <h3>
-      Synthetics Recorder
-    </h3>
-    <header></header>
-    <div class="btn-groups">
-      <button id="start">Play</button>
-      <button id="record">Record</button>
-      <button id="stop">Stop</button> </br>
+    <header>
+      <h3>Elastic Synthetics Recorder</h3>
+    </header>
+    <div class="container">
+      <div class="top">
+        <input class="url" type="text" placeholder="Enter URL to test" value=""/> 
+        <button id="start">Test</button>
+        <button id="record">Record</button>
+        <button id="stop">Stop</button> </br>
+      </div>
+      <div class="steps">
+        <h4>Synthetics Scripts</h4>
+        <textarea id="results"></textarea>
+      </div>
+      <div class="recorder-table">
+        <h4>
+          Recorder Table
+        </h4>
+        <table style="text-align: center;" id="records">
+          <thead>
+            <th>Command</th>
+            <th>Target</th>
+            <th>Value</th>
+          </thead>
+        </table>
+      </div>
     </div>
-    <div id="results"></div>
-    <h4>
-      Recorder Table
-    </h4>
-    <table style="text-align: center;" id="records">
-      <thead>
-        <th>Command</th>
-        <th>Target</th>
-        <th>Value</th>
-      </thead>
-    </table>
     <script src="./script.js"></script>
   </body>
 </html>

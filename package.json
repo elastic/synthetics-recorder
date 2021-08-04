@@ -17,8 +17,8 @@
   "author": "Vignesh Shanmugam <vignesh.shanmugam22@gmail.com> (https://vigneshh.in)",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^11.2.3",
-    "electron-builder": "^22.9.1"
+    "electron": "^13.1.0",
+    "electron-builder": "^22.11.1"
   },
   "files": [
     "index.js",
@@ -28,7 +28,7 @@
     "script.js"
   ],
   "dependencies": {
-    "@elastic/synthetics": "0.0.1-alpha.9",
+    "@elastic/synthetics": "^1.0.0-beta",
     "electron-debug": "^3.2.0",
     "electron-unhandled": "^3.0.2",
     "playwright": "file://Users/vigneshh/opensource/playwright",

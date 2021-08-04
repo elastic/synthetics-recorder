@@ -46,7 +46,6 @@ class SyntheticsGenerator extends JavaScriptLanguageGenerator {
       if (signals.popup)
         leftHandSide = `const [${signals.popup.popupAlias}] = `;
       else if (signals.download) leftHandSide = `const [download] = `;
-      // formatter.add(`step(${quote(actionTitle(action))}, async() => {`);
       formatter.add(`${leftHandSide}await Promise.all([`);
     }
 
@@ -71,19 +70,17 @@ class SyntheticsGenerator extends JavaScriptLanguageGenerator {
         : "await ";
     const actionCall = this._generateActionCall(action);
     const suffix = signals.waitForNavigation || emitPromiseAll ? "" : ";";
-    // if (!emitPromiseAll) {
-    formatter.add(`step(${quote(actionTitle(action))}, async() => {`);
-    // }
     formatter.add(`${prefix}${subject}.${actionCall}${suffix}`);
 
-    if (emitPromiseAll) formatter.add(`]);`);
-    else if (signals.assertNavigation)
+    if (emitPromiseAll) {
+      formatter.add(`]);`);
+    } else if (signals.assertNavigation) {
       formatter.add(
-        `  // assert.equal(${pageAlias}.url(), ${quote(
+        `  expect(${pageAlias}.url()).toBe(${quote(
           signals.assertNavigation.url
         )});`
       );
-    formatter.add(`});`);
+    }
     return formatter.format();
   }
 

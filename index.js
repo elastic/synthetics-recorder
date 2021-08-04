@@ -9,7 +9,7 @@ const { chromium } = require("playwright");
 const SyntheticsGenerator = require("./formatter/synthetics");
 
 unhandled();
-debug();
+// debug();
 
 async function launchContext() {
   const browser = await chromium.launch({ headless: false });
@@ -53,7 +53,7 @@ async function openPage(context, url) {
 // Prevent window from being garbage collected
 let mainWindow;
 const syntheticsCli = require.resolve("@elastic/synthetics/dist/cli");
-sconst JOURNEY_DIR = path.join(__dirname, "journeys");
+const JOURNEY_DIR = path.join(__dirname, "journeys");
 
 async function createWindow() {
   const win = new BrowserWindow({
@@ -63,6 +63,7 @@ async function createWindow() {
     height: 600,
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
     },
   });
   win.on("ready-to-show", () => {
@@ -135,10 +136,11 @@ async function createWindow() {
       launchOptions: {},
       contextOptions: {},
       startRecording: true,
-      listener: actionListener,
+      showRecorder: false,
+      actionListener: actionListener,
     });
 
-    await openPage(context, "https://elastic.co");
+    await openPage(context, "https://elastic-synthetics.vercel.app/");
 
     browser.on("disconnected", () => {
       const generator = new SyntheticsGenerator();
