@@ -1,18 +1,8 @@
 import React, { useState } from "react";
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
-export function HeaderComponent() {
+export function Header() {
   const [url, setUrl] = useState("");
-
-  async function onTest() {
-    const synthResults = await ipc.callMain(
-      "run-journey",
-      document.getElementById("code").value
-    );
-    const results = document.getElementById("results");
-    results.innerHTML = "";
-    results.innerHTML += synthResults;
-  }
 
   async function onRecord() {
     const scriptArea = document.getElementById("code");
@@ -43,9 +33,6 @@ export function HeaderComponent() {
         value={url}
         onChange={handleChange}
       />
-      <button id="test" onClick={onTest}>
-        Test
-      </button>
       <button id="record" onClick={onRecord}>
         Record
       </button>

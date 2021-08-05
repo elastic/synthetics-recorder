@@ -1,16 +1,14 @@
 import "./App.css";
-import { HeaderComponent } from "./components/HeaderComponent";
+import { Header } from "./components/Header";
+import { Snippet } from "./components/Snippet";
 
 function App() {
   return (
     <div className="App">
-      <HeaderComponent />
+      <Header />
       <div className="container">
         <div className="steps">
-          <div className="script">
-            <h4>Test Script</h4>
-            <textarea id="code"></textarea>
-          </div>
+          <Snippet />
           <div className="output">
             <h4>Test Result</h4>
             <textarea id="results"></textarea>

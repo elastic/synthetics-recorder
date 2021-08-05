@@ -4,32 +4,30 @@ const isDev = require("electron-is-dev");
 const unhandled = require("electron-unhandled");
 const debug = require("electron-debug");
 const setupListeners = require("./execution");
+
+// For dev
 unhandled();
 debug({ enabled: true, showDevTools: false });
+
+// TODO: Auto Update
 
 const BUILD_DIR = join(__dirname, "..", "build");
 
 async function createWindow() {
   const win = new BrowserWindow({
     title: "Synthetics Recorder",
-    show: false,
     width: 1000,
     height: 600,
     webPreferences: {
+      devTools: isDev,
       nodeIntegration: true,
       contextIsolation: false,
     },
   });
-  win.on("ready-to-show", () => win.show());
 
   isDev
     ? win.loadURL("http://localhost:3000")
     : win.loadFile(join(BUILD_DIR, "index.html"));
-
-  // Open the DevTools.
-  if (isDev) {
-    win.webContents.openDevTools({ mode: "detach" });
-  }
 }
 
 app.on("ready", () => {

@@ -1,10 +1,12 @@
 const { chromium } = require("playwright");
 const { join, resolve } = require("path");
 const { existsSync } = require("fs");
+const { writeFile } = require("fs/promises");
 const SyntheticsGenerator = require("./formatter/synthetics");
 const { ipcMain: ipc } = require("electron-better-ipc");
 const { fork } = require("child_process");
 const { EventEmitter, once } = require("events");
+const { dialog, BrowserWindow } = require("electron");
 
 const SYNTHETICS_CLI = require.resolve("@elastic/synthetics/dist/cli");
 const JOURNEY_DIR = join(__dirname, "..", "journeys");
@@ -121,7 +123,7 @@ async function recordJourneys(data) {
     closingBrowser = true;
     await browser.close();
   }
-  ipc.on("stop", async () => await closeBrowser());
+  ipc.on("stop", closeBrowser);
 
   await once(browser, "disconnected");
   const generator = new SyntheticsGenerator();
@@ -153,9 +155,25 @@ async function onTest(code) {
   return data.join("");
 }
 
+async function onFileSave(code) {
+  const { filePath, canceled } = await dialog.showSaveDialog(
+    BrowserWindow.getFocusedWindow(),
+    {
+      defaultPath: "recorded.journey.js",
+    }
+  );
+
+  if (!canceled) {
+    await writeFile(filePath, code);
+    return true;
+  }
+  return false;
+}
+
 function setupListeners() {
   ipc.answerRenderer("record-journey", recordJourneys);
   ipc.answerRenderer("run-journey", onTest);
+  ipc.answerRenderer("save-file", onFileSave);
 }
 
 module.exports = setupListeners;
