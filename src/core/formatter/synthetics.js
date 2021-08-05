@@ -3,38 +3,27 @@ const {
 } = require("playwright/lib/server/supplements/recorder/javascript");
 
 class SyntheticsGenerator extends JavaScriptLanguageGenerator {
-  constructor(isTest) {
+  constructor(isSuite) {
     super(true);
+    this.isSuite = isSuite;
+    this.insideStep = false;
+    this.previousContext = undefined;
   }
 
   generateAction(actionInContext) {
     const { action, pageAlias } = actionInContext;
-    const formatter = new JavaScriptFormatter(2);
+    const formatter = new JavaScriptFormatter(this.isSuite ? 2 : 0);
 
     if (action.name === "openPage") {
-      if (
-        action.url &&
-        action.url !== "about:blank" &&
-        action.url !== "chrome://newtab/"
-      )
-        formatter.add(`${pageAlias}.goto('${action.url}');`);
-      return formatter.format();
+      return "";
     }
-    formatter.newLine();
-
-    formatter.newLine();
-    formatter.add("// " + actionTitle(action));
-
-    if (action.name === "openPage") {
-      if (this._isTest) return "";
-      formatter.add(`const ${pageAlias} = await context.newPage();`);
-      if (
-        action.url &&
-        action.url !== "about:blank" &&
-        action.url !== "chrome://newtab/"
-      )
-        formatter.add(`await ${pageAlias}.goto(${quote(action.url)});`);
-      return formatter.format();
+    // Check if its a new step
+    const isNewStep = this.isNewStep(actionInContext);
+    if (isNewStep) {
+      if (this.insideStep) {
+        formatter.add(this.generateStepEnd());
+      }
+      formatter.add(this.generateStepStart(actionTitle(action)));
     }
 
     const subject = actionInContext.isMainFrame
@@ -88,6 +77,11 @@ class SyntheticsGenerator extends JavaScriptLanguageGenerator {
         ? ""
         : "await ";
     const actionCall = this._generateActionCall(action);
+
+    // Dont cleanup page object managed by Synthetics
+    if (actionCall === "close()" && pageAlias === "page") {
+      return "";
+    }
     const suffix = signals.waitForNavigation || emitPromiseAll ? "" : ";";
     formatter.add(`${prefix}${subject}.${actionCall}${suffix}`);
 
@@ -100,6 +94,36 @@ class SyntheticsGenerator extends JavaScriptLanguageGenerator {
         )});`
       );
     }
+    this.previousContext = actionInContext;
+    return formatter.format();
+  }
+
+  isNewStep(actionContext) {
+    const { action, frameUrl } = actionContext;
+    if (action.name === "navigate") {
+      return true;
+    } else if (action.name === "click") {
+      return (
+        this.previousContext?.frameUrl === frameUrl && action.signals.length > 0
+      );
+    }
+    return false;
+  }
+
+  generateStepStart(name) {
+    this.insideStep = true;
+    return `step('${name}', async () => {`;
+  }
+
+  generateStepEnd() {
+    if (!this.insideStep) {
+      return "";
+    }
+
+    this.insideStep = false;
+    const formatter = new JavaScriptFormatter(this.isSuite ? 2 : 0);
+    formatter.add(`});`);
+    formatter.newLine();
     return formatter.format();
   }
 
@@ -108,8 +132,7 @@ class SyntheticsGenerator extends JavaScriptLanguageGenerator {
     formatter.add(`
       const { journey, step } = require('@elastic/synthetics');
       
-      journey('Recorded journey', async ({ page, context }) => {
-    `);
+      journey('Recorded journey', async ({ page, context }) => {`);
     return formatter.format();
   }
 
@@ -119,9 +142,16 @@ class SyntheticsGenerator extends JavaScriptLanguageGenerator {
 
   generateText(actions) {
     const text = [];
-    text.push(this.generateHeader());
-    for (const action of actions) text.push(this.generateAction(action));
-    text.push(this.generateFooter());
+    if (this.isSuite) {
+      text.push(this.generateHeader());
+    }
+    for (let i = 0; i < actions.length; i++) {
+      text.push(this.generateAction(actions[i]));
+      if (i === actions.length - 1) text.push(this.generateStepEnd());
+    }
+    if (this.isSuite) {
+      text.push(this.generateFooter());
+    }
     return text.join("\n");
   }
 }

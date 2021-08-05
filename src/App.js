@@ -17,7 +17,7 @@ function App() {
           </div>
         </div>
         <div className="recorder-table">
-          <h4>Recorder Table</h4>
+          <h4>Action Logger</h4>
           <table style={{ textAlign: "center" }} id="records">
             <thead>
               <tr>

@@ -3,19 +3,21 @@ const { ipcRenderer } = window.require("electron");
 
 export function HeaderComponent() {
   const [url, setUrl] = useState("");
-  const scriptArea = document.getElementById("code");
-  const results = document.getElementById("results");
-  const records = document.getElementById("records");
 
   function onTest() {
+    const results = document.getElementById("results");
     ipcRenderer.on("done", (event, data) => {
-      results.innerHTML += data.replace(/\n/g, "") + "\n";
+      console.log("data", data);
+      results.innerHTML = "";
+      results.innerHTML += data;
     });
-    ipcRenderer.send("start", scriptArea.value);
+    ipcRenderer.send("start", document.getElementById("code").value);
   }
 
   function onRecord() {
+    const records = document.getElementById("records");
     const tBody = document.createElement("tbody");
+    const scriptArea = document.getElementById("code");
     records.appendChild(tBody);
     ipcRenderer.on("action", (event, action) => {
       const { name, url, selector, text } = action.action;
@@ -30,7 +32,7 @@ export function HeaderComponent() {
     });
 
     ipcRenderer.on("code", (event, code) => {
-      scriptArea.value += code;
+      scriptArea.value = code;
     });
 
     const urlNode = document.querySelector(".url");
@@ -54,6 +56,7 @@ export function HeaderComponent() {
         className="url"
         type="text"
         placeholder="Enter URL to test"
+        value="https://vigneshh.in"
         onChange={handleChange}
       />
       <button id="test" onClick={onTest}>

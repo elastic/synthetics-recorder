@@ -48,6 +48,10 @@ async function openPage(context, url) {
   return page;
 }
 
+function removeColorCodes(str) {
+  return str.replace(/\u001b\[.*?m/g, "");
+}
+
 /**
  * Record User Journeys
  */
@@ -58,7 +62,6 @@ ipcMain.on("record", async (event, data) => {
   let eraseLastAction = false;
   let lastActionContext = null;
   actionListener.on("action", (actionInContext) => {
-    actions = [];
     const { action, pageAlias } = actionInContext;
     if (lastActionContext && lastActionContext.pageAlias === pageAlias) {
       const { action: lastAction } = lastActionContext;
@@ -119,10 +122,9 @@ ipcMain.on("record", async (event, data) => {
 
   browser.on("disconnected", () => {
     const generator = new SyntheticsGenerator();
-    // console.log("actions", actions);
     const code = generator.generateText(actions);
     event.sender.send("code", code);
-
+    actions = [];
     // fs.writeFileSync(`${JOURNEY_DIR}/recorded.journey.js`, code);
   });
 
@@ -137,7 +139,7 @@ ipcMain.on("record", async (event, data) => {
 });
 
 ipcMain.on("start", async (event, code) => {
-  const syntheticsProcess = fork(
+  const { stdout, stdin, stderr } = fork(
     `${SYNTHETICS_CLI}`,
     ["--inline", "--no-headless"],
     {
@@ -145,13 +147,15 @@ ipcMain.on("start", async (event, code) => {
       stdio: "pipe",
     }
   );
-  syntheticsProcess.stdin.write(code);
-  syntheticsProcess.stdout.on("data", (data) => {
-    event.sender.send("done", data.toString());
-  });
-
-  syntheticsProcess.stderr.on("data", (data) => {
-    event.sender.send("done", data.toString());
-  });
-  syntheticsProcess.stdin.end();
+  stdin.write(code);
+  stdin.end();
+  stdout.setEncoding("utf-8");
+  let data = [];
+  for await (const chunk of stdout) {
+    data.push(removeColorCodes(chunk));
+  }
+  for await (const chunk of stderr) {
+    data.push(removeColorCodes(chunk));
+  }
+  event.sender.send("done", data.join(""));
 });
