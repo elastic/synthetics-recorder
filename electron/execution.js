@@ -2,9 +2,9 @@ const { chromium } = require("playwright");
 const { join, resolve } = require("path");
 const { existsSync } = require("fs");
 const SyntheticsGenerator = require("./formatter/synthetics");
-const { ipcMain } = require("electron");
+const { ipcMain: ipc } = require("electron-better-ipc");
 const { fork } = require("child_process");
-const { EventEmitter } = require("events");
+const { EventEmitter, once } = require("events");
 
 const SYNTHETICS_CLI = require.resolve("@elastic/synthetics/dist/cli");
 const JOURNEY_DIR = join(__dirname, "..", "journeys");
@@ -52,7 +52,7 @@ function removeColorCodes(str = "") {
   return str.replace(/\u001b\[.*?m/g, "");
 }
 
-async function recordJourneys(event, data) {
+async function recordJourneys(data) {
   const { browser, context } = await launchContext();
   const actionListener = new EventEmitter();
   let actions = [];
@@ -102,8 +102,6 @@ async function recordJourneys(event, data) {
     lastActionContext = actionInContext;
     if (eraseLastAction) {
       actions.pop();
-    } else {
-      event.sender.send("action", actionInContext);
     }
     actions.push(actionInContext);
   });
@@ -117,25 +115,23 @@ async function recordJourneys(event, data) {
   });
   await openPage(context, data.url);
 
-  browser.on("disconnected", () => {
-    const generator = new SyntheticsGenerator();
-    const code = generator.generateText(actions);
-    event.sender.send("code", code);
-    actions = [];
-    // fs.writeFileSync(`${JOURNEY_DIR}/recorded.journey.js`, code);
-  });
-
   let closingBrowser = false;
   async function closeBrowser() {
     if (closingBrowser) return;
     closingBrowser = true;
     await browser.close();
   }
+  ipc.on("stop", async () => await closeBrowser());
 
-  ipcMain.on("stop", async () => await closeBrowser());
+  await once(browser, "disconnected");
+  const generator = new SyntheticsGenerator();
+  const code = generator.generateText(actions);
+  actions = [];
+  ipc.answerRenderer("code", code);
+  return code;
 }
 
-async function onTest(event, code) {
+async function onTest(code) {
   const { stdout, stdin, stderr } = fork(
     `${SYNTHETICS_CLI}`,
     ["--inline", "--no-headless"],
@@ -154,12 +150,12 @@ async function onTest(event, code) {
   for await (const chunk of stderr) {
     data.push(removeColorCodes(chunk));
   }
-  event.sender.send("done", data.join(""));
+  return data.join("");
 }
 
 function setupListeners() {
-  ipcMain.on("record", recordJourneys);
-  ipcMain.on("start", onTest);
+  ipc.answerRenderer("record-journey", recordJourneys);
+  ipc.answerRenderer("run-journey", onTest);
 }
 
 module.exports = setupListeners;

@@ -1,45 +1,30 @@
 import React, { useState } from "react";
-const { ipcRenderer } = window.require("electron");
+const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export function HeaderComponent() {
   const [url, setUrl] = useState("");
 
-  function onTest() {
+  async function onTest() {
+    const synthResults = await ipc.callMain(
+      "run-journey",
+      document.getElementById("code").value
+    );
     const results = document.getElementById("results");
-    ipcRenderer.on("done", (event, data) => {
-      results.innerHTML = "";
-      results.innerHTML += data;
-    });
-    ipcRenderer.send("start", document.getElementById("code").value);
+    results.innerHTML = "";
+    results.innerHTML += synthResults;
   }
 
-  function onRecord() {
-    const records = document.getElementById("records");
-    const tBody = document.createElement("tbody");
+  async function onRecord() {
     const scriptArea = document.getElementById("code");
-    records.appendChild(tBody);
-    ipcRenderer.on("action", (event, action) => {
-      const { name, url, selector, text } = action.action;
-      const tRow = tBody.insertRow();
-      tRow.insertCell().appendChild(document.createTextNode(name));
-      if (url || selector) {
-        tRow.insertCell().appendChild(document.createTextNode(url || selector));
-      }
-      if (text) {
-        tRow.insertCell().appendChild(document.createTextNode(text));
-      }
-    });
-
-    ipcRenderer.on("code", (event, code) => {
-      scriptArea.value = code;
-    });
-
     const urlNode = document.querySelector(".url");
-    ipcRenderer.send("record", { url: urlNode.value });
+    const synthJourneys = await ipc.callMain("record-journey", {
+      url: urlNode.value,
+    });
+    scriptArea.value = synthJourneys;
   }
 
   function onStop() {
-    ipcRenderer.send("stop");
+    ipc.send("stop");
   }
 
   function handleChange(e) {

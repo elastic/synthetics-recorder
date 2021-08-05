@@ -2,9 +2,10 @@ const { join } = require("path");
 const { app, BrowserWindow } = require("electron");
 const isDev = require("electron-is-dev");
 const unhandled = require("electron-unhandled");
+const debug = require("electron-debug");
 const setupListeners = require("./execution");
-
 unhandled();
+debug({ enabled: true, showDevTools: false });
 
 const BUILD_DIR = join(__dirname, "..", "build");
 
