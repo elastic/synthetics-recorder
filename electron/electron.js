@@ -2,7 +2,7 @@ const { join } = require("path");
 const { app, BrowserWindow } = require("electron");
 const isDev = require("electron-is-dev");
 const unhandled = require("electron-unhandled");
-require("./core/execution");
+const setupListeners = require("./execution");
 
 unhandled();
 
@@ -31,13 +31,16 @@ async function createWindow() {
   }
 }
 
+app.on("ready", () => {
+  createWindow();
+  setupListeners();
+});
+
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
   }
 });
-
-app.whenReady().then(createWindow).catch(console.error);
 
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();

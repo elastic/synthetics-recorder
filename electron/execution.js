@@ -48,14 +48,11 @@ async function openPage(context, url) {
   return page;
 }
 
-function removeColorCodes(str) {
+function removeColorCodes(str = "") {
   return str.replace(/\u001b\[.*?m/g, "");
 }
 
-/**
- * Record User Journeys
- */
-ipcMain.on("record", async (event, data) => {
+async function recordJourneys(event, data) {
   const { browser, context } = await launchContext();
   const actionListener = new EventEmitter();
   let actions = [];
@@ -136,9 +133,9 @@ ipcMain.on("record", async (event, data) => {
   }
 
   ipcMain.on("stop", async () => await closeBrowser());
-});
+}
 
-ipcMain.on("start", async (event, code) => {
+async function onTest(event, code) {
   const { stdout, stdin, stderr } = fork(
     `${SYNTHETICS_CLI}`,
     ["--inline", "--no-headless"],
@@ -158,4 +155,11 @@ ipcMain.on("start", async (event, code) => {
     data.push(removeColorCodes(chunk));
   }
   event.sender.send("done", data.join(""));
-});
+}
+
+function setupListeners() {
+  ipcMain.on("record", recordJourneys);
+  ipcMain.on("start", onTest);
+}
+
+module.exports = setupListeners;

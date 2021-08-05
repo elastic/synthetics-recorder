@@ -7,7 +7,6 @@ export function HeaderComponent() {
   function onTest() {
     const results = document.getElementById("results");
     ipcRenderer.on("done", (event, data) => {
-      console.log("data", data);
       results.innerHTML = "";
       results.innerHTML += data;
     });
@@ -56,7 +55,7 @@ export function HeaderComponent() {
         className="url"
         type="text"
         placeholder="Enter URL to test"
-        value="https://vigneshh.in"
+        value={url}
         onChange={handleChange}
       />
       <button id="test" onClick={onTest}>
