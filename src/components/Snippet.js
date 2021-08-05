@@ -1,34 +1,55 @@
 import React from "react";
+import {
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiSpacer,
+  EuiText,
+  EuiCodeBlock,
+  EuiButton,
+} from "@elastic/eui";
+
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
-export function Snippet() {
+export function Snippet(props) {
   const onTest = async () => {
-    const synthResults = await ipc.callMain(
-      "run-journey",
-      document.getElementById("code").value
-    );
-    const results = document.getElementById("results");
-    results.innerHTML = "";
-    results.innerHTML += synthResults;
+    const syntheticsOutput = await ipc.callMain("run-journey", props.code);
+    props.onTestRun(syntheticsOutput);
   };
 
   const onSave = async () => {
-    const { value } = document.getElementById("code");
-    await ipc.callMain("save-file", value);
+    await ipc.callMain("save-file", props.code);
   };
 
   return (
-    <div className="snippet">
-      <h4>Generated Test Snippet</h4>
-      <textarea id="code"></textarea>
-      <div>
-        <button id="test" onClick={onTest}>
-          Test
-        </button>
-        <button id="save" onClick={onSave}>
-          Save
-        </button>
-      </div>
-    </div>
+    <>
+      <EuiText>
+        <h3>Generated Test Snippet </h3>
+      </EuiText>
+      <EuiSpacer />
+      <EuiFlexItem>
+        <EuiCodeBlock
+          language="js"
+          fontSize="m"
+          paddingSize="m"
+          overflowHeight={200}
+          style={{ minHeight: 120 }}
+        >
+          {props.code}
+        </EuiCodeBlock>
+      </EuiFlexItem>
+      <EuiSpacer />
+      <EuiFlexGroup gutterSize="s">
+        <EuiFlexItem grow={false}>
+          <EuiButton fill onClick={onTest} color="primary">
+            Test
+          </EuiButton>
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          <EuiButton fill onClick={onSave} color="secondary">
+            Save
+          </EuiButton>
+        </EuiFlexItem>
+      </EuiFlexGroup>
+    </>
   );
 }
