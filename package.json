@@ -69,7 +69,8 @@
     "moment": "^2.29.1",
     "playwright": "file://Users/vigneshh/opensource/playwright",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "update-electron-app": "^2.0.1"
   },
   "browserslist": [
     "last 1 version"

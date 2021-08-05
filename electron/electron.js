@@ -3,13 +3,19 @@ const { app, BrowserWindow } = require("electron");
 const isDev = require("electron-is-dev");
 const unhandled = require("electron-unhandled");
 const debug = require("electron-debug");
+const initAutoUpdate = require("update-electron-app");
 const setupListeners = require("./execution");
 
 // For dev
 unhandled();
 debug({ enabled: true, showDevTools: false });
 
-// TODO: Auto Update
+// Update the app
+// TODO - Change repo location after moving to Elastic
+initAutoUpdate({
+  repo: "vigneshshanmugam/synthetics-recorder",
+  updateInterval: "1 hour",
+});
 
 const BUILD_DIR = join(__dirname, "..", "build");
 
