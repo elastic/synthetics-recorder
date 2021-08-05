@@ -6,6 +6,7 @@ import {
   EuiSpacer,
   EuiText,
   EuiFieldText,
+  EuiIcon,
 } from "@elastic/eui";
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
@@ -27,9 +28,16 @@ export function Header(props) {
 
   return (
     <>
-      <EuiText>
-        <h2>Elastic Synthetics Recorder </h2>
-      </EuiText>
+      <EuiFlexGroup alignItems="center">
+        <EuiFlexItem grow={false}>
+          <EuiIcon type="logoElastic" size="xl"></EuiIcon>
+        </EuiFlexItem>
+        <EuiText>
+          <h2>Elastic Synthetics Recorder </h2>
+        </EuiText>
+        <EuiFlexItem></EuiFlexItem>
+      </EuiFlexGroup>
+
       <EuiSpacer />
       <EuiSpacer />
       <EuiFlexGroup>

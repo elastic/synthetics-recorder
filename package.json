@@ -35,6 +35,20 @@
     },
     "extraMetadata": {
       "main": "build/electron.js"
+    },
+    "mac": {
+      "icon": "public/elastic.png"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "public/elastic.png"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "public/elastic.png"
     }
   },
   "devDependencies": {
