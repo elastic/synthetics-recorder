@@ -2,11 +2,12 @@ const { chromium } = require("playwright");
 const { join, resolve } = require("path");
 const { existsSync } = require("fs");
 const { writeFile, rm } = require("fs/promises");
-const SyntheticsGenerator = require("./formatter/synthetics");
 const { ipcMain: ipc } = require("electron-better-ipc");
 const { fork } = require("child_process");
 const { EventEmitter, once } = require("events");
 const { dialog, BrowserWindow } = require("electron");
+const logger = require("electron-timber");
+const SyntheticsGenerator = require("./formatter/synthetics");
 
 const SYNTHETICS_CLI = require.resolve("@elastic/synthetics/dist/cli");
 const JOURNEY_DIR = join(__dirname, "..", "journeys");
@@ -162,8 +163,8 @@ async function onTest(data) {
       await rm(filePath, { recursive: true, force: true });
     }
     return chunks.join("");
-  } catch (e) {
-    console.error(e);
+  } catch (err) {
+    logger.error(err);
   }
 }
 
