@@ -7,6 +7,7 @@ import {
   EuiText,
   EuiFieldText,
   EuiIcon,
+  EuiSelect,
 } from "@elastic/eui";
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
@@ -14,7 +15,10 @@ export function Header(props) {
   const [url, setUrl] = useState("");
 
   async function onRecord() {
-    const journeyCode = await ipc.callMain("record-journey", { url });
+    const journeyCode = await ipc.callMain("record-journey", {
+      url,
+      isSuite: props.type === "suite",
+    });
     props.onSaveSnippetCode(journeyCode);
   }
 
@@ -49,8 +53,18 @@ export function Header(props) {
             fullWidth
           />
         </EuiFlexItem>
-        <EuiFlexItem>
+        <EuiFlexItem grow={2}>
           <EuiFlexGroup gutterSize="m">
+            <EuiFlexItem>
+              <EuiSelect
+                options={[
+                  { value: "inline", text: "Inline" },
+                  { value: "suite", text: "Suite" },
+                ]}
+                value={props.type}
+                onChange={(e) => props.onJourneyType(e.target.value)}
+              />
+            </EuiFlexItem>
             <EuiFlexItem>
               <EuiButton fill onClick={onRecord} color="primary">
                 Record

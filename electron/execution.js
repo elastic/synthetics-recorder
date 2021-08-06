@@ -1,7 +1,7 @@
 const { chromium } = require("playwright");
 const { join, resolve } = require("path");
 const { existsSync } = require("fs");
-const { writeFile } = require("fs/promises");
+const { writeFile, rm } = require("fs/promises");
 const SyntheticsGenerator = require("./formatter/synthetics");
 const { ipcMain: ipc } = require("electron-better-ipc");
 const { fork } = require("child_process");
@@ -124,35 +124,47 @@ async function recordJourneys(data) {
     await browser.close();
   }
   ipc.on("stop", closeBrowser);
-
   await once(browser, "disconnected");
-  const generator = new SyntheticsGenerator();
+  const generator = new SyntheticsGenerator(data.isSuite);
   const code = generator.generateText(actions);
   actions = [];
-  ipc.answerRenderer("code", code);
   return code;
 }
 
-async function onTest(code) {
-  const { stdout, stdin, stderr } = fork(
-    `${SYNTHETICS_CLI}`,
-    ["--inline", "--no-headless"],
-    {
+async function onTest(data) {
+  try {
+    const isSuite = data.isSuite;
+    const args = ["--no-headless"];
+    const filePath = join(JOURNEY_DIR, "recorded.journey.js");
+    if (!isSuite) {
+      args.push("--inline");
+    } else {
+      await writeFile(filePath, data.code);
+      args.unshift(filePath);
+    }
+    const { stdout, stdin, stderr } = fork(`${SYNTHETICS_CLI}`, args, {
       env: process.env,
       stdio: "pipe",
+    });
+    if (!isSuite) {
+      stdin.write(data.code);
+      stdin.end();
     }
-  );
-  stdin.write(code);
-  stdin.end();
-  stdout.setEncoding("utf-8");
-  let data = [];
-  for await (const chunk of stdout) {
-    data.push(removeColorCodes(chunk));
+    stdout.setEncoding("utf-8");
+    let chunks = [];
+    for await (const chunk of stdout) {
+      chunks.push(removeColorCodes(chunk));
+    }
+    for await (const chunk of stderr) {
+      chunks.push(removeColorCodes(chunk));
+    }
+    if (isSuite) {
+      await rm(filePath, { recursive: true, force: true });
+    }
+    return chunks.join("");
+  } catch (e) {
+    console.error(e);
   }
-  for await (const chunk of stderr) {
-    data.push(removeColorCodes(chunk));
-  }
-  return data.join("");
 }
 
 async function onFileSave(code) {

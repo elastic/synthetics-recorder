@@ -12,7 +12,10 @@ const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export function Snippet(props) {
   const onTest = async () => {
-    const syntheticsOutput = await ipc.callMain("run-journey", props.code);
+    const syntheticsOutput = await ipc.callMain("run-journey", {
+      code: props.code,
+      isSuite: props.type === "suite",
+    });
     props.onTestRun(syntheticsOutput);
   };
 
