@@ -152,6 +152,7 @@ async function onTest(data) {
       stdin.end();
     }
     stdout.setEncoding("utf-8");
+    stderr.setEncoding("utf-8");
     let chunks = [];
     for await (const chunk of stdout) {
       chunks.push(removeColorCodes(chunk));

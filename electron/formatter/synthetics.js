@@ -112,7 +112,7 @@ class SyntheticsGenerator extends JavaScriptLanguageGenerator {
 
   generateStepStart(name) {
     this.insideStep = true;
-    return `step('${name}', async () => {`;
+    return `step("${name}", async () => {`;
   }
 
   generateStepEnd() {
