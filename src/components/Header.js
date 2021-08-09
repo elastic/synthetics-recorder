@@ -12,23 +12,16 @@ import {
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export function Header(props) {
-  const [url, setUrl] = useState("");
-
-  async function onRecord() {
-    const journeyCode = await ipc.callMain("record-journey", {
-      url,
+  const onSave = async () => {
+    await ipc.callMain("save-file", props.code);
+  };
+  const onTest = async () => {
+    const syntheticsOutput = await ipc.callMain("run-journey", {
+      code: props.code,
       isSuite: props.type === "suite",
     });
-    props.onSaveSnippetCode(journeyCode);
-  }
-
-  function onStop() {
-    ipc.send("stop");
-  }
-
-  function handleChange(value) {
-    setUrl(value);
-  }
+    props.onTestRun(syntheticsOutput);
+  };
 
   return (
     <>
@@ -48,8 +41,8 @@ export function Header(props) {
         <EuiFlexItem grow={2}>
           <EuiFieldText
             placeholder="Enter URL to test"
-            value={url}
-            onChange={(e) => handleChange(e.target.value)}
+            value={props.url}
+            onChange={(e) => props.onUrlChange(e.target.value)}
             fullWidth
           />
         </EuiFlexItem>
@@ -65,14 +58,14 @@ export function Header(props) {
                 onChange={(e) => props.onJourneyType(e.target.value)}
               />
             </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiButton fill onClick={onRecord} color="primary">
-                Record
+            <EuiFlexItem grow={false}>
+              <EuiButton fill onClick={onTest} color="primary">
+                Test
               </EuiButton>
             </EuiFlexItem>
-            <EuiFlexItem>
-              <EuiButton fill onClick={onStop} color="danger">
-                Stop
+            <EuiFlexItem grow={false}>
+              <EuiButton fill onClick={onSave} color="secondary">
+                Save
               </EuiButton>
             </EuiFlexItem>
           </EuiFlexGroup>

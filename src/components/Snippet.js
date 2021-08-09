@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   EuiFlexGroup,
   EuiFlexItem,
@@ -6,29 +6,46 @@ import {
   EuiText,
   EuiCodeBlock,
   EuiButton,
+  EuiPanel,
 } from "@elastic/eui";
 
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export function Snippet(props) {
-  const onTest = async () => {
-    const syntheticsOutput = await ipc.callMain("run-journey", {
-      code: props.code,
+  const [isRecording, setIsRecording] = useState(false);
+
+  const onRecord = async () => {
+    if (isRecording) {
+      setIsRecording(false);
+      // Stop browser process
+      ipc.send("stop");
+      return;
+    }
+    setIsRecording(true);
+    const journeyCode = await ipc.callMain("record-journey", {
+      url: props.url,
       isSuite: props.type === "suite",
     });
-    props.onTestRun(syntheticsOutput);
-  };
-
-  const onSave = async () => {
-    await ipc.callMain("save-file", props.code);
+    setIsRecording(false);
+    props.onRecordingDone(journeyCode);
   };
 
   return (
-    <>
-      <EuiText>
-        <h3>Generated Test Snippet </h3>
-      </EuiText>
+    <EuiPanel hasBorder={true} color="transparent">
+      <EuiFlexGroup alignItems="baseline">
+        <EuiFlexItem>
+          <EuiText size="s">
+            <p>Get started with your script</p>
+          </EuiText>
+        </EuiFlexItem>
+        <EuiFlexItem>
+          <EuiButton iconType="play" color="secondary" onClick={onRecord}>
+            {isRecording ? "Stop Recording" : "Start Recording"}
+          </EuiButton>
+        </EuiFlexItem>
+      </EuiFlexGroup>
       <EuiSpacer />
+
       <EuiFlexItem>
         <EuiCodeBlock
           language="js"
@@ -40,19 +57,6 @@ export function Snippet(props) {
           {props.code}
         </EuiCodeBlock>
       </EuiFlexItem>
-      <EuiSpacer />
-      <EuiFlexGroup gutterSize="s">
-        <EuiFlexItem grow={false}>
-          <EuiButton fill onClick={onTest} color="primary">
-            Test
-          </EuiButton>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiButton fill onClick={onSave} color="secondary">
-            Save
-          </EuiButton>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    </>
+    </EuiPanel>
   );
 }

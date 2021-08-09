@@ -130,7 +130,7 @@ class SyntheticsGenerator extends JavaScriptLanguageGenerator {
   generateHeader() {
     const formatter = new JavaScriptFormatter();
     formatter.add(`
-      const { journey, step } = require('@elastic/synthetics');
+      const { journey, step, expect } = require('@elastic/synthetics');
       
       journey('Recorded journey', async ({ page, context }) => {`);
     return formatter.format();

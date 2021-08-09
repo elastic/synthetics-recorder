@@ -12,14 +12,18 @@ import { Header } from "./components/Header";
 import { Snippet } from "./components/Snippet";
 
 export default function App() {
+  const [url, setUrl] = useState("");
   const [code, setCode] = useState("// Record journeys");
   const [result, setResult] = useState("");
   const [type, setJourneyType] = useState("inline");
 
+  const onUrlChange = (value) => {
+    setUrl(value);
+  };
   const onJourneyType = (value) => {
     setJourneyType(value);
   };
-  const onSaveSnippetCode = (value) => {
+  const onRecordingDone = (value) => {
     setCode(value);
   };
   const onTestRun = (result) => {
@@ -30,13 +34,21 @@ export default function App() {
     <div style={{ margin: "2px 10px" }}>
       <Header
         type={type}
-        onSaveSnippetCode={onSaveSnippetCode}
+        url={url}
+        code={code}
+        onTestRun={onTestRun}
         onJourneyType={onJourneyType}
+        onUrlChange={onUrlChange}
       />
       <EuiSpacer />
       <EuiFlexGroup component="span" wrap>
         <EuiFlexItem component="span">
-          <Snippet code={code} type={type} onTestRun={onTestRun} />
+          <Snippet
+            code={code}
+            type={type}
+            url={url}
+            onRecordingDone={onRecordingDone}
+          />
         </EuiFlexItem>
         <EuiFlexItem component="span">
           <EuiText>
