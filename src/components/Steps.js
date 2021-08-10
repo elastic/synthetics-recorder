@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiText,
-  EuiPanel,
-  EuiSteps,
-  EuiSpacer,
-} from "@elastic/eui";
+import { EuiText, EuiPanel, EuiSpacer } from "@elastic/eui";
 import { generateIR } from "../helpers/generator";
+import { StepAccordions } from "./StepDetails";
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 function actionTitle(action) {
@@ -43,16 +37,12 @@ function actionTitle(action) {
 }
 
 function constructSteps(actionContexts) {
-  return generateIR(actionContexts)
-    .map((actionContext) => {
-      const title = actionTitle(actionContext.action);
-      return {
-        title,
-        children: "",
-        status: "incomplete",
-      };
-    })
-    .filter((step) => Boolean(step.title));
+  return generateIR(actionContexts).map((actionContext) => {
+    return {
+      title: actionTitle(actionContext.action),
+      action: actionContext.action,
+    };
+  });
 }
 
 export function Steps(props) {
@@ -60,10 +50,14 @@ export function Steps(props) {
 
   useEffect(() => {
     ipc.answerMain("change", ({ actions }) => {
-      const steps = constructSteps(actions);
-      setSteps(steps);
+      setSteps(() => constructSteps(actions));
     });
-  });
+  }, []);
+
+  const onStepDetailChange = (action, index) => {
+    steps[index] = action;
+    setSteps(() => steps);
+  };
 
   return (
     <EuiPanel color="transparent" hasBorder={true}>
@@ -73,7 +67,10 @@ export function Steps(props) {
       <EuiSpacer />
       <EuiPanel color="transparent" hasBorder={true}>
         {steps.length > 0 ? (
-          <EuiSteps steps={steps} titleSize="xs"></EuiSteps>
+          <StepAccordions
+            steps={steps}
+            onStepDetailChange={onStepDetailChange}
+          />
         ) : (
           <EuiText size="xs" textAlign="center">
             <div>

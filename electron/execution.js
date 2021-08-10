@@ -59,54 +59,8 @@ async function recordJourneys(data, browserWindow) {
   const { browser, context } = await launchContext();
   const actionListener = new EventEmitter();
   let actions = [];
-  let eraseLastAction = false;
-  let lastActionContext = null;
-  actionListener.on("action", (actionInContext) => {
-    const { action, pageAlias } = actionInContext;
-    if (lastActionContext && lastActionContext.pageAlias === pageAlias) {
-      const { action: lastAction } = lastActionContext;
-      // We augment last action based on the type.
-      if (
-        lastActionContext &&
-        action.name === "fill" &&
-        lastAction.name === "fill"
-      ) {
-        if (action.selector === lastAction.selector) eraseLastAction = true;
-      }
-      if (
-        lastAction &&
-        action.name === "click" &&
-        lastAction.name === "click"
-      ) {
-        if (
-          action.selector === lastAction.selector &&
-          action.clickCount > lastAction.clickCount
-        )
-          eraseLastAction = true;
-      }
-      if (
-        lastAction &&
-        action.name === "navigate" &&
-        lastAction.name === "navigate"
-      ) {
-        if (action.url === lastAction.url) {
-          // Already at a target URL.
-          this._currentAction = null;
-          return;
-        }
-      }
-      for (const name of ["check", "uncheck"]) {
-        // Check and uncheck erase click.
-        if (lastAction && action.name === name && lastAction.name === "click") {
-          if (action.selector === lastAction.selector) eraseLastAction = true;
-        }
-      }
-    }
-    lastActionContext = actionInContext;
-    if (eraseLastAction) {
-      actions.pop();
-    }
-    actions.push(actionInContext);
+  actionListener.on("actions", (currentActions) => {
+    actions = currentActions;
     ipc.callRenderer(browserWindow, "change", { actions });
   });
 
@@ -128,6 +82,7 @@ async function recordJourneys(data, browserWindow) {
   ipc.on("stop", closeBrowser);
   await once(browser, "disconnected");
   const generator = new SyntheticsGenerator(data.isSuite);
+  console.log("actions", actions);
   const code = generator.generateText(actions);
   actions = [];
   return code;

@@ -41,8 +41,8 @@ export default function App() {
         onUrlChange={onUrlChange}
       />
       <EuiSpacer />
-      <EuiFlexGroup component="span" wrap>
-        <EuiFlexItem component="span">
+      <EuiFlexGroup component="span" wrap={false}>
+        <EuiFlexItem component="span" grow={2}>
           <Snippet
             code={code}
             type={type}
@@ -50,7 +50,7 @@ export default function App() {
             onRecordingDone={onRecordingDone}
           />
         </EuiFlexItem>
-        <EuiFlexItem component="span">
+        <EuiFlexItem component="span" grow={false}>
           <EuiText>
             <h3>Test Result</h3>
           </EuiText>
