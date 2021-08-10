@@ -8,6 +8,7 @@ import {
   EuiButton,
   EuiPanel,
 } from "@elastic/eui";
+import { Steps } from "./Steps";
 
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
@@ -44,6 +45,11 @@ export function Snippet(props) {
           </EuiButton>
         </EuiFlexItem>
       </EuiFlexGroup>
+      <EuiSpacer />
+
+      <EuiFlexItem>
+        <Steps />
+      </EuiFlexItem>
       <EuiSpacer />
 
       <EuiFlexItem>

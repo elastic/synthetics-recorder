@@ -55,7 +55,7 @@ function removeColorCodes(str = "") {
   return str.replace(/\u001b\[.*?m/g, "");
 }
 
-async function recordJourneys(data) {
+async function recordJourneys(data, browserWindow) {
   const { browser, context } = await launchContext();
   const actionListener = new EventEmitter();
   let actions = [];
@@ -107,6 +107,7 @@ async function recordJourneys(data) {
       actions.pop();
     }
     actions.push(actionInContext);
+    ipc.callRenderer(browserWindow, "change", { actions });
   });
 
   await context._enableRecorder({
