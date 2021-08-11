@@ -1,5 +1,8 @@
 export function generateIR(actionContexts) {
   const result = [];
+  let steps = [];
+  let previousContext = null;
+  let newStep = false;
   for (const actionContext of actionContexts) {
     const { action, pageAlias } = actionContext;
     if (action.name === "openPage") {
@@ -7,9 +10,35 @@ export function generateIR(actionContexts) {
     } else if (action.name === "closePage" && pageAlias === "page") {
       continue;
     }
-    result.push(actionContext);
+
+    newStep = isNewStep(actionContext, previousContext);
+    if (newStep && steps.length > 0) {
+      result.push(steps);
+      steps = [];
+    }
+    // Add title to all actionContexts
+    const enhancedContext = {
+      ...actionContext,
+      title: actionTitle(actionContext.action),
+    };
+    steps.push(enhancedContext);
+    previousContext = actionContext;
+  }
+  if (steps.length > 0) {
+    result.push(steps);
   }
   return result;
+}
+
+function isNewStep(actionContext, previousContext) {
+  const { action, frameUrl } = actionContext;
+
+  if (action.name === "navigate") {
+    return true;
+  } else if (action.name === "click") {
+    return previousContext?.frameUrl === frameUrl && action.signals.length > 0;
+  }
+  return false;
 }
 
 export function actionTitle(action) {

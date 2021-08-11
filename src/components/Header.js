@@ -25,7 +25,7 @@ export function Header(props) {
 
   return (
     <>
-      <EuiFlexGroup alignItems="center">
+      <EuiFlexGroup alignItems="center" style={{ paddingTop: 10 }}>
         <EuiFlexItem grow={false}>
           <EuiIcon type="logoElastic" size="xl"></EuiIcon>
         </EuiFlexItem>

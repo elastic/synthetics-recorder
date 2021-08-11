@@ -1,85 +1,37 @@
-import React, { useState } from "react";
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiText,
-  EuiAccordion,
-  EuiButtonIcon,
-  EuiFieldText,
-} from "@elastic/eui";
-import { actionTitle } from "../helpers/generator";
+import React from "react";
+import { EuiAccordion } from "@elastic/eui";
+import { ActionDetail } from "./ActionDetail";
 
-function StepDetails({ step, onStepDetailChange, index }) {
-  const { action } = step;
-  const [selector, setSelector] = useState(action.selector || "");
-  const [text, setText] = useState(action.text || "");
-
-  const onSelectorChange = (value) => {
-    if (!value) {
-      return;
-    }
-    setSelector(value);
-    action.selector = value;
-    onStepDetailChange(step, index);
+function StepDetail({ step, stepIndex, onStepDetailChange }) {
+  const onActionContextChange = (actionContext, actionIndex) => {
+    step[actionIndex] = actionContext;
+    onStepDetailChange(step, stepIndex);
   };
 
-  const onTextChange = (value) => {
-    if (!value) {
-      return;
-    }
-    setText(value);
-    action.text = value;
-    onStepDetailChange(step, index);
-  };
-
-  return action.selector ? (
-    <>
-      <EuiFlexGroup alignItems="baseline">
-        <EuiFlexItem grow={false}>
-          <EuiText size="s">Selector</EuiText>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiFieldText
-            value={selector}
-            onChange={(e) => onSelectorChange(e.target.value)}
-          ></EuiFieldText>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-      {action.text ? (
-        <EuiFlexGroup alignItems="baseline">
-          <EuiFlexItem grow={false}>
-            <EuiText size="s">Text</EuiText>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiFieldText
-              value={text}
-              onChange={(e) => onTextChange(e.target.value)}
-            ></EuiFieldText>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      ) : (
-        ""
-      )}
-    </>
-  ) : (
-    ""
-  );
+  return step.map((actionContext, index) => (
+    <ActionDetail
+      key={index}
+      actionContext={actionContext}
+      actionIndex={index}
+      onActionContextChange={onActionContextChange}
+    ></ActionDetail>
+  ));
 }
 
 export function StepAccordions({ steps, onStepDetailChange }) {
   return steps.map((step, index) => {
-    const title = actionTitle(step.action);
+    const { title } = step[0];
     return (
       <EuiAccordion
         id={title}
         key={index}
-        className="euiAccordionForm"
         buttonContent={title}
+        paddingSize="l"
         buttonClassName="euiAccordionForm__button"
       >
-        <StepDetails
+        <StepDetail
           step={step}
-          index={index}
+          stepIndex={index}
           onStepDetailChange={onStepDetailChange}
         />
       </EuiAccordion>

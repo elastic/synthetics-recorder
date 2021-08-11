@@ -13,8 +13,8 @@ export function Steps(props) {
     });
   }, []);
 
-  const onStepDetailChange = (step, index) => {
-    actions[index] = step;
+  const onStepDetailChange = (step, stepIndex) => {
+    actions[stepIndex] = step;
     setActions(() => actions);
     props.onUpdateActions(actions);
   };

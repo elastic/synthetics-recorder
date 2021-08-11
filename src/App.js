@@ -26,7 +26,9 @@ export default function App() {
   const onJourneyType = (value) => {
     setJourneyType(value);
   };
-  const onUpdateActions = async (actions) => {
+  const onUpdateActions = async (actionWithSteps) => {
+    // Spread the actions array
+    const actions = actionWithSteps.flat();
     const code = await ipc.callMain("actions-to-code", {
       actions,
       isSuite: type == "suite",
@@ -50,7 +52,7 @@ export default function App() {
       <EuiSpacer />
       <EuiFlexGroup>
         <EuiFlexItem grow={2}>
-          <Snippet type={type} url={url} onUpdateActions={onUpdateActions} />
+          <Snippet url={url} onUpdateActions={onUpdateActions} />
         </EuiFlexItem>
         <EuiFlexItem grow={1}>
           <EuiText size="s">
