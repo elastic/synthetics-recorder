@@ -80,6 +80,8 @@ async function recordJourneys(data, browserWindow) {
     await browser.close();
   }
   ipc.on("stop", closeBrowser);
+  await once(browser, "disconnected");
+  return actions;
 }
 
 async function onTest(data) {

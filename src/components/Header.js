@@ -30,7 +30,7 @@ export function Header(props) {
           <EuiIcon type="logoElastic" size="xl"></EuiIcon>
         </EuiFlexItem>
         <EuiText>
-          <h2>Elastic Synthetics Recorder </h2>
+          <h3>Elastic Synthetics Recorder </h3>
         </EuiText>
         <EuiFlexItem></EuiFlexItem>
       </EuiFlexGroup>
@@ -46,18 +46,8 @@ export function Header(props) {
             fullWidth
           />
         </EuiFlexItem>
-        <EuiFlexItem grow={2}>
+        <EuiFlexItem grow={false}>
           <EuiFlexGroup gutterSize="m">
-            <EuiFlexItem>
-              <EuiSelect
-                options={[
-                  { value: "inline", text: "Inline" },
-                  { value: "suite", text: "Suite" },
-                ]}
-                value={props.type}
-                onChange={(e) => props.onJourneyType(e.target.value)}
-              />
-            </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <EuiButton fill onClick={onTest} color="primary">
                 Test
@@ -67,6 +57,16 @@ export function Header(props) {
               <EuiButton fill onClick={onSave} color="secondary">
                 Save
               </EuiButton>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiSelect
+                options={[
+                  { value: "inline", text: "Inline" },
+                  { value: "suite", text: "Suite" },
+                ]}
+                value={props.type}
+                onChange={(e) => props.onJourneyType(e.target.value)}
+              />
             </EuiFlexItem>
           </EuiFlexGroup>
         </EuiFlexItem>

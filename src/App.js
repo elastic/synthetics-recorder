@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  EuiCodeBlock,
   EuiFlexGroup,
   EuiFlexItem,
   EuiSpacer,
@@ -16,7 +17,6 @@ const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 export default function App() {
   const [url, setUrl] = useState("");
   const [code, setCode] = useState("// Record journeys");
-  const [actions, setActions] = useState([]);
   const [result, setResult] = useState("");
   const [type, setJourneyType] = useState("inline");
 
@@ -27,20 +27,14 @@ export default function App() {
     setJourneyType(value);
   };
   const onUpdateActions = async (actions) => {
-    setActions(actions);
-  };
-  const onTestRun = (result) => {
-    setResult(result);
-  };
-  const onGenerateCode = async () => {
-    const actionContexts = actions.map(({ actionContext }) => ({
-      ...actionContext,
-    }));
     const code = await ipc.callMain("actions-to-code", {
-      actions: actionContexts,
+      actions,
       isSuite: type == "suite",
     });
     setCode(code);
+  };
+  const onTestRun = (result) => {
+    setResult(result);
   };
 
   return (
@@ -54,22 +48,27 @@ export default function App() {
         onUrlChange={onUrlChange}
       />
       <EuiSpacer />
-      <EuiFlexGroup component="span" wrap={false}>
-        <EuiFlexItem component="span" grow={2}>
-          <Snippet
-            code={code}
-            type={type}
-            actions={actions}
-            url={url}
-            onUpdateActions={onUpdateActions}
-            onGenerateCode={onGenerateCode}
-          />
+      <EuiFlexGroup>
+        <EuiFlexItem grow={2}>
+          <Snippet type={type} url={url} onUpdateActions={onUpdateActions} />
         </EuiFlexItem>
-        <EuiFlexItem component="span" grow={false}>
-          <EuiText>
-            <h3>Test Result</h3>
+        <EuiFlexItem grow={1}>
+          <EuiText size="s">
+            <strong>Generated Code</strong>
           </EuiText>
+          <EuiCodeBlock
+            language="js"
+            fontSize="m"
+            paddingSize="m"
+            overflowHeight={200}
+            style={{ minHeight: 120 }}
+          >
+            {code}
+          </EuiCodeBlock>
           <EuiSpacer />
+          <EuiText size="s">
+            <strong>Test Result</strong>
+          </EuiText>
           <EuiTextArea value={result} onChange={() => {}}></EuiTextArea>
         </EuiFlexItem>
       </EuiFlexGroup>

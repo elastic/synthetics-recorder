@@ -7,9 +7,10 @@ import {
   EuiButtonIcon,
   EuiFieldText,
 } from "@elastic/eui";
+import { actionTitle } from "../helpers/generator";
 
 function StepDetails({ step, onStepDetailChange, index }) {
-  const { action } = step.actionContext;
+  const { action } = step;
   const [selector, setSelector] = useState(action.selector || "");
   const [text, setText] = useState(action.text || "");
 
@@ -66,29 +67,22 @@ function StepDetails({ step, onStepDetailChange, index }) {
 }
 
 export function StepAccordions({ steps, onStepDetailChange }) {
-  const extraAction = (
-    <EuiButtonIcon
-      iconType="heart"
-      color="danger"
-      className="euiAccordionForm__extraAction"
-      aria-label="Delete"
-    />
-  );
-
-  return steps.map((step, index) => (
-    <EuiAccordion
-      id={step.title}
-      key={index}
-      className="euiAccordionForm"
-      buttonContent={step.title}
-      buttonClassName="euiAccordionForm__button"
-      extraAction={extraAction}
-    >
-      <StepDetails
-        step={step}
-        index={index}
-        onStepDetailChange={onStepDetailChange}
-      />
-    </EuiAccordion>
-  ));
+  return steps.map((step, index) => {
+    const title = actionTitle(step.action);
+    return (
+      <EuiAccordion
+        id={title}
+        key={index}
+        className="euiAccordionForm"
+        buttonContent={title}
+        buttonClassName="euiAccordionForm__button"
+      >
+        <StepDetails
+          step={step}
+          index={index}
+          onStepDetailChange={onStepDetailChange}
+        />
+      </EuiAccordion>
+    );
+  });
 }
