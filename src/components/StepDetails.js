@@ -8,7 +8,8 @@ import {
   EuiFieldText,
 } from "@elastic/eui";
 
-function StepDetails({ action = {}, onStepDetailChange, index }) {
+function StepDetails({ step, onStepDetailChange, index }) {
+  const { action } = step.actionContext;
   const [selector, setSelector] = useState(action.selector || "");
   const [text, setText] = useState(action.text || "");
 
@@ -18,7 +19,7 @@ function StepDetails({ action = {}, onStepDetailChange, index }) {
     }
     setSelector(value);
     action.selector = value;
-    onStepDetailChange(action, index);
+    onStepDetailChange(step, index);
   };
 
   const onTextChange = (value) => {
@@ -27,7 +28,7 @@ function StepDetails({ action = {}, onStepDetailChange, index }) {
     }
     setText(value);
     action.text = value;
-    onStepDetailChange(action, index);
+    onStepDetailChange(step, index);
   };
 
   return action.selector ? (
@@ -76,6 +77,7 @@ export function StepAccordions({ steps, onStepDetailChange }) {
 
   return steps.map((step, index) => (
     <EuiAccordion
+      id={step.title}
       key={index}
       className="euiAccordionForm"
       buttonContent={step.title}
@@ -83,7 +85,7 @@ export function StepAccordions({ steps, onStepDetailChange }) {
       extraAction={extraAction}
     >
       <StepDetails
-        action={step.action}
+        step={step}
         index={index}
         onStepDetailChange={onStepDetailChange}
       />

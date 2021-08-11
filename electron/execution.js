@@ -80,12 +80,6 @@ async function recordJourneys(data, browserWindow) {
     await browser.close();
   }
   ipc.on("stop", closeBrowser);
-  await once(browser, "disconnected");
-  const generator = new SyntheticsGenerator(data.isSuite);
-  console.log("actions", actions);
-  const code = generator.generateText(actions);
-  actions = [];
-  return code;
 }
 
 async function onTest(data) {
@@ -140,10 +134,17 @@ async function onFileSave(code) {
   return false;
 }
 
+async function onTransformCode(data) {
+  const generator = new SyntheticsGenerator(data.isSuite);
+  const code = generator.generateText(data.actions);
+  return code;
+}
+
 function setupListeners() {
   ipc.answerRenderer("record-journey", recordJourneys);
   ipc.answerRenderer("run-journey", onTest);
   ipc.answerRenderer("save-file", onFileSave);
+  ipc.answerRenderer("actions-to-code", onTransformCode);
 }
 
 module.exports = setupListeners;

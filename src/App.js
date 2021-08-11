@@ -11,9 +11,12 @@ import "@elastic/eui/dist/eui_theme_amsterdam_light.css";
 import { Header } from "./components/Header";
 import { Snippet } from "./components/Snippet";
 
+const { ipcRenderer: ipc } = window.require("electron-better-ipc");
+
 export default function App() {
   const [url, setUrl] = useState("");
   const [code, setCode] = useState("// Record journeys");
+  const [actions, setActions] = useState([]);
   const [result, setResult] = useState("");
   const [type, setJourneyType] = useState("inline");
 
@@ -23,11 +26,21 @@ export default function App() {
   const onJourneyType = (value) => {
     setJourneyType(value);
   };
-  const onRecordingDone = (value) => {
-    setCode(value);
+  const onUpdateActions = async (actions) => {
+    setActions(actions);
   };
   const onTestRun = (result) => {
     setResult(result);
+  };
+  const onGenerateCode = async () => {
+    const actionContexts = actions.map(({ actionContext }) => ({
+      ...actionContext,
+    }));
+    const code = await ipc.callMain("actions-to-code", {
+      actions: actionContexts,
+      isSuite: type == "suite",
+    });
+    setCode(code);
   };
 
   return (
@@ -46,8 +59,10 @@ export default function App() {
           <Snippet
             code={code}
             type={type}
+            actions={actions}
             url={url}
-            onRecordingDone={onRecordingDone}
+            onUpdateActions={onUpdateActions}
+            onGenerateCode={onGenerateCode}
           />
         </EuiFlexItem>
         <EuiFlexItem component="span" grow={false}>

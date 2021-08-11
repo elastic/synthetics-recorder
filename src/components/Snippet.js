@@ -7,6 +7,7 @@ import {
   EuiCodeBlock,
   EuiButton,
   EuiPanel,
+  EuiAccordion,
 } from "@elastic/eui";
 import { Steps } from "./Steps";
 
@@ -23,12 +24,8 @@ export function Snippet(props) {
       return;
     }
     setIsRecording(true);
-    const journeyCode = await ipc.callMain("record-journey", {
-      url: props.url,
-      isSuite: props.type === "suite",
-    });
+    await ipc.callMain("record-journey", { url: props.url });
     setIsRecording(false);
-    props.onRecordingDone(journeyCode);
   };
 
   return (
@@ -48,20 +45,25 @@ export function Snippet(props) {
       <EuiSpacer />
 
       <EuiFlexItem>
-        <Steps />
+        <Steps onUpdateActions={props.onUpdateActions} />
       </EuiFlexItem>
       <EuiSpacer />
-
       <EuiFlexItem>
-        <EuiCodeBlock
-          language="js"
-          fontSize="m"
-          paddingSize="m"
-          overflowHeight={200}
-          style={{ minHeight: 120 }}
+        <EuiAccordion
+          id="code-block"
+          onClick={() => props.onGenerateCode()}
+          buttonContent="Show code"
         >
-          {props.code}
-        </EuiCodeBlock>
+          <EuiCodeBlock
+            language="js"
+            fontSize="m"
+            paddingSize="m"
+            overflowHeight={200}
+            style={{ minHeight: 120 }}
+          >
+            {props.code}
+          </EuiCodeBlock>
+        </EuiAccordion>
       </EuiFlexItem>
     </EuiPanel>
   );

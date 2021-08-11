@@ -40,35 +40,36 @@ function constructSteps(actionContexts) {
   return generateIR(actionContexts).map((actionContext) => {
     return {
       title: actionTitle(actionContext.action),
-      action: actionContext.action,
+      actionContext: actionContext,
     };
   });
 }
 
 export function Steps(props) {
-  const [steps, setSteps] = useState([]);
+  const [actions, setActions] = useState([]);
 
   useEffect(() => {
     ipc.answerMain("change", ({ actions }) => {
-      setSteps(() => constructSteps(actions));
+      setActions(() => constructSteps(actions));
     });
   }, []);
 
-  const onStepDetailChange = (action, index) => {
-    steps[index] = action;
-    setSteps(() => steps);
+  const onStepDetailChange = (actionContext, index) => {
+    actions[index] = actionContext;
+    setActions(() => actions);
+    props.onUpdateActions(actions);
   };
 
   return (
     <EuiPanel color="transparent" hasBorder={true}>
       <EuiText size="s">
-        <h4>{steps.length} Recorded Steps</h4>
+        <strong>{actions.length} Recorded Steps</strong>
       </EuiText>
       <EuiSpacer />
       <EuiPanel color="transparent" hasBorder={true}>
-        {steps.length > 0 ? (
+        {actions.length > 0 ? (
           <StepAccordions
-            steps={steps}
+            steps={actions}
             onStepDetailChange={onStepDetailChange}
           />
         ) : (
