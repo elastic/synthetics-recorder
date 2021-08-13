@@ -19,6 +19,15 @@ export function Steps(props) {
     props.onUpdateActions(actions);
   };
 
+  const onStepDelete = (stepIndex) => {
+    const newActions = [
+      ...actions.slice(0, stepIndex),
+      ...actions.slice(stepIndex + 1),
+    ];
+    setActions(() => newActions);
+    props.onUpdateActions(newActions);
+  };
+
   return (
     <EuiPanel color="transparent" hasBorder={true}>
       <EuiText size="s">
@@ -30,6 +39,7 @@ export function Steps(props) {
           <StepAccordions
             steps={actions}
             onStepDetailChange={onStepDetailChange}
+            onStepDelete={onStepDelete}
           />
         ) : (
           <EuiText size="xs" textAlign="center">
