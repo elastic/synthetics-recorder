@@ -68,7 +68,7 @@
     "electron-timber": "^0.5.1",
     "electron-unhandled": "^3.0.2",
     "moment": "^2.29.1",
-    "playwright": "file://Users/vigneshh/opensource/playwright",
+    "playwright": "git+https://github.com/vigneshshanmugam/playwright.git#separate-recorder",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "update-electron-app": "^2.0.1"
