@@ -6,6 +6,7 @@ import {
   EuiFieldText,
   EuiSpacer,
 } from "@elastic/eui";
+import { Assertion } from "./Assertion";
 
 export function ActionDetail({
   actionContext,
@@ -35,10 +36,11 @@ export function ActionDetail({
     action.url = value;
     onActionContextChange(actionContext, actionIndex);
   };
+  const title = action.name[0].toUpperCase() + action.name.slice(1);
 
   return (
     <>
-      <strong>{actionContext.title}</strong>
+      <strong>{title}</strong>
       <EuiSpacer />
       {action.url && (
         <>
@@ -86,6 +88,15 @@ export function ActionDetail({
             </EuiFlexItem>
           </EuiFlexGroup>
           <EuiSpacer />
+        </>
+      )}
+      {action.isAssert && (
+        <>
+          <Assertion
+            actionContext={actionContext}
+            actionIndex={actionIndex}
+            onActionContextChange={onActionContextChange}
+          />
         </>
       )}
     </>

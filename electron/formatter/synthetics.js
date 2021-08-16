@@ -82,6 +82,8 @@ class SyntheticsGenerator extends JavaScriptLanguageGenerator {
     if (actionCall === "close()" && pageAlias === "page") {
       return "";
     }
+    // Add assertion from Synthetics.
+
     const suffix = signals.waitForNavigation || emitPromiseAll ? "" : ";";
     formatter.add(`${prefix}${subject}.${actionCall}${suffix}`);
 

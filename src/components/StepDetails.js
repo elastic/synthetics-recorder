@@ -1,21 +1,52 @@
 import React from "react";
-import { EuiAccordion, EuiButtonIcon } from "@elastic/eui";
+import { EuiAccordion, EuiButtonIcon, EuiButton } from "@elastic/eui";
 import { ActionDetail } from "./ActionDetail";
 
 function StepDetail({ step, stepIndex, onStepDetailChange }) {
+  const onAddAssertion = () => {
+    const previousStep = step[step.length - 1];
+    const newStep = [
+      ...step,
+      {
+        pageAlias: previousStep.pageAlias,
+        isMainFrame: previousStep.isMainFrame,
+        frameUrl: previousStep.frameUrl,
+        action: {
+          name: "assert",
+          isAssert: true,
+          signals: [
+            {
+              name: "",
+              selector: "",
+              value: "",
+            },
+          ],
+        },
+      },
+    ];
+    onStepDetailChange(newStep, stepIndex);
+  };
+
   const onActionContextChange = (actionContext, actionIndex) => {
     step[actionIndex] = actionContext;
     onStepDetailChange(step, stepIndex);
   };
 
-  return step.map((actionContext, index) => (
-    <ActionDetail
-      key={index}
-      actionContext={actionContext}
-      actionIndex={index}
-      onActionContextChange={onActionContextChange}
-    ></ActionDetail>
-  ));
+  return (
+    <>
+      {step.map((actionContext, index) => (
+        <ActionDetail
+          key={index}
+          actionContext={actionContext}
+          actionIndex={index}
+          onActionContextChange={onActionContextChange}
+        ></ActionDetail>
+      ))}
+      <EuiButton fill onClick={onAddAssertion} color="secondary">
+        Add assertion
+      </EuiButton>
+    </>
+  );
 }
 
 export function StepAccordions({ steps, onStepDetailChange, onStepDelete }) {
