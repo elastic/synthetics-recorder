@@ -79,23 +79,29 @@ class SyntheticsGenerator extends JavaScriptLanguageGenerator {
     const actionCall = this._generateActionCall(action);
 
     // Dont cleanup page object managed by Synthetics
-    if (actionCall === "close()" && pageAlias === "page") {
-      return "";
-    }
+    const isCleanUp = actionCall === "close()" && pageAlias === "page";
     // Add assertion from Synthetics.
+    const isAssert = action.name === "assert" && action.isAssert;
 
-    const suffix = signals.waitForNavigation || emitPromiseAll ? "" : ";";
-    formatter.add(`${prefix}${subject}.${actionCall}${suffix}`);
+    if (!isCleanUp && !isAssert) {
+      const suffix = signals.waitForNavigation || emitPromiseAll ? "" : ";";
+      formatter.add(`${prefix}${subject}.${actionCall}${suffix}`);
 
-    if (emitPromiseAll) {
-      formatter.add(`]);`);
-    } else if (signals.assertNavigation) {
-      formatter.add(
-        `  expect(${pageAlias}.url()).toBe(${quote(
-          signals.assertNavigation.url
-        )});`
-      );
+      if (emitPromiseAll) {
+        formatter.add(`]);`);
+      } else if (signals.assertNavigation) {
+        formatter.add(
+          `  expect(${pageAlias}.url()).toBe(${quote(
+            signals.assertNavigation.url
+          )});`
+        );
+      }
     }
+
+    if (isAssert && signals.command) {
+      formatter.add(toAssertCall(pageAlias, signals.command));
+    }
+
     this.previousContext = actionInContext;
     return formatter.format();
   }
@@ -225,6 +231,7 @@ function toSignalMap(action) {
   let popup;
   let download;
   let dialog;
+  let command;
   for (const signal of action.signals) {
     if (signal.name === "navigation" && signal.isAsync)
       waitForNavigation = signal;
@@ -233,6 +240,7 @@ function toSignalMap(action) {
     else if (signal.name === "popup") popup = signal;
     else if (signal.name === "download") download = signal;
     else if (signal.name === "dialog") dialog = signal;
+    else if (signal.name !== "") command = signal;
   }
   return {
     waitForNavigation,
@@ -240,7 +248,21 @@ function toSignalMap(action) {
     popup,
     download,
     dialog,
+    command,
   };
+}
+
+function toAssertCall(pageAlias, command) {
+  const { name, selector, value } = command;
+  switch (name) {
+    case "textContent":
+      return `expect(${pageAlias}.${name}(${quote(selector)})).toBe(${quote(
+        value
+      )});`;
+    case "isVisible":
+    case "isHidden":
+      return `expect(${pageAlias}.${name}(${quote(selector)}))).toBeTruthy();`;
+  }
 }
 
 function formatObject(value, indent = "  ") {

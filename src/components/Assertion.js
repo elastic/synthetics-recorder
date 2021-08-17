@@ -28,7 +28,7 @@ export function Assertion({
   ];
   const { action } = actionContext;
   const [selector, setSelector] = useState("");
-  const [command, setCommand] = useState(commandOptions[0].value);
+  const [command, setCommand] = useState("");
   const [assertValue, setAssertValue] = useState("");
 
   const needsAssertingValue = () => {
@@ -63,6 +63,7 @@ export function Assertion({
         <EuiFlexItem>
           <EuiSelect
             options={commandOptions}
+            hasNoInitialSelection
             value={command}
             onChange={(e) => onCommandChange(e.target.value)}
           />

@@ -42,6 +42,22 @@ const actions = [
     isMainFrame: true,
     frameUrl: "https://vigneshh.in/",
     action: {
+      name: "assert",
+      isAssert: true,
+      signals: [
+        {
+          name: "textContent",
+          selector: "text=Babel Minify",
+          value: "babel",
+        },
+      ],
+    },
+  },
+  {
+    pageAlias: "page",
+    isMainFrame: true,
+    frameUrl: "https://vigneshh.in/",
+    action: {
       name: "click",
       selector: "text=Babel Minify",
       signals: [
@@ -111,4 +127,4 @@ const actions = [
   },
 ];
 
-console.log(new SyntheticsFormatter(true).generateText(actions));
+console.log(new SyntheticsFormatter(false).generateText(actions));
