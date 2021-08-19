@@ -256,12 +256,14 @@ function toAssertCall(pageAlias, command) {
   const { name, selector, value } = command;
   switch (name) {
     case "textContent":
-      return `expect(${pageAlias}.${name}(${quote(selector)})).toBe(${quote(
-        value
-      )});`;
+      return `expect(await ${pageAlias}.${name}(${quote(
+        selector
+      )})).toBe(${quote(value)});`;
     case "isVisible":
     case "isHidden":
-      return `expect(${pageAlias}.${name}(${quote(selector)}))).toBeTruthy();`;
+      return `expect(await ${pageAlias}.${name}(${quote(
+        selector
+      )})).toBeTruthy();`;
   }
 }
 
