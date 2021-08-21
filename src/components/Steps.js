@@ -5,11 +5,39 @@ import { StepAccordions } from "./StepDetails";
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export function Steps(props) {
+  const generateMergedIR = (prevActions, currActions) => {
+    const flatPrevActions = prevActions.flat();
+    const flatCurrActions = currActions.flat();
+    if (
+      flatCurrActions.length === 0 ||
+      flatPrevActions.length === 0 ||
+      flatPrevActions.length < flatCurrActions.length
+    ) {
+      props.onUpdateActions(currActions);
+      return currActions;
+    }
+
+    const mergedActions = [];
+    for (let i = 0; i < flatPrevActions.length; i++) {
+      const { action } = flatPrevActions[i];
+      if (action.name === "assert") {
+        mergedActions.push(flatPrevActions[i]);
+      }
+      flatCurrActions[i] && mergedActions.push(flatCurrActions[i]);
+    }
+    // console.log("Merged", JSON.stringify(mergedActions, null, 2));
+    props.onUpdateActions(mergedActions);
+    return generateIR(mergedActions);
+  };
+
   const [actions, setActions] = useState([]);
 
   useEffect(() => {
     ipc.answerMain("change", ({ actions }) => {
-      (actions.length > 0) & setActions(() => generateIR(actions));
+      setActions((prevActions) => {
+        const currentActions = generateIR(actions);
+        return generateMergedIR(prevActions, currentActions);
+      });
     });
   }, []);
 

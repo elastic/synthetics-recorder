@@ -63,7 +63,7 @@ export default function App() {
             fontSize="m"
             paddingSize="m"
             overflowHeight={200}
-            style={{ minHeight: 120 }}
+            style={{ minHeight: 120, maxWidth: 300 }}
           >
             {code}
           </EuiCodeBlock>

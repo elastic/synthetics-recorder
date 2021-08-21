@@ -55,13 +55,17 @@ function removeColorCodes(str = "") {
   return str.replace(/\u001b\[.*?m/g, "");
 }
 
+let browserContext = null;
 async function recordJourneys(data, browserWindow) {
   const { browser, context } = await launchContext();
+  browserContext = context;
   const actionListener = new EventEmitter();
-  let actions = [];
-  actionListener.on("actions", (currentActions) => {
-    actions = currentActions;
+  actionListener.on("actions", (actions) => {
     ipc.callRenderer(browserWindow, "change", { actions });
+  });
+
+  actionListener.on("selector", (selector) => {
+    ipc.callRenderer(browserWindow, "received-selector", selector);
   });
 
   await context._enableRecorder({
@@ -78,10 +82,10 @@ async function recordJourneys(data, browserWindow) {
     if (closingBrowser) return;
     closingBrowser = true;
     await browser.close();
+    browserContext = null;
   }
   ipc.on("stop", closeBrowser);
   await once(browser, "disconnected");
-  return actions;
 }
 
 async function onTest(data) {
@@ -142,11 +146,24 @@ async function onTransformCode(data) {
   return code;
 }
 
+async function onSetMode(mode) {
+  if (browserContext) {
+    const page = browserContext.pages()[0];
+    await page.mainFrame().evaluate(
+      ([mode]) => {
+        window._playwrightSetMode(mode);
+      },
+      [mode]
+    );
+  }
+}
+
 function setupListeners() {
   ipc.answerRenderer("record-journey", recordJourneys);
   ipc.answerRenderer("run-journey", onTest);
   ipc.answerRenderer("save-file", onFileSave);
   ipc.answerRenderer("actions-to-code", onTransformCode);
+  ipc.answerRenderer("set-mode", onSetMode);
 }
 
 module.exports = setupListeners;

@@ -38,11 +38,15 @@ export function ActionDetail({
   };
   const title = action.name[0].toUpperCase() + action.name.slice(1);
 
+  if (action.text !== text) {
+    setText(action.text);
+  }
+
   return (
     <>
       <strong>{title}</strong>
       <EuiSpacer />
-      {action.url && (
+      {url && (
         <>
           <EuiFlexGroup alignItems="baseline">
             <EuiFlexItem grow={false}>
@@ -58,7 +62,7 @@ export function ActionDetail({
           <EuiSpacer />
         </>
       )}
-      {action.selector && (
+      {selector && (
         <>
           <EuiFlexGroup alignItems="baseline">
             <EuiFlexItem grow={false}>
@@ -74,7 +78,7 @@ export function ActionDetail({
           <EuiSpacer />
         </>
       )}
-      {action.text && (
+      {text && (
         <>
           <EuiFlexGroup alignItems="baseline">
             <EuiFlexItem grow={false}>

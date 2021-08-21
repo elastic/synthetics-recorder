@@ -22,9 +22,8 @@ export function Snippet(props) {
       return;
     }
     setIsRecording(true);
-    const actions = await ipc.callMain("record-journey", { url: props.url });
+    await ipc.callMain("record-journey", { url: props.url });
     setIsRecording(false);
-    props.onUpdateActions(actions);
   };
 
   return (

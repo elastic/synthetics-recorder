@@ -70,5 +70,7 @@ export function actionTitle(action) {
       );
     case "select":
       return `Select ${action.options.join(", ")}`;
+    case "assert":
+      return `Assert`;
   }
 }
