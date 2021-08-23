@@ -56,16 +56,15 @@ function removeColorCodes(str = "") {
 }
 
 let browserContext = null;
+let actionListener = new EventEmitter();
+
 async function recordJourneys(data, browserWindow) {
   const { browser, context } = await launchContext();
   browserContext = context;
-  const actionListener = new EventEmitter();
+  actionListene = new EventEmitter();
+  // Listen to actions from Playwright recording session
   actionListener.on("actions", (actions) => {
     ipc.callRenderer(browserWindow, "change", { actions });
-  });
-
-  actionListener.on("selector", (selector) => {
-    ipc.callRenderer(browserWindow, "received-selector", selector);
   });
 
   await context._enableRecorder({
@@ -77,12 +76,9 @@ async function recordJourneys(data, browserWindow) {
   });
   await openPage(context, data.url);
 
-  let closingBrowser = false;
   async function closeBrowser() {
-    if (closingBrowser) return;
-    closingBrowser = true;
-    await browser.close();
     browserContext = null;
+    await browser.close().catch({});
   }
   ipc.on("stop", closeBrowser);
   await once(browser, "disconnected");
@@ -147,15 +143,18 @@ async function onTransformCode(data) {
 }
 
 async function onSetMode(mode) {
-  if (browserContext) {
-    const page = browserContext.pages()[0];
-    await page.mainFrame().evaluate(
-      ([mode]) => {
-        window._playwrightSetMode(mode);
-      },
-      [mode]
-    );
-  }
+  if (!browserContext) return;
+  const page = browserContext.pages()[0];
+  if (!page) return;
+  await page.mainFrame().evaluate(
+    ([mode]) => {
+      window._playwrightSetMode(mode);
+    },
+    [mode]
+  );
+  if (mode !== "inspecting") return;
+  const [selector] = await once(actionListener, "selector");
+  return selector;
 }
 
 function setupListeners() {

@@ -62,7 +62,7 @@ export function ActionDetail({
           <EuiSpacer />
         </>
       )}
-      {selector && (
+      {selector && !action.isAssert && (
         <>
           <EuiFlexGroup alignItems="baseline">
             <EuiFlexItem grow={false}>
@@ -97,6 +97,7 @@ export function ActionDetail({
       {action.isAssert && (
         <>
           <Assertion
+            key={title + Date.now.toString()}
             actionContext={actionContext}
             actionIndex={actionIndex}
             onActionContextChange={onActionContextChange}

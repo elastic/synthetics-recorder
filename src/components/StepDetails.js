@@ -4,23 +4,20 @@ import { ActionDetail } from "./ActionDetail";
 
 function StepDetail({ step, stepIndex, onStepDetailChange }) {
   const onAddAssertion = () => {
-    const previousStep = step[step.length - 1];
+    const previousAction = step[step.length - 1];
     const newStep = [
       ...step,
       {
-        pageAlias: previousStep.pageAlias,
-        isMainFrame: previousStep.isMainFrame,
-        frameUrl: previousStep.frameUrl,
+        pageAlias: previousAction.pageAlias,
+        isMainFrame: previousAction.isMainFrame,
+        frameUrl: previousAction.frameUrl,
         action: {
           name: "assert",
           isAssert: true,
-          signals: [
-            {
-              name: "",
-              selector: "",
-              value: "",
-            },
-          ],
+          selector: previousAction.action?.selector,
+          command: "",
+          value: "",
+          signals: [],
         },
       },
     ];

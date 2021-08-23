@@ -98,8 +98,8 @@ class SyntheticsGenerator extends JavaScriptLanguageGenerator {
       }
     }
 
-    if (isAssert && signals.command) {
-      formatter.add(toAssertCall(pageAlias, signals.command));
+    if (isAssert && action.command) {
+      formatter.add(toAssertCall(pageAlias, action));
     }
 
     this.previousContext = actionInContext;
@@ -218,6 +218,7 @@ class JavaScriptFormatter {
   }
 }
 
+// TODO - Use this change - https://github.com/microsoft/playwright/pull/8350
 function quote(text, char = "'") {
   if (char === "'") return char + text.replace(/[']/g, "\\'") + char;
   if (char === '"') return char + text.replace(/["]/g, '\\"') + char;
@@ -231,7 +232,6 @@ function toSignalMap(action) {
   let popup;
   let download;
   let dialog;
-  let command;
   for (const signal of action.signals) {
     if (signal.name === "navigation" && signal.isAsync)
       waitForNavigation = signal;
@@ -240,7 +240,6 @@ function toSignalMap(action) {
     else if (signal.name === "popup") popup = signal;
     else if (signal.name === "download") download = signal;
     else if (signal.name === "dialog") dialog = signal;
-    else if (signal.name !== "") command = signal;
   }
   return {
     waitForNavigation,
@@ -248,20 +247,19 @@ function toSignalMap(action) {
     popup,
     download,
     dialog,
-    command,
   };
 }
 
-function toAssertCall(pageAlias, command) {
-  const { name, selector, value } = command;
-  switch (name) {
+function toAssertCall(pageAlias, action) {
+  const { command, selector, value } = action;
+  switch (command) {
     case "textContent":
-      return `expect(await ${pageAlias}.${name}(${quote(
+      return `expect(await ${pageAlias}.${command}(${quote(
         selector
       )})).toBe(${quote(value)});`;
     case "isVisible":
     case "isHidden":
-      return `expect(await ${pageAlias}.${name}(${quote(
+      return `expect(await ${pageAlias}.${command}(${quote(
         selector
       )})).toBeTruthy();`;
   }

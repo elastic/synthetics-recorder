@@ -30,34 +30,33 @@ export function Assertion({
     },
   ];
   const { action } = actionContext;
-  const [selector, setSelector] = useState("");
+  const [selector, setSelector] = useState(action.selector || "");
   const [command, setCommand] = useState("");
   const [assertValue, setAssertValue] = useState("");
 
   const onSelectorLookup = async () => {
-    await ipc.callMain("set-mode", "inspecting");
-    ipc.answerMain("received-selector", async (selector) => {
-      setSelector(() => selector);
+    const selector = await ipc.callMain("set-mode", "inspecting");
+    if (selector) {
       onSelectorChange(selector);
       await ipc.callMain("set-mode", "recording");
-    });
+    }
   };
   const needsAssertingValue = () => {
     return command === commandOptions[0].value;
   };
   const onSelectorChange = (selector) => {
     setSelector(selector);
-    action.signals[0].selector = selector;
+    action.selector = selector;
     onActionContextChange(actionContext, actionIndex);
   };
   const onCommandChange = (command) => {
     setCommand(command);
-    action.signals[0].name = command;
+    action.command = command;
     onActionContextChange(actionContext, actionIndex);
   };
   const onAssertChange = (value) => {
     setAssertValue(value);
-    action.signals[0].value = value;
+    action.value = value;
     onActionContextChange(actionContext, actionIndex);
   };
 

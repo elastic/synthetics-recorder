@@ -44,13 +44,10 @@ const actions = [
     action: {
       name: "assert",
       isAssert: true,
-      signals: [
-        {
-          name: "textContent",
-          selector: "text=Babel Minify",
-          value: "babel",
-        },
-      ],
+      command: "textContent",
+      selector: "text=Babel Minify",
+      value: "babel",
+      signals: [],
     },
   },
   {
