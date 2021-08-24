@@ -10,10 +10,9 @@ const setupListeners = require("./execution");
 unhandled();
 debug({ enabled: true, showDevTools: false });
 
-// Update the app
-// TODO - Change repo location after moving to Elastic
+// Looks for updates
 initAutoUpdate({
-  repo: "vigneshshanmugam/synthetics-recorder",
+  repo: "elastic/synthetics-recorder",
   updateInterval: "1 hour",
 });
 
