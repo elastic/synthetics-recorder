@@ -1,6 +1,9 @@
 const {
   JavaScriptLanguageGenerator,
 } = require("playwright/lib/server/supplements/recorder/javascript");
+const {
+  escapeWithQuotes,
+} = require("playwright/lib/server/supplements/recorder/utils");
 
 class SyntheticsGenerator extends JavaScriptLanguageGenerator {
   constructor(isSuite) {
@@ -120,7 +123,7 @@ class SyntheticsGenerator extends JavaScriptLanguageGenerator {
 
   generateStepStart(name) {
     this.insideStep = true;
-    return `step("${name}", async () => {`;
+    return `step(${quote(name)}, async () => {`;
   }
 
   generateStepEnd() {
@@ -204,12 +207,14 @@ class JavaScriptFormatter {
         if (line.startsWith("}") || line.startsWith("]"))
           spaces = spaces.substring(this._baseIndent.length);
 
-        const extraSpaces = /^(for|while|if).*\(.*\)$/.test(previousLine)
+        const extraSpaces = /^(for|while|if|try).*\(.*\)$/.test(previousLine)
           ? this._baseIndent
           : "";
         previousLine = line;
 
-        line = spaces + extraSpaces + line;
+        const callCarryOver = line.startsWith(".set");
+        line =
+          spaces + extraSpaces + (callCarryOver ? this._baseIndent : "") + line;
         if (line.endsWith("{") || line.endsWith("["))
           spaces += this._baseIndent;
         return this._baseOffset + line;
@@ -219,11 +224,8 @@ class JavaScriptFormatter {
 }
 
 // TODO - Use this change - https://github.com/microsoft/playwright/pull/8350
-function quote(text, char = "'") {
-  if (char === "'") return char + text.replace(/[']/g, "\\'") + char;
-  if (char === '"') return char + text.replace(/["]/g, '\\"') + char;
-  if (char === "`") return char + text.replace(/[`]/g, "\\`") + char;
-  throw new Error("Invalid escape char");
+function quote(text) {
+  return escapeWithQuotes(text, "'");
 }
 
 function toSignalMap(action) {

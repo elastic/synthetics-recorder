@@ -29,7 +29,7 @@ const actions = [
     frameUrl: "https://vigneshh.in/",
     action: {
       name: "click",
-      selector: "text=I Enjoy evangelizing the magic of web performance.",
+      selector: 'a:has-text("Go to bag")',
       signals: [],
       button: "left",
       modifiers: 0,
