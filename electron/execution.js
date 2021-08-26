@@ -61,7 +61,7 @@ let actionListener = new EventEmitter();
 async function recordJourneys(data, browserWindow) {
   const { browser, context } = await launchContext();
   browserContext = context;
-  actionListene = new EventEmitter();
+  actionListener = new EventEmitter();
   // Listen to actions from Playwright recording session
   actionListener.on("actions", (actions) => {
     ipc.callRenderer(browserWindow, "change", { actions });
@@ -72,7 +72,7 @@ async function recordJourneys(data, browserWindow) {
     contextOptions: {},
     startRecording: true,
     showRecorder: false,
-    actionListener: actionListener,
+    actionListener,
   });
   await openPage(context, data.url);
 
