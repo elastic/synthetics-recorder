@@ -31,8 +31,10 @@ function StepDetail({ step, stepIndex, onStepDetailChange }) {
   };
 
   const onActionContextChange = (actionContext, actionIndex) => {
-    step[actionIndex] = actionContext;
-    onStepDetailChange(step, stepIndex);
+    onStepDetailChange(
+      step.map((a, ind) => (ind === actionIndex ? actionContext : a)),
+      stepIndex
+    );
   };
 
   return (
