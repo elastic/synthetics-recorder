@@ -10,7 +10,7 @@ import {
 import "./App.css";
 import "@elastic/eui/dist/eui_theme_amsterdam_light.css";
 import { Header } from "./components/Header";
-import { Snippet } from "./components/Snippet";
+import { Steps } from "./components/Steps";
 
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
@@ -52,7 +52,7 @@ export default function App() {
       <EuiSpacer />
       <EuiFlexGroup>
         <EuiFlexItem grow={2}>
-          <Snippet url={url} onUpdateActions={onUpdateActions} />
+          <Steps url={url} onUpdateActions={onUpdateActions} />
         </EuiFlexItem>
         <EuiFlexItem grow={1}>
           <EuiText size="s">

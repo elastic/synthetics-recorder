@@ -1,5 +1,11 @@
 import React from "react";
-import { EuiAccordion, EuiButtonIcon, EuiButton } from "@elastic/eui";
+import {
+  EuiAccordion,
+  EuiButtonIcon,
+  EuiButton,
+  EuiText,
+  EuiTitle,
+} from "@elastic/eui";
 import { ActionDetail } from "./ActionDetail";
 
 function StepDetail({ step, stepIndex, onStepDetailChange }) {
@@ -53,9 +59,13 @@ export function StepAccordions({ steps, onStepDetailChange, onStepDelete }) {
       <EuiAccordion
         id={title}
         key={index}
-        buttonContent={title}
-        paddingSize="l"
-        className="euiAccordionForm"
+        buttonContent={
+          <EuiText size="s">
+            <strong>Step {index + 1} </strong>
+            {title}
+          </EuiText>
+        }
+        paddingSize="m"
         buttonClassName="euiAccordionForm__button"
         extraAction={
           <EuiButtonIcon

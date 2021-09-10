@@ -55,7 +55,7 @@ export function Header(props) {
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <EuiButton fill onClick={onSave} color="secondary">
-                Save
+                Save and download
               </EuiButton>
             </EuiFlexItem>
             <EuiFlexItem>

@@ -1,10 +1,41 @@
 import React, { useEffect, useState } from "react";
-import { EuiText, EuiPanel, EuiSpacer } from "@elastic/eui";
+import {
+  EuiText,
+  EuiPanel,
+  EuiSpacer,
+  EuiFlexItem,
+  EuiButton,
+  EuiFlexGroup,
+} from "@elastic/eui";
 import { generateIR } from "../helpers/generator";
 import { StepAccordions } from "./StepDetails";
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export function Steps(props) {
+  const [isRecording, setIsRecording] = useState(false);
+  const [actions, setActions] = useState([]);
+
+  useEffect(() => {
+    ipc.answerMain("change", ({ actions }) => {
+      setActions((prevActions) => {
+        const currentActions = generateIR(actions);
+        return generateMergedIR(prevActions, currentActions);
+      });
+    });
+  }, []);
+
+  const onRecord = async () => {
+    if (isRecording) {
+      setIsRecording(false);
+      // Stop browser process
+      ipc.send("stop");
+      return;
+    }
+    setIsRecording(true);
+    await ipc.callMain("record-journey", { url: props.url });
+    setIsRecording(false);
+  };
+
   const generateMergedIR = (prevActions, currActions) => {
     const flatPrevActions = prevActions.flat();
     const flatCurrActions = currActions.flat();
@@ -30,17 +61,6 @@ export function Steps(props) {
     return generateIR(mergedActions);
   };
 
-  const [actions, setActions] = useState([]);
-
-  useEffect(() => {
-    ipc.answerMain("change", ({ actions }) => {
-      setActions((prevActions) => {
-        const currentActions = generateIR(actions);
-        return generateMergedIR(prevActions, currentActions);
-      });
-    });
-  }, []);
-
   const onStepDetailChange = (step, stepIndex) => {
     actions[stepIndex] = step;
     setActions(() => actions);
@@ -57,12 +77,22 @@ export function Steps(props) {
   };
 
   return (
-    <EuiPanel color="transparent" hasBorder={true}>
-      <EuiText size="s">
-        <strong>{actions.length} Recorded Steps</strong>
-      </EuiText>
+    <EuiPanel hasBorder={true} color="transparent">
+      <EuiFlexGroup alignItems="baseline">
+        <EuiFlexItem>
+          <EuiText size="m">
+            <strong>{actions.length} Recorded Steps</strong>
+          </EuiText>
+        </EuiFlexItem>
+        <EuiFlexItem>
+          <EuiButton iconType="play" color="secondary" onClick={onRecord}>
+            {isRecording ? "Stop Recording" : "Start Recording"}
+          </EuiButton>
+        </EuiFlexItem>
+      </EuiFlexGroup>
+
       <EuiSpacer />
-      <EuiPanel color="transparent" hasBorder={true}>
+      <EuiPanel color="transparent" hasBorder={true} grow={true}>
         {actions.length > 0 ? (
           <StepAccordions
             steps={actions}
