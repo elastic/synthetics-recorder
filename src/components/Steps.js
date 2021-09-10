@@ -64,9 +64,9 @@ export function Steps(props) {
   };
 
   const onStepDetailChange = (step, stepIndex) => {
-    actions[stepIndex] = step;
-    setActions(() => actions);
-    props.onUpdateActions(actions);
+    const newActions = actions.map((a, ind) => (ind === stepIndex ? step : a));
+    setActions(newActions);
+    props.onUpdateActions(newActions);
   };
 
   const onStepDelete = (stepIndex) => {

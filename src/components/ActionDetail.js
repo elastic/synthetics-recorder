@@ -8,6 +8,13 @@ import {
 } from "@elastic/eui";
 import { Assertion } from "./Assertion";
 
+function createUpdatedAction(field, value, context) {
+  return {
+    ...context,
+    action: { ...context.action, [field]: value },
+  };
+}
+
 export function ActionDetail({
   actionContext,
   onActionContextChange,
@@ -21,20 +28,26 @@ export function ActionDetail({
   const onSelectorChange = (value) => {
     if (!value) return;
     setSelector(value);
-    action.selector = value;
-    onActionContextChange(actionContext, actionIndex);
+    onActionContextChange(
+      createUpdatedAction("selector", value, actionContext),
+      actionIndex
+    );
   };
   const onTextChange = (value) => {
     if (!value) return;
     setText(value);
-    action.text = value;
-    onActionContextChange(actionContext, actionIndex);
+    onActionContextChange(
+      createUpdatedAction("text", value, actionContext),
+      actionIndex
+    );
   };
   const onURLChange = (value) => {
     if (!value) return;
     setUrl(value);
-    action.url = value;
-    onActionContextChange(actionContext, actionIndex);
+    onActionContextChange(
+      createUpdatedAction("url", value, actionContext),
+      actionIndex
+    );
   };
   const title = action.name[0].toUpperCase() + action.name.slice(1);
 
