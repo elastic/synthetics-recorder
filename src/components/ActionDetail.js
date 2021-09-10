@@ -4,7 +4,7 @@ import {
   EuiFlexItem,
   EuiText,
   EuiFieldText,
-  EuiSpacer,
+  EuiPanel,
 } from "@elastic/eui";
 import { Assertion } from "./Assertion";
 
@@ -43,67 +43,46 @@ export function ActionDetail({
   }
 
   return (
-    <>
-      <strong>{title}</strong>
-      <EuiSpacer />
-      {url && (
-        <>
-          <EuiFlexGroup alignItems="baseline">
-            <EuiFlexItem grow={false}>
-              <EuiText size="s">URL</EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiFieldText
-                value={url}
-                onChange={(e) => onURLChange(e.target.value)}
-              ></EuiFieldText>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-          <EuiSpacer />
-        </>
-      )}
-      {selector && !action.isAssert && (
-        <>
-          <EuiFlexGroup alignItems="baseline">
-            <EuiFlexItem grow={false}>
-              <EuiText size="s">Selector</EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiFieldText
-                value={selector}
-                onChange={(e) => onSelectorChange(e.target.value)}
-              ></EuiFieldText>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-          <EuiSpacer />
-        </>
-      )}
-      {text && (
-        <>
-          <EuiFlexGroup alignItems="baseline">
-            <EuiFlexItem grow={false}>
-              <EuiText size="s">Text</EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiFieldText
-                value={text}
-                onChange={(e) => onTextChange(e.target.value)}
-              ></EuiFieldText>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-          <EuiSpacer />
-        </>
-      )}
+    <EuiPanel color="transparent" paddingSize="s">
+      <EuiFlexGroup alignItems="baseline">
+        <EuiFlexItem grow={false} style={{ width: 50 }}>
+          <EuiText size="s">
+            <strong>{title}</strong>
+          </EuiText>
+        </EuiFlexItem>
+        {url && (
+          <EuiFlexItem>
+            <EuiFieldText
+              value={url}
+              onChange={(e) => onURLChange(e.target.value)}
+            ></EuiFieldText>
+          </EuiFlexItem>
+        )}
+        {selector && !action.isAssert && (
+          <EuiFlexItem>
+            <EuiFieldText
+              value={selector}
+              onChange={(e) => onSelectorChange(e.target.value)}
+            ></EuiFieldText>
+          </EuiFlexItem>
+        )}
+        {text && (
+          <EuiFlexItem>
+            <EuiFieldText
+              value={text}
+              onChange={(e) => onTextChange(e.target.value)}
+            ></EuiFieldText>
+          </EuiFlexItem>
+        )}
+      </EuiFlexGroup>
       {action.isAssert && (
-        <>
-          <Assertion
-            key={title + Date.now.toString()}
-            actionContext={actionContext}
-            actionIndex={actionIndex}
-            onActionContextChange={onActionContextChange}
-          />
-        </>
+        <Assertion
+          key={title + Date.now.toString()}
+          actionContext={actionContext}
+          actionIndex={actionIndex}
+          onActionContextChange={onActionContextChange}
+        />
       )}
-    </>
+    </EuiPanel>
   );
 }
