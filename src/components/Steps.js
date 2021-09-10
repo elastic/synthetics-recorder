@@ -13,6 +13,7 @@ const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export function Steps(props) {
   const [isRecording, setIsRecording] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [actions, setActions] = useState([]);
 
   useEffect(() => {
@@ -27,6 +28,7 @@ export function Steps(props) {
   const onRecord = async () => {
     if (isRecording) {
       setIsRecording(false);
+      setIsPaused(false);
       // Stop browser process
       ipc.send("stop");
       return;
@@ -76,6 +78,17 @@ export function Steps(props) {
     props.onUpdateActions(newActions);
   };
 
+  const onPause = async () => {
+    if (!isRecording) return;
+    if (!isPaused) {
+      setIsPaused(true);
+      await ipc.callMain("set-mode", "none");
+    } else {
+      await ipc.callMain("set-mode", "recording");
+      setIsPaused(false);
+    }
+  };
+
   return (
     <EuiPanel hasBorder={true} color="transparent">
       <EuiFlexGroup alignItems="baseline">
@@ -84,9 +97,14 @@ export function Steps(props) {
             <strong>{actions.length} Recorded Steps</strong>
           </EuiText>
         </EuiFlexItem>
-        <EuiFlexItem>
-          <EuiButton iconType="play" color="secondary" onClick={onRecord}>
-            {isRecording ? "Stop Recording" : "Start Recording"}
+        <EuiFlexItem grow={false}>
+          <EuiButton iconType="play" onClick={onRecord}>
+            {isRecording ? "Stop" : "Start"}
+          </EuiButton>
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          <EuiButton disabled={!isRecording} iconType="pause" onClick={onPause}>
+            {isPaused ? "Resume" : "Pause"}
           </EuiButton>
         </EuiFlexItem>
       </EuiFlexGroup>
