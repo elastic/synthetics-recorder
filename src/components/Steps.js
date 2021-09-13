@@ -111,7 +111,7 @@ export function Steps(props) {
 
       <EuiSpacer />
       <EuiFlexItem>
-        <EuiPanel color="transparent" hasBorder={true} grow={true}>
+        <EuiPanel color="transparent" hasBorder={true} borderRadius="none">
           {actions.length > 0 ? (
             <StepAccordions
               steps={actions}

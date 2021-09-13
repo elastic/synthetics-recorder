@@ -9,6 +9,7 @@ import {
   EuiFlyoutBody,
   EuiFlyoutHeader,
   EuiCodeBlock,
+  EuiFlexGroup,
 } from "@elastic/eui";
 import { Steps } from "./Steps";
 
@@ -28,40 +29,46 @@ export function StepsMonitor(props) {
   };
 
   return (
-    <EuiPanel hasBorder={true} color="transparent">
+    <EuiFlexGroup direction="column" gutterSize="xs" justifyContent>
       <EuiFlexItem>
-        <Steps url={props.url} onUpdateActions={props.onUpdateActions} />
-      </EuiFlexItem>
-      <EuiSpacer />
-      {props.currentActions.length > 0 && (
-        <EuiButton
-          iconType="eye"
-          iconSide="right"
-          color="text"
-          onClick={showFlyout}
-        >
-          Show Script
-        </EuiButton>
-      )}
+        <EuiPanel hasBorder={true} color="transparent" borderRadius="none">
+          <Steps url={props.url} onUpdateActions={props.onUpdateActions} />
+          <EuiSpacer />
 
-      {isFlyoutVisible && (
-        <EuiFlyout
-          ownFocus
-          onClose={() => setIsFlyoutVisible(false)}
-          aria-labelledby="flyoutTitle"
-        >
-          <EuiFlyoutHeader hasBorder>
-            <EuiTitle size="s">
-              <h2 id="flyoutTitle">Recorded Code</h2>
-            </EuiTitle>
-          </EuiFlyoutHeader>
-          <EuiFlyoutBody>
-            <EuiCodeBlock language="js" paddingSize="m" isCopyable>
-              {code}
-            </EuiCodeBlock>
-          </EuiFlyoutBody>
-        </EuiFlyout>
-      )}
-    </EuiPanel>
+          {isFlyoutVisible && (
+            <EuiFlyout
+              ownFocus
+              onClose={() => setIsFlyoutVisible(false)}
+              aria-labelledby="flyoutTitle"
+            >
+              <EuiFlyoutHeader hasBorder>
+                <EuiTitle size="s">
+                  <h2 id="flyoutTitle">Recorded Code</h2>
+                </EuiTitle>
+              </EuiFlyoutHeader>
+              <EuiFlyoutBody>
+                <EuiCodeBlock language="js" paddingSize="m" isCopyable>
+                  {code}
+                </EuiCodeBlock>
+              </EuiFlyoutBody>
+            </EuiFlyout>
+          )}
+        </EuiPanel>
+      </EuiFlexItem>
+      <EuiFlexItem grow={false}>
+        {props.currentActions.length > 0 && (
+          <div>
+            <EuiButton
+              iconType="eye"
+              iconSide="right"
+              color="text"
+              onClick={showFlyout}
+            >
+              Show Script
+            </EuiButton>
+          </div>
+        )}
+      </EuiFlexItem>
+    </EuiFlexGroup>
   );
 }
