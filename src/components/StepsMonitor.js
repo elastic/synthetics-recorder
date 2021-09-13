@@ -4,10 +4,10 @@ import {
   EuiSpacer,
   EuiButton,
   EuiPanel,
-  EuiModal,
-  EuiModalHeader,
-  EuiModalHeaderTitle,
-  EuiModalBody,
+  EuiTitle,
+  EuiFlyout,
+  EuiFlyoutBody,
+  EuiFlyoutHeader,
   EuiCodeBlock,
 } from "@elastic/eui";
 import { Steps } from "./Steps";
@@ -15,34 +15,17 @@ import { Steps } from "./Steps";
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export function StepsMonitor(props) {
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isFlyoutVisible, setIsFlyoutVisible] = useState(false);
   const [code, setCode] = useState("");
 
-  const closeModal = () => setIsModalVisible(false);
-  const showModal = async () => {
+  const showFlyout = async () => {
     const code = await ipc.callMain("actions-to-code", {
       actions: props.currentActions,
       isSuite: props.type == "suite",
     });
     setCode(code);
-    setIsModalVisible(true);
+    setIsFlyoutVisible(true);
   };
-
-  let modal;
-  if (isModalVisible) {
-    modal = (
-      <EuiModal style={{ width: 700 }} onClose={closeModal}>
-        <EuiModalHeader>
-          <EuiModalHeaderTitle>Recorded Code</EuiModalHeaderTitle>
-        </EuiModalHeader>
-        <EuiModalBody>
-          <EuiCodeBlock language="js" paddingSize="m" isCopyable>
-            {code}
-          </EuiCodeBlock>
-        </EuiModalBody>
-      </EuiModal>
-    );
-  }
 
   return (
     <EuiPanel hasBorder={true} color="transparent">
@@ -50,15 +33,35 @@ export function StepsMonitor(props) {
         <Steps url={props.url} onUpdateActions={props.onUpdateActions} />
       </EuiFlexItem>
       <EuiSpacer />
-      <EuiButton
-        iconType="arrowUp"
-        iconSide="right"
-        color="text"
-        onClick={showModal}
-      >
-        Show Script
-      </EuiButton>
-      {modal}
+      {props.currentActions.length > 0 && (
+        <EuiButton
+          iconType="eye"
+          iconSide="right"
+          color="text"
+          onClick={showFlyout}
+        >
+          Show Script
+        </EuiButton>
+      )}
+
+      {isFlyoutVisible && (
+        <EuiFlyout
+          ownFocus
+          onClose={() => setIsFlyoutVisible(false)}
+          aria-labelledby="flyoutTitle"
+        >
+          <EuiFlyoutHeader hasBorder>
+            <EuiTitle size="s">
+              <h2 id="flyoutTitle">Recorded Code</h2>
+            </EuiTitle>
+          </EuiFlyoutHeader>
+          <EuiFlyoutBody>
+            <EuiCodeBlock language="js" paddingSize="m" isCopyable>
+              {code}
+            </EuiCodeBlock>
+          </EuiFlyoutBody>
+        </EuiFlyout>
+      )}
     </EuiPanel>
   );
 }

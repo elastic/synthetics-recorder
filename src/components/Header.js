@@ -13,11 +13,10 @@ const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export function Header(props) {
   const getCodeFromActions = async () => {
-    const code = await ipc.callMain("actions-to-code", {
+    return await ipc.callMain("actions-to-code", {
       actions: props.currentActions,
       isSuite: props.type == "suite",
     });
-    return code;
   };
 
   const onSave = async () => {
