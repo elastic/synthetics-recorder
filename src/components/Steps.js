@@ -90,7 +90,7 @@ export function Steps(props) {
   };
 
   return (
-    <EuiPanel hasBorder={true} color="transparent">
+    <>
       <EuiFlexGroup alignItems="baseline">
         <EuiFlexItem>
           <EuiText size="m">
@@ -110,22 +110,24 @@ export function Steps(props) {
       </EuiFlexGroup>
 
       <EuiSpacer />
-      <EuiPanel color="transparent" hasBorder={true} grow={true}>
-        {actions.length > 0 ? (
-          <StepAccordions
-            steps={actions}
-            onStepDetailChange={onStepDetailChange}
-            onStepDelete={onStepDelete}
-          />
-        ) : (
-          <EuiText size="xs" textAlign="center">
-            <div>
-              <span>Click on Start recording to get started</span>
-            </div>
-            <span>with your script</span>
-          </EuiText>
-        )}
-      </EuiPanel>
-    </EuiPanel>
+      <EuiFlexItem>
+        <EuiPanel color="transparent" hasBorder={true} borderRadius="none">
+          {actions.length > 0 ? (
+            <StepAccordions
+              steps={actions}
+              onStepDetailChange={onStepDetailChange}
+              onStepDelete={onStepDelete}
+            />
+          ) : (
+            <EuiText size="xs" textAlign="center">
+              <div>
+                <span>Click on Start recording to get started</span>
+              </div>
+              <span>with your script</span>
+            </EuiText>
+          )}
+        </EuiPanel>
+      </EuiFlexItem>
+    </>
   );
 }

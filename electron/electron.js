@@ -22,7 +22,9 @@ async function createWindow() {
   const win = new BrowserWindow({
     title: "Synthetics Recorder",
     width: 1000,
-    height: 600,
+    height: 700,
+    minHeight: 500,
+    minWidth: 800,
     webPreferences: {
       devTools: isDev,
       nodeIntegration: true,

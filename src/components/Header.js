@@ -12,12 +12,21 @@ import {
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export function Header(props) {
+  const getCodeFromActions = async () => {
+    return await ipc.callMain("actions-to-code", {
+      actions: props.currentActions,
+      isSuite: props.type == "suite",
+    });
+  };
+
   const onSave = async () => {
-    await ipc.callMain("save-file", props.code);
+    const code = await getCodeFromActions();
+    await ipc.callMain("save-file", code);
   };
   const onTest = async () => {
+    const code = await getCodeFromActions();
     const syntheticsOutput = await ipc.callMain("run-journey", {
-      code: props.code,
+      code,
       isSuite: props.type === "suite",
     });
     props.onTestRun(syntheticsOutput);
@@ -37,8 +46,8 @@ export function Header(props) {
 
       <EuiSpacer />
       <EuiSpacer />
-      <EuiFlexGroup>
-        <EuiFlexItem grow={2}>
+      <EuiFlexGroup wrap>
+        <EuiFlexItem style={{ minWidth: 550 }}>
           <EuiFieldText
             placeholder="Enter URL to test"
             value={props.url}
@@ -46,7 +55,7 @@ export function Header(props) {
             fullWidth
           />
         </EuiFlexItem>
-        <EuiFlexItem grow={false}>
+        <EuiFlexItem style={{ minWidth: 250 }}>
           <EuiFlexGroup gutterSize="m">
             <EuiFlexItem grow={false}>
               <EuiButton fill onClick={onTest} color="primary">
@@ -58,7 +67,7 @@ export function Header(props) {
                 Save and download
               </EuiButton>
             </EuiFlexItem>
-            <EuiFlexItem>
+            <EuiFlexItem grow={false}>
               <EuiSelect
                 options={[
                   { value: "inline", text: "Inline" },

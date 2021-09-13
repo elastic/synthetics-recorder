@@ -1,22 +1,14 @@
 import React, { useState } from "react";
-import {
-  EuiCodeBlock,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiSpacer,
-  EuiText,
-  EuiTextArea,
-} from "@elastic/eui";
+import { EuiFlexGroup, EuiFlexItem, EuiSpacer } from "@elastic/eui";
 import "./App.css";
 import "@elastic/eui/dist/eui_theme_amsterdam_light.css";
 import { Header } from "./components/Header";
-import { Steps } from "./components/Steps";
-
-const { ipcRenderer: ipc } = window.require("electron-better-ipc");
+import { StepsMonitor } from "./components/StepsMonitor";
+import { TestResult } from "./components/TestResult";
 
 export default function App() {
   const [url, setUrl] = useState("");
-  const [code, setCode] = useState("// Record journeys");
+  const [currentActions, setCurrentActions] = useState([]);
   const [result, setResult] = useState("");
   const [type, setJourneyType] = useState("inline");
 
@@ -26,52 +18,37 @@ export default function App() {
   const onJourneyType = (value) => {
     setJourneyType(value);
   };
-  const onUpdateActions = async (actionWithSteps) => {
-    // Spread the actions array
+  const onUpdateActions = (actionWithSteps) => {
+    // Spread the actions array modified by the IR
     const actions = actionWithSteps.flat();
-    const code = await ipc.callMain("actions-to-code", {
-      actions,
-      isSuite: type == "suite",
-    });
-    setCode(code);
+    if (actions.length > 0) setCurrentActions(actions);
   };
   const onTestRun = (result) => {
     setResult(result);
   };
 
   return (
-    <div style={{ margin: "2px 10px" }}>
+    <div style={{ padding: "2px 10px" }}>
       <Header
-        type={type}
         url={url}
-        code={code}
+        type={type}
+        currentActions={currentActions}
         onTestRun={onTestRun}
         onJourneyType={onJourneyType}
         onUrlChange={onUrlChange}
       />
       <EuiSpacer />
-      <EuiFlexGroup>
-        <EuiFlexItem grow={2}>
-          <Steps url={url} onUpdateActions={onUpdateActions} />
+      <EuiFlexGroup wrap>
+        <EuiFlexItem style={{ minWidth: 700 }}>
+          <StepsMonitor
+            url={url}
+            type={type}
+            currentActions={currentActions}
+            onUpdateActions={onUpdateActions}
+          />
         </EuiFlexItem>
-        <EuiFlexItem grow={1}>
-          <EuiText size="s">
-            <strong>Generated Code</strong>
-          </EuiText>
-          <EuiCodeBlock
-            language="js"
-            fontSize="m"
-            paddingSize="m"
-            overflowHeight={200}
-            style={{ minHeight: 120, maxWidth: 300 }}
-          >
-            {code}
-          </EuiCodeBlock>
-          <EuiSpacer />
-          <EuiText size="s">
-            <strong>Test Result</strong>
-          </EuiText>
-          <EuiTextArea value={result} onChange={() => {}}></EuiTextArea>
+        <EuiFlexItem style={{ minWidth: 200 }}>
+          <TestResult result={result} />
         </EuiFlexItem>
       </EuiFlexGroup>
     </div>
