@@ -36,8 +36,8 @@ export function Header(props) {
   const { isRecording, toggleRecording } = React.useContext(RecordingContext);
 
   const onUrlFieldKeyUp = async (e) => {
-    if (e?.key === "Enter" && !isRecording) {
-      toggleRecording();
+    if (e?.key == "Enter" && !isRecording) {
+      await toggleRecording();
     }
   };
 

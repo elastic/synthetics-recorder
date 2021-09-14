@@ -12,5 +12,5 @@ export const RecordingContext = createContext({
 });
 
 export function RecordingContextProvider({ children, ...props }) {
-  <RecordingContext.Provider children={children} value={props} />;
+  return <RecordingContext.Provider children={children} value={props} />;
 }
