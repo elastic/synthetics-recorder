@@ -3,14 +3,28 @@ const { join, resolve } = require("path");
 const { existsSync } = require("fs");
 const { writeFile, rm } = require("fs/promises");
 const { ipcMain: ipc } = require("electron-better-ipc");
-const { fork } = require("child_process");
 const { EventEmitter, once } = require("events");
 const { dialog, BrowserWindow } = require("electron");
 const logger = require("electron-timber");
 const SyntheticsGenerator = require("./formatter/synthetics");
+const { run, journey, step, expect } = require("@elastic/synthetics");
 
-const SYNTHETICS_CLI = require.resolve("@elastic/synthetics/dist/cli");
 const JOURNEY_DIR = join(__dirname, "..", "journeys");
+
+function loadInlineJourney(source) {
+  const scriptFn = new Function(
+    "step",
+    "page",
+    "context",
+    "browser",
+    "params",
+    "expect",
+    source
+  );
+  journey("recorded journey", async ({ page, context, browser, params }) => {
+    scriptFn.apply(null, [step, page, context, browser, params, expect]);
+  });
+}
 
 async function launchContext() {
   const browser = await chromium.launch({ headless: false });
@@ -51,10 +65,6 @@ async function openPage(context, url) {
   return page;
 }
 
-function removeColorCodes(str = "") {
-  return str.replace(/\u001b\[.*?m/g, "");
-}
-
 let browserContext = null;
 let actionListener = new EventEmitter();
 
@@ -85,37 +95,59 @@ async function recordJourneys(data, browserWindow) {
 }
 
 async function onTest(data) {
+  const result = {
+    succeeded: 0,
+    failed: 0,
+    skipped: 0,
+    total: 0,
+    journeys: {},
+  };
+  class Reporter {
+    constructor(runner) {
+      runner.on("journey:start", ({ journey }) => {
+        result.journeys[journey.name] = { status: "succeeded", steps: [] };
+      });
+      runner.on("step:end", ({ journey, step, end, start, status, error }) => {
+        result[status]++;
+        result.journeys[journey.name].steps.push({
+          name: step.name,
+          status,
+          error,
+          duration: Math.ceil((end - start) * 1000),
+        });
+      });
+      runner.on("journey:end", ({ journey, status }) => {
+        result.journeys[journey.name].status = status;
+      });
+      runner.on("end", () => {
+        const { failed, succeeded, skipped } = result;
+        result.total = failed + succeeded + skipped;
+      });
+    }
+  }
+
   try {
     const isSuite = data.isSuite;
-    const args = ["--no-headless"];
-    const filePath = join(JOURNEY_DIR, "recorded.journey.js");
+    const journeyPath = join(JOURNEY_DIR, `recorded-${Date.now()}.journey.js`);
+
     if (!isSuite) {
-      args.push("--inline");
+      data.code && loadInlineJourney(data.code);
     } else {
-      await writeFile(filePath, data.code);
-      args.unshift(filePath);
+      await writeFile(journeyPath, data.code);
+      require(journeyPath);
     }
-    const { stdout, stdin, stderr } = fork(`${SYNTHETICS_CLI}`, args, {
-      env: process.env,
-      stdio: "pipe",
+
+    await run({
+      reporter: Reporter,
+      screenshots: "off",
+      playwrightOptions: {
+        headless: false,
+      },
     });
-    if (!isSuite) {
-      stdin.write(data.code);
-      stdin.end();
-    }
-    stdout.setEncoding("utf-8");
-    stderr.setEncoding("utf-8");
-    let chunks = [];
-    for await (const chunk of stdout) {
-      chunks.push(removeColorCodes(chunk));
-    }
-    for await (const chunk of stderr) {
-      chunks.push(removeColorCodes(chunk));
-    }
     if (isSuite) {
-      await rm(filePath, { recursive: true, force: true });
+      await rm(journeyPath, { recursive: true, force: true });
     }
-    return chunks.join("");
+    return result;
   } catch (err) {
     logger.error(err);
   }

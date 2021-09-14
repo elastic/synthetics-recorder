@@ -26,11 +26,11 @@ export function Header(props) {
   };
   const onTest = async () => {
     const code = await getCodeFromActions();
-    const syntheticsOutput = await ipc.callMain("run-journey", {
+    const result = await ipc.callMain("run-journey", {
       code,
       isSuite: props.type === "suite",
     });
-    props.onTestRun(syntheticsOutput);
+    props.onTestRun(result);
   };
 
   const { isRecording, toggleRecording } = React.useContext(RecordingContext);

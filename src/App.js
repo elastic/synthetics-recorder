@@ -71,7 +71,7 @@ export default function App() {
           onUrlChange={onUrlChange}
         />
         <EuiSpacer />
-        <EuiFlexGroup wrap>
+        <EuiFlexGroup direction="row" style={{ minHeight: 500 }}>
           <EuiFlexItem style={{ minWidth: 700 }}>
             <StepsMonitor
               url={url}
