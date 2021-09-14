@@ -21,7 +21,7 @@ const BUILD_DIR = join(__dirname, "..", "build");
 async function createWindow() {
   const win = new BrowserWindow({
     title: "Synthetics Recorder",
-    width: 1000,
+    width: 1100,
     height: 700,
     minHeight: 500,
     minWidth: 800,

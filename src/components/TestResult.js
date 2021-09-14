@@ -44,11 +44,15 @@ function ResultAccordions({ journeys }) {
               </span>
             </EuiText>
           }
-          paddingSize="l"
+          paddingSize="s"
           buttonClassName="euiAccordionForm__button"
         >
           {error && (
-            <EuiCodeBlock language="js" paddingSize="none">
+            <EuiCodeBlock
+              language="js"
+              paddingSize="none"
+              style={{ maxWidth: 300 }}
+            >
               {removeColorCodes(error.message)}
             </EuiCodeBlock>
           )}
@@ -65,7 +69,7 @@ export function TestResult(props) {
 
     return (
       <EuiFlexGroup direction="column" style={{ padding: "0 7px" }}>
-        <EuiFlexGroup gutterSize="m" direction="row">
+        <EuiFlexGroup gutterSize="m">
           {Object.keys(symbols).map((key, index) => (
             <EuiFlexItem key={index} grow={false}>
               <EuiText style={styles[key]}>
@@ -90,7 +94,9 @@ export function TestResult(props) {
         <strong>Test Result</strong>
       </EuiText>
       <EuiSpacer />
-      <ResultComponent result={props.result}></ResultComponent>
+      {props.result && (
+        <ResultComponent result={props.result}></ResultComponent>
+      )}
     </EuiPanel>
   );
 }
