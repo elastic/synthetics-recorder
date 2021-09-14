@@ -9,6 +9,7 @@ import {
   EuiIcon,
   EuiSelect,
 } from "@elastic/eui";
+import { RecordingContext } from "../contexts/RecordingContext";
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export function Header(props) {
@@ -32,6 +33,14 @@ export function Header(props) {
     props.onTestRun(syntheticsOutput);
   };
 
+  const { isRecording, toggleRecording } = React.useContext(RecordingContext);
+
+  const onUrlFieldKeyUp = async (e) => {
+    if (e?.key == "Enter" && !isRecording) {
+      await toggleRecording();
+    }
+  };
+
   return (
     <>
       <EuiFlexGroup alignItems="center" style={{ paddingTop: 10 }}>
@@ -51,6 +60,7 @@ export function Header(props) {
           <EuiFieldText
             placeholder="Enter URL to test"
             value={props.url}
+            onKeyUp={onUrlFieldKeyUp}
             onChange={(e) => props.onUrlChange(e.target.value)}
             fullWidth
           />

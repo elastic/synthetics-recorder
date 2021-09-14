@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   EuiText,
   EuiPanel,
@@ -9,12 +9,13 @@ import {
 } from "@elastic/eui";
 import { generateIR } from "../helpers/generator";
 import { StepAccordions } from "./StepDetails";
+import { RecordingContext } from "../contexts/RecordingContext";
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export function Steps(props) {
-  const [isRecording, setIsRecording] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
   const [actions, setActions] = useState([]);
+  const { toggleRecording, isRecording, isPaused, togglePause } =
+    useContext(RecordingContext);
 
   useEffect(() => {
     ipc.answerMain("change", ({ actions }) => {
@@ -24,19 +25,6 @@ export function Steps(props) {
       });
     });
   }, []);
-
-  const onRecord = async () => {
-    if (isRecording) {
-      setIsRecording(false);
-      setIsPaused(false);
-      // Stop browser process
-      ipc.send("stop");
-      return;
-    }
-    setIsRecording(true);
-    await ipc.callMain("record-journey", { url: props.url });
-    setIsRecording(false);
-  };
 
   const generateMergedIR = (prevActions, currActions) => {
     const flatPrevActions = prevActions.flat();
@@ -78,17 +66,6 @@ export function Steps(props) {
     props.onUpdateActions(newActions);
   };
 
-  const onPause = async () => {
-    if (!isRecording) return;
-    if (!isPaused) {
-      setIsPaused(true);
-      await ipc.callMain("set-mode", "none");
-    } else {
-      await ipc.callMain("set-mode", "recording");
-      setIsPaused(false);
-    }
-  };
-
   return (
     <>
       <EuiFlexGroup alignItems="baseline">
@@ -100,13 +77,17 @@ export function Steps(props) {
         <EuiFlexItem grow={false}>
           <EuiButton
             iconType={isRecording ? "stop" : "play"}
-            onClick={onRecord}
+            onClick={toggleRecording}
           >
             {isRecording ? "Stop" : "Start"}
           </EuiButton>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
-          <EuiButton disabled={!isRecording} iconType="pause" onClick={onPause}>
+          <EuiButton
+            disabled={!isRecording}
+            iconType="pause"
+            onClick={togglePause}
+          >
             {isPaused ? "Resume" : "Pause"}
           </EuiButton>
         </EuiFlexItem>
