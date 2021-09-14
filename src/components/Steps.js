@@ -98,7 +98,10 @@ export function Steps(props) {
           </EuiText>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
-          <EuiButton iconType="play" onClick={onRecord}>
+          <EuiButton
+            iconType={isRecording ? "stop" : "play"}
+            onClick={onRecord}
+          >
             {isRecording ? "Stop" : "Start"}
           </EuiButton>
         </EuiFlexItem>
