@@ -29,7 +29,7 @@ export function StepsMonitor(props) {
   };
 
   return (
-    <EuiFlexGroup direction="column" gutterSize="xs" justifyContent>
+    <EuiFlexGroup direction="column" gutterSize="xs">
       <EuiFlexItem>
         <EuiPanel hasBorder={true} color="transparent" borderRadius="none">
           <Steps url={props.url} onUpdateActions={props.onUpdateActions} />

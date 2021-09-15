@@ -71,7 +71,7 @@ export default function App() {
           onUrlChange={onUrlChange}
         />
         <EuiSpacer />
-        <EuiFlexGroup wrap>
+        <EuiFlexGroup wrap style={{ minHeight: 500 }}>
           <EuiFlexItem style={{ minWidth: 700 }}>
             <StepsMonitor
               url={url}
@@ -80,7 +80,7 @@ export default function App() {
               onUpdateActions={onUpdateActions}
             />
           </EuiFlexItem>
-          <EuiFlexItem style={{ minWidth: 200 }}>
+          <EuiFlexItem style={{ minWidth: 300 }}>
             <TestResult result={result} />
           </EuiFlexItem>
         </EuiFlexGroup>
