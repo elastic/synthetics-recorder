@@ -4,11 +4,10 @@ import {
   EuiFlexItem,
   EuiSelect,
   EuiFieldText,
-  EuiSpacer,
   EuiButtonIcon,
 } from "@elastic/eui";
 
-const { ipcRenderer: ipc } = window.require("electron-better-ipc");
+import { performSelectorLookup } from "../common/shared";
 
 export function Assertion({
   actionContext,
@@ -34,13 +33,6 @@ export function Assertion({
   const [command, setCommand] = useState(action.command ?? "");
   const [assertValue, setAssertValue] = useState(action.value ?? "");
 
-  const onSelectorLookup = async () => {
-    const selector = await ipc.callMain("set-mode", "inspecting");
-    if (selector) {
-      onSelectorChange(selector);
-      await ipc.callMain("set-mode", "recording");
-    }
-  };
   const needsAssertingValue = () => {
     return command === commandOptions[0].value;
   };
@@ -70,7 +62,7 @@ export function Assertion({
           prepend={
             <EuiButtonIcon
               iconType="search"
-              onClick={onSelectorLookup}
+              onClick={performSelectorLookup}
               aria-label="search"
             />
           }

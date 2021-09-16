@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { COMMAND_SELECTOR_OPTIONS } from "../common/commandOptions";
+import { COMMAND_SELECTOR_OPTIONS } from "../common/shared";
 
 export function useAssertionDrawer() {
   const [commandValue, setCommandValue] = useState(

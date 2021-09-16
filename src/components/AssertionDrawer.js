@@ -11,7 +11,10 @@ import {
   EuiTitle,
 } from "@elastic/eui";
 
-import { COMMAND_SELECTOR_OPTIONS } from "../common/commandOptions";
+import {
+  COMMAND_SELECTOR_OPTIONS,
+  performSelectorLookup,
+} from "../common/shared";
 import { StepsContext } from "../contexts/StepsContext";
 import { AssertionContext } from "../contexts/AssertionContext";
 
@@ -89,7 +92,12 @@ export function AssertionDrawer(props) {
       >
         <EuiFlexItem>
           <EuiFieldText
-            prepend={<EuiButtonIcon iconType="search" />}
+            prepend={
+              <EuiButtonIcon
+                iconType="search"
+                onClick={performSelectorLookup}
+              />
+            }
             onChange={(e) => setSelectorValue(e.target.value)}
             value={selectorValue}
             placeholder="Selector"
