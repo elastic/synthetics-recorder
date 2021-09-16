@@ -40,7 +40,7 @@ export function AssertionDrawer(props) {
   function addAssertion() {
     const newActions = actions.map((step, sidx) => {
       if (stepIndex === sidx) {
-        step.splice(actionIndex + 1, 0, {
+        const newAction = {
           pageAlias: action.pageAlias,
           isMainFrame: action.isMainFrame,
           frameUrl: action.frameUrl,
@@ -52,7 +52,8 @@ export function AssertionDrawer(props) {
             value: value,
             signals: [],
           },
-        });
+        };
+        step.splice(actionIndex + 1, 0, newAction);
         return [...step];
       }
       return step;
@@ -62,6 +63,7 @@ export function AssertionDrawer(props) {
     onUpdateActions(newActions);
     onHideAssertionDrawer();
   }
+  console.log("command value", commandValue);
 
   return (
     <EuiPanel
@@ -106,7 +108,9 @@ export function AssertionDrawer(props) {
         <EuiFlexItem>
           <EuiSelect
             prepend="Command"
-            onChange={(e) => setCommandValue(e.target.value)}
+            onChange={(e) => {
+              setCommandValue(e.target.value);
+            }}
             options={COMMAND_SELECTOR_OPTIONS}
             value={commandValue}
           />

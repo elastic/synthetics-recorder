@@ -7,34 +7,23 @@ import {
   EuiButtonIcon,
 } from "@elastic/eui";
 
-import { performSelectorLookup } from "../common/shared";
+import {
+  COMMAND_SELECTOR_OPTIONS,
+  performSelectorLookup,
+} from "../common/shared";
 
 export function Assertion({
   actionContext,
   onActionContextChange,
   actionIndex,
 }) {
-  const commandOptions = [
-    {
-      value: "textContent",
-      text: "Text content",
-    },
-    {
-      value: "isVisible",
-      text: "Check Visibility",
-    },
-    {
-      value: "isHidden",
-      text: "Check Hidden",
-    },
-  ];
   const { action } = actionContext;
   const [selector, setSelector] = useState(action.selector || "");
   const [command, setCommand] = useState(action.command ?? "");
   const [assertValue, setAssertValue] = useState(action.value ?? "");
 
   const needsAssertingValue = () => {
-    return command === commandOptions[0].value;
+    return command === COMMAND_SELECTOR_OPTIONS[0].value;
   };
   const onSelectorChange = (selector) => {
     setSelector(selector);
@@ -70,8 +59,7 @@ export function Assertion({
       </EuiFlexItem>
       <EuiFlexItem>
         <EuiSelect
-          options={commandOptions}
-          hasNoInitialSelection
+          options={COMMAND_SELECTOR_OPTIONS}
           value={command}
           onChange={(e) => onCommandChange(e.target.value)}
         />

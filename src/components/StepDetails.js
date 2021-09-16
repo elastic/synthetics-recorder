@@ -9,27 +9,6 @@ import {
 import { ActionDetail } from "./ActionDetail";
 
 function StepDetail({ step, stepIndex, onStepDetailChange }) {
-  const onAddAssertion = () => {
-    const previousAction = step[step.length - 1];
-    const newStep = [
-      ...step,
-      {
-        pageAlias: previousAction.pageAlias,
-        isMainFrame: previousAction.isMainFrame,
-        frameUrl: previousAction.frameUrl,
-        action: {
-          name: "assert",
-          isAssert: true,
-          selector: previousAction.action?.selector,
-          command: "",
-          value: "",
-          signals: [],
-        },
-      },
-    ];
-    onStepDetailChange(newStep, stepIndex);
-  };
-
   const onActionContextChange = (actionContext, actionIndex) => {
     onStepDetailChange(
       step.map((a, ind) => (ind === actionIndex ? actionContext : a)),
