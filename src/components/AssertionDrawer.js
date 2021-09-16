@@ -28,11 +28,11 @@ export function AssertionDrawer({ width, onUpdateActions }) {
     value,
     isVisible,
     onHideAssertionDrawer,
-    selectorValue,
+    selector,
     commandValue,
     setValue,
     setCommandValue,
-    setSelectorValue,
+    setSelector,
     stepIndex,
   } = useContext(AssertionContext);
 
@@ -46,7 +46,7 @@ export function AssertionDrawer({ width, onUpdateActions }) {
           action: {
             name: "assert",
             isAssert: true,
-            selector: selectorValue,
+            selector: selector,
             command: commandValue,
             value: value,
             signals: [],
@@ -103,8 +103,8 @@ export function AssertionDrawer({ width, onUpdateActions }) {
                 onClick={performSelectorLookup}
               />
             }
-            onChange={(e) => setSelectorValue(e.target.value)}
-            value={selectorValue}
+            onChange={(e) => setSelector(e.target.value)}
+            value={selector}
             placeholder="Selector"
           />
         </EuiFlexItem>
@@ -130,7 +130,7 @@ export function AssertionDrawer({ width, onUpdateActions }) {
         </EuiFlexItem>
       </EuiFlexGroup>
       <EuiButton
-        disabled={!selectorValue}
+        disabled={!selector}
         aria-label="Create the assertion you have defined"
         onClick={addAssertion}
         size="s"
