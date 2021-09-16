@@ -10,10 +10,11 @@ import {
 import { generateIR } from "../helpers/generator";
 import { StepAccordions } from "./StepDetails";
 import { RecordingContext } from "../contexts/RecordingContext";
+import { StepsContext } from "../contexts/StepsContext";
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export function Steps(props) {
-  const [actions, setActions] = useState([]);
+  const { actions, setActions } = useContext(StepsContext);
   const { toggleRecording, isRecording, isPaused, togglePause } =
     useContext(RecordingContext);
 

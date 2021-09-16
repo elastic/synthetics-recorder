@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
+  EuiButtonIcon,
   EuiFlexGroup,
   EuiFlexItem,
   EuiText,
@@ -7,6 +8,7 @@ import {
   EuiPanel,
 } from "@elastic/eui";
 import { Assertion } from "./Assertion";
+import { AssertionContext } from "../contexts/AssertionContext";
 
 function createUpdatedAction(field, value, context) {
   return {
@@ -19,11 +21,14 @@ export function ActionDetail({
   actionContext,
   onActionContextChange,
   actionIndex,
+  stepIndex,
 }) {
   const { action } = actionContext;
   const [selector, setSelector] = useState(action.selector || "");
   const [text, setText] = useState(action.text || "");
   const [url, setUrl] = useState(action.url || "");
+
+  const { onShowAssertionDrawer } = useContext(AssertionContext);
 
   const onSelectorChange = (value) => {
     if (!value) return;
@@ -87,15 +92,31 @@ export function ActionDetail({
             ></EuiFieldText>
           </EuiFlexItem>
         )}
+        {!action.isAssert && (
+          <EuiFlexItem grow={false}>
+            <EuiButtonIcon
+              onClick={() =>
+                onShowAssertionDrawer({
+                  previousAction: actionContext,
+                  stepIndex,
+                  actionIndex,
+                })
+              }
+              iconType="plus"
+            />
+          </EuiFlexItem>
+        )}
+        {action.isAssert && (
+          <EuiFlexItem>
+            <Assertion
+              key={title + Date.now.toString()}
+              actionContext={actionContext}
+              actionIndex={actionIndex}
+              onActionContextChange={onActionContextChange}
+            />
+          </EuiFlexItem>
+        )}
       </EuiFlexGroup>
-      {action.isAssert && (
-        <Assertion
-          key={title + Date.now.toString()}
-          actionContext={actionContext}
-          actionIndex={actionIndex}
-          onActionContextChange={onActionContextChange}
-        />
-      )}
     </EuiPanel>
   );
 }

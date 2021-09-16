@@ -10,7 +10,3 @@ export const RecordingContext = createContext({
   isPaused: false,
   togglePause: notImplemented,
 });
-
-export function RecordingContextProvider({ children, ...props }) {
-  return <RecordingContext.Provider children={children} value={props} />;
-}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {
-  EuiFlexGrid,
+  EuiFlexGroup,
   EuiFlexItem,
   EuiSelect,
   EuiFieldText,
@@ -31,8 +31,8 @@ export function Assertion({
   ];
   const { action } = actionContext;
   const [selector, setSelector] = useState(action.selector || "");
-  const [command, setCommand] = useState("");
-  const [assertValue, setAssertValue] = useState("");
+  const [command, setCommand] = useState(action.command ?? "");
+  const [assertValue, setAssertValue] = useState(action.value ?? "");
 
   const onSelectorLookup = async () => {
     const selector = await ipc.callMain("set-mode", "inspecting");
@@ -61,41 +61,38 @@ export function Assertion({
   };
 
   return (
-    <>
-      <EuiFlexGrid columns={3}>
+    <EuiFlexGroup>
+      <EuiFlexItem>
+        <EuiFieldText
+          placeholder="selector"
+          value={selector}
+          onChange={(e) => onSelectorChange(e.target.value)}
+          prepend={
+            <EuiButtonIcon
+              iconType="search"
+              onClick={onSelectorLookup}
+              aria-label="search"
+            />
+          }
+        ></EuiFieldText>
+      </EuiFlexItem>
+      <EuiFlexItem>
+        <EuiSelect
+          options={commandOptions}
+          hasNoInitialSelection
+          value={command}
+          onChange={(e) => onCommandChange(e.target.value)}
+        />
+      </EuiFlexItem>
+      {needsAssertingValue() && (
         <EuiFlexItem>
           <EuiFieldText
-            placeholder="selector"
-            value={selector}
-            onChange={(e) => onSelectorChange(e.target.value)}
-            prepend={
-              <EuiButtonIcon
-                iconType="search"
-                onClick={onSelectorLookup}
-                aria-label="search"
-              />
-            }
+            placeholder="value"
+            value={assertValue}
+            onChange={(e) => onAssertChange(e.target.value)}
           ></EuiFieldText>
         </EuiFlexItem>
-        <EuiFlexItem>
-          <EuiSelect
-            options={commandOptions}
-            hasNoInitialSelection
-            value={command}
-            onChange={(e) => onCommandChange(e.target.value)}
-          />
-        </EuiFlexItem>
-        {needsAssertingValue() && (
-          <EuiFlexItem>
-            <EuiFieldText
-              placeholder="value"
-              value={assertValue}
-              onChange={(e) => onAssertChange(e.target.value)}
-            ></EuiFieldText>
-          </EuiFlexItem>
-        )}
-      </EuiFlexGrid>
-      <EuiSpacer />
-    </>
+      )}
+    </EuiFlexGroup>
   );
 }

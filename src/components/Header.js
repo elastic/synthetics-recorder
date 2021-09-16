@@ -48,7 +48,7 @@ export function Header(props) {
           <EuiIcon type="logoElastic" size="xl"></EuiIcon>
         </EuiFlexItem>
         <EuiText>
-          <h3>Elastic Synthetics Recorder </h3>
+          <h1>Elastic Synthetics Recorder </h1>
         </EuiText>
         <EuiFlexItem></EuiFlexItem>
       </EuiFlexGroup>
