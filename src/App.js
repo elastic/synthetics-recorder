@@ -60,7 +60,7 @@ export default function App() {
                   setIsPaused(false);
                   // Stop browser process
                   ipc.send("stop");
-                } else if (url) {
+                } else {
                   setIsRecording(true);
                   await ipc.callMain("record-journey", { url });
                   setIsRecording(false);
