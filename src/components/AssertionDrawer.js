@@ -83,7 +83,11 @@ export function AssertionDrawer({ width, onUpdateActions }) {
           </EuiTitle>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
-          <EuiButtonIcon iconType="cross" onClick={onHideAssertionDrawer} />
+          <EuiButtonIcon
+            aria-label="Close the create assertion dialogue"
+            iconType="cross"
+            onClick={onHideAssertionDrawer}
+          />
         </EuiFlexItem>
       </EuiFlexGroup>
       <EuiFlexGroup
@@ -94,6 +98,7 @@ export function AssertionDrawer({ width, onUpdateActions }) {
           <EuiFieldText
             prepend={
               <EuiButtonIcon
+                aria-label="Choose the type of assertion command"
                 iconType="search"
                 onClick={performSelectorLookup}
               />
@@ -124,7 +129,13 @@ export function AssertionDrawer({ width, onUpdateActions }) {
           />
         </EuiFlexItem>
       </EuiFlexGroup>
-      <EuiButton onClick={addAssertion} size="s" style={{ float: "right" }}>
+      <EuiButton
+        disabled={!selectorValue}
+        aria-label="Create the assertion you have defined"
+        onClick={addAssertion}
+        size="s"
+        style={{ float: "right" }}
+      >
         Add
       </EuiButton>
     </EuiPanel>

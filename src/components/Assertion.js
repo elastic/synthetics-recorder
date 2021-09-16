@@ -50,15 +50,17 @@ export function Assertion({
           onChange={(e) => onSelectorChange(e.target.value)}
           prepend={
             <EuiButtonIcon
+              aria-label="Refocus the browser to inspect for the selector you have defined"
+              disabled={!selector}
               iconType="search"
               onClick={performSelectorLookup}
-              aria-label="search"
             />
           }
         ></EuiFieldText>
       </EuiFlexItem>
       <EuiFlexItem>
         <EuiSelect
+          aria-label="Choose the type of assertion command"
           options={COMMAND_SELECTOR_OPTIONS}
           value={command}
           onChange={(e) => onCommandChange(e.target.value)}

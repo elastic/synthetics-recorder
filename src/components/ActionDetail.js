@@ -95,6 +95,8 @@ export function ActionDetail({
         {!action.isAssert && (
           <EuiFlexItem grow={false}>
             <EuiButtonIcon
+              aria-label="Opens a dialogue to create an assertion after this action"
+              iconType="plus"
               onClick={() =>
                 onShowAssertionDrawer({
                   previousAction: actionContext,
@@ -102,7 +104,6 @@ export function ActionDetail({
                   actionIndex,
                 })
               }
-              iconType="plus"
             />
           </EuiFlexItem>
         )}

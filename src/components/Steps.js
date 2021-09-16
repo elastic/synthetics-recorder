@@ -76,6 +76,7 @@ export function Steps(props) {
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiButton
+            aria-label="Toggle script recording on/off"
             iconType={isRecording ? "stop" : "play"}
             onClick={toggleRecording}
           >
@@ -84,6 +85,7 @@ export function Steps(props) {
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiButton
+            aria-label="Toggle script recording pause/record"
             disabled={!isRecording}
             iconType="pause"
             onClick={togglePause}

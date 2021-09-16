@@ -52,6 +52,7 @@ export function StepAccordions({ steps, onStepDetailChange, onStepDelete }) {
           <EuiFlexGroup gutterSize="xs">
             <EuiFlexItem grow={false}>
               <EuiButtonIcon
+                aria-label="Edit the step's name"
                 // TODO: Impelement functionality
                 className="euiAccordionForm__extraAction"
                 iconType="wrench"
@@ -65,7 +66,7 @@ export function StepAccordions({ steps, onStepDetailChange, onStepDelete }) {
                 iconType="cross"
                 color="danger"
                 className="euiAccordionForm__extraAction"
-                aria-label="Delete"
+                aria-label="Delete this step"
                 onClick={() => onStepDelete(index)}
               />
             </EuiFlexItem>
