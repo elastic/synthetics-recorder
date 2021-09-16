@@ -47,7 +47,6 @@ export function Steps(props) {
       }
       flatCurrActions[i] && mergedActions.push(flatCurrActions[i]);
     }
-    // console.log("Merged", JSON.stringify(mergedActions, null, 2));
     props.onUpdateActions(mergedActions);
     return generateIR(mergedActions);
   };

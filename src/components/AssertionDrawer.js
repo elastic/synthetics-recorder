@@ -20,8 +20,7 @@ import { AssertionContext } from "../contexts/AssertionContext";
 
 const ADD_ASSERTION_PANEL_HEIGHT = 300;
 
-export function AssertionDrawer(props) {
-  const { width, onUpdateActions } = props;
+export function AssertionDrawer({ width, onUpdateActions }) {
   const { actions, setActions } = useContext(StepsContext);
   const {
     actionIndex,
@@ -63,7 +62,6 @@ export function AssertionDrawer(props) {
     onUpdateActions(newActions);
     onHideAssertionDrawer();
   }
-  console.log("command value", commandValue);
 
   return (
     <EuiPanel
