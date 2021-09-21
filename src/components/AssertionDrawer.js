@@ -65,6 +65,8 @@ export function AssertionDrawer({ width, onUpdateActions }) {
 
   return (
     <EuiPanel
+      hasBorder
+      borderRadius="none"
       style={{
         animationTimingFunction: "ease-in",
         position: "fixed",
