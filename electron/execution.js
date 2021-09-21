@@ -6,8 +6,10 @@ const { ipcMain: ipc } = require("electron-better-ipc");
 const { EventEmitter, once } = require("events");
 const { dialog, BrowserWindow } = require("electron");
 const logger = require("electron-timber");
-const SyntheticsGenerator = require("./formatter/synthetics");
 const { run, journey, step, expect } = require("@elastic/synthetics");
+const {
+  SyntheticsGenerator,
+} = require("@elastic/synthetics/dist/formatter/javascript");
 
 const JOURNEY_DIR = join(__dirname, "..", "journeys");
 
