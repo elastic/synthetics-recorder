@@ -115,7 +115,7 @@ export function AssertionDrawer({ width, onUpdateActions }) {
                   <EuiButtonIcon
                     aria-label="Choose the type of assertion command"
                     iconType="search"
-                    onClick={performSelectorLookup}
+                    onClick={performSelectorLookup(setSelector)}
                   />
                 }
                 onChange={(e) => setSelector(e.target.value)}

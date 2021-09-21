@@ -15,10 +15,12 @@ export const COMMAND_SELECTOR_OPTIONS = [
   },
 ];
 
-export async function performSelectorLookup() {
-  const selector = await ipc.callMain("set-mode", "inspecting");
-  if (selector) {
-    onSelectorChange(selector);
-    await ipc.callMain("set-mode", "recording");
-  }
+export function performSelectorLookup(onSelectorChange) {
+  return async () => {
+    const selector = await ipc.callMain("set-mode", "inspecting");
+    if (selector) {
+      onSelectorChange(selector);
+      await ipc.callMain("set-mode", "recording");
+    }
+  };
 }

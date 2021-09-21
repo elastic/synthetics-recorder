@@ -52,7 +52,7 @@ export function Assertion({
             <EuiButtonIcon
               aria-label="Refocus the browser to inspect for the selector you have defined"
               iconType="search"
-              onClick={performSelectorLookup}
+              onClick={performSelectorLookup(onSelectorChange)}
             />
           }
         ></EuiFieldText>
