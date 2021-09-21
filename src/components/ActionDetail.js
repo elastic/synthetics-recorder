@@ -1,11 +1,12 @@
 import React, { useContext, useState } from "react";
 import {
   EuiButtonIcon,
+  EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiText,
-  EuiFieldText,
   EuiPanel,
+  EuiText,
+  EuiToolTip,
 } from "@elastic/eui";
 import { Assertion } from "./Assertion";
 import { AssertionContext } from "../contexts/AssertionContext";
@@ -94,17 +95,19 @@ export function ActionDetail({
         )}
         {!action.isAssert && (
           <EuiFlexItem grow={false}>
-            <EuiButtonIcon
-              aria-label="Opens a dialogue to create an assertion after this action"
-              iconType="plus"
-              onClick={() =>
-                onShowAssertionDrawer({
-                  previousAction: actionContext,
-                  stepIndex,
-                  actionIndex,
-                })
-              }
-            />
+            <EuiToolTip content="Add assertion to this action">
+              <EuiButtonIcon
+                aria-label="Opens a dialogue to create an assertion after this action"
+                iconType="plus"
+                onClick={() =>
+                  onShowAssertionDrawer({
+                    previousAction: actionContext,
+                    stepIndex,
+                    actionIndex,
+                  })
+                }
+              />
+            </EuiToolTip>
           </EuiFlexItem>
         )}
         {action.isAssert && (
