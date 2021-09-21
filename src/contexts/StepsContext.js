@@ -6,5 +6,6 @@ function notImplemented() {
 
 export const StepsContext = createContext({
   actions: [],
+  onDeleteAction: notImplemented,
   setActions: notImplemented,
 });

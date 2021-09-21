@@ -8,8 +8,8 @@ import {
   EuiText,
   EuiToolTip,
 } from "@elastic/eui";
-import { Assertion } from "./Assertion";
 import { AssertionContext } from "../contexts/AssertionContext";
+import { StepsContext } from "../contexts/StepsContext";
 
 function createUpdatedAction(field, value, context) {
   return {
@@ -24,6 +24,7 @@ export function ActionDetail({
   actionIndex,
   stepIndex,
 }) {
+  const { onDeleteAction } = useContext(StepsContext);
   const { action } = actionContext;
   const [selector, setSelector] = useState(action.selector || "");
   const [text, setText] = useState(action.text || "");
@@ -104,6 +105,7 @@ export function ActionDetail({
                     previousAction: actionContext,
                     stepIndex,
                     actionIndex,
+                    mode: "create",
                   })
                 }
               />
@@ -112,12 +114,35 @@ export function ActionDetail({
         )}
         {action.isAssert && (
           <EuiFlexItem>
-            <Assertion
-              key={title + Date.now.toString()}
-              actionContext={actionContext}
-              actionIndex={actionIndex}
-              onActionContextChange={onActionContextChange}
-            />
+            <EuiFlexGroup
+              style={{
+                background: "#9fc2e8",
+              }}
+            >
+              <EuiFlexItem>
+                {action.selector} {action.command}
+                {action.value ? `, ${action.value}` : ""}
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButtonIcon
+                  iconType="documentEdit"
+                  onClick={() => {
+                    onShowAssertionDrawer({
+                      previousAction: actionContext,
+                      actionIndex,
+                      stepIndex,
+                      mode: "edit",
+                    });
+                  }}
+                />
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButtonIcon
+                  iconType="trash"
+                  onClick={() => onDeleteAction(stepIndex, actionIndex)}
+                />
+              </EuiFlexItem>
+            </EuiFlexGroup>
           </EuiFlexItem>
         )}
       </EuiFlexGroup>

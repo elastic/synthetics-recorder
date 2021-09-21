@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useState } from "react";
 import { EuiFlexGroup, EuiFlexItem, EuiSpacer } from "@elastic/eui";
 import "./App.css";
 import "@elastic/eui/dist/eui_theme_amsterdam_light.css";
@@ -47,6 +47,15 @@ export default function App() {
       <StepsContext.Provider
         value={{
           actions: stepActions,
+          onDeleteAction: (sIdx, aIdx) => {
+            setStepActions(
+              stepActions.map((s, idx) => {
+                if (idx != sIdx) return s;
+                s.splice(aIdx, 1);
+                return [...s];
+              })
+            );
+          },
           setActions: setStepActions,
         }}
       >

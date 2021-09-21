@@ -57,6 +57,7 @@ export function StepAccordions({ steps, onStepDetailChange, onStepDelete }) {
                 className="euiAccordionForm__extraAction"
                 iconType="wrench"
                 onClick={() => {
+                  // TODO: Implement
                   throw Error("edit step name not implemented");
                 }}
               />

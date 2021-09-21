@@ -30,6 +30,16 @@ function AssertionDrawerFormRow({ title, content }) {
   );
 }
 
+function getInsertionIndex(step, actionIndex) {
+  let i = actionIndex + 1;
+  for (; i < step.length; i++) {
+    if (step[i].action.isAssert !== true) {
+      break;
+    }
+  }
+  return i;
+}
+
 export function AssertionDrawer({ width, onUpdateActions }) {
   const { actions, setActions } = useContext(StepsContext);
   const {
@@ -44,6 +54,7 @@ export function AssertionDrawer({ width, onUpdateActions }) {
     setCommandValue,
     setSelector,
     stepIndex,
+    mode,
   } = useContext(AssertionContext);
 
   function addAssertion() {
@@ -58,11 +69,16 @@ export function AssertionDrawer({ width, onUpdateActions }) {
             isAssert: true,
             selector: selector,
             command: commandValue,
-            value: value,
+            value: commandValue == "textContent" ? value : null,
             signals: [],
           },
         };
-        step.splice(actionIndex + 1, 0, newAction);
+        if (mode == "create") {
+          step.splice(getInsertionIndex(step, actionIndex), 0, newAction);
+        } else if (mode == "edit") {
+          step.splice(actionIndex, 1, newAction);
+        }
+
         return [...step];
       }
       return step;
