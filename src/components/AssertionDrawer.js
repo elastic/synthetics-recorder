@@ -154,14 +154,13 @@ export function AssertionDrawer({ width, onUpdateActions }) {
           />
         </EuiFlexItem>
       </EuiFlexGroup>
-      <EuiFlexGroup>
+      <EuiFlexGroup justifyContent="flexEnd">
         <EuiFlexItem grow={false}>
           <EuiButton
             disabled={!selector}
             aria-label="Create the assertion you have defined"
             onClick={addAssertion}
             size="s"
-            style={{ float: "right" }}
           >
             Add
           </EuiButton>
