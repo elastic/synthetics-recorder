@@ -19,7 +19,6 @@
     "elastic",
     "playwright"
   ],
-  "author": "Vignesh Shanmugam <vignesh.shanmugam22@gmail.com> (https://vigneshh.in)",
   "license": "MIT",
   "main": "build/electron.js",
   "homepage": "./",
