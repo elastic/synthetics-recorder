@@ -8,6 +8,7 @@ import {
   EuiFieldText,
   EuiPanel,
   EuiSelect,
+  EuiText,
   EuiTitle,
 } from "@elastic/eui";
 
@@ -19,6 +20,15 @@ import { StepsContext } from "../contexts/StepsContext";
 import { AssertionContext } from "../contexts/AssertionContext";
 
 const ADD_ASSERTION_PANEL_HEIGHT = 300;
+
+function AssertionDrawerFormRow({ title, content }) {
+  return (
+    <EuiFlexGroup alignItems="center" justifyContent="center">
+      <EuiFlexItem style={{ maxWidth: 100 }}>{title}</EuiFlexItem>
+      <EuiFlexItem>{content}</EuiFlexItem>
+    </EuiFlexGroup>
+  );
+}
 
 export function AssertionDrawer({ width, onUpdateActions }) {
   const { actions, setActions } = useContext(StepsContext);
@@ -97,42 +107,54 @@ export function AssertionDrawer({ width, onUpdateActions }) {
         style={{ marginTop: 4, marginBottom: 4 }}
       >
         <EuiFlexItem>
-          <EuiFieldText
-            prepend={
-              <EuiButtonIcon
-                aria-label="Choose the type of assertion command"
-                iconType="search"
-                onClick={performSelectorLookup}
+          <AssertionDrawerFormRow
+            title={<EuiText textAlign="right">Selector</EuiText>}
+            content={
+              <EuiFieldText
+                prepend={
+                  <EuiButtonIcon
+                    aria-label="Choose the type of assertion command"
+                    iconType="search"
+                    onClick={performSelectorLookup}
+                  />
+                }
+                onChange={(e) => setSelector(e.target.value)}
+                value={selector}
+                placeholder="Selector"
               />
             }
-            onChange={(e) => setSelector(e.target.value)}
-            value={selector}
-            placeholder="Selector"
           />
         </EuiFlexItem>
         <EuiFlexItem>
-          <EuiSelect
-            prepend="Command"
-            onChange={(e) => {
-              setCommandValue(e.target.value);
-            }}
-            options={COMMAND_SELECTOR_OPTIONS}
-            value={commandValue}
+          <AssertionDrawerFormRow
+            title={<EuiText textAlign="right">Command</EuiText>}
+            content={
+              <EuiSelect
+                onChange={(e) => {
+                  setCommandValue(e.target.value);
+                }}
+                options={COMMAND_SELECTOR_OPTIONS}
+                value={commandValue}
+              />
+            }
           />
         </EuiFlexItem>
         <EuiFlexItem>
-          <EuiFieldText
-            disabled={commandValue != "textContent"}
-            prepend="Value"
-            onChange={(e) => {
-              setValue(e.target.value);
-            }}
-            value={value}
+          <AssertionDrawerFormRow
+            title={<EuiText textAlign="right">Value</EuiText>}
+            content={
+              <EuiFieldText
+                disabled={commandValue != "textContent"}
+                onChange={(e) => {
+                  setValue(e.target.value);
+                }}
+                value={value}
+              />
+            }
           />
         </EuiFlexItem>
       </EuiFlexGroup>
       <EuiFlexGroup>
-        <EuiFlexItem />
         <EuiFlexItem grow={false}>
           <EuiButton
             disabled={!selector}
