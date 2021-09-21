@@ -51,7 +51,6 @@ export function Assertion({
           prepend={
             <EuiButtonIcon
               aria-label="Refocus the browser to inspect for the selector you have defined"
-              disabled={!selector}
               iconType="search"
               onClick={performSelectorLookup}
             />
