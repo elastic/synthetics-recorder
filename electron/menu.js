@@ -3,7 +3,6 @@ function buildMenu(appName) {
     {
       label: appName,
       submenu: [
-        { type: "separator" },
         { role: "about" },
         { type: "separator" },
         { role: "services", submenu: [] },
