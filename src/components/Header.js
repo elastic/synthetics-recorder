@@ -35,7 +35,7 @@ export function Header(props) {
 
   const { isRecording, toggleRecording } = React.useContext(RecordingContext);
 
-  const onUrlFieldKeyUp = async (e) => {
+  const onUrlFieldKeyUp = async e => {
     if (e?.key == "Enter" && !isRecording) {
       await toggleRecording();
     }
@@ -61,7 +61,7 @@ export function Header(props) {
             placeholder="Enter URL to test"
             value={props.url}
             onKeyUp={onUrlFieldKeyUp}
-            onChange={(e) => props.onUrlChange(e.target.value)}
+            onChange={e => props.onUrlChange(e.target.value)}
             fullWidth
           />
         </EuiFlexItem>
@@ -90,7 +90,7 @@ export function Header(props) {
                   { value: "suite", text: "Suite" },
                 ]}
                 value={props.type}
-                onChange={(e) => props.onJourneyType(e.target.value)}
+                onChange={e => props.onJourneyType(e.target.value)}
               />
             </EuiFlexItem>
           </EuiFlexGroup>

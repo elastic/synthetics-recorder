@@ -20,7 +20,7 @@ export function Steps(props) {
 
   useEffect(() => {
     ipc.answerMain("change", ({ actions }) => {
-      setActions((prevActions) => {
+      setActions(prevActions => {
         const currentActions = generateIR(actions);
         return generateMergedIR(prevActions, currentActions);
       });
@@ -57,7 +57,7 @@ export function Steps(props) {
     props.onUpdateActions(newActions);
   };
 
-  const onStepDelete = (stepIndex) => {
+  const onStepDelete = stepIndex => {
     const newActions = [
       ...actions.slice(0, stepIndex),
       ...actions.slice(stepIndex + 1),

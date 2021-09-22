@@ -32,7 +32,7 @@ export function ActionDetail({
 
   const { onShowAssertionDrawer } = useContext(AssertionContext);
 
-  const onSelectorChange = (value) => {
+  const onSelectorChange = value => {
     if (!value) return;
     setSelector(value);
     onActionContextChange(
@@ -40,7 +40,7 @@ export function ActionDetail({
       actionIndex
     );
   };
-  const onTextChange = (value) => {
+  const onTextChange = value => {
     if (!value) return;
     setText(value);
     onActionContextChange(
@@ -48,7 +48,7 @@ export function ActionDetail({
       actionIndex
     );
   };
-  const onURLChange = (value) => {
+  const onURLChange = value => {
     if (!value) return;
     setUrl(value);
     onActionContextChange(
@@ -74,7 +74,7 @@ export function ActionDetail({
           <EuiFlexItem>
             <EuiFieldText
               value={url}
-              onChange={(e) => onURLChange(e.target.value)}
+              onChange={e => onURLChange(e.target.value)}
             ></EuiFieldText>
           </EuiFlexItem>
         )}
@@ -82,7 +82,7 @@ export function ActionDetail({
           <EuiFlexItem>
             <EuiFieldText
               value={selector}
-              onChange={(e) => onSelectorChange(e.target.value)}
+              onChange={e => onSelectorChange(e.target.value)}
             ></EuiFieldText>
           </EuiFlexItem>
         )}
@@ -90,7 +90,7 @@ export function ActionDetail({
           <EuiFlexItem>
             <EuiFieldText
               value={text}
-              onChange={(e) => onTextChange(e.target.value)}
+              onChange={e => onTextChange(e.target.value)}
             ></EuiFieldText>
           </EuiFlexItem>
         )}

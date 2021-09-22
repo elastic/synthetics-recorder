@@ -26,7 +26,7 @@ function removeColorCodes(str = "") {
 }
 
 function ResultAccordions({ journeys }) {
-  return Object.keys(journeys).map((name) => {
+  return Object.keys(journeys).map(name => {
     const { steps } = journeys[name];
     return steps.map((step, stepIndex) => {
       const { name, status, error, duration } = step;

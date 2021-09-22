@@ -39,14 +39,14 @@ async function launchContext() {
     await browser.close();
   }
 
-  context.on("page", (page) => {
+  context.on("page", page => {
     page.on("dialog", () => {});
     page.on("close", () => {
       const hasPage = browser
         .contexts()
-        .some((context) => context.pages().length > 0);
+        .some(context => context.pages().length > 0);
       if (hasPage) return;
-      closeBrowser().catch((e) => null);
+      closeBrowser().catch(e => null);
     });
   });
   return { browser, context };
@@ -75,7 +75,7 @@ async function recordJourneys(data, browserWindow) {
   browserContext = context;
   actionListener = new EventEmitter();
   // Listen to actions from Playwright recording session
-  actionListener.on("actions", (actions) => {
+  actionListener.on("actions", actions => {
     ipc.callRenderer(browserWindow, "change", { actions });
   });
 

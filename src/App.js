@@ -26,19 +26,19 @@ export default function App() {
 
   const assertionDrawerUtils = useAssertionDrawer();
 
-  const onUrlChange = (value) => {
+  const onUrlChange = value => {
     setUrl(value);
   };
-  const onJourneyType = (value) => {
+  const onJourneyType = value => {
     setJourneyType(value);
   };
-  const onUpdateActions = (actionWithSteps) => {
+  const onUpdateActions = actionWithSteps => {
     // Spread the actions array modified by the IR
     const actions = actionWithSteps.flat();
     if (actions.length > 0) setCurrentActions(actions);
   };
 
-  const onTestRun = (result) => {
+  const onTestRun = result => {
     setResult(result);
   };
 
