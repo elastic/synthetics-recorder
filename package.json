@@ -1,16 +1,17 @@
 {
   "name": "synthetics-recorder",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Record synthetics user journey flow of a website",
+  "repository": "https://github.com/elastic/synthetics-recorder",
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
     "react:start": "react-scripts start",
     "react:build": "react-scripts build",
     "electron:copy": "cp -r ./electron/. ./build",
     "dev": "concurrently -k \"BROWSER=none npm run react:start\" \"wait-on tcp:3000 && electron electron/electron.js\"",
-    "pack": "electron-builder",
-    "build": "npm run react:build && npm run electron:copy && npm run pack",
-    "release": "npm run react:build && npm run electron:copy && electron-builder --publish=always",
+    "build": "npm run clean && npm run react:build && npm run electron:copy",
+    "pack": "npm run build && electron-builder",
+    "release": "npm run build && electron-builder --publish=always",
     "clean": "rm -rf ./build && rm -rf ./dist"
   },
   "keywords": [
@@ -60,7 +61,7 @@
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "^37.0.0",
-    "@elastic/synthetics": "^1.0.0-beta.13",
+    "@elastic/synthetics": "^1.0.0-beta.14",
     "electron-better-ipc": "^2.0.1",
     "electron-debug": "^3.2.0",
     "electron-is-dev": "^2.0.0",
