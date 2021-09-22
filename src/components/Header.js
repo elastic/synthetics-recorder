@@ -48,7 +48,7 @@ export function Header(props) {
           <EuiIcon type="logoElastic" size="xl"></EuiIcon>
         </EuiFlexItem>
         <EuiText>
-          <h3>Elastic Synthetics Recorder </h3>
+          <h1>Elastic Synthetics Recorder </h1>
         </EuiText>
         <EuiFlexItem></EuiFlexItem>
       </EuiFlexGroup>
@@ -68,7 +68,12 @@ export function Header(props) {
         <EuiFlexItem style={{ minWidth: 250 }}>
           <EuiFlexGroup gutterSize="m">
             <EuiFlexItem grow={false}>
-              <EuiButton fill onClick={onTest} color="primary">
+              <EuiButton
+                aria-label="Perform a test run the journey you have defined"
+                fill
+                onClick={onTest}
+                color="primary"
+              >
                 Test
               </EuiButton>
             </EuiFlexItem>
@@ -79,6 +84,7 @@ export function Header(props) {
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <EuiSelect
+                aria-label="Choose the type of journey"
                 options={[
                   { value: "inline", text: "Inline" },
                   { value: "suite", text: "Suite" },

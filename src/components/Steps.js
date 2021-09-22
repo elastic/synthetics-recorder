@@ -10,10 +10,11 @@ import {
 import { generateIR } from "../helpers/generator";
 import { StepAccordions } from "./StepDetails";
 import { RecordingContext } from "../contexts/RecordingContext";
+import { StepsContext } from "../contexts/StepsContext";
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export function Steps(props) {
-  const [actions, setActions] = useState([]);
+  const { actions, setActions } = useContext(StepsContext);
   const { toggleRecording, isRecording, isPaused, togglePause } =
     useContext(RecordingContext);
 
@@ -46,7 +47,6 @@ export function Steps(props) {
       }
       flatCurrActions[i] && mergedActions.push(flatCurrActions[i]);
     }
-    // console.log("Merged", JSON.stringify(mergedActions, null, 2));
     props.onUpdateActions(mergedActions);
     return generateIR(mergedActions);
   };
@@ -76,6 +76,7 @@ export function Steps(props) {
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiButton
+            aria-label="Toggle script recording on/off"
             iconType={isRecording ? "stop" : "play"}
             onClick={toggleRecording}
           >
@@ -84,6 +85,7 @@ export function Steps(props) {
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiButton
+            aria-label="Toggle script recording pause/record"
             disabled={!isRecording}
             iconType="pause"
             onClick={togglePause}

@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
+  EuiButtonIcon,
+  EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiText,
-  EuiFieldText,
   EuiPanel,
+  EuiText,
+  EuiToolTip,
 } from "@elastic/eui";
-import { Assertion } from "./Assertion";
+import { AssertionContext } from "../contexts/AssertionContext";
+import { StepsContext } from "../contexts/StepsContext";
 
 function createUpdatedAction(field, value, context) {
   return {
@@ -19,11 +22,15 @@ export function ActionDetail({
   actionContext,
   onActionContextChange,
   actionIndex,
+  stepIndex,
 }) {
+  const { onDeleteAction } = useContext(StepsContext);
   const { action } = actionContext;
   const [selector, setSelector] = useState(action.selector || "");
   const [text, setText] = useState(action.text || "");
   const [url, setUrl] = useState(action.url || "");
+
+  const { onShowAssertionDrawer } = useContext(AssertionContext);
 
   const onSelectorChange = (value) => {
     if (!value) return;
@@ -87,15 +94,58 @@ export function ActionDetail({
             ></EuiFieldText>
           </EuiFlexItem>
         )}
+        {!action.isAssert && (
+          <EuiFlexItem grow={false}>
+            <EuiToolTip content="Add assertion to this action">
+              <EuiButtonIcon
+                aria-label="Opens a dialogue to create an assertion after this action"
+                iconType="plus"
+                onClick={() =>
+                  onShowAssertionDrawer({
+                    previousAction: actionContext,
+                    stepIndex,
+                    actionIndex,
+                    mode: "create",
+                  })
+                }
+              />
+            </EuiToolTip>
+          </EuiFlexItem>
+        )}
+        {action.isAssert && (
+          <EuiFlexItem>
+            <EuiFlexGroup
+              style={{
+                background: "#9fc2e8",
+              }}
+            >
+              <EuiFlexItem>
+                {action.selector} {action.command}
+                {action.value ? `, ${action.value}` : ""}
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButtonIcon
+                  iconType="documentEdit"
+                  onClick={() => {
+                    onShowAssertionDrawer({
+                      previousAction: actionContext,
+                      actionIndex,
+                      stepIndex,
+                      mode: "edit",
+                    });
+                  }}
+                />
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButtonIcon
+                  iconType="trash"
+                  onClick={() => onDeleteAction(stepIndex, actionIndex)}
+                />
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </EuiFlexItem>
+        )}
       </EuiFlexGroup>
-      {action.isAssert && (
-        <Assertion
-          key={title + Date.now.toString()}
-          actionContext={actionContext}
-          actionIndex={actionIndex}
-          onActionContextChange={onActionContextChange}
-        />
-      )}
     </EuiPanel>
   );
 }
