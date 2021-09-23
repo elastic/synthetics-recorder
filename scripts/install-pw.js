@@ -3,26 +3,12 @@ require("dotenv").config();
 
 const { Registry } = require("playwright/lib/utils/registry");
 const SYNTHETICS_BROWSER_REVISIONS = require("@elastic/synthetics/node_modules/playwright-chromium/browsers.json");
-/**
- * Constructs the Browser JSON that will be used by the
- * registry to download the chromium version specific to
- * the synthetics version
- */
-function constructBrowserVersions() {
-  const { browsers } = SYNTHETICS_BROWSER_REVISIONS;
-  return browsers.map(browser => {
-    const allowedInstalls = ["chromium", "ffmpeg"];
-    if (!allowedInstalls.includes(browser.name)) {
-      browser.installByDefault = false;
-    }
-    return browser;
-  });
-}
 
-const browserJSON = {
-  browsers: constructBrowserVersions(),
-};
-const registry = new Registry(browserJSON);
+/**
+ * Constructs the Registry with browsers that will be used
+ * to download the chromium version required by the synthetics version
+ */
+const registry = new Registry(SYNTHETICS_BROWSER_REVISIONS);
 
 module.exports.getChromeVersion = function () {
   const { browsers } = SYNTHETICS_BROWSER_REVISIONS;

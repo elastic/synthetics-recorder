@@ -1,55 +1,28 @@
 const { chromium } = require("playwright");
 const { join, resolve } = require("path");
 const { existsSync } = require("fs");
-const { writeFile, rm } = require("fs/promises");
+const { writeFile, rm, mkdir } = require("fs/promises");
 const { ipcMain: ipc } = require("electron-better-ipc");
 const { EventEmitter, once } = require("events");
 const { dialog, BrowserWindow } = require("electron");
+const { fork } = require("child_process");
 const logger = require("electron-log");
-const { run, journey, step, expect } = require("@elastic/synthetics");
+const isDev = require("electron-is-dev");
 const {
   SyntheticsGenerator,
 } = require("@elastic/synthetics/dist/formatter/javascript");
+const SYNTHETICS_CLI = require.resolve("@elastic/synthetics/dist/cli");
 const {
-  getExecutablePath,
-  getChromeVersion,
-} = require("../scripts/install-pw");
-
-const JOURNEY_DIR = join(__dirname, "..", "journeys");
-const PLAYWRIGHT_BROWSERS_PATH =
-  process.env.PLAYWRIGHT_BROWSERS_PATH || "local-browsers";
-
-const configuredExetutablePath = getExecutablePath();
-const installedVersion = getChromeVersion();
-
-logger.info("Executable path before ", configuredExetutablePath);
-
-const executablePath = join(
-  __dirname,
+  JOURNEY_DIR,
   PLAYWRIGHT_BROWSERS_PATH,
-  installedVersion,
-  configuredExetutablePath.split(installedVersion)[1]
-);
-
-logger.info("Executable path after ", executablePath);
-
-function loadInlineJourney(source) {
-  const scriptFn = new Function(
-    "step",
-    "page",
-    "context",
-    "browser",
-    "params",
-    "expect",
-    source
-  );
-  journey("recorded journey", async ({ page, context, browser, params }) => {
-    scriptFn.apply(null, [step, page, context, browser, params, expect]);
-  });
-}
+  EXECUTABLE_PATH,
+} = require("./config");
 
 async function launchContext() {
-  const browser = await chromium.launch({ headless: false, executablePath });
+  const browser = await chromium.launch({
+    headless: false,
+    executablePath: EXECUTABLE_PATH,
+  });
   const context = await browser.newContext();
 
   let closingBrowser = false;
@@ -125,58 +98,85 @@ async function onTest(data) {
     succeeded: 0,
     failed: 0,
     skipped: 0,
-    total: 0,
     journeys: {},
   };
-  class Reporter {
-    constructor(runner) {
-      runner.on("journey:start", ({ journey }) => {
+
+  const parseOrSkip = chunk => {
+    try {
+      return JSON.parse(chunk);
+    } catch (_) {
+      return {};
+    }
+  };
+  const constructResult = chunk => {
+    const parsed = parseOrSkip(chunk);
+    switch (parsed.type) {
+      case "journey/start": {
+        const { journey } = parsed;
         result.journeys[journey.name] = { status: "succeeded", steps: [] };
-      });
-      runner.on("step:end", ({ journey, step, end, start, status, error }) => {
-        result[status]++;
+        break;
+      }
+      case "step/end": {
+        const { journey, step, error } = parsed;
+        result[step.status]++;
         result.journeys[journey.name].steps.push({
           name: step.name,
-          status,
+          status: step.status,
           error,
-          duration: Math.ceil((end - start) * 1000),
+          duration: Math.ceil(step.duration.us / 1000),
         });
-      });
-      runner.on("journey:end", ({ journey, status }) => {
-        result.journeys[journey.name].status = status;
-      });
-      runner.on("end", () => {
-        const { failed, succeeded, skipped } = result;
-        result.total = failed + succeeded + skipped;
-      });
+        break;
+      }
+      case "journey/end": {
+        const { journey } = parsed;
+        result.journeys[journey.name].status = journey.status;
+        // Update total on every journey
+        break;
+      }
     }
-  }
+  };
 
   try {
     const isSuite = data.isSuite;
-    const journeyPath = join(JOURNEY_DIR, `recorded-${Date.now()}.journey.js`);
-
+    const args = ["--no-headless", "--reporter=json", "--screenshots=off"];
+    const filePath = join(JOURNEY_DIR, "recorded.journey.js");
     if (!isSuite) {
-      data.code && loadInlineJourney(data.code);
+      args.push("--inline");
     } else {
-      await writeFile(journeyPath, data.code);
-      require(journeyPath);
+      await mkdir(JOURNEY_DIR).catch(() => {});
+      await writeFile(filePath, data.code);
+      args.unshift(filePath);
     }
-
-    await run({
-      reporter: Reporter,
-      screenshots: "off",
-      playwrightOptions: {
-        headless: false,
-        executablePath,
+    /**
+     * Fork the Synthetics CLI with correct browser path and
+     * cwd correctly spanws the process
+     */
+    const { stdout, stdin, stderr } = fork(`${SYNTHETICS_CLI}`, args, {
+      env: {
+        PLAYWRIGHT_BROWSERS_PATH,
       },
+      cwd: isDev ? process.cwd() : process.resourcesPath,
+      stdio: "pipe",
     });
+    if (!isSuite) {
+      stdin.write(data.code);
+      stdin.end();
+    }
+    stdout.setEncoding("utf-8");
+    stderr.setEncoding("utf-8");
+    for await (const chunk of stdout) {
+      constructResult(chunk);
+    }
+    for await (const chunk of stderr) {
+      logger.error(chunk);
+    }
     if (isSuite) {
-      await rm(journeyPath, { recursive: true, force: true });
+      await rm(filePath, { recursive: true, force: true });
     }
     return result;
   } catch (err) {
     logger.error(err);
+    return result;
   }
 }
 

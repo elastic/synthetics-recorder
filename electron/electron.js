@@ -23,6 +23,7 @@ async function createWindow() {
       devTools: isDev,
       nodeIntegration: true,
       contextIsolation: false,
+      nativeWindowOpen: true,
     },
   });
 
@@ -36,18 +37,18 @@ function createMenu() {
   Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
 }
 
-app.on("ready", () => {
+app.whenReady().then(() => {
   createWindow();
   setupListeners();
   createMenu();
+
+  app.on("activate", function () {
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
 });
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
   }
-});
-
-app.on("activate", () => {
-  if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });

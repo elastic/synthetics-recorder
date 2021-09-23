@@ -30,8 +30,10 @@
     "files": [
       "build/**/*",
       "scripts/**/*",
-      "local-browsers/**/*",
-      ".synthetics/**/*"
+      "node_modules/**/*"
+    ],
+    "extraResources": [
+      "local-browsers/**/*"
     ],
     "extends": null,
     "publish": {
@@ -57,8 +59,8 @@
   },
   "devDependencies": {
     "concurrently": "^6.2.0",
-    "electron": "^13.1.0",
-    "electron-builder": "^22.11.1",
+    "electron": "^14.0.1",
+    "electron-builder": "^22.11.7",
     "react-scripts": "^4.0.3",
     "wait-on": "^6.0.0"
   },
