@@ -12,8 +12,12 @@
     "dev": "concurrently -k \"BROWSER=none npm run react:start\" \"wait-on tcp:3000 && electron electron/electron.js\"",
     "build": "npm run clean && npm run react:build && npm run electron:copy",
     "pack": "npm run build && electron-builder",
-    "release": "npm run build && electron-builder --publish=always",
+    "release": "npm run build && electron-builder -mwl --publish=always",
     "clean": "rm -rf ./build && rm -rf ./dist"
+  },
+  "author": {
+    "name": "Elastic Synthetics Team",
+    "email": "synthrum@elastic.co"
   },
   "keywords": [
     "synthetics",
@@ -54,7 +58,8 @@
         "AppImage",
         "deb"
       ],
-      "icon": "public/elastic.png"
+      "icon": "public/elastic.png",
+      "category": "Utility"
     }
   },
   "devDependencies": {
