@@ -1,0 +1,9 @@
+.euiAccordion__button {
+  width: auto;
+  flex-grow: 0;
+}
+
+.euiAccordion__optionalAction {
+  flex-grow: 1;
+  flex-shrink: 1;
+}
