@@ -21,7 +21,7 @@ const JOURNEY_DIR = isDev
   : join(RESOURCES_PATH, "journeys");
 
 /**
- * Controlls where the browser binaries are available
+ * Controls where the browser binaries are available
  * to use it for both recording and testing phase
  */
 const PLAYWRIGHT_BROWSERS_PATH = isDev

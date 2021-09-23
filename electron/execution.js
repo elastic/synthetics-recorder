@@ -130,7 +130,6 @@ async function onTest(data) {
       case "journey/end": {
         const { journey } = parsed;
         result.journeys[journey.name].status = journey.status;
-        // Update total on every journey
         break;
       }
     }
