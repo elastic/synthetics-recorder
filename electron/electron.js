@@ -3,19 +3,13 @@ const { app, BrowserWindow, Menu } = require("electron");
 const isDev = require("electron-is-dev");
 const unhandled = require("electron-unhandled");
 const debug = require("electron-debug");
-const initAutoUpdate = require("update-electron-app");
+const logger = require("electron-log");
 const setupListeners = require("./execution");
 const buildMenu = require("./menu");
 
 // For dev
-unhandled();
+unhandled({ logger: err => logger.error(err) });
 debug({ enabled: true, showDevTools: false });
-
-// Looks for updates
-initAutoUpdate({
-  repo: "elastic/synthetics-recorder",
-  updateInterval: "1 hour",
-});
 
 const BUILD_DIR = join(__dirname, "..", "build");
 

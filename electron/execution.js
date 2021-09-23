@@ -5,13 +5,33 @@ const { writeFile, rm } = require("fs/promises");
 const { ipcMain: ipc } = require("electron-better-ipc");
 const { EventEmitter, once } = require("events");
 const { dialog, BrowserWindow } = require("electron");
-const logger = require("electron-timber");
+const logger = require("electron-log");
 const { run, journey, step, expect } = require("@elastic/synthetics");
 const {
   SyntheticsGenerator,
 } = require("@elastic/synthetics/dist/formatter/javascript");
+const {
+  getExecutablePath,
+  getChromeVersion,
+} = require("../scripts/install-pw");
 
 const JOURNEY_DIR = join(__dirname, "..", "journeys");
+const PLAYWRIGHT_BROWSERS_PATH =
+  process.env.PLAYWRIGHT_BROWSERS_PATH || "local-browsers";
+
+const configuredExetutablePath = getExecutablePath();
+const installedVersion = getChromeVersion();
+
+logger.info("Executable path before ", configuredExetutablePath);
+
+const executablePath = join(
+  __dirname,
+  PLAYWRIGHT_BROWSERS_PATH,
+  installedVersion,
+  configuredExetutablePath.split(installedVersion)[1]
+);
+
+logger.info("Executable path after ", executablePath);
 
 function loadInlineJourney(source) {
   const scriptFn = new Function(
@@ -29,7 +49,7 @@ function loadInlineJourney(source) {
 }
 
 async function launchContext() {
-  const browser = await chromium.launch({ headless: false });
+  const browser = await chromium.launch({ headless: false, executablePath });
   const context = await browser.newContext();
 
   let closingBrowser = false;
@@ -71,29 +91,33 @@ let browserContext = null;
 let actionListener = new EventEmitter();
 
 async function recordJourneys(data, browserWindow) {
-  const { browser, context } = await launchContext();
-  browserContext = context;
-  actionListener = new EventEmitter();
-  // Listen to actions from Playwright recording session
-  actionListener.on("actions", actions => {
-    ipc.callRenderer(browserWindow, "change", { actions });
-  });
+  try {
+    const { browser, context } = await launchContext();
+    browserContext = context;
+    actionListener = new EventEmitter();
+    // Listen to actions from Playwright recording session
+    actionListener.on("actions", actions => {
+      ipc.callRenderer(browserWindow, "change", { actions });
+    });
 
-  await context._enableRecorder({
-    launchOptions: {},
-    contextOptions: {},
-    startRecording: true,
-    showRecorder: false,
-    actionListener,
-  });
-  await openPage(context, data.url);
+    await context._enableRecorder({
+      launchOptions: {},
+      contextOptions: {},
+      startRecording: true,
+      showRecorder: false,
+      actionListener,
+    });
+    await openPage(context, data.url);
 
-  async function closeBrowser() {
-    browserContext = null;
-    await browser.close().catch({});
+    async function closeBrowser() {
+      browserContext = null;
+      await browser.close().catch({});
+    }
+    ipc.on("stop", closeBrowser);
+    await once(browser, "disconnected");
+  } catch (e) {
+    logger.error(e);
   }
-  ipc.on("stop", closeBrowser);
-  await once(browser, "disconnected");
 }
 
 async function onTest(data) {
@@ -144,6 +168,7 @@ async function onTest(data) {
       screenshots: "off",
       playwrightOptions: {
         headless: false,
+        executablePath,
       },
     });
     if (isSuite) {

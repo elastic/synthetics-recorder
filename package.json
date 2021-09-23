@@ -4,7 +4,8 @@
   "description": "Record synthetics user journey flow of a website",
   "repository": "https://github.com/elastic/synthetics-recorder",
   "scripts": {
-    "postinstall": "electron-builder install-app-deps",
+    "install:pw": "node scripts/install-pw.js",
+    "postinstall": "npm run install:pw && electron-builder install-app-deps",
     "react:start": "react-scripts start",
     "react:build": "react-scripts build",
     "electron:copy": "cp -r ./electron/. ./build",
@@ -28,8 +29,11 @@
     "appId": "com.elastic.synthetics-recorder",
     "files": [
       "build/**/*",
-      "node_modules/**/*"
+      "scripts/**/*",
+      "local-browsers/**/*",
+      ".synthetics/**/*"
     ],
+    "extends": null,
     "publish": {
       "provider": "github"
     },
@@ -62,16 +66,16 @@
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "^37.0.0",
     "@elastic/synthetics": "^1.0.0-beta.14",
+    "dotenv": "^10.0.0",
     "electron-better-ipc": "^2.0.1",
     "electron-debug": "^3.2.0",
     "electron-is-dev": "^2.0.0",
-    "electron-timber": "^0.5.1",
+    "electron-log": "^4.4.1",
     "electron-unhandled": "^3.0.2",
     "moment": "^2.29.1",
-    "playwright": "git+https://github.com/vigneshshanmugam/playwright.git#separate-recorder",
+    "playwright": "file://Users/vigneshh/opensource/playwright",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "update-electron-app": "^2.0.1"
+    "react-dom": "^17.0.1"
   },
   "browserslist": [
     "last 1 version"
