@@ -1,35 +1,28 @@
 const { chromium } = require("playwright");
 const { join, resolve } = require("path");
 const { existsSync } = require("fs");
-const { writeFile, rm } = require("fs/promises");
+const { writeFile, rm, mkdir } = require("fs/promises");
 const { ipcMain: ipc } = require("electron-better-ipc");
 const { EventEmitter, once } = require("events");
 const { dialog, BrowserWindow } = require("electron");
-const logger = require("electron-timber");
-const { run, journey, step, expect } = require("@elastic/synthetics");
+const { fork } = require("child_process");
+const logger = require("electron-log");
+const isDev = require("electron-is-dev");
 const {
   SyntheticsGenerator,
 } = require("@elastic/synthetics/dist/formatter/javascript");
-
-const JOURNEY_DIR = join(__dirname, "..", "journeys");
-
-function loadInlineJourney(source) {
-  const scriptFn = new Function(
-    "step",
-    "page",
-    "context",
-    "browser",
-    "params",
-    "expect",
-    source
-  );
-  journey("recorded journey", async ({ page, context, browser, params }) => {
-    scriptFn.apply(null, [step, page, context, browser, params, expect]);
-  });
-}
+const SYNTHETICS_CLI = require.resolve("@elastic/synthetics/dist/cli");
+const {
+  JOURNEY_DIR,
+  PLAYWRIGHT_BROWSERS_PATH,
+  EXECUTABLE_PATH,
+} = require("./config");
 
 async function launchContext() {
-  const browser = await chromium.launch({ headless: false });
+  const browser = await chromium.launch({
+    headless: false,
+    executablePath: EXECUTABLE_PATH,
+  });
   const context = await browser.newContext();
 
   let closingBrowser = false;
@@ -71,29 +64,33 @@ let browserContext = null;
 let actionListener = new EventEmitter();
 
 async function recordJourneys(data, browserWindow) {
-  const { browser, context } = await launchContext();
-  browserContext = context;
-  actionListener = new EventEmitter();
-  // Listen to actions from Playwright recording session
-  actionListener.on("actions", actions => {
-    ipc.callRenderer(browserWindow, "change", { actions });
-  });
+  try {
+    const { browser, context } = await launchContext();
+    browserContext = context;
+    actionListener = new EventEmitter();
+    // Listen to actions from Playwright recording session
+    actionListener.on("actions", actions => {
+      ipc.callRenderer(browserWindow, "change", { actions });
+    });
 
-  await context._enableRecorder({
-    launchOptions: {},
-    contextOptions: {},
-    startRecording: true,
-    showRecorder: false,
-    actionListener,
-  });
-  await openPage(context, data.url);
+    await context._enableRecorder({
+      launchOptions: {},
+      contextOptions: {},
+      startRecording: true,
+      showRecorder: false,
+      actionListener,
+    });
+    await openPage(context, data.url);
 
-  async function closeBrowser() {
-    browserContext = null;
-    await browser.close().catch({});
+    async function closeBrowser() {
+      browserContext = null;
+      await browser.close().catch({});
+    }
+    ipc.on("stop", closeBrowser);
+    await once(browser, "disconnected");
+  } catch (e) {
+    logger.error(e);
   }
-  ipc.on("stop", closeBrowser);
-  await once(browser, "disconnected");
 }
 
 async function onTest(data) {
@@ -101,57 +98,84 @@ async function onTest(data) {
     succeeded: 0,
     failed: 0,
     skipped: 0,
-    total: 0,
     journeys: {},
   };
-  class Reporter {
-    constructor(runner) {
-      runner.on("journey:start", ({ journey }) => {
+
+  const parseOrSkip = chunk => {
+    try {
+      return JSON.parse(chunk);
+    } catch (_) {
+      return {};
+    }
+  };
+  const constructResult = chunk => {
+    const parsed = parseOrSkip(chunk);
+    switch (parsed.type) {
+      case "journey/start": {
+        const { journey } = parsed;
         result.journeys[journey.name] = { status: "succeeded", steps: [] };
-      });
-      runner.on("step:end", ({ journey, step, end, start, status, error }) => {
-        result[status]++;
+        break;
+      }
+      case "step/end": {
+        const { journey, step, error } = parsed;
+        result[step.status]++;
         result.journeys[journey.name].steps.push({
           name: step.name,
-          status,
+          status: step.status,
           error,
-          duration: Math.ceil((end - start) * 1000),
+          duration: Math.ceil(step.duration.us / 1000),
         });
-      });
-      runner.on("journey:end", ({ journey, status }) => {
-        result.journeys[journey.name].status = status;
-      });
-      runner.on("end", () => {
-        const { failed, succeeded, skipped } = result;
-        result.total = failed + succeeded + skipped;
-      });
+        break;
+      }
+      case "journey/end": {
+        const { journey } = parsed;
+        result.journeys[journey.name].status = journey.status;
+        break;
+      }
     }
-  }
+  };
 
   try {
     const isSuite = data.isSuite;
-    const journeyPath = join(JOURNEY_DIR, `recorded-${Date.now()}.journey.js`);
-
+    const args = ["--no-headless", "--reporter=json", "--screenshots=off"];
+    const filePath = join(JOURNEY_DIR, "recorded.journey.js");
     if (!isSuite) {
-      data.code && loadInlineJourney(data.code);
+      args.push("--inline");
     } else {
-      await writeFile(journeyPath, data.code);
-      require(journeyPath);
+      await mkdir(JOURNEY_DIR).catch(() => {});
+      await writeFile(filePath, data.code);
+      args.unshift(filePath);
     }
-
-    await run({
-      reporter: Reporter,
-      screenshots: "off",
-      playwrightOptions: {
-        headless: false,
+    /**
+     * Fork the Synthetics CLI with correct browser path and
+     * cwd correctly spanws the process
+     */
+    const { stdout, stdin, stderr } = fork(`${SYNTHETICS_CLI}`, args, {
+      env: {
+        PLAYWRIGHT_BROWSERS_PATH,
       },
+      cwd: isDev ? process.cwd() : process.resourcesPath,
+      stdio: "pipe",
     });
+    if (!isSuite) {
+      stdin.write(data.code);
+      stdin.end();
+    }
+    stdout.setEncoding("utf-8");
+    stderr.setEncoding("utf-8");
+    for await (const chunk of stdout) {
+      constructResult(chunk);
+    }
+    for await (const chunk of stderr) {
+      logger.error(chunk);
+    }
     if (isSuite) {
-      await rm(journeyPath, { recursive: true, force: true });
+      await rm(filePath, { recursive: true, force: true });
     }
     return result;
   } catch (err) {
     logger.error(err);
+    return result;
   }
 }
 
