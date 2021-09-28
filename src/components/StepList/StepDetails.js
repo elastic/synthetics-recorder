@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   EuiAccordion,
   EuiButtonIcon,
@@ -11,6 +11,16 @@ import { ActionDetail } from "../ActionDetail";
 import { StepAccordionTitle } from "./StepAccordionTitle";
 
 function StepDetail({ step, stepIndex, onStepDetailChange }) {
+  const assertionNumberTable = useMemo(() => {
+    let assertionCount = 0;
+    return step.reduce((table, actionContext, index) => {
+      if (actionContext.action.isAssert) {
+        table[index] = ++assertionCount;
+      }
+      return table;
+    }, {});
+  }, [step]);
+
   const onActionContextChange = (actionContext, actionIndex) => {
     onStepDetailChange(
       step.map((a, index) => (index === actionIndex ? actionContext : a)),
@@ -25,6 +35,7 @@ function StepDetail({ step, stepIndex, onStepDetailChange }) {
           key={index}
           actionContext={actionContext}
           actionIndex={index}
+          assertionCount={assertionNumberTable[index]}
           onActionContextChange={onActionContextChange}
           stepIndex={stepIndex}
         />
