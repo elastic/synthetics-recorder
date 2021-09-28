@@ -60,6 +60,22 @@ export const COMMAND_SELECTOR_OPTIONS = [
     value: "textContent",
     text: "Text content",
   },
+  {
+    value: "isChecked",
+    text: "Is Checked",
+  },
+  {
+    value: "isDisabled",
+    text: "Is Disabled",
+  },
+  {
+    value: "isEditable",
+    text: "Is Editable",
+  },
+  {
+    value: "isEnabled",
+    text: "Is Enabled",
+  },
 ];
 
 export function performSelectorLookup(
