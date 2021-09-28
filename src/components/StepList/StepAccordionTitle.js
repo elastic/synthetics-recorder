@@ -30,7 +30,7 @@ export function StepAccordionTitle({
   }
 
   return (
-    <EuiText size="s">
+    <EuiText style={{ marginTop: 2 }} size="s">
       <strong style={{ marginRight: 33 }}>{stepIndexString}</strong>
       {title}
     </EuiText>
