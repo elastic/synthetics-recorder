@@ -1,10 +1,13 @@
 import React from "react";
 import {
+  EuiBadge,
   EuiButtonIcon,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiToolTip,
   useEuiTheme,
 } from "@elastic/eui";
+import { COMMAND_SELECTOR_OPTIONS } from "../common/shared";
 
 export function Assertion({
   action,
@@ -24,6 +27,11 @@ export function Assertion({
     },
   } = useEuiTheme();
 
+  const commandOption = COMMAND_SELECTOR_OPTIONS.find(
+    ({ value: v }) => v == action.command
+  );
+  const commandText = commandOption ? commandOption.text : action.command;
+
   return (
     <EuiFlexGroup
       alignItems="center"
@@ -38,9 +46,18 @@ export function Assertion({
       }}
     >
       <EuiFlexItem>
-        Assertion {assertionCount}&nbsp;
-        {action.selector} {action.command}
-        {action.value ? `, ${action.value}` : ""}
+        <EuiFlexGroup alignItems="center" gutterSize="none">
+          <EuiFlexItem>Assertion {assertionCount}&nbsp;</EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiToolTip
+              content={`${action.selector}${
+                action.value ? `: "${action.value}"` : ""
+              }`}
+            >
+              <EuiBadge>{commandText}</EuiBadge>
+            </EuiToolTip>
+          </EuiFlexItem>
+        </EuiFlexGroup>
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <EuiButtonIcon
