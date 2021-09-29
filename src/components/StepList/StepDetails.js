@@ -69,7 +69,7 @@ function StepAccordion({
       buttonClassName="euiAccordionForm__button"
       extraAction={
         <EuiFlexGroup direction="row" gutterSize="xs">
-          <EuiFlexItem grow={isEditing}>
+          <EuiFlexItem grow={false}>
             <StepAccordionTitle
               isEditing={isEditing}
               setIsEditing={setIsEditing}
@@ -78,15 +78,14 @@ function StepAccordion({
               index={index}
             />
           </EuiFlexItem>
-          <EuiFlexItem grow={!isEditing}>
+          <EuiFlexItem grow={true}>
             <EuiButtonIcon
               aria-label="Edit the step's name"
               className="euiAccordionForm__extraAction"
               color={darkShade}
-              disabled={isEditing}
               iconType="pencil"
               onClick={() => {
-                setIsEditing(true);
+                if (!isEditing) setIsEditing(true);
               }}
             />
           </EuiFlexItem>
