@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import {
   EuiText,
   EuiPanel,
@@ -8,7 +8,7 @@ import {
   EuiFlexGroup,
 } from "@elastic/eui";
 import { generateIR } from "../helpers/generator";
-import { StepAccordions } from "./StepDetails";
+import { StepAccordions } from "./StepList/StepDetails";
 import { RecordingContext } from "../contexts/RecordingContext";
 import { StepsContext } from "../contexts/StepsContext";
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
