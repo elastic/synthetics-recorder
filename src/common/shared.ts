@@ -32,6 +32,10 @@ export const COMMAND_SELECTOR_OPTIONS = [
     value: "isEnabled",
     text: "Is Enabled",
   },
+  {
+    value: "innerText",
+    text: "Inner Text",
+  }
 ];
 
 export function performSelectorLookup(
