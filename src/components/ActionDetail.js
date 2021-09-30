@@ -10,6 +10,7 @@ import {
 } from "@elastic/eui";
 import { AssertionContext } from "../contexts/AssertionContext";
 import { StepsContext } from "../contexts/StepsContext";
+import { Assertion } from "./Assertion";
 
 function createUpdatedAction(field, value, context) {
   return {
@@ -20,6 +21,7 @@ function createUpdatedAction(field, value, context) {
 
 export function ActionDetail({
   actionContext,
+  assertionCount,
   onActionContextChange,
   actionIndex,
   stepIndex,
@@ -67,7 +69,7 @@ export function ActionDetail({
       <EuiFlexGroup alignItems="baseline">
         <EuiFlexItem grow={false} style={{ width: 50 }}>
           <EuiText size="s">
-            <strong>{title}</strong>
+            {title != "Assert" && <strong>{title}</strong>}
           </EuiText>
         </EuiFlexItem>
         {url && (
@@ -99,7 +101,8 @@ export function ActionDetail({
             <EuiToolTip content="Add assertion to this action">
               <EuiButtonIcon
                 aria-label="Opens a dialogue to create an assertion after this action"
-                iconType="plus"
+                color="text"
+                iconType="plusInCircle"
                 onClick={() =>
                   onShowAssertionDrawer({
                     previousAction: actionContext,
@@ -114,35 +117,15 @@ export function ActionDetail({
         )}
         {action.isAssert && (
           <EuiFlexItem>
-            <EuiFlexGroup
-              style={{
-                background: "#9fc2e8",
-              }}
-            >
-              <EuiFlexItem>
-                {action.selector} {action.command}
-                {action.value ? `, ${action.value}` : ""}
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <EuiButtonIcon
-                  iconType="documentEdit"
-                  onClick={() => {
-                    onShowAssertionDrawer({
-                      previousAction: actionContext,
-                      actionIndex,
-                      stepIndex,
-                      mode: "edit",
-                    });
-                  }}
-                />
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <EuiButtonIcon
-                  iconType="trash"
-                  onClick={() => onDeleteAction(stepIndex, actionIndex)}
-                />
-              </EuiFlexItem>
-            </EuiFlexGroup>
+            <Assertion
+              action={action}
+              actionContext={actionContext}
+              actionIndex={actionIndex}
+              assertionCount={assertionCount}
+              onDeleteAction={onDeleteAction}
+              onShowAssertionDrawer={onShowAssertionDrawer}
+              stepIndex={stepIndex}
+            />
           </EuiFlexItem>
         )}
       </EuiFlexGroup>

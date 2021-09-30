@@ -1,0 +1,87 @@
+import React from "react";
+import {
+  EuiBadge,
+  EuiButtonIcon,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiToolTip,
+  useEuiTheme,
+} from "@elastic/eui";
+import { COMMAND_SELECTOR_OPTIONS } from "../common/shared";
+
+export function Assertion({
+  action,
+  actionContext,
+  actionIndex,
+  assertionCount,
+  onDeleteAction,
+  onShowAssertionDrawer,
+  stepIndex,
+}) {
+  const {
+    euiTheme: {
+      border: {
+        thin,
+        radius: { medium },
+      },
+    },
+  } = useEuiTheme();
+
+  const commandOption = COMMAND_SELECTOR_OPTIONS.find(
+    ({ value: v }) => v == action.command
+  );
+  const commandText = commandOption ? commandOption.text : action.command;
+
+  return (
+    <EuiFlexGroup
+      alignItems="center"
+      style={{
+        border: thin,
+        borderRadius: medium,
+        marginTop: 0,
+        marginLeft: 0,
+        marginBottom: 0,
+        marginRight: 36,
+        maxHeight: 40,
+      }}
+    >
+      <EuiFlexItem>
+        <EuiFlexGroup alignItems="center" gutterSize="none">
+          <EuiFlexItem>Assertion {assertionCount}&nbsp;</EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiToolTip
+              content={`${action.selector}${
+                action.value ? `: "${action.value}"` : ""
+              }`}
+            >
+              <EuiBadge>{commandText}</EuiBadge>
+            </EuiToolTip>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </EuiFlexItem>
+      <EuiFlexItem grow={false}>
+        <EuiButtonIcon
+          aria-label="Open a dialogue to edit this assertion."
+          color="text"
+          iconType="pencil"
+          onClick={() => {
+            onShowAssertionDrawer({
+              previousAction: actionContext,
+              actionIndex,
+              stepIndex,
+              mode: "edit",
+            });
+          }}
+        />
+      </EuiFlexItem>
+      <EuiFlexItem grow={false}>
+        <EuiButtonIcon
+          aria-label="Delete this assertion."
+          color="text"
+          iconType="trash"
+          onClick={() => onDeleteAction(stepIndex, actionIndex)}
+        />
+      </EuiFlexItem>
+    </EuiFlexGroup>
+  );
+}
