@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { EuiFlexGroup, EuiFlexItem, EuiSpacer } from "@elastic/eui";
+import {
+  EuiBetaBadge,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiIcon,
+  EuiLink,
+  EuiPageTemplate,
+  EuiSpacer,
+} from "@elastic/eui";
 import "./App.css";
 import "@elastic/eui/dist/eui_theme_amsterdam_light.css";
 import { Header } from "./components/Header";
@@ -37,7 +45,7 @@ export default function App() {
   };
 
   return (
-    <div style={{ margin: "2px 10px" }}>
+    <div style={{ padding: 4 }}>
       <StepsContext.Provider
         value={{
           actions: stepActions,
@@ -82,23 +90,67 @@ export default function App() {
               },
             }}
           >
-            <Header
-              url={url}
-              type={type}
-              onTestRun={onTestRun}
-              onJourneyType={onJourneyType}
-              onUrlChange={onUrlChange}
-            />
-            <EuiSpacer />
-            <EuiFlexGroup wrap style={{ minHeight: 500 }}>
-              <EuiFlexItem style={{ minWidth: MAIN_CONTROLS_MIN_WIDTH }}>
-                <StepsMonitor url={url} type={type} />
-              </EuiFlexItem>
-              <EuiFlexItem style={{ minWidth: 300 }}>
-                <TestResult result={result} />
-              </EuiFlexItem>
-            </EuiFlexGroup>
-            <AssertionDrawer width={MAIN_CONTROLS_MIN_WIDTH} />
+            <EuiPageTemplate
+              pageContentBodyProps={{
+                restrictWidth: "1400",
+              }}
+              pageHeader={{
+                bottomBorder: true,
+                // the bottom border didn't grow without providing a value for
+                // `restrictWidth`. We always want there to be a border and we
+                // always want the header to fill the full width.
+                restrictWidth: Infinity,
+                pageTitle: (
+                  <EuiFlexGroup>
+                    <EuiFlexItem grow={false}>
+                      <EuiIcon size="xxl" type="logoElastic" />
+                    </EuiFlexItem>
+                    <EuiFlexItem grow={false}>Script recorder</EuiFlexItem>
+                    <EuiFlexItem grow={false}>
+                      <EuiBetaBadge
+                        style={{ marginTop: 10 }}
+                        label="BETA"
+                        color="accent"
+                      />
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                ),
+                paddingSize: "s",
+                rightSideItems: [
+                  <EuiLink style={{ marginTop: 16 }}>Send feedback</EuiLink>,
+                ],
+              }}
+            >
+              <EuiSpacer />
+              <EuiFlexGroup>
+                <EuiFlexItem>
+                  <EuiFlexGroup direction="column">
+                    <EuiFlexItem grow={false}>
+                      <Header
+                        url={url}
+                        type={type}
+                        onJourneyType={onJourneyType}
+                        onUrlChange={onUrlChange}
+                      />
+                    </EuiFlexItem>
+                    <EuiFlexItem>
+                      <StepsMonitor url={url} type={type} />
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiFlexItem style={{ minWidth: 300 }}>
+                    <TestResult
+                      onTestRun={onTestRun}
+                      result={result}
+                      setType={setJourneyType}
+                      type={type}
+                    />
+                  </EuiFlexItem>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+              <AssertionDrawer width={MAIN_CONTROLS_MIN_WIDTH} />
+            </EuiPageTemplate>
           </RecordingContext.Provider>
         </AssertionContext.Provider>
       </StepsContext.Provider>

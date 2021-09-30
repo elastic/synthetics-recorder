@@ -11,10 +11,38 @@ import {
   EuiCodeBlock,
   EuiFlexGroup,
 } from "@elastic/eui";
+import { getCodeFromActions } from "../common/shared";
 import { Steps } from "./Steps";
 import { StepsContext } from "../contexts/StepsContext";
 
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
+
+function StepsFooter({ actions, showFlyout, type }) {
+  const onSave = async () => {
+    const code = await getCodeFromActions(actions, type);
+    await ipc.callMain("save-file", code);
+  };
+
+  return (
+    <EuiFlexGroup justifyContent="spaceBetween">
+      <EuiFlexItem grow={false}>
+        <EuiButton
+          iconType="eye"
+          iconSide="right"
+          color="text"
+          onClick={showFlyout}
+        >
+          Show Script
+        </EuiButton>
+      </EuiFlexItem>
+      <EuiFlexItem grow={false}>
+        <EuiButton fill color="success" onClick={onSave}>
+          Export script
+        </EuiButton>
+      </EuiFlexItem>
+    </EuiFlexGroup>
+  );
+}
 
 export function StepsMonitor(props) {
   const { actions } = useContext(StepsContext);
@@ -31,46 +59,39 @@ export function StepsMonitor(props) {
   };
 
   return (
-    <EuiFlexGroup direction="column" gutterSize="xs">
-      <EuiFlexItem>
-        <EuiPanel hasBorder={true} color="transparent" borderRadius="none">
-          <Steps />
-          <EuiSpacer />
+    <>
+      <EuiPanel
+        color="transparent"
+        borderRadius="none"
+        style={{ minHeight: 500 }}
+      >
+        <Steps />
+        <EuiSpacer />
 
-          {isFlyoutVisible && (
-            <EuiFlyout
-              ownFocus
-              onClose={() => setIsFlyoutVisible(false)}
-              aria-labelledby="flyoutTitle"
-            >
-              <EuiFlyoutHeader hasBorder>
-                <EuiTitle size="s">
-                  <h2 id="flyoutTitle">Recorded Code</h2>
-                </EuiTitle>
-              </EuiFlyoutHeader>
-              <EuiFlyoutBody>
-                <EuiCodeBlock language="js" paddingSize="m" isCopyable>
-                  {code}
-                </EuiCodeBlock>
-              </EuiFlyoutBody>
-            </EuiFlyout>
-          )}
-        </EuiPanel>
-      </EuiFlexItem>
-      <EuiFlexItem grow={false}>
-        {actions.length > 0 && (
-          <div>
-            <EuiButton
-              iconType="eye"
-              iconSide="right"
-              color="text"
-              onClick={showFlyout}
-            >
-              Show Script
-            </EuiButton>
-          </div>
+        {isFlyoutVisible && (
+          <EuiFlyout
+            ownFocus
+            onClose={() => setIsFlyoutVisible(false)}
+            aria-labelledby="flyoutTitle"
+          >
+            <EuiFlyoutHeader hasBorder>
+              <EuiTitle size="s">
+                <h2 id="flyoutTitle">Recorded Code</h2>
+              </EuiTitle>
+            </EuiFlyoutHeader>
+            <EuiFlyoutBody>
+              <EuiCodeBlock language="js" paddingSize="m" isCopyable>
+                {code}
+              </EuiCodeBlock>
+            </EuiFlyoutBody>
+          </EuiFlyout>
         )}
-      </EuiFlexItem>
-    </EuiFlexGroup>
+      </EuiPanel>
+      <StepsFooter
+        actions={actions}
+        showFlyout={showFlyout}
+        type={props.type}
+      />
+    </>
   );
 }

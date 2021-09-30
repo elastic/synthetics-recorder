@@ -66,12 +66,10 @@ export function ActionDetail({
   }
 
   return (
-    <EuiPanel color="transparent" paddingSize="s">
+    <EuiPanel style={{ margin: "16px 0px" }} hasShadow={false} paddingSize="s">
       <EuiFlexGroup alignItems="baseline">
         <EuiFlexItem grow={false} style={{ width: 50 }}>
-          <EuiText size="s">
-            {title != "Assert" && <strong>{title}</strong>}
-          </EuiText>
+          {title != "Assert" && <EuiText size="s">title</EuiText>}
         </EuiFlexItem>
         {url && (
           <EuiFlexItem>
@@ -99,7 +97,7 @@ export function ActionDetail({
         )}
         {!action.isAssert && (
           <EuiFlexItem grow={false}>
-            <EuiToolTip content="Add assertion to this action">
+            <EuiToolTip content="Add an assertion">
               <EuiButtonIcon
                 aria-label="Opens a dialogue to create an assertion after this action"
                 color="text"

@@ -1,22 +1,20 @@
 import React, { useEffect, useContext } from "react";
 import {
+  EuiCode,
+  EuiEmptyPrompt,
   EuiText,
-  EuiPanel,
   EuiSpacer,
-  EuiFlexItem,
-  EuiButton,
-  EuiFlexGroup,
+  EuiTitle,
 } from "@elastic/eui";
+
 import { generateIR, generateMergedIR } from "../helpers/generator";
 import { StepAccordions } from "./StepList/StepDetails";
-import { RecordingContext } from "../contexts/RecordingContext";
 import { StepsContext } from "../contexts/StepsContext";
+
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export function Steps() {
   const { actions, setActions } = useContext(StepsContext);
-  const { toggleRecording, isRecording, isPaused, togglePause } =
-    useContext(RecordingContext);
 
   const onStepDetailChange = (step, stepIndex) => {
     const newActions = actions.map((a, ind) => (ind === stepIndex ? step : a));
@@ -45,54 +43,44 @@ export function Steps() {
     };
   }, []);
 
+  if (actions.length == 0) {
+    return (
+      <EuiEmptyPrompt
+        aria-label="This empty prompt indicates that you have not recorded any journey steps yet."
+        title={<h3>No steps recorded yet</h3>}
+        body={
+          <p>
+            Click on <EuiCode>Start recording</EuiCode> to get started with your
+            script.
+          </p>
+        }
+      />
+    );
+  }
+
   return (
     <>
-      <EuiFlexGroup alignItems="baseline">
-        <EuiFlexItem>
-          <EuiText size="m">
-            <strong>{actions.length} Recorded Steps</strong>
-          </EuiText>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiButton
-            aria-label="Toggle script recording on/off"
-            iconType={isRecording ? "stop" : "play"}
-            onClick={toggleRecording}
-          >
-            {isRecording ? "Stop" : "Start"}
-          </EuiButton>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiButton
-            aria-label="Toggle script recording pause/record"
-            disabled={!isRecording}
-            iconType="pause"
-            onClick={togglePause}
-          >
-            {isPaused ? "Resume" : "Pause"}
-          </EuiButton>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-
+      <EuiTitle size="s">
+        <h2>
+          {actions.length}&nbsp;
+          {actions.length == 1 ? "Recorded Step" : "Recorded Steps"}
+        </h2>
+      </EuiTitle>
       <EuiSpacer />
-      <EuiFlexItem>
-        <EuiPanel color="transparent" hasBorder={true} borderRadius="none">
-          {actions.length > 0 ? (
-            <StepAccordions
-              steps={actions}
-              onStepDetailChange={onStepDetailChange}
-              onStepDelete={onStepDelete}
-            />
-          ) : (
-            <EuiText size="xs" textAlign="center">
-              <div>
-                <span>Click on Start recording to get started</span>
-              </div>
-              <span>with your script</span>
-            </EuiText>
-          )}
-        </EuiPanel>
-      </EuiFlexItem>
+      {actions.length > 0 ? (
+        <StepAccordions
+          steps={actions}
+          onStepDetailChange={onStepDetailChange}
+          onStepDelete={onStepDelete}
+        />
+      ) : (
+        <EuiText size="xs" textAlign="center">
+          <div>
+            <span>Click on Start recording to get started</span>
+          </div>
+          <span>with your script</span>
+        </EuiText>
+      )}
     </>
   );
 }

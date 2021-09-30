@@ -9,6 +9,7 @@ import {
 import "./StepList.css";
 import { ActionDetail } from "../ActionDetail";
 import { StepAccordionTitle } from "./StepAccordionTitle";
+import "./StepDetails.css";
 
 function StepDetail({ step, stepIndex, onStepDetailChange }) {
   const assertionNumberTable = useMemo(() => {
@@ -51,6 +52,14 @@ function StepAccordion({
   onStepDelete,
   step,
 }) {
+  const {
+    euiTheme: {
+      border: {
+        thin,
+        radius: { medium },
+      },
+    },
+  } = useEuiTheme();
   const [isEditing, setIsEditing] = useState(false);
   const onStepTitleChange = updatedTitle => {
     onStepDetailChange(
@@ -74,9 +83,13 @@ function StepAccordion({
     <EuiAccordion
       id={title}
       key={index}
-      style={{ border: "none" }}
+      style={{
+        border: thin,
+        borderRadius: medium,
+        margin: "8px 0px",
+      }}
       paddingSize="m"
-      className="euiAccordionForm"
+      className="euiAccordionForm stepAccordion"
       buttonClassName="euiAccordionForm__button"
       extraAction={
         <EuiFlexGroup direction="row" gutterSize="xs">
