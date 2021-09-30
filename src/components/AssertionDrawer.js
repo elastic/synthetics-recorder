@@ -40,7 +40,7 @@ function getInsertionIndex(step, actionIndex) {
   return i;
 }
 
-export function AssertionDrawer({ width, onUpdateActions }) {
+export function AssertionDrawer({ width }) {
   const { actions, setActions } = useContext(StepsContext);
   const {
     actionIndex,
@@ -85,7 +85,6 @@ export function AssertionDrawer({ width, onUpdateActions }) {
     });
 
     setActions(newActions);
-    onUpdateActions(newActions);
     onHideAssertionDrawer();
   }
 
@@ -134,7 +133,7 @@ export function AssertionDrawer({ width, onUpdateActions }) {
                     onClick={performSelectorLookup(setSelector)}
                   />
                 }
-                onChange={(e) => setSelector(e.target.value)}
+                onChange={e => setSelector(e.target.value)}
                 value={selector}
                 placeholder="Selector"
               />
@@ -146,7 +145,7 @@ export function AssertionDrawer({ width, onUpdateActions }) {
             title={<EuiText textAlign="right">Command</EuiText>}
             content={
               <EuiSelect
-                onChange={(e) => {
+                onChange={e => {
                   setCommandValue(e.target.value);
                 }}
                 options={COMMAND_SELECTOR_OPTIONS}
@@ -161,7 +160,7 @@ export function AssertionDrawer({ width, onUpdateActions }) {
             content={
               <EuiFieldText
                 disabled={commandValue != "textContent"}
-                onChange={(e) => {
+                onChange={e => {
                   setValue(e.target.value);
                 }}
                 value={value}

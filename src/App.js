@@ -17,7 +17,6 @@ const MAIN_CONTROLS_MIN_WIDTH = 700;
 
 export default function App() {
   const [url, setUrl] = useState("");
-  const [currentActions, setCurrentActions] = useState([]);
   const [stepActions, setStepActions] = useState([]);
   const [result, setResult] = useState("");
   const [type, setJourneyType] = useState("inline");
@@ -31,11 +30,6 @@ export default function App() {
   };
   const onJourneyType = value => {
     setJourneyType(value);
-  };
-  const onUpdateActions = actionWithSteps => {
-    // Spread the actions array modified by the IR
-    const actions = actionWithSteps.flat();
-    if (actions.length > 0) setCurrentActions(actions);
   };
 
   const onTestRun = result => {
@@ -91,7 +85,6 @@ export default function App() {
             <Header
               url={url}
               type={type}
-              currentActions={currentActions}
               onTestRun={onTestRun}
               onJourneyType={onJourneyType}
               onUrlChange={onUrlChange}
@@ -99,21 +92,13 @@ export default function App() {
             <EuiSpacer />
             <EuiFlexGroup wrap style={{ minHeight: 500 }}>
               <EuiFlexItem style={{ minWidth: MAIN_CONTROLS_MIN_WIDTH }}>
-                <StepsMonitor
-                  url={url}
-                  type={type}
-                  currentActions={currentActions}
-                  onUpdateActions={onUpdateActions}
-                />
+                <StepsMonitor url={url} type={type} />
               </EuiFlexItem>
               <EuiFlexItem style={{ minWidth: 300 }}>
                 <TestResult result={result} />
               </EuiFlexItem>
             </EuiFlexGroup>
-            <AssertionDrawer
-              width={MAIN_CONTROLS_MIN_WIDTH}
-              onUpdateActions={onUpdateActions}
-            />
+            <AssertionDrawer width={MAIN_CONTROLS_MIN_WIDTH} />
           </RecordingContext.Provider>
         </AssertionContext.Provider>
       </StepsContext.Provider>

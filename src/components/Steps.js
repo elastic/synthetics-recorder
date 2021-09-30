@@ -13,7 +13,7 @@ import { RecordingContext } from "../contexts/RecordingContext";
 import { StepsContext } from "../contexts/StepsContext";
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
-export function Steps(props) {
+export function Steps() {
   const { actions, setActions } = useContext(StepsContext);
   const { toggleRecording, isRecording, isPaused, togglePause } =
     useContext(RecordingContext);
@@ -35,7 +35,6 @@ export function Steps(props) {
       flatPrevActions.length === 0 ||
       flatPrevActions.length < flatCurrActions.length
     ) {
-      props.onUpdateActions(currActions);
       return currActions;
     }
 
@@ -47,14 +46,12 @@ export function Steps(props) {
       }
       flatCurrActions[i] && mergedActions.push(flatCurrActions[i]);
     }
-    props.onUpdateActions(mergedActions);
     return generateIR(mergedActions);
   };
 
   const onStepDetailChange = (step, stepIndex) => {
     const newActions = actions.map((a, ind) => (ind === stepIndex ? step : a));
     setActions(newActions);
-    props.onUpdateActions(newActions);
   };
 
   const onStepDelete = stepIndex => {
@@ -62,8 +59,7 @@ export function Steps(props) {
       ...actions.slice(0, stepIndex),
       ...actions.slice(stepIndex + 1),
     ];
-    setActions(() => newActions);
-    props.onUpdateActions(newActions);
+    setActions(newActions);
   };
 
   return (
