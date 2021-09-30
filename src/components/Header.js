@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   EuiButton,
   EuiFlexGroup,
@@ -10,16 +10,19 @@ import {
   EuiSelect,
 } from "@elastic/eui";
 import { RecordingContext } from "../contexts/RecordingContext";
+import { StepsContext } from "../contexts/StepsContext";
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export function Header(props) {
+  const { actions } = useContext(StepsContext);
+  const { isRecording, toggleRecording } = useContext(RecordingContext);
+
   const getCodeFromActions = async () => {
     return await ipc.callMain("actions-to-code", {
-      actions: props.currentActions,
+      actions: actions.flat(),
       isSuite: props.type == "suite",
     });
   };
-
   const onSave = async () => {
     const code = await getCodeFromActions();
     await ipc.callMain("save-file", code);
@@ -32,9 +35,6 @@ export function Header(props) {
     });
     props.onTestRun(result);
   };
-
-  const { isRecording, toggleRecording } = React.useContext(RecordingContext);
-
   const onUrlFieldKeyUp = async e => {
     if (e?.key == "Enter" && !isRecording) {
       await toggleRecording();

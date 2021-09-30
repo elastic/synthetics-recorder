@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   EuiFlexItem,
   EuiSpacer,
@@ -12,16 +12,18 @@ import {
   EuiFlexGroup,
 } from "@elastic/eui";
 import { Steps } from "./Steps";
+import { StepsContext } from "../contexts/StepsContext";
 
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export function StepsMonitor(props) {
+  const { actions } = useContext(StepsContext);
   const [isFlyoutVisible, setIsFlyoutVisible] = useState(false);
   const [code, setCode] = useState("");
 
   const showFlyout = async () => {
     const code = await ipc.callMain("actions-to-code", {
-      actions: props.currentActions,
+      actions: actions.flat(),
       isSuite: props.type == "suite",
     });
     setCode(code);
@@ -32,7 +34,7 @@ export function StepsMonitor(props) {
     <EuiFlexGroup direction="column" gutterSize="xs">
       <EuiFlexItem>
         <EuiPanel hasBorder={true} color="transparent" borderRadius="none">
-          <Steps url={props.url} onUpdateActions={props.onUpdateActions} />
+          <Steps />
           <EuiSpacer />
 
           {isFlyoutVisible && (
@@ -56,7 +58,7 @@ export function StepsMonitor(props) {
         </EuiPanel>
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
-        {props.currentActions.length > 0 && (
+        {actions.length > 0 && (
           <div>
             <EuiButton
               iconType="eye"
