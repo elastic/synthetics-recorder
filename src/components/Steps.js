@@ -41,7 +41,6 @@ export function Steps() {
     ipc.on("change", updateActions);
 
     return () => {
-      console.log("off");
       ipc.off("change", updateActions);
     };
   }, []);
