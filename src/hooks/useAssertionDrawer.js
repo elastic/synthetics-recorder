@@ -6,7 +6,7 @@ export function useAssertionDrawer() {
     COMMAND_SELECTOR_OPTIONS[0].value
   );
   const [isVisible, setIsVisible] = useState(false);
-  const [selector, setSelector] = useState(null);
+  const [selector, setSelector] = useState("");
   const [stepIndex, setStepIndex] = useState(null);
   const [actionIndex, setActionIndex] = useState(null);
   const [value, setValue] = useState("");

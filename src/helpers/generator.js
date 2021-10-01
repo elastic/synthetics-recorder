@@ -4,7 +4,7 @@ export function generateIR(actionContexts) {
   let previousContext = null;
   let newStep = false;
   for (const actionContext of actionContexts) {
-    const { action, pageAlias } = actionContext;
+    const { action, pageAlias, title } = actionContext;
     if (action.name === "openPage") {
       continue;
     } else if (action.name === "closePage" && pageAlias === "page") {
@@ -17,10 +17,9 @@ export function generateIR(actionContexts) {
       steps = [];
     }
     // Add title to all actionContexts
-    const enhancedContext = {
-      ...actionContext,
-      title: actionTitle(actionContext.action),
-    };
+    const enhancedContext = title
+      ? actionContext
+      : { ...actionContext, title: actionTitle(action) };
     steps.push(enhancedContext);
     previousContext = actionContext;
   }
@@ -73,4 +72,50 @@ export function actionTitle(action) {
     case "assert":
       return `Assert`;
   }
+}
+
+/**
+ * Works by taking the actions from the PW recorder and
+ * the actions generated/modified by the UI and merges them
+ * to display the correct modified actions on the UI
+ */
+export function generateMergedIR(prevAcs, currAcs) {
+  const prevActionContexts = prevAcs.flat();
+  const currActionContexts = currAcs.flat();
+  const prevLength = prevActionContexts.length;
+  const currLength = currActionContexts.length;
+  /**
+   * when recorder is started/resetted
+   */
+  if (currLength === 0 || prevLength === 0) {
+    return currAcs;
+  }
+
+  const mergedActions = [];
+  const maxLen = Math.max(prevLength, currLength);
+  for (let i = 0, j = 0; i < maxLen || j < maxLen; i++, j++) {
+    /**
+     * Keep adding all the assrtions added by user as PW
+     * does not have any assertion built in
+     * We treat the UI as the source of truth
+     */
+    if (prevActionContexts[i]?.action.name === "assert") {
+      do {
+        mergedActions.push(prevActionContexts[i]);
+        i++;
+      } while (i < maxLen && prevActionContexts[i]?.action.name === "assert");
+    }
+    /**
+     * If actions are not assert commands, then we need to
+     * check if the actions are modified on the UI and add
+     * them to the final list
+     *
+     * Any modified state in the UI is the final state
+     */
+    const item = prevActionContexts[i]?.modified
+      ? prevActionContexts[i]
+      : currActionContexts[j];
+    item && mergedActions.push(item);
+  }
+  return generateIR(mergedActions);
 }

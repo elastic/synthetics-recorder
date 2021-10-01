@@ -7,7 +7,7 @@ import {
   EuiButton,
   EuiFlexGroup,
 } from "@elastic/eui";
-import { generateIR } from "../helpers/generator";
+import { generateIR, generateMergedIR } from "../helpers/generator";
 import { StepAccordions } from "./StepList/StepDetails";
 import { RecordingContext } from "../contexts/RecordingContext";
 import { StepsContext } from "../contexts/StepsContext";
@@ -17,37 +17,6 @@ export function Steps() {
   const { actions, setActions } = useContext(StepsContext);
   const { toggleRecording, isRecording, isPaused, togglePause } =
     useContext(RecordingContext);
-
-  useEffect(() => {
-    ipc.answerMain("change", ({ actions }) => {
-      setActions(prevActions => {
-        const currentActions = generateIR(actions);
-        return generateMergedIR(prevActions, currentActions);
-      });
-    });
-  }, []);
-
-  const generateMergedIR = (prevActions, currActions) => {
-    const flatPrevActions = prevActions.flat();
-    const flatCurrActions = currActions.flat();
-    if (
-      flatCurrActions.length === 0 ||
-      flatPrevActions.length === 0 ||
-      flatPrevActions.length < flatCurrActions.length
-    ) {
-      return currActions;
-    }
-
-    const mergedActions = [];
-    for (let i = 0; i < flatPrevActions.length; i++) {
-      const { action } = flatPrevActions[i];
-      if (action.name === "assert") {
-        mergedActions.push(flatPrevActions[i]);
-      }
-      flatCurrActions[i] && mergedActions.push(flatCurrActions[i]);
-    }
-    return generateIR(mergedActions);
-  };
 
   const onStepDetailChange = (step, stepIndex) => {
     const newActions = actions.map((a, ind) => (ind === stepIndex ? step : a));
@@ -61,6 +30,21 @@ export function Steps() {
     ];
     setActions(newActions);
   };
+
+  useEffect(() => {
+    const updateActions = (_, pwActions) => {
+      setActions(prevActionContexts => {
+        const currActionsContexts = generateIR(pwActions);
+        return generateMergedIR(prevActionContexts, currActionsContexts);
+      });
+    };
+    ipc.on("change", updateActions);
+
+    return () => {
+      console.log("off");
+      ipc.off("change", updateActions);
+    };
+  }, []);
 
   return (
     <>

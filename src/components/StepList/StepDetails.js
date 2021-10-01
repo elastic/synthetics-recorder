@@ -56,7 +56,7 @@ function StepAccordion({
     onStepDetailChange(
       step.map((s, stepIdx) => {
         if (stepIdx === 0) {
-          return { ...s, title: updatedTitle };
+          return { ...s, title: updatedTitle, modified: true };
         }
         return s;
       }),

@@ -16,6 +16,7 @@ function createUpdatedAction(field, value, context) {
   return {
     ...context,
     action: { ...context.action, [field]: value },
+    modified: true,
   };
 }
 
