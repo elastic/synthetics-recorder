@@ -95,7 +95,7 @@ export function generateMergedIR(prevAcs, currAcs) {
   const maxLen = Math.max(prevLength, currLength);
   for (let i = 0, j = 0; i < maxLen || j < maxLen; i++, j++) {
     /**
-     * Keep adding all the assrtions added by user as PW
+     * Keep adding all the assertions added by user as PW
      * does not have any assertion built in
      * We treat the UI as the source of truth
      */
