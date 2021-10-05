@@ -15,8 +15,8 @@ const BUILD_DIR = join(__dirname, "..", "build");
 
 async function createWindow() {
   const win = new BrowserWindow({
-    width: 1100,
-    height: 700,
+    width: 1445,
+    height: 788,
     minHeight: 500,
     minWidth: 800,
     webPreferences: {

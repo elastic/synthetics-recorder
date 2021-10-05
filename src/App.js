@@ -139,7 +139,7 @@ export default function App() {
                   </EuiFlexGroup>
                 </EuiFlexItem>
                 <EuiFlexItem grow={false}>
-                  <EuiFlexItem style={{ minWidth: 300 }}>
+                  <EuiFlexItem>
                     <TestResult
                       onTestRun={onTestRun}
                       result={result}
