@@ -86,7 +86,7 @@ function ResultAccordions({ actions, journeys, type }) {
               <EuiCodeBlock
                 language="js"
                 paddingSize="m"
-                style={{ maxWidth: 450 }}
+                style={{ maxWidth: 300 }}
                 transparentBackground={true}
               >
                 {codeBlocks[name] ?? null}

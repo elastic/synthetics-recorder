@@ -96,7 +96,7 @@ export default function App() {
                 // the bottom border didn't grow without providing a value for
                 // `restrictWidth`. We always want there to be a border and we
                 // always want the header to fill the full width.
-                restrictWidth: Infinity,
+                restrictWidth: 4000,
                 pageTitle: (
                   <EuiFlexGroup>
                     <EuiFlexItem grow={false}>
@@ -130,7 +130,7 @@ export default function App() {
                     </EuiFlexItem>
                   </EuiFlexGroup>
                 </EuiFlexItem>
-                <EuiFlexItem grow={false} style={{ minWidth: 300 }}>
+                <EuiFlexItem style={{ minWidth: 300 }}>
                   <TestResult
                     onTestRun={onTestRun}
                     result={result}
