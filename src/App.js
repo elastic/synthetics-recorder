@@ -21,7 +21,7 @@ import { useAssertionDrawer } from "./hooks/useAssertionDrawer";
 
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
-const MAIN_CONTROLS_MIN_WIDTH = 700;
+const MAIN_CONTROLS_MIN_WIDTH = 600;
 
 export default function App() {
   const [url, setUrl] = useState("");
@@ -91,9 +91,6 @@ export default function App() {
             }}
           >
             <EuiPageTemplate
-              pageContentBodyProps={{
-                restrictWidth: "1400",
-              }}
               pageHeader={{
                 bottomBorder: true,
                 // the bottom border didn't grow without providing a value for
@@ -126,27 +123,20 @@ export default function App() {
                 <EuiFlexItem>
                   <EuiFlexGroup direction="column">
                     <EuiFlexItem grow={false}>
-                      <Header
-                        url={url}
-                        type={type}
-                        onJourneyType={onJourneyType}
-                        onUrlChange={onUrlChange}
-                      />
+                      <Header url={url} onUrlChange={onUrlChange} />
                     </EuiFlexItem>
-                    <EuiFlexItem>
+                    <EuiFlexItem style={{ minWidth: MAIN_CONTROLS_MIN_WIDTH }}>
                       <StepsMonitor url={url} type={type} />
                     </EuiFlexItem>
                   </EuiFlexGroup>
                 </EuiFlexItem>
-                <EuiFlexItem grow={false}>
-                  <EuiFlexItem>
-                    <TestResult
-                      onTestRun={onTestRun}
-                      result={result}
-                      setType={setJourneyType}
-                      type={type}
-                    />
-                  </EuiFlexItem>
+                <EuiFlexItem grow={false} style={{ minWidth: 300 }}>
+                  <TestResult
+                    onTestRun={onTestRun}
+                    result={result}
+                    setType={setJourneyType}
+                    type={type}
+                  />
                 </EuiFlexItem>
               </EuiFlexGroup>
               <AssertionDrawer width={MAIN_CONTROLS_MIN_WIDTH} />
