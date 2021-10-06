@@ -69,7 +69,7 @@ export function ActionDetail({
     <EuiPanel style={{ margin: "16px 0px" }} hasShadow={false} paddingSize="s">
       <EuiFlexGroup alignItems="baseline">
         <EuiFlexItem grow={false} style={{ width: 50 }}>
-          {title != "Assert" && <EuiText size="s">title</EuiText>}
+          {title != "Assert" && <EuiText size="s">{title}</EuiText>}
         </EuiFlexItem>
         {url && (
           <EuiFlexItem>
