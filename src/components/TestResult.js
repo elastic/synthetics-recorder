@@ -56,7 +56,7 @@ function ResultAccordions({ actions, journeys, type }) {
         });
       }
     });
-  }, [journeys, setCodeBlocks]);
+  }, [journeys, codeBlocks, setCodeBlocks]);
 
   return Object.keys(journeys).map(name => {
     const { steps } = journeys[name];
@@ -85,11 +85,11 @@ function ResultAccordions({ actions, journeys, type }) {
             <>
               <EuiCodeBlock
                 language="js"
-                paddingSize="none"
+                paddingSize="m"
+                style={{ maxWidth: 450 }}
                 transparentBackground={true}
-                whiteSpace="pre"
               >
-                {codeBlocks[name] ? codeBlocks[name] : null}
+                {codeBlocks[name] ?? null}
               </EuiCodeBlock>
               <EuiCodeBlock paddingSize="m" transparentBackground={true}>
                 {removeColorCodes(error.message)}
@@ -166,9 +166,9 @@ export function TestResult(props) {
 
   return (
     <>
-      <EuiFlexGroup style={{ maxHeight: 90 }}>
+      <EuiFlexGroup gutterSize="m" style={{ maxHeight: 90 }} wrap>
         <EuiFlexItem grow={false}>
-          <EuiTitle size="s">
+          <EuiTitle size="xs">
             <h3>Test your script</h3>
           </EuiTitle>
         </EuiFlexItem>
