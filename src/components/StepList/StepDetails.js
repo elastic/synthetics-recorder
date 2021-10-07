@@ -92,7 +92,7 @@ function StepAccordion({
       className="euiAccordionForm stepAccordion"
       buttonClassName="euiAccordionForm__button"
       extraAction={
-        <EuiFlexGroup direction="row" gutterSize="xs">
+        <EuiFlexGroup alignItems="center" direction="row" gutterSize="xs">
           <EuiFlexItem grow={false}>
             <StepAccordionTitle
               isEditing={isEditing}
@@ -102,7 +102,7 @@ function StepAccordion({
               index={index}
             />
           </EuiFlexItem>
-          <EuiFlexItem grow={true}>
+          <EuiFlexItem>
             <EuiButtonIcon
               aria-label="Edit the step's name"
               className="euiAccordionForm__extraAction"
