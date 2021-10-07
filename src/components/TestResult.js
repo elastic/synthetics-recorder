@@ -170,7 +170,12 @@ export function TestResult(props) {
 
   return (
     <>
-      <EuiFlexGroup gutterSize="m" style={{ maxHeight: 90 }} wrap>
+      <EuiFlexGroup
+        alignItems="baseline"
+        gutterSize="m"
+        style={{ maxHeight: 90 }}
+        wrap
+      >
         <EuiFlexItem grow={false}>
           <EuiTitle size="xs">
             <h3>Test your script</h3>
