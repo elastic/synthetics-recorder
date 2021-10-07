@@ -36,9 +36,6 @@ export default function App() {
   const onUrlChange = value => {
     setUrl(value);
   };
-  const onJourneyType = value => {
-    setJourneyType(value);
-  };
 
   const onTestRun = result => {
     setResult(result);

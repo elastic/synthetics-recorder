@@ -33,8 +33,7 @@ function getStepActions(step, currentActions) {
   if (!step.name) return;
   for (let i = 0; i < currentActions.length; i++) {
     if (
-      Array.isArray(currentActions) &&
-      currentActions.length > 0 &&
+      currentActions[i].length > 0 &&
       currentActions[i][0].title === step.name
     ) {
       return currentActions[i];
@@ -42,22 +41,16 @@ function getStepActions(step, currentActions) {
   }
 }
 
-function ResultAccordions({ actions, journeys, type }) {
-  const [codeBlocks, setCodeBlocks] = useState({});
+async function getCodeForResult(actions, journeys, type) {
+  const stepActions = Object.keys(journeys).map(name => {
+    for (const step of journeys[name].steps) {
+      return getStepActions(step, actions);
+    }
+  });
+  return await getCodeFromActions(stepActions, type);
+}
 
-  useEffect(() => {
-    Object.keys(journeys).forEach(name => {
-      if (Array.isArray(journeys[name].steps)) {
-        journeys[name].steps.forEach(step => {
-          const stepActions = getStepActions(step, actions);
-          getCodeFromActions(stepActions, type).then(code => {
-            setCodeBlocks(oldBlocks => ({ ...oldBlocks, [step.name]: code }));
-          });
-        });
-      }
-    });
-  }, [journeys, codeBlocks, setCodeBlocks]);
-
+function ResultAccordions({ codeBlocks, journeys }) {
   return Object.keys(journeys).map(name => {
     const { steps } = journeys[name];
     return steps.map((step, stepIndex) => {
@@ -89,7 +82,7 @@ function ResultAccordions({ actions, journeys, type }) {
                 style={{ maxWidth: 300 }}
                 transparentBackground={true}
               >
-                {codeBlocks[name] ?? null}
+                {codeBlocks ?? null}
               </EuiCodeBlock>
               <EuiCodeBlock paddingSize="m" transparentBackground={true}>
                 {removeColorCodes(error.message)}
@@ -104,6 +97,13 @@ function ResultAccordions({ actions, journeys, type }) {
 
 export function TestResult(props) {
   const { actions } = useContext(StepsContext);
+  const [result, setResult] = useState(undefined);
+  const [codeBlocks, setCodeBlocks] = useState({});
+
+  useEffect(() => {
+    if (actions.length == 0 && result) setResult(undefined);
+  }, [actions.length]);
+
   const {
     euiTheme: {
       colors: { danger, success, warning },
@@ -118,17 +118,20 @@ export function TestResult(props) {
 
   const text = {
     succeeded: "success",
-    failed: props.result.failed === 1 ? "error" : "errors",
+    failed: result?.failed === 1 ? "error" : "errors",
     skipped: "skipped",
   };
 
   const onTest = async () => {
     const code = await getCodeFromActions(actions, props.type);
-    const result = await ipc.callMain("run-journey", {
+    const resultFromServer = await ipc.callMain("run-journey", {
       code,
       isSuite: props.type === "suite",
     });
-    props.onTestRun(result);
+    setCodeBlocks(
+      await getCodeForResult(actions, resultFromServer.journeys, props.type)
+    );
+    setResult(resultFromServer);
   };
 
   const ResultComponent = ({ result }) => {
@@ -156,6 +159,7 @@ export function TestResult(props) {
             <ResultAccordions
               {...props}
               actions={actions}
+              codeBlocks={codeBlocks}
               journeys={result.journeys}
             />
           </EuiFlexItem>
@@ -196,9 +200,7 @@ export function TestResult(props) {
         </EuiFlexItem>
       </EuiFlexGroup>
       <EuiPanel color="subdued">
-        {props.result && (
-          <ResultComponent result={props.result}></ResultComponent>
-        )}
+        {result && <ResultComponent result={result}></ResultComponent>}
       </EuiPanel>
     </>
   );
