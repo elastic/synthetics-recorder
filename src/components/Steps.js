@@ -30,17 +30,12 @@ export function Steps() {
   };
 
   useEffect(() => {
-    const updateActions = (_, pwActions) => {
+    ipc.answerMain("change", ({ actions }) => {
       setActions(prevActionContexts => {
-        const currActionsContexts = generateIR(pwActions);
+        const currActionsContexts = generateIR(actions);
         return generateMergedIR(prevActionContexts, currActionsContexts);
       });
-    };
-    ipc.on("change", updateActions);
-
-    return () => {
-      ipc.off("change", updateActions);
-    };
+    });
   }, []);
 
   if (actions.length == 0) {
