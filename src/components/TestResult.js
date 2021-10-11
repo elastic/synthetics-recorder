@@ -173,7 +173,7 @@ export function TestResult(props) {
       <EuiFlexGroup
         alignItems="baseline"
         gutterSize="m"
-        style={{ maxHeight: 90 }}
+        style={{ minHeight: 130, maxHeight: 130 }}
         wrap
       >
         <EuiFlexItem grow={false}>
