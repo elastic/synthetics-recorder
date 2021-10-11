@@ -216,7 +216,11 @@ async function onSetMode(mode) {
 }
 
 async function onLinkExternal(url) {
-  await shell.openExternal(url);
+  try {
+    await shell.openExternal(url);
+  } catch (e) {
+    logger.error(e);
+  }
 }
 
 function setupListeners() {
