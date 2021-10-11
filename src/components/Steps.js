@@ -1,11 +1,5 @@
 import React, { useEffect, useContext } from "react";
-import {
-  EuiCode,
-  EuiEmptyPrompt,
-  EuiText,
-  EuiSpacer,
-  EuiTitle,
-} from "@elastic/eui";
+import { EuiCode, EuiEmptyPrompt, EuiSpacer, EuiTitle } from "@elastic/eui";
 
 import { generateIR, generateMergedIR } from "../helpers/generator";
 import { StepAccordions } from "./StepList/StepDetails";
@@ -62,20 +56,11 @@ export function Steps() {
         </h2>
       </EuiTitle>
       <EuiSpacer />
-      {actions.length > 0 ? (
-        <StepAccordions
-          steps={actions}
-          onStepDetailChange={onStepDetailChange}
-          onStepDelete={onStepDelete}
-        />
-      ) : (
-        <EuiText size="xs" textAlign="center">
-          <div>
-            <span>Click on Start recording to get started</span>
-          </div>
-          <span>with your script</span>
-        </EuiText>
-      )}
+      <StepAccordions
+        steps={actions}
+        onStepDetailChange={onStepDetailChange}
+        onStepDelete={onStepDelete}
+      />
     </>
   );
 }
