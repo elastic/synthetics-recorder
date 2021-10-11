@@ -43,6 +43,7 @@ export function Assertion({
         marginBottom: 0,
         marginRight: 36,
         maxHeight: 40,
+        minWidth: 310,
       }}
     >
       <EuiFlexItem>

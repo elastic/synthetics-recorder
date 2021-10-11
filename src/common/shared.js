@@ -24,3 +24,10 @@ export function performSelectorLookup(onSelectorChange) {
     }
   };
 }
+
+export async function getCodeFromActions(actions, type) {
+  return await ipc.callMain("actions-to-code", {
+    actions: actions.flat(),
+    isSuite: type == "suite",
+  });
+}

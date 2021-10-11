@@ -32,7 +32,7 @@ export function StepTitleEditField({ onStepTitleChange, setIsEditing, title }) {
       }}
       placeholder={title}
       inputRef={inputRef}
-      style={{ minWidth: 400 }}
+      style={{ minWidth: 350 }}
       value={tempText}
     />
   );

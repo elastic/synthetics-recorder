@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { EuiFlexGroup, EuiFlexItem, EuiSpacer } from "@elastic/eui";
+import {
+  EuiBetaBadge,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiIcon,
+  EuiLink,
+  EuiPageTemplate,
+  EuiSpacer,
+} from "@elastic/eui";
 import "./App.css";
 import "@elastic/eui/dist/eui_theme_amsterdam_light.css";
 import { Header } from "./components/Header";
@@ -13,7 +21,7 @@ import { useAssertionDrawer } from "./hooks/useAssertionDrawer";
 
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
-const MAIN_CONTROLS_MIN_WIDTH = 700;
+const MAIN_CONTROLS_MIN_WIDTH = 600;
 
 export default function App() {
   const [url, setUrl] = useState("");
@@ -28,16 +36,13 @@ export default function App() {
   const onUrlChange = value => {
     setUrl(value);
   };
-  const onJourneyType = value => {
-    setJourneyType(value);
-  };
 
   const onTestRun = result => {
     setResult(result);
   };
 
   return (
-    <div style={{ margin: "2px 10px" }}>
+    <div style={{ padding: 4 }}>
       <StepsContext.Provider
         value={{
           actions: stepActions,
@@ -82,23 +87,57 @@ export default function App() {
               },
             }}
           >
-            <Header
-              url={url}
-              type={type}
-              onTestRun={onTestRun}
-              onJourneyType={onJourneyType}
-              onUrlChange={onUrlChange}
-            />
-            <EuiSpacer />
-            <EuiFlexGroup wrap style={{ minHeight: 500 }}>
-              <EuiFlexItem style={{ minWidth: MAIN_CONTROLS_MIN_WIDTH }}>
-                <StepsMonitor url={url} type={type} />
-              </EuiFlexItem>
-              <EuiFlexItem style={{ minWidth: 300 }}>
-                <TestResult result={result} />
-              </EuiFlexItem>
-            </EuiFlexGroup>
-            <AssertionDrawer width={MAIN_CONTROLS_MIN_WIDTH} />
+            <EuiPageTemplate
+              pageHeader={{
+                bottomBorder: true,
+                // the bottom border didn't grow without providing a value for
+                // `restrictWidth`. We always want there to be a border and we
+                // always want the header to fill the full width.
+                restrictWidth: 4000,
+                pageTitle: (
+                  <EuiFlexGroup>
+                    <EuiFlexItem grow={false}>
+                      <EuiIcon size="xxl" type="logoElastic" />
+                    </EuiFlexItem>
+                    <EuiFlexItem grow={false}>Script recorder</EuiFlexItem>
+                    <EuiFlexItem grow={false}>
+                      <EuiBetaBadge
+                        style={{ marginTop: 10 }}
+                        label="BETA"
+                        color="accent"
+                      />
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                ),
+                paddingSize: "s",
+                rightSideItems: [
+                  <EuiLink style={{ marginTop: 16 }}>Send feedback</EuiLink>,
+                ],
+              }}
+            >
+              <EuiSpacer />
+              <EuiFlexGroup>
+                <EuiFlexItem>
+                  <EuiFlexGroup direction="column">
+                    <EuiFlexItem grow={false}>
+                      <Header url={url} onUrlChange={onUrlChange} />
+                    </EuiFlexItem>
+                    <EuiFlexItem style={{ minWidth: MAIN_CONTROLS_MIN_WIDTH }}>
+                      <StepsMonitor url={url} type={type} />
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                </EuiFlexItem>
+                <EuiFlexItem style={{ minWidth: 300 }}>
+                  <TestResult
+                    onTestRun={onTestRun}
+                    result={result}
+                    setType={setJourneyType}
+                    type={type}
+                  />
+                </EuiFlexItem>
+              </EuiFlexGroup>
+              <AssertionDrawer width={MAIN_CONTROLS_MIN_WIDTH} />
+            </EuiPageTemplate>
           </RecordingContext.Provider>
         </AssertionContext.Provider>
       </StepsContext.Provider>

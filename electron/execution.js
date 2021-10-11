@@ -70,7 +70,7 @@ async function recordJourneys(data, browserWindow) {
     actionListener = new EventEmitter();
     // Listen to actions from Playwright recording session
     actionListener.on("actions", actions => {
-      ipc.sendToRenderers("change", actions);
+      ipc.callRenderer(browserWindow, "change", { actions });
     });
 
     await context._enableRecorder({

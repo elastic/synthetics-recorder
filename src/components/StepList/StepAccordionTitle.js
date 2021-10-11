@@ -12,7 +12,7 @@ export function StepAccordionTitle({
   const stepIndexString = `Step ${index + 1}`;
   if (isEditing) {
     return (
-      <EuiFlexGroup alignItems="center">
+      <EuiFlexGroup alignItems="baseline">
         <EuiFlexItem grow={false}>
           <EuiText size="s">
             <strong>{stepIndexString}</strong>
@@ -30,8 +30,8 @@ export function StepAccordionTitle({
   }
 
   return (
-    <EuiText style={{ marginTop: 2 }} size="s">
-      <strong style={{ marginRight: 33 }}>{stepIndexString}</strong>
+    <EuiText style={{ marginTop: 1 }} size="s">
+      <strong style={{ marginRight: 38 }}>{stepIndexString}</strong>
       {title}
     </EuiText>
   );
