@@ -135,8 +135,8 @@ export function TestResult(props) {
   };
 
   const ResultComponent = ({ result }) => {
-    if (result.total === 0)
-      return <EuiText color="subdued">No tests found</EuiText>;
+    const total = result.succeeded + result.skipped + result.failed;
+    if (total === 0) return <EuiText color="subdued">No tests found</EuiText>;
 
     return (
       <EuiFlexGroup
