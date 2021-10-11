@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import {
   EuiAccordion,
   EuiButtonIcon,
@@ -10,6 +10,7 @@ import "./StepList.css";
 import { ActionDetail } from "../ActionDetail";
 import { StepAccordionTitle } from "./StepAccordionTitle";
 import "./StepDetails.css";
+import { RecordingContext } from "../../contexts/RecordingContext";
 
 function StepDetail({ step, stepIndex, onStepDetailChange }) {
   const assertionNumberTable = useMemo(() => {
@@ -60,6 +61,7 @@ function StepAccordion({
       },
     },
   } = useEuiTheme();
+  const { isRecording } = useContext(RecordingContext);
   const [isEditing, setIsEditing] = useState(false);
   const onStepTitleChange = updatedTitle => {
     onStepDetailChange(
@@ -115,9 +117,14 @@ function StepAccordion({
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <EuiButtonIcon
-              aria-label="Delete this step"
+              aria-label={
+                isRecording
+                  ? "Delete this step. You cannot delete steps until you end the recording session."
+                  : "Delete this step."
+              }
               className="euiAccordionForm__extraAction"
               color={darkShade}
+              isDisabled={isRecording}
               iconType="trash"
               onClick={() => onStepDelete(index)}
             />
