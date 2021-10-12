@@ -104,7 +104,7 @@ function TestButton({ disabled, onTest }) {
     <EuiButton
       aria-label={ariaLabel}
       color="primary"
-      disabled={disabled}
+      isDisabled={disabled}
       onClick={onTest}
     >
       Test
