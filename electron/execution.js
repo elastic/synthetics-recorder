@@ -4,7 +4,7 @@ const { existsSync } = require("fs");
 const { writeFile, rm, mkdir } = require("fs/promises");
 const { ipcMain: ipc } = require("electron-better-ipc");
 const { EventEmitter, once } = require("events");
-const { dialog, BrowserWindow } = require("electron");
+const { dialog, shell, BrowserWindow } = require("electron");
 const { fork } = require("child_process");
 const logger = require("electron-log");
 const isDev = require("electron-is-dev");
@@ -215,12 +215,21 @@ async function onSetMode(mode) {
   return selector;
 }
 
+async function onLinkExternal(url) {
+  try {
+    await shell.openExternal(url);
+  } catch (e) {
+    logger.error(e);
+  }
+}
+
 function setupListeners() {
   ipc.answerRenderer("record-journey", recordJourneys);
   ipc.answerRenderer("run-journey", onTest);
   ipc.answerRenderer("save-file", onFileSave);
   ipc.answerRenderer("actions-to-code", onTransformCode);
   ipc.answerRenderer("set-mode", onSetMode);
+  ipc.answerRenderer("link-to-external", onLinkExternal);
 }
 
 module.exports = setupListeners;

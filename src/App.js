@@ -18,10 +18,14 @@ import { AssertionDrawer } from "./components/AssertionDrawer";
 import { AssertionContext } from "./contexts/AssertionContext";
 import { StepsContext } from "./contexts/StepsContext";
 import { useAssertionDrawer } from "./hooks/useAssertionDrawer";
+import { createExternalLinkHandler } from "./common/shared";
 
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 const MAIN_CONTROLS_MIN_WIDTH = 600;
+
+const SYNTHETICS_DISCUSS_FORUM_URL =
+  "https://discuss.elastic.co/tags/c/observability/uptime/75/synthetics";
 
 export default function App() {
   const [url, setUrl] = useState("");
@@ -111,7 +115,15 @@ export default function App() {
                 ),
                 paddingSize: "s",
                 rightSideItems: [
-                  <EuiLink style={{ marginTop: 16 }}>Send feedback</EuiLink>,
+                  <EuiLink
+                    href={SYNTHETICS_DISCUSS_FORUM_URL}
+                    style={{ marginTop: 16 }}
+                    onClick={createExternalLinkHandler(
+                      SYNTHETICS_DISCUSS_FORUM_URL
+                    )}
+                  >
+                    Send feedback
+                  </EuiLink>,
                 ],
               }}
             >

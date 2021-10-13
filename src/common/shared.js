@@ -31,3 +31,10 @@ export async function getCodeFromActions(actions, type) {
     isSuite: type == "suite",
   });
 }
+
+export function createExternalLinkHandler(url) {
+  return async e => {
+    e.preventDefault();
+    await ipc.callMain("link-to-external", url);
+  };
+}
