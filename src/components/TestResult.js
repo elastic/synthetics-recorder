@@ -11,6 +11,7 @@ import {
   EuiSpacer,
   EuiText,
   EuiTitle,
+  EuiToolTip,
   useEuiTheme,
 } from "@elastic/eui";
 
@@ -93,6 +94,30 @@ function ResultAccordions({ codeBlocks, journeys }) {
       );
     });
   });
+}
+
+function TestButton({ disabled, onTest }) {
+  const ariaLabel = disabled
+    ? "Record a step in order to run a test"
+    : "Perform a test run for the journey you have recorded";
+  const button = (
+    <EuiButton
+      aria-label={ariaLabel}
+      color="primary"
+      isDisabled={disabled}
+      onClick={onTest}
+    >
+      Test
+    </EuiButton>
+  );
+  if (disabled) {
+    return (
+      <EuiToolTip content="Record a step in order to run a test" delay="long">
+        {button}
+      </EuiToolTip>
+    );
+  }
+  return button;
 }
 
 export function TestResult(props) {
@@ -195,13 +220,7 @@ export function TestResult(props) {
         </EuiFlexItem>
         <EuiFlexItem />
         <EuiFlexItem grow={false}>
-          <EuiButton
-            aria-label="Perform a test run for the journey you have recorded"
-            color="primary"
-            onClick={onTest}
-          >
-            Test
-          </EuiButton>
+          <TestButton disabled={actions.length == 0} onTest={onTest} />
         </EuiFlexItem>
       </EuiFlexGroup>
       <EuiPanel color="subdued">
