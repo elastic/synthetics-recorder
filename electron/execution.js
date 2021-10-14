@@ -137,7 +137,12 @@ async function onTest(data) {
 
   try {
     const isSuite = data.isSuite;
-    const args = ["--no-headless", "--reporter=json", "--screenshots=off"];
+    const args = [
+      "--no-headless",
+      "--reporter=json",
+      "--screenshots=off",
+      "--no-throttling",
+    ];
     const filePath = join(JOURNEY_DIR, "recorded.journey.js");
     if (!isSuite) {
       args.push("--inline");
