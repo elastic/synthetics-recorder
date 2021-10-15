@@ -1,24 +1,30 @@
 import React, { useContext } from "react";
 import {
   EuiButton,
+  EuiButtonEmpty,
   EuiButtonIcon,
+  EuiCallOut,
   EuiFlexGroup,
   EuiFlexItem,
   EuiFieldText,
+  EuiFlyout,
+  EuiFlyoutBody,
+  EuiFlyoutHeader,
   EuiSelect,
   EuiText,
   EuiTitle,
-  EuiFlyout,
-  EuiFlyoutHeader,
-  EuiFlyoutBody,
 } from "@elastic/eui";
 
 import {
   COMMAND_SELECTOR_OPTIONS,
+  createExternalLinkHandler,
   performSelectorLookup,
 } from "../common/shared";
 import { StepsContext } from "../contexts/StepsContext";
 import { AssertionContext } from "../contexts/AssertionContext";
+
+const PLAYWRIGHT_ASSERTIONS_DOCS_LINK =
+  "https://playwright.dev/docs/assertions/";
 
 function AssertionDrawerFormRow({ title, content }) {
   return (
@@ -101,7 +107,31 @@ export function AssertionDrawer({ width }) {
           <h2 id="assertionDrawerHeader">Add assertion</h2>
         </EuiTitle>
       </EuiFlyoutHeader>
-      <EuiFlyoutBody aria-label="This element contains the controls you can use to create an assertion.">
+      <EuiFlyoutBody
+        aria-label="This element contains the controls you can use to create an assertion."
+        banner={
+          <EuiCallOut heading="h3" iconType="iInCircle" size="s">
+            <EuiFlexGroup alignItems="center" gutterSize="xs">
+              <EuiFlexItem grow={false}>
+                Create an assertion. Learn more in the
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButtonEmpty
+                  flush="left"
+                  iconSide="right"
+                  iconType="popout"
+                  onClick={createExternalLinkHandler(
+                    PLAYWRIGHT_ASSERTIONS_DOCS_LINK
+                  )}
+                  size="xs"
+                >
+                  Playwright docs
+                </EuiButtonEmpty>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </EuiCallOut>
+        }
+      >
         <EuiFlexGroup
           direction="column"
           style={{ marginTop: 4, marginBottom: 4 }}
