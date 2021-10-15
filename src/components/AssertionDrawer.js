@@ -111,9 +111,14 @@ export function AssertionDrawer({ width }) {
         aria-label="This element contains the controls you can use to create an assertion."
         banner={
           <EuiCallOut heading="h3" iconType="iInCircle" size="s">
-            <EuiFlexGroup alignItems="center" gutterSize="xs">
+            <EuiFlexGroup
+              alignItems="baseline"
+              direction="column"
+              gutterSize="xs"
+            >
               <EuiFlexItem grow={false}>
-                Create an assertion. Learn more in the
+                Add an assertion to check additional types of functionality in
+                your monitoring script.
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
                 <EuiButtonEmpty
@@ -125,7 +130,7 @@ export function AssertionDrawer({ width }) {
                   )}
                   size="xs"
                 >
-                  Playwright docs
+                  Read more about assertions
                 </EuiButtonEmpty>
               </EuiFlexItem>
             </EuiFlexGroup>
