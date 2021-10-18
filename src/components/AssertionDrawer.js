@@ -1,12 +1,15 @@
 import React, { useContext } from "react";
-
 import {
   EuiButton,
+  EuiButtonEmpty,
   EuiButtonIcon,
+  EuiCallOut,
   EuiFlexGroup,
   EuiFlexItem,
   EuiFieldText,
-  EuiPanel,
+  EuiFlyout,
+  EuiFlyoutBody,
+  EuiFlyoutHeader,
   EuiSelect,
   EuiText,
   EuiTitle,
@@ -14,12 +17,14 @@ import {
 
 import {
   COMMAND_SELECTOR_OPTIONS,
+  createExternalLinkHandler,
   performSelectorLookup,
 } from "../common/shared";
 import { StepsContext } from "../contexts/StepsContext";
 import { AssertionContext } from "../contexts/AssertionContext";
 
-const ADD_ASSERTION_PANEL_HEIGHT = 300;
+const PLAYWRIGHT_ASSERTIONS_DOCS_LINK =
+  "https://playwright.dev/docs/assertions/";
 
 function AssertionDrawerFormRow({ title, content }) {
   return (
@@ -88,99 +93,115 @@ export function AssertionDrawer({ width }) {
     onHideAssertionDrawer();
   }
 
+  if (!isVisible) return null;
+
   return (
-    <EuiPanel
-      hasBorder
-      borderRadius="none"
-      style={{
-        animationTimingFunction: "ease-in",
-        position: "fixed",
-        bottom: 0,
-        transform: `translateY(${
-          isVisible ? 0 : `${ADD_ASSERTION_PANEL_HEIGHT}px`
-        }`,
-        transition: "transform 450ms",
-        minWidth: width,
-      }}
+    <EuiFlyout
+      aria-labelledby="assertionDrawerHeader"
+      closeButtonAriaLabel="Close the create assertion dialogue."
+      ownFocus
+      onClose={onHideAssertionDrawer}
     >
-      <EuiFlexGroup justifyContent="spaceBetween">
-        <EuiFlexItem>
-          <EuiTitle size="xs">
-            <h3>Add assertion</h3>
-          </EuiTitle>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiButtonIcon
-            aria-label="Close the create assertion dialogue"
-            iconType="cross"
-            onClick={onHideAssertionDrawer}
-          />
-        </EuiFlexItem>
-      </EuiFlexGroup>
-      <EuiFlexGroup
-        direction="column"
-        style={{ marginTop: 4, marginBottom: 4 }}
+      <EuiFlyoutHeader hasBorder>
+        <EuiTitle size="m">
+          <h2 id="assertionDrawerHeader">Add assertion</h2>
+        </EuiTitle>
+      </EuiFlyoutHeader>
+      <EuiFlyoutBody
+        aria-label="This element contains the controls you can use to create an assertion."
+        banner={
+          <EuiCallOut heading="h3" iconType="iInCircle" size="s">
+            <EuiFlexGroup
+              alignItems="baseline"
+              direction="column"
+              gutterSize="xs"
+            >
+              <EuiFlexItem grow={false}>
+                Add an assertion to check additional types of functionality in
+                your monitoring script.
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButtonEmpty
+                  flush="left"
+                  iconSide="right"
+                  iconType="popout"
+                  onClick={createExternalLinkHandler(
+                    PLAYWRIGHT_ASSERTIONS_DOCS_LINK
+                  )}
+                  size="xs"
+                >
+                  Read more about assertions
+                </EuiButtonEmpty>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </EuiCallOut>
+        }
       >
-        <EuiFlexItem>
-          <AssertionDrawerFormRow
-            title={<EuiText textAlign="right">Selector</EuiText>}
-            content={
-              <EuiFieldText
-                prepend={
-                  <EuiButtonIcon
-                    aria-label="Choose the type of assertion command"
-                    iconType="search"
-                    onClick={performSelectorLookup(setSelector)}
-                  />
-                }
-                onChange={e => setSelector(e.target.value)}
-                value={selector}
-                placeholder="Selector"
-              />
-            }
-          />
-        </EuiFlexItem>
-        <EuiFlexItem>
-          <AssertionDrawerFormRow
-            title={<EuiText textAlign="right">Command</EuiText>}
-            content={
-              <EuiSelect
-                onChange={e => {
-                  setCommandValue(e.target.value);
-                }}
-                options={COMMAND_SELECTOR_OPTIONS}
-                value={commandValue}
-              />
-            }
-          />
-        </EuiFlexItem>
-        <EuiFlexItem>
-          <AssertionDrawerFormRow
-            title={<EuiText textAlign="right">Value</EuiText>}
-            content={
-              <EuiFieldText
-                disabled={commandValue != "textContent"}
-                onChange={e => {
-                  setValue(e.target.value);
-                }}
-                value={value}
-              />
-            }
-          />
-        </EuiFlexItem>
-      </EuiFlexGroup>
-      <EuiFlexGroup justifyContent="flexEnd">
-        <EuiFlexItem grow={false}>
-          <EuiButton
-            disabled={!selector}
-            aria-label="Create the assertion you have defined"
-            onClick={addAssertion}
-            size="s"
-          >
-            Add
-          </EuiButton>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    </EuiPanel>
+        <EuiFlexGroup
+          direction="column"
+          style={{ marginTop: 4, marginBottom: 4 }}
+        >
+          <EuiFlexItem>
+            <AssertionDrawerFormRow
+              title={<EuiText textAlign="right">Selector</EuiText>}
+              content={
+                <EuiFieldText
+                  prepend={
+                    <EuiButtonIcon
+                      aria-label="Choose the type of assertion command"
+                      iconType="search"
+                      onClick={performSelectorLookup(setSelector)}
+                    />
+                  }
+                  onChange={e => setSelector(e.target.value)}
+                  value={selector}
+                  placeholder="Selector"
+                />
+              }
+            />
+          </EuiFlexItem>
+          <EuiFlexItem>
+            <AssertionDrawerFormRow
+              title={<EuiText textAlign="right">Command</EuiText>}
+              content={
+                <EuiSelect
+                  onChange={e => {
+                    setCommandValue(e.target.value);
+                  }}
+                  options={COMMAND_SELECTOR_OPTIONS}
+                  value={commandValue}
+                />
+              }
+            />
+          </EuiFlexItem>
+          <EuiFlexItem>
+            <AssertionDrawerFormRow
+              title={<EuiText textAlign="right">Value</EuiText>}
+              content={
+                <EuiFieldText
+                  disabled={commandValue != "textContent"}
+                  onChange={e => {
+                    setValue(e.target.value);
+                  }}
+                  value={value}
+                />
+              }
+            />
+          </EuiFlexItem>
+        </EuiFlexGroup>
+        <EuiFlexGroup justifyContent="flexEnd">
+          <EuiFlexItem grow={false}>
+            <EuiButton
+              disabled={!selector}
+              aria-label="Create the assertion you have defined"
+              onClick={addAssertion}
+              size="s"
+            >
+              Add
+            </EuiButton>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </EuiFlyoutBody>
+    </EuiFlyout>
   );
 }
