@@ -72,7 +72,7 @@
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "^37.0.0",
-    "@elastic/synthetics": "=1.0.0-beta.15",
+    "@elastic/synthetics": "=1.0.0-beta.16",
     "dotenv": "^10.0.0",
     "electron-better-ipc": "^2.0.1",
     "electron-debug": "^3.2.0",
@@ -86,5 +86,9 @@
   },
   "browserslist": [
     "last 1 version"
-  ]
+  ],
+  "engines": {
+    "node": ">14.14.0",
+    "npm": "6"
+  }
 }

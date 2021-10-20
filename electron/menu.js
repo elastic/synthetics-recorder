@@ -15,6 +15,19 @@ function buildMenu(appName) {
       ],
     },
     {
+      label: "Edit",
+      submenu: [
+        { role: "undo" },
+        { role: "redo" },
+        { type: "separator" },
+        { role: "cut" },
+        { role: "copy" },
+        { role: "paste" },
+        { role: "delete" },
+        { role: "selectall" },
+      ],
+    },
+    {
       label: "View",
       submenu: [{ role: "reload" }, { role: "forcereload" }],
     },
