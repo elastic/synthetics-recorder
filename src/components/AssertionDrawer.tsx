@@ -22,11 +22,18 @@ import {
 } from "../common/shared";
 import { StepsContext } from "../contexts/StepsContext";
 import { AssertionContext } from "../contexts/AssertionContext";
+import type { ActionContext } from "../common/types";
 
 const PLAYWRIGHT_ASSERTIONS_DOCS_LINK =
   "https://playwright.dev/docs/assertions/";
 
-function AssertionDrawerFormRow({ title, content }) {
+function AssertionDrawerFormRow({
+  title,
+  content,
+}: {
+  title: JSX.Element;
+  content: JSX.Element;
+}) {
   return (
     <EuiFlexGroup alignItems="center" justifyContent="center">
       <EuiFlexItem style={{ maxWidth: 100 }}>{title}</EuiFlexItem>
@@ -35,7 +42,7 @@ function AssertionDrawerFormRow({ title, content }) {
   );
 }
 
-function getInsertionIndex(step, actionIndex) {
+function getInsertionIndex(step: ActionContext[], actionIndex: number) {
   let i = actionIndex + 1;
   for (; i < step.length; i++) {
     if (step[i].action.isAssert !== true) {
@@ -45,7 +52,7 @@ function getInsertionIndex(step, actionIndex) {
   return i;
 }
 
-export function AssertionDrawer({ width }) {
+export function AssertionDrawer() {
   const { actions, setActions } = useContext(StepsContext);
   const {
     actionIndex,
@@ -64,24 +71,25 @@ export function AssertionDrawer({ width }) {
 
   function addAssertion() {
     const newActions = actions.map((step, sidx) => {
-      if (stepIndex === sidx) {
-        const newAction = {
-          pageAlias: action.pageAlias,
-          isMainFrame: action.isMainFrame,
-          frameUrl: action.frameUrl,
+      if (stepIndex === sidx && action) {
+        const newAction: ActionContext = {
           action: {
             name: "assert",
             isAssert: true,
             selector: selector,
             command: commandValue,
-            value: commandValue == "textContent" ? value : null,
+            value: commandValue === "textContent" ? value : null,
             signals: [],
           },
+          frameUrl: action.frameUrl,
+          modified: false,
+          isMainFrame: action.isMainFrame,
+          pageAlias: action.pageAlias,
         };
-        if (mode == "create") {
-          step.splice(getInsertionIndex(step, actionIndex), 0, newAction);
-        } else if (mode == "edit") {
-          step.splice(actionIndex, 1, newAction);
+        if (mode === "create") {
+          step.splice(getInsertionIndex(step, actionIndex!), 0, newAction);
+        } else if (mode === "edit") {
+          step.splice(actionIndex!, 1, newAction);
         }
 
         return [...step];
@@ -183,7 +191,7 @@ export function AssertionDrawer({ width }) {
               title={<EuiText textAlign="right">Value</EuiText>}
               content={
                 <EuiFieldText
-                  disabled={commandValue != "textContent"}
+                  disabled={commandValue !== "textContent"}
                   onChange={e => {
                     setValue(e.target.value);
                   }}

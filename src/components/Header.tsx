@@ -9,12 +9,17 @@ import {
 } from "@elastic/eui";
 import { RecordingContext } from "../contexts/RecordingContext";
 
-export function Header(props) {
+interface IHeader {
+  onUrlChange: (url: string) => void;
+  url: string;
+}
+
+export function Header(props: IHeader) {
   const { isRecording, isPaused, toggleRecording, togglePause } =
     useContext(RecordingContext);
 
-  const onUrlFieldKeyUp = async e => {
-    if (e?.key == "Enter" && !isRecording) {
+  const onUrlFieldKeyUp = async (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !isRecording) {
       await toggleRecording();
     }
   };
@@ -58,7 +63,16 @@ export function Header(props) {
   );
 }
 
-function ControlButton(props) {
+interface IControlButton {
+  "aria-label": string;
+  color: "primary";
+  disabled?: boolean;
+  fill?: boolean;
+  iconType: string;
+  onClick: () => void;
+}
+
+const ControlButton: React.FC<IControlButton> = props => {
   const [showIconOnly, setShowIconOnly] = useState(false);
   const {
     euiTheme: {
@@ -76,7 +90,7 @@ function ControlButton(props) {
     }
     window.addEventListener("resize", evaluateSize);
     return () => window.removeEventListener("resize", evaluateSize);
-  }, [showIconOnly]);
+  }, [l, showIconOnly]);
 
   if (showIconOnly) {
     const { children, fill, ...rest } = props;
@@ -85,4 +99,4 @@ function ControlButton(props) {
     );
   }
   return <EuiButton {...props} />;
-}
+};

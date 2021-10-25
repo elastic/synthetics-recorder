@@ -2,13 +2,21 @@ import React from "react";
 import { EuiFlexGroup, EuiFlexItem, EuiText } from "@elastic/eui";
 import { StepTitleEditField } from "./StepTitleEditField";
 
+interface IStepAccordionTitle {
+  index: number;
+  isEditing: boolean;
+  onStepTitleChange: (updatedTitle: string) => void;
+  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
+  title: string;
+}
+
 export function StepAccordionTitle({
   index,
   isEditing,
   onStepTitleChange,
   setIsEditing,
   title,
-}) {
+}: IStepAccordionTitle) {
   const stepIndexString = `Step ${index + 1}`;
   if (isEditing) {
     return (

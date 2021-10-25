@@ -1,4 +1,6 @@
-export function generateIR(actionContexts) {
+import { Action, ActionContext } from "../common/types";
+
+export function generateIR(actionContexts: ActionContext[]) {
   const result = [];
   let steps = [];
   let previousContext = null;
@@ -29,7 +31,10 @@ export function generateIR(actionContexts) {
   return result;
 }
 
-function isNewStep(actionContext, previousContext) {
+function isNewStep(
+  actionContext: ActionContext,
+  previousContext: ActionContext | null
+) {
   const { action, frameUrl } = actionContext;
 
   if (action.name === "navigate") {
@@ -40,7 +45,7 @@ function isNewStep(actionContext, previousContext) {
   return false;
 }
 
-export function actionTitle(action) {
+export function actionTitle(action: Action) {
   switch (action.name) {
     case "openPage":
       return `Open new page`;
@@ -59,8 +64,8 @@ export function actionTitle(action) {
     case "fill":
       return `Fill ${action.selector}`;
     case "setInputFiles":
-      if (action.files.length === 0) return `Clear selected files`;
-      else return `Upload ${action.files.join(", ")}`;
+      if (action.files?.length === 0) return `Clear selected files`;
+      else return `Upload ${action.files?.join(", ")}`;
     case "navigate":
       return `Go to ${action.url}`;
     case "press":
@@ -68,7 +73,7 @@ export function actionTitle(action) {
         `Press ${action.key}` + (action.modifiers ? " with modifiers" : "")
       );
     case "select":
-      return `Select ${action.options.join(", ")}`;
+      return `Select ${action.options?.join(", ")}`;
     case "assert":
       return `Assert`;
   }
@@ -79,7 +84,10 @@ export function actionTitle(action) {
  * the actions generated/modified by the UI and merges them
  * to display the correct modified actions on the UI
  */
-export function generateMergedIR(prevAcs, currAcs) {
+export function generateMergedIR(
+  prevAcs: ActionContext[][],
+  currAcs: ActionContext[][]
+): ActionContext[][] {
   const prevActionContexts = prevAcs.flat();
   const currActionContexts = currAcs.flat();
   const prevLength = prevActionContexts.length;

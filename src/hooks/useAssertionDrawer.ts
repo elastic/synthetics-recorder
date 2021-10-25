@@ -1,17 +1,18 @@
 import { useCallback, useState } from "react";
 import { COMMAND_SELECTOR_OPTIONS } from "../common/shared";
+import type { ActionContext, AssertionDrawerMode } from "../common/types";
 
 export function useAssertionDrawer() {
   const [commandValue, setCommandValue] = useState(
     COMMAND_SELECTOR_OPTIONS[0].value
   );
+  const [action, setAction] = useState<ActionContext | null>(null);
+  const [actionIndex, setActionIndex] = useState<number | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [selector, setSelector] = useState("");
-  const [stepIndex, setStepIndex] = useState(null);
-  const [actionIndex, setActionIndex] = useState(null);
+  const [stepIndex, setStepIndex] = useState<number | null>(null);
+  const [mode, setMode] = useState<AssertionDrawerMode>("create");
   const [value, setValue] = useState("");
-  const [action, setAction] = useState(null);
-  const [mode, setMode] = useState("create");
 
   const onShowAssertionDrawer = useCallback(
     function ({ previousAction, actionIndex: aidx, stepIndex: sidx, mode: m }) {

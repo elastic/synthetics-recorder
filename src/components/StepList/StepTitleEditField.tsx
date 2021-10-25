@@ -1,9 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
 import { EuiFieldText } from "@elastic/eui";
 
-export function StepTitleEditField({ onStepTitleChange, setIsEditing, title }) {
-  const [tempText, setTempText] = useState(title);
-  const inputRef = useRef(null);
+interface IStepTitleEditField {
+  onStepTitleChange: (text: string) => void;
+  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
+  title: string;
+}
+
+export function StepTitleEditField({
+  onStepTitleChange,
+  setIsEditing,
+  title,
+}: IStepTitleEditField) {
+  const [tempText, setTempText] = useState<string>(title);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -20,9 +30,9 @@ export function StepTitleEditField({ onStepTitleChange, setIsEditing, title }) {
     <EuiFieldText
       aria-label="Sets the title for the current step."
       onKeyDown={e => {
-        if (e.key == "Enter") {
+        if (e.key === "Enter") {
           updateTitle();
-        } else if (e.key == "Escape") {
+        } else if (e.key === "Escape") {
           setIsEditing(false);
         }
       }}

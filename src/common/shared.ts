@@ -1,3 +1,6 @@
+import React from "react";
+import type { ActionContext, JourneyType } from "./types";
+
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export const COMMAND_SELECTOR_OPTIONS = [
@@ -15,7 +18,9 @@ export const COMMAND_SELECTOR_OPTIONS = [
   },
 ];
 
-export function performSelectorLookup(onSelectorChange) {
+export function performSelectorLookup(
+  onSelectorChange: React.Dispatch<React.SetStateAction<string>>
+) {
   return async () => {
     const selector = await ipc.callMain("set-mode", "inspecting");
     if (selector) {
@@ -25,14 +30,19 @@ export function performSelectorLookup(onSelectorChange) {
   };
 }
 
-export async function getCodeFromActions(actions, type) {
+export async function getCodeFromActions(
+  actions: ActionContext[][],
+  type: JourneyType
+) {
   return await ipc.callMain("actions-to-code", {
     actions: actions.flat(),
-    isSuite: type == "suite",
+    isSuite: type === "suite",
   });
 }
 
-export function createExternalLinkHandler(url) {
+export function createExternalLinkHandler(
+  url: string
+): React.MouseEventHandler<HTMLAnchorElement> {
   return async e => {
     e.preventDefault();
     await ipc.callMain("link-to-external", url);

@@ -8,6 +8,18 @@ import {
   useEuiTheme,
 } from "@elastic/eui";
 import { COMMAND_SELECTOR_OPTIONS } from "../common/shared";
+import type { Action, ActionContext } from "../common/types";
+import { AssertionDrawerHandler } from "../contexts/AssertionContext";
+
+interface IAssertion {
+  action: Action;
+  actionContext: ActionContext;
+  actionIndex: number;
+  assertionCount: number;
+  onDeleteAction: (stepIndex: number, actionIndex: number) => void;
+  onShowAssertionDrawer: AssertionDrawerHandler;
+  stepIndex: number;
+}
 
 export function Assertion({
   action,
@@ -17,7 +29,7 @@ export function Assertion({
   onDeleteAction,
   onShowAssertionDrawer,
   stepIndex,
-}) {
+}: IAssertion) {
   const {
     euiTheme: {
       border: {
@@ -28,7 +40,7 @@ export function Assertion({
   } = useEuiTheme();
 
   const commandOption = COMMAND_SELECTOR_OPTIONS.find(
-    ({ value: v }) => v == action.command
+    ({ value: v }) => v === action.command
   );
   const commandText = commandOption ? commandOption.text : action.command;
 

@@ -11,8 +11,13 @@ import {
 import { AssertionContext } from "../contexts/AssertionContext";
 import { StepsContext } from "../contexts/StepsContext";
 import { Assertion } from "./Assertion";
+import type { ActionContext } from "../common/types";
 
-function createUpdatedAction(field, value, context) {
+function createUpdatedAction(
+  field: string,
+  value: string,
+  context: ActionContext
+) {
   return {
     ...context,
     action: { ...context.action, [field]: value },
@@ -20,13 +25,24 @@ function createUpdatedAction(field, value, context) {
   };
 }
 
+interface IActionDetail {
+  actionContext: ActionContext;
+  actionIndex: number;
+  assertionCount: number;
+  onActionContextChange: (
+    actionContext: ActionContext,
+    actionIndex: number
+  ) => void;
+  stepIndex: number;
+}
+
 export function ActionDetail({
   actionContext,
+  actionIndex,
   assertionCount,
   onActionContextChange,
-  actionIndex,
   stepIndex,
-}) {
+}: IActionDetail) {
   const { onDeleteAction } = useContext(StepsContext);
   const { action } = actionContext;
   const [selector, setSelector] = useState(action.selector || "");
@@ -35,7 +51,7 @@ export function ActionDetail({
 
   const { onShowAssertionDrawer } = useContext(AssertionContext);
 
-  const onSelectorChange = value => {
+  const onSelectorChange = (value: string) => {
     if (!value) return;
     setSelector(value);
     onActionContextChange(
@@ -43,7 +59,7 @@ export function ActionDetail({
       actionIndex
     );
   };
-  const onTextChange = value => {
+  const onTextChange = (value: string) => {
     if (!value) return;
     setText(value);
     onActionContextChange(
@@ -51,7 +67,7 @@ export function ActionDetail({
       actionIndex
     );
   };
-  const onURLChange = value => {
+  const onURLChange = (value: string) => {
     if (!value) return;
     setUrl(value);
     onActionContextChange(
@@ -61,7 +77,7 @@ export function ActionDetail({
   };
   const title = action.name[0].toUpperCase() + action.name.slice(1);
 
-  if (action.text !== text) {
+  if (action.text !== text && typeof action.text !== "undefined") {
     setText(action.text);
   }
 
@@ -69,7 +85,7 @@ export function ActionDetail({
     <EuiPanel style={{ margin: "16px 0px" }} hasShadow={false} paddingSize="s">
       <EuiFlexGroup alignItems="baseline">
         <EuiFlexItem grow={false} style={{ width: 50 }}>
-          {title != "Assert" && <EuiText size="s">{title}</EuiText>}
+          {title !== "Assert" && <EuiText size="s">{title}</EuiText>}
         </EuiFlexItem>
         {url && (
           <EuiFlexItem>

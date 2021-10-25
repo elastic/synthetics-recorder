@@ -19,6 +19,7 @@ import { AssertionContext } from "./contexts/AssertionContext";
 import { StepsContext } from "./contexts/StepsContext";
 import { useAssertionDrawer } from "./hooks/useAssertionDrawer";
 import { createExternalLinkHandler } from "./common/shared";
+import type { ActionContext, JourneyType } from "./common/types";
 
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
@@ -28,21 +29,16 @@ const SYNTHETICS_DISCUSS_FORUM_URL =
   "https://discuss.elastic.co/tags/c/observability/uptime/75/synthetics";
 
 export default function App() {
-  const [url, setUrl] = useState("");
-  const [stepActions, setStepActions] = useState([]);
-  const [result, setResult] = useState("");
-  const [type, setJourneyType] = useState("inline");
+  const [url, setUrl] = useState<string>("");
+  const [stepActions, setStepActions] = useState<ActionContext[][]>([]);
+  const [type, setJourneyType] = useState<JourneyType>("inline");
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
 
   const assertionDrawerUtils = useAssertionDrawer();
 
-  const onUrlChange = value => {
+  const onUrlChange = (value: string) => {
     setUrl(value);
-  };
-
-  const onTestRun = result => {
-    setResult(result);
   };
 
   return (
@@ -50,10 +46,10 @@ export default function App() {
       <StepsContext.Provider
         value={{
           actions: stepActions,
-          onDeleteAction: (sIdx, aIdx) => {
-            setStepActions(
-              stepActions.map((s, idx) => {
-                if (idx != sIdx) return s;
+          onDeleteAction: (sIdx: number, aIdx: number) => {
+            setStepActions(value =>
+              value.map((s: ActionContext[], idx: number) => {
+                if (idx !== sIdx) return s;
                 s.splice(aIdx, 1);
                 return [...s];
               })
@@ -136,20 +132,15 @@ export default function App() {
                       <Header url={url} onUrlChange={onUrlChange} />
                     </EuiFlexItem>
                     <EuiFlexItem style={{ minWidth: MAIN_CONTROLS_MIN_WIDTH }}>
-                      <StepsMonitor url={url} type={type} />
+                      <StepsMonitor type={type} />
                     </EuiFlexItem>
                   </EuiFlexGroup>
                 </EuiFlexItem>
                 <EuiFlexItem style={{ minWidth: 300 }}>
-                  <TestResult
-                    onTestRun={onTestRun}
-                    result={result}
-                    setType={setJourneyType}
-                    type={type}
-                  />
+                  <TestResult setType={setJourneyType} type={type} />
                 </EuiFlexItem>
               </EuiFlexGroup>
-              <AssertionDrawer width={MAIN_CONTROLS_MIN_WIDTH} />
+              <AssertionDrawer />
             </EuiPageTemplate>
           </RecordingContext.Provider>
         </AssertionContext.Provider>
