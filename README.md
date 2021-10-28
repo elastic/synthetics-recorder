@@ -11,6 +11,9 @@ Download and unpack the appropriate binary for your platform, and install it.
 
 #### Usage
 
+This section describes the basic usage of the Script Recorder.
+It explains how to start a journey and record steps, as well as testing and outputting a completed script.
+
 After starting up the application, you may input a URL.
 This URL will be the starting point of the journey script Elastic Synthetics will create.
 
