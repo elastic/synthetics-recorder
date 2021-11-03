@@ -104,38 +104,40 @@ export function AssertionDrawer({ width }) {
     >
       <EuiFlyoutHeader hasBorder>
         <EuiTitle size="m">
-          <h2 id="assertionDrawerHeader">{mode === "create" ? "Add assertion" : "Edit assertion"}</h2>
+          <h2 id="assertionDrawerHeader">
+            {mode === "create" ? "Add assertion" : "Edit assertion"}
+          </h2>
         </EuiTitle>
       </EuiFlyoutHeader>
       <EuiFlyoutBody
         aria-label="This element contains the controls you can use to create an assertion."
         banner={
           mode === "create" && (
-          <EuiCallOut heading="h3" iconType="iInCircle" size="s">
-            <EuiFlexGroup
-              alignItems="baseline"
-              direction="column"
-              gutterSize="xs"
-            >
-              <EuiFlexItem grow={false}>
-                Add an assertion to check additional types of functionality in
-                your monitoring script.
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <EuiButtonEmpty
-                  flush="left"
-                  iconSide="right"
-                  iconType="popout"
-                  onClick={createExternalLinkHandler(
-                    PLAYWRIGHT_ASSERTIONS_DOCS_LINK
-                  )}
-                  size="xs"
-                >
-                  Read more about assertions
-                </EuiButtonEmpty>
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          </EuiCallOut>
+            <EuiCallOut heading="h3" iconType="iInCircle" size="s">
+              <EuiFlexGroup
+                alignItems="baseline"
+                direction="column"
+                gutterSize="xs"
+              >
+                <EuiFlexItem grow={false}>
+                  Add an assertion to check additional types of functionality in
+                  your monitoring script.
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiButtonEmpty
+                    flush="left"
+                    iconSide="right"
+                    iconType="popout"
+                    onClick={createExternalLinkHandler(
+                      PLAYWRIGHT_ASSERTIONS_DOCS_LINK
+                    )}
+                    size="xs"
+                  >
+                    Read more about assertions
+                  </EuiButtonEmpty>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            </EuiCallOut>
           )
         }
       >
@@ -199,7 +201,7 @@ export function AssertionDrawer({ width }) {
               onClick={addAssertion}
               size="s"
             >
-              Add
+              {mode === "create" ? "Add" : "Update"}
             </EuiButton>
           </EuiFlexItem>
         </EuiFlexGroup>
