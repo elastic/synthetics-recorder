@@ -104,7 +104,7 @@ export function AssertionDrawer({ width }) {
     >
       <EuiFlyoutHeader hasBorder>
         <EuiTitle size="m">
-          <h2 id="assertionDrawerHeader">Add assertion</h2>
+          <h2 id="assertionDrawerHeader">{mode === "create" ? "Add assertion" : "Edit assertion"}</h2>
         </EuiTitle>
       </EuiFlyoutHeader>
       <EuiFlyoutBody
