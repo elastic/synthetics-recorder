@@ -143,7 +143,7 @@ export default function App() {
                       <Header url={url} onUrlChange={onUrlChange} />
                     </EuiFlexItem>
                     <EuiFlexItem style={{ minWidth: MAIN_CONTROLS_MIN_WIDTH }}>
-                      <StepsMonitor type={type} />
+                      <StepsMonitor />
                     </EuiFlexItem>
                   </EuiFlexGroup>
                 </EuiFlexItem>
