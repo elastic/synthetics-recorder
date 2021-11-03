@@ -110,6 +110,7 @@ export function AssertionDrawer({ width }) {
       <EuiFlyoutBody
         aria-label="This element contains the controls you can use to create an assertion."
         banner={
+          mode === "create" && (
           <EuiCallOut heading="h3" iconType="iInCircle" size="s">
             <EuiFlexGroup
               alignItems="baseline"
@@ -135,6 +136,7 @@ export function AssertionDrawer({ width }) {
               </EuiFlexItem>
             </EuiFlexGroup>
           </EuiCallOut>
+          )
         }
       >
         <EuiFlexGroup
