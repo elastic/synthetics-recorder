@@ -47,7 +47,8 @@ function StepsFooter({
   };
 
   const onSave = async () => {
-    await ipc.callMain("save-file", code);
+    const codeFromActions = await getCodeFromActions(actions, "inline");
+    await ipc.callMain("save-file", codeFromActions);
   };
 
   return (
