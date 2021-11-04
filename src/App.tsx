@@ -29,7 +29,7 @@ const SYNTHETICS_DISCUSS_FORUM_URL =
   "https://discuss.elastic.co/tags/c/observability/uptime/75/synthetics";
 
 export default function App() {
-  const [url, setUrl] = useState<string>("");
+  const [url, setUrl] = useState("");
   const [stepActions, setStepActions] = useState<ActionContext[][]>([]);
   const [type, setJourneyType] = useState<JourneyType>("inline");
   const [isRecording, setIsRecording] = useState(false);
