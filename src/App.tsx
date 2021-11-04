@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   EuiBetaBadge,
   EuiFlexGroup,
@@ -20,6 +20,7 @@ import { StepsContext } from "./contexts/StepsContext";
 import { useAssertionDrawer } from "./hooks/useAssertionDrawer";
 import { createExternalLinkHandler } from "./common/shared";
 import type { ActionContext, JourneyType } from "./common/types";
+import { generateIR, generateMergedIR } from "./helpers/generator";
 
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
@@ -40,6 +41,15 @@ export default function App() {
   const onUrlChange = (value: string) => {
     setUrl(value);
   };
+
+  useEffect(() => {
+    ipc.answerMain("change", ({ actions }: { actions: ActionContext[] }) => {
+      setStepActions(prevActionContexts => {
+        const currActionsContexts = generateIR(actions);
+        return generateMergedIR(prevActionContexts, currActionsContexts);
+      });
+    });
+  }, [setStepActions]);
 
   return (
     <div style={{ padding: 4 }}>

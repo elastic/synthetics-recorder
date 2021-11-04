@@ -1,12 +1,9 @@
-import React, { useEffect, useContext } from "react";
+import { useContext } from "react";
 import { EuiCode, EuiEmptyPrompt, EuiSpacer, EuiTitle } from "@elastic/eui";
 
-import { generateIR, generateMergedIR } from "../helpers/generator";
 import { StepAccordions } from "./StepList/StepDetails";
 import { StepsContext } from "../contexts/StepsContext";
 import type { ActionContext } from "../common/types";
-
-const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export function Steps() {
   const { actions, setActions } = useContext(StepsContext);
@@ -23,15 +20,6 @@ export function Steps() {
     ];
     setActions(newActions);
   };
-
-  useEffect(() => {
-    ipc.answerMain("change", ({ actions }: { actions: ActionContext[] }) => {
-      setActions(prevActionContexts => {
-        const currActionsContexts = generateIR(actions);
-        return generateMergedIR(prevActionContexts, currActionsContexts);
-      });
-    });
-  }, [setActions]);
 
   if (actions.length === 0) {
     return (
