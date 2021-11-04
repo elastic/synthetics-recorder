@@ -8,19 +8,20 @@ export interface ActionContext {
 }
 
 export interface Action {
-  clickCount?: number;
   command: string;
+  isAssert: boolean;
+  name: string;
+  selector: string;
+  signals: Record<string, string>[];
+  value: string | null;
+  // optional
+  clickCount?: number;
   files?: string[];
   key?: string;
-  isAssert: boolean;
   modifiers?: string;
-  name: string;
   options?: string[];
-  selector: string;
-  signals: unknown[];
   text?: string;
   url?: string;
-  value: string | null;
 }
 
 export interface Result {
