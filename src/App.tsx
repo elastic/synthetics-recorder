@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   EuiBetaBadge,
   EuiFlexGroup,
@@ -113,6 +113,7 @@ export default function App() {
                 paddingSize: "s",
                 rightSideItems: [
                   <EuiLink
+                    key="link-to-synthetics-help"
                     href={SYNTHETICS_DISCUSS_FORUM_URL}
                     style={{ marginTop: 16 }}
                     onClick={createExternalLinkHandler(

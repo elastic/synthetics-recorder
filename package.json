@@ -13,7 +13,8 @@
     "build": "npm run clean && npm run react:build && npm run electron:copy",
     "pack": "npm run build && electron-builder",
     "release": "npm run build && electron-builder -mwl --publish=always",
-    "clean": "rm -rf ./build && rm -rf ./dist"
+    "clean": "rm -rf ./build && rm -rf ./dist",
+    "lint": "eslint ."
   },
   "author": {
     "name": "Elastic Synthetics Team",
@@ -67,6 +68,7 @@
     "concurrently": "^6.2.0",
     "electron": "^14.0.1",
     "electron-builder": "^22.11.7",
+    "eslint": "^7.32.0",
     "react-scripts": "^4.0.3",
     "wait-on": "^6.0.0"
   },
@@ -91,6 +93,25 @@
   "eslintConfig": {
     "extends": [
       "react-app"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "*.ts",
+          "*.tsx"
+        ],
+        "extends": [
+          "plugin:@typescript-eslint/recommended",
+          "plugin:@typescript-eslint/eslint-recommended"
+        ],
+        "plugins": [
+          "@typescript-eslint"
+        ],
+        "rules": {
+          "@typescript-eslint/explicit-module-boundary-types": 0,
+          "@typescript-eslint/no-non-null-assertion": 0
+        }
+      }
     ]
   },
   "engines": {

@@ -132,6 +132,8 @@ async function onTest(data) {
         result.journeys[journey.name].status = journey.status;
         break;
       }
+      default:
+        break;
     }
   };
 

@@ -13,7 +13,7 @@ const registry = new Registry(SYNTHETICS_BROWSER_REVISIONS);
 module.exports.getChromeVersion = function () {
   const { browsers } = SYNTHETICS_BROWSER_REVISIONS;
   const revision = browsers.find(
-    browser => browser.name == "chromium"
+    browser => browser.name === "chromium"
   ).revision;
   return `chromium-${revision}`;
 };
