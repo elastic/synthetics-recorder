@@ -22,7 +22,7 @@ interface IStepDetail {
 function StepDetail({ step, stepIndex, onStepDetailChange }: IStepDetail) {
   const assertionNumberTable = useMemo(() => {
     let assertionCount = 0;
-    return step.reduce<{ [key: number]: number }>(
+    return step.reduce<Record<number, number>>(
       (table, actionContext, index) => {
         if (actionContext.action.isAssert) {
           table[index] = ++assertionCount;
