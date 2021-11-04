@@ -6,13 +6,13 @@ export function useAssertionDrawer() {
   const [commandValue, setCommandValue] = useState(
     COMMAND_SELECTOR_OPTIONS[0].value
   );
-  const [action, setAction] = useState<ActionContext | null>(null);
-  const [actionIndex, setActionIndex] = useState<number | null>(null);
+  const [action, setAction] = useState<ActionContext | undefined>();
+  const [actionIndex, setActionIndex] = useState<number | undefined>();
   const [isVisible, setIsVisible] = useState(false);
-  const [selector, setSelector] = useState("");
-  const [stepIndex, setStepIndex] = useState<number | null>(null);
+  const [selector, setSelector] = useState<string | undefined>();
+  const [stepIndex, setStepIndex] = useState<number | undefined>();
   const [mode, setMode] = useState<AssertionDrawerMode>("create");
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState<string | undefined>();
 
   const onShowAssertionDrawer = useCallback(
     function ({ previousAction, actionIndex: aidx, stepIndex: sidx, mode: m }) {

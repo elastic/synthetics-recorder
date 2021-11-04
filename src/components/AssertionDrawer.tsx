@@ -76,9 +76,9 @@ export function AssertionDrawer() {
           action: {
             name: "assert",
             isAssert: true,
-            selector: selector,
+            selector: selector || "",
             command: commandValue,
-            value: commandValue === "textContent" ? value : null,
+            value: commandValue === "textContent" ? value ?? null : null,
             signals: [],
           },
           frameUrl: action.frameUrl,

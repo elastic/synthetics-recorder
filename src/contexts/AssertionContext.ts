@@ -1,4 +1,5 @@
 import React, { createContext } from "react";
+import { COMMAND_SELECTOR_OPTIONS } from "../common/shared";
 import type { ActionContext } from "../common/types";
 
 function notInitialized() {
@@ -19,35 +20,32 @@ export type AssertionDrawerHandler = (
 type Setter<T> = React.Dispatch<React.SetStateAction<T>>;
 
 interface IAssertionContext {
-  action: ActionContext | null;
-  actionIndex: number | null;
+  action?: ActionContext;
+  actionIndex?: number;
   commandValue: string;
   isVisible: boolean;
   mode: "create" | "edit";
   onHideAssertionDrawer: () => void;
   onShowAssertionDrawer: AssertionDrawerHandler;
-  selector: string;
-  setAction: Setter<ActionContext | null>;
-  setActionIndex: Setter<number | null>;
+  selector?: string;
+  setAction: Setter<ActionContext | undefined>;
+  setActionIndex: Setter<number | undefined>;
   setCommandValue: Setter<string>;
   setIsVisible: Setter<boolean>;
   setMode: Setter<"create" | "edit">;
-  setSelector: Setter<string>;
-  setStepIndex: Setter<number | null>;
-  setValue: Setter<string>;
-  stepIndex: number | null;
-  value: string;
+  setSelector: Setter<string | undefined>;
+  setStepIndex: Setter<number | undefined>;
+  setValue: Setter<string | undefined>;
+  stepIndex?: number;
+  value?: string;
 }
 
 export const AssertionContext = createContext<IAssertionContext>({
-  action: null,
-  actionIndex: null,
-  commandValue: "",
+  commandValue: COMMAND_SELECTOR_OPTIONS[0].value,
   isVisible: false,
   mode: "create",
   onHideAssertionDrawer: notInitialized,
   onShowAssertionDrawer: notInitialized,
-  selector: "",
   setAction: notInitialized,
   setActionIndex: notInitialized,
   setCommandValue: notInitialized,
@@ -56,6 +54,4 @@ export const AssertionContext = createContext<IAssertionContext>({
   setSelector: notInitialized,
   setStepIndex: notInitialized,
   setValue: notInitialized,
-  stepIndex: null,
-  value: "",
 });

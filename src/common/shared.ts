@@ -19,7 +19,7 @@ export const COMMAND_SELECTOR_OPTIONS = [
 ];
 
 export function performSelectorLookup(
-  onSelectorChange: React.Dispatch<React.SetStateAction<string>>
+  onSelectorChange: React.Dispatch<React.SetStateAction<string | undefined>>
 ) {
   return async () => {
     const selector = await ipc.callMain("set-mode", "inspecting");
