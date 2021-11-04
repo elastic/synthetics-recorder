@@ -23,14 +23,13 @@ const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 interface IStepsFooter {
   actions: ActionContext[][];
-  code: string;
   setCode: Setter<string>;
   setIsFlyoutVisible: Setter<boolean>;
   type: JourneyType;
 }
+
 function StepsFooter({
   actions,
-  code,
   setCode,
   setIsFlyoutVisible,
   type,
@@ -113,6 +112,51 @@ function RecordedCodeTabs({ selectedTab, setSelectedTab }: IRecordedCodeTabs) {
   );
 }
 
+interface ICodeFlyout {
+  actions: ActionContext[][];
+  code: string;
+  setCode: Setter<string>;
+  setIsFlyoutVisible: Setter<boolean>;
+  setType: Setter<JourneyType>;
+  type: JourneyType;
+}
+
+function CodeFlyout({
+  actions,
+  code,
+  setCode,
+  setIsFlyoutVisible,
+  setType,
+  type,
+}: ICodeFlyout) {
+  useEffect(() => {
+    (async function getCode() {
+      const codeFromActions = await getCodeFromActions(actions, type);
+      setCode(codeFromActions);
+    })();
+  }, [actions, setCode, type]);
+
+  return (
+    <EuiFlyout
+      ownFocus
+      onClose={() => setIsFlyoutVisible(false)}
+      aria-labelledby="flyoutTitle"
+    >
+      <EuiFlyoutHeader hasBorder>
+        <EuiTitle size="s">
+          <h2 id="flyoutTitle">Recorded Code</h2>
+        </EuiTitle>
+      </EuiFlyoutHeader>
+      <EuiFlyoutBody>
+        <RecordedCodeTabs selectedTab={type} setSelectedTab={setType} />
+        <EuiCodeBlock language="js" paddingSize="m" isCopyable>
+          {code}
+        </EuiCodeBlock>
+      </EuiFlyoutBody>
+    </EuiFlyout>
+  );
+}
+
 export function StepsMonitor() {
   const { actions } = useContext(StepsContext);
   const [isFlyoutVisible, setIsFlyoutVisible] = useState(false);
@@ -130,28 +174,18 @@ export function StepsMonitor() {
         <EuiSpacer />
 
         {isFlyoutVisible && (
-          <EuiFlyout
-            ownFocus
-            onClose={() => setIsFlyoutVisible(false)}
-            aria-labelledby="flyoutTitle"
-          >
-            <EuiFlyoutHeader hasBorder>
-              <EuiTitle size="s">
-                <h2 id="flyoutTitle">Recorded Code</h2>
-              </EuiTitle>
-            </EuiFlyoutHeader>
-            <EuiFlyoutBody>
-              <RecordedCodeTabs selectedTab={type} setSelectedTab={setType} />
-              <EuiCodeBlock language="js" paddingSize="m" isCopyable>
-                {code}
-              </EuiCodeBlock>
-            </EuiFlyoutBody>
-          </EuiFlyout>
+          <CodeFlyout
+            actions={actions}
+            code={code}
+            setCode={setCode}
+            setIsFlyoutVisible={setIsFlyoutVisible}
+            setType={setType}
+            type={type}
+          />
         )}
       </EuiPanel>
       <StepsFooter
         actions={actions}
-        code={code}
         setCode={setCode}
         setIsFlyoutVisible={setIsFlyoutVisible}
         type={type}
