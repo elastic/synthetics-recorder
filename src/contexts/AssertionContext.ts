@@ -1,6 +1,6 @@
-import React, { createContext } from "react";
+import { createContext } from "react";
 import { COMMAND_SELECTOR_OPTIONS } from "../common/shared";
-import type { ActionContext } from "../common/types";
+import type { ActionContext, Setter } from "../common/types";
 
 function notInitialized() {
   throw Error("Assertion context not initialized");
@@ -16,8 +16,6 @@ interface ShowAssertionDrawerHandlerParams {
 export type AssertionDrawerHandler = (
   params: ShowAssertionDrawerHandlerParams
 ) => void;
-
-type Setter<T> = React.Dispatch<React.SetStateAction<T>>;
 
 interface IAssertionContext {
   action?: ActionContext;

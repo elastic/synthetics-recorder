@@ -24,6 +24,7 @@ import type {
   JourneyType,
   Result,
   ResultCategory,
+  Setter,
 } from "../common/types";
 
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
@@ -168,7 +169,7 @@ function TestButton({
 }
 
 interface ITestResult {
-  setType: React.Dispatch<React.SetStateAction<JourneyType>>;
+  setType: Setter<JourneyType>;
   type: JourneyType;
 }
 

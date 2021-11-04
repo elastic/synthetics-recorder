@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import { useState, useContext } from "react";
 import {
   EuiFlexItem,
   EuiSpacer,
@@ -14,13 +14,13 @@ import {
 import { getCodeFromActions } from "../common/shared";
 import { Steps } from "./Steps";
 import { StepsContext } from "../contexts/StepsContext";
-import type { JourneyType } from "../common/types";
+import type { JourneyType, Setter } from "../common/types";
 
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 interface IStepsFooter {
-  setCode: React.Dispatch<React.SetStateAction<string>>;
-  setIsFlyoutVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  setCode: Setter<string>;
+  setIsFlyoutVisible: Setter<boolean>;
   type: JourneyType;
 }
 

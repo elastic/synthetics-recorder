@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { EuiFieldText } from "@elastic/eui";
+import { Setter } from "../../common/types";
 
 interface IStepTitleEditField {
   onStepTitleChange: (text: string) => void;
-  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsEditing: Setter<boolean>;
   title: string;
 }
 

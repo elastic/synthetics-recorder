@@ -52,3 +52,5 @@ export interface JourneyStep {
 export type JourneyType = "suite" | "inline";
 
 export type AssertionDrawerMode = "create" | "edit";
+
+export type Setter<T> = React.Dispatch<React.SetStateAction<T>>;

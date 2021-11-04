@@ -1,5 +1,5 @@
 import React from "react";
-import type { ActionContext, JourneyType } from "./types";
+import type { ActionContext, JourneyType, Setter } from "./types";
 
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
@@ -19,7 +19,7 @@ export const COMMAND_SELECTOR_OPTIONS = [
 ];
 
 export function performSelectorLookup(
-  onSelectorChange: React.Dispatch<React.SetStateAction<string | undefined>>
+  onSelectorChange: Setter<string | undefined>
 ) {
   return async () => {
     const selector = await ipc.callMain("set-mode", "inspecting");
