@@ -76,6 +76,7 @@ export default function App() {
                   setIsRecording(true);
                   await ipc.callMain("record-journey", { url });
                   setIsRecording(false);
+                  setIsPaused(false);
                 }
               },
               isPaused,
