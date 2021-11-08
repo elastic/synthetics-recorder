@@ -7,7 +7,6 @@ import {
   EuiFlexItem,
   EuiIcon,
   EuiPanel,
-  EuiSelect,
   EuiSpacer,
   EuiText,
   EuiTitle,
@@ -173,11 +172,6 @@ interface ITestResult {
   type: JourneyType;
 }
 
-const JOURNEY_TYPE_OPTIONS = [
-  { value: "inline", text: "Inline" },
-  { value: "suite", text: "Suite" },
-];
-
 export function TestResult(props: ITestResult) {
   const { actions } = useContext(StepsContext);
   const [result, setResult] = useState<Result | undefined>(undefined);
@@ -269,25 +263,6 @@ export function TestResult(props: ITestResult) {
           <EuiTitle size="xs">
             <h3>Test your script</h3>
           </EuiTitle>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiSelect
-            aria-label="Use this input to change the type of journey between inline and suite."
-            id="selectJourneyType"
-            onChange={e => {
-              if (
-                JOURNEY_TYPE_OPTIONS.map(({ value }) => value).some(
-                  v => v === e.target.value
-                )
-              ) {
-                // @ts-expect-error the condition above verifies this value is
-                // one of the expected values
-                props.setType(e.target.value);
-              }
-            }}
-            options={JOURNEY_TYPE_OPTIONS}
-            value={props.type}
-          />
         </EuiFlexItem>
         <EuiFlexItem />
         <EuiFlexItem grow={false}>
