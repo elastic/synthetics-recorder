@@ -5,3 +5,4 @@ journeys/*.js
 
 local-browsers
 .synthetics
+react-app-env.d.ts
