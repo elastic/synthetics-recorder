@@ -17,8 +17,9 @@
     "lint": "eslint . --format eslint-formatter-multiple",
     "format": "prettier --write .",
     "lint:fix": "npm run lint -- --fix",
-    "test": "jest",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test:unit": "jest --config ./jest.unit.config.js ./src",
+    "test:e2e": "jest --config ./jest.e2e.config.js ./e2e"
   },
   "author": {
     "name": "Elastic Synthetics Team",
