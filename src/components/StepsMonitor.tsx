@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import { useState, useContext } from "react";
 import {
   EuiFlexItem,
   EuiSpacer,
@@ -14,10 +14,18 @@ import {
 import { getCodeFromActions } from "../common/shared";
 import { Steps } from "./Steps";
 import { StepsContext } from "../contexts/StepsContext";
+import type { JourneyType, Setter } from "../common/types";
 
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
-function StepsFooter({ actions, setCode, setIsFlyoutVisible, type }) {
+interface IStepsFooter {
+  setCode: Setter<string>;
+  setIsFlyoutVisible: Setter<boolean>;
+  type: JourneyType;
+}
+
+function StepsFooter({ setCode, setIsFlyoutVisible, type }: IStepsFooter) {
+  const { actions } = useContext(StepsContext);
   const showFlyout = async () => {
     const code = await getCodeFromActions(actions, type);
     setCode(code);
@@ -50,8 +58,11 @@ function StepsFooter({ actions, setCode, setIsFlyoutVisible, type }) {
   );
 }
 
-export function StepsMonitor(props) {
-  const { actions } = useContext(StepsContext);
+interface IStepsMonitor {
+  type: JourneyType;
+}
+
+export function StepsMonitor({ type }: IStepsMonitor) {
   const [isFlyoutVisible, setIsFlyoutVisible] = useState(false);
   const [code, setCode] = useState("");
 
@@ -85,10 +96,9 @@ export function StepsMonitor(props) {
         )}
       </EuiPanel>
       <StepsFooter
-        actions={actions}
         setCode={setCode}
         setIsFlyoutVisible={setIsFlyoutVisible}
-        type={props.type}
+        type={type}
       />
     </>
   );

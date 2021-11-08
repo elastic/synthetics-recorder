@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   EuiBetaBadge,
   EuiFlexGroup,
@@ -19,6 +19,8 @@ import { AssertionContext } from "./contexts/AssertionContext";
 import { StepsContext } from "./contexts/StepsContext";
 import { useAssertionDrawer } from "./hooks/useAssertionDrawer";
 import { createExternalLinkHandler } from "./common/shared";
+import type { ActionContext, JourneyType } from "./common/types";
+import { generateIR, generateMergedIR } from "./helpers/generator";
 
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
@@ -29,31 +31,35 @@ const SYNTHETICS_DISCUSS_FORUM_URL =
 
 export default function App() {
   const [url, setUrl] = useState("");
-  const [stepActions, setStepActions] = useState([]);
-  const [result, setResult] = useState("");
-  const [type, setJourneyType] = useState("inline");
+  const [stepActions, setStepActions] = useState<ActionContext[][]>([]);
+  const [type, setJourneyType] = useState<JourneyType>("inline");
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
 
   const assertionDrawerUtils = useAssertionDrawer();
 
-  const onUrlChange = value => {
+  const onUrlChange = (value: string) => {
     setUrl(value);
   };
 
-  const onTestRun = result => {
-    setResult(result);
-  };
+  useEffect(() => {
+    ipc.answerMain("change", ({ actions }: { actions: ActionContext[] }) => {
+      setStepActions(prevActionContexts => {
+        const currActionsContexts = generateIR(actions);
+        return generateMergedIR(prevActionContexts, currActionsContexts);
+      });
+    });
+  }, [setStepActions]);
 
   return (
     <div style={{ padding: 4 }}>
       <StepsContext.Provider
         value={{
           actions: stepActions,
-          onDeleteAction: (sIdx, aIdx) => {
-            setStepActions(
-              stepActions.map((s, idx) => {
-                if (idx != sIdx) return s;
+          onDeleteAction: (sIdx: number, aIdx: number) => {
+            setStepActions(value =>
+              value.map((s: ActionContext[], idx: number) => {
+                if (idx !== sIdx) return s;
                 s.splice(aIdx, 1);
                 return [...s];
               })
@@ -117,6 +123,7 @@ export default function App() {
                 paddingSize: "s",
                 rightSideItems: [
                   <EuiLink
+                    key="link-to-synthetics-help"
                     href={SYNTHETICS_DISCUSS_FORUM_URL}
                     style={{ marginTop: 16 }}
                     onClick={createExternalLinkHandler(
@@ -136,20 +143,15 @@ export default function App() {
                       <Header url={url} onUrlChange={onUrlChange} />
                     </EuiFlexItem>
                     <EuiFlexItem style={{ minWidth: MAIN_CONTROLS_MIN_WIDTH }}>
-                      <StepsMonitor url={url} type={type} />
+                      <StepsMonitor type={type} />
                     </EuiFlexItem>
                   </EuiFlexGroup>
                 </EuiFlexItem>
                 <EuiFlexItem style={{ minWidth: 300 }}>
-                  <TestResult
-                    onTestRun={onTestRun}
-                    result={result}
-                    setType={setJourneyType}
-                    type={type}
-                  />
+                  <TestResult setType={setJourneyType} type={type} />
                 </EuiFlexItem>
               </EuiFlexGroup>
-              <AssertionDrawer width={MAIN_CONTROLS_MIN_WIDTH} />
+              <AssertionDrawer />
             </EuiPageTemplate>
           </RecordingContext.Provider>
         </AssertionContext.Provider>

@@ -1,6 +1,14 @@
-import React from "react";
 import { EuiFlexGroup, EuiFlexItem, EuiText } from "@elastic/eui";
 import { StepTitleEditField } from "./StepTitleEditField";
+import { Setter } from "../../common/types";
+
+interface IStepAccordionTitle {
+  index: number;
+  isEditing: boolean;
+  onStepTitleChange: (updatedTitle: string) => void;
+  setIsEditing: Setter<boolean>;
+  title: string;
+}
 
 export function StepAccordionTitle({
   index,
@@ -8,7 +16,7 @@ export function StepAccordionTitle({
   onStepTitleChange,
   setIsEditing,
   title,
-}) {
+}: IStepAccordionTitle) {
   const stepIndexString = `Step ${index + 1}`;
   if (isEditing) {
     return (
