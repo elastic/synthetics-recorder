@@ -14,7 +14,8 @@
     "pack": "npm run build && electron-builder",
     "release": "npm run build && electron-builder -mwl --publish=always",
     "clean": "rm -rf ./build && rm -rf ./dist",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "jest"
   },
   "author": {
     "name": "Elastic Synthetics Team",
@@ -64,11 +65,16 @@
     }
   },
   "devDependencies": {
+    "@babel/preset-typescript": "^7.16.0",
+    "@testing-library/react": "^12.1.2",
+    "@types/jest": "^27.0.2",
     "@types/react-dom": "^17.0.10",
+    "babel-jest": "^27.3.1",
     "concurrently": "^6.2.0",
     "electron": "^14.0.1",
     "electron-builder": "^22.11.7",
     "eslint": "^7.32.0",
+    "jest": "^26.6.0",
     "react-scripts": "^4.0.3",
     "wait-on": "^6.0.0"
   },
@@ -92,17 +98,19 @@
   ],
   "eslintConfig": {
     "extends": [
-      "react-app"
+      "react-app",
+      "plugin:react/recommended"
     ],
+    "ignorePatterns": "build",
     "overrides": [
       {
-        "files": [
-          "*.ts",
-          "*.tsx"
-        ],
         "extends": [
           "plugin:@typescript-eslint/recommended",
           "plugin:@typescript-eslint/eslint-recommended"
+        ],
+        "files": [
+          "*.ts",
+          "*.tsx"
         ],
         "plugins": [
           "@typescript-eslint"

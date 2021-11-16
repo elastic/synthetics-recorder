@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useRef, useState } from "react";
 import { EuiFieldText } from "@elastic/eui";
 import { Setter } from "../../common/types";
