@@ -6,4 +6,6 @@ journeys/*.js
 local-browsers
 .synthetics
 react-app-env.d.ts
+
 eslint-junit.xml
+.idea
