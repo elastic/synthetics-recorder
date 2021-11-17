@@ -2,9 +2,7 @@ import { Action, ActionContext } from "../common/types";
 
 export function generateIR(actionContexts: ActionContext[]) {
   const result = [];
-  let steps = [];
-  let previousContext = null;
-  let newStep = false;
+  const steps = [];
   for (const actionContext of actionContexts) {
     const { action, pageAlias, title } = actionContext;
     if (action.name === "openPage") {
@@ -13,36 +11,16 @@ export function generateIR(actionContexts: ActionContext[]) {
       continue;
     }
 
-    newStep = isNewStep(actionContext, previousContext);
-    if (newStep && steps.length > 0) {
-      result.push(steps);
-      steps = [];
-    }
     // Add title to all actionContexts
     const enhancedContext = title
       ? actionContext
       : { ...actionContext, title: actionTitle(action) };
     steps.push(enhancedContext);
-    previousContext = actionContext;
   }
   if (steps.length > 0) {
     result.push(steps);
   }
   return result;
-}
-
-function isNewStep(
-  actionContext: ActionContext,
-  previousContext: ActionContext | null
-) {
-  const { action, frameUrl } = actionContext;
-
-  if (action.name === "navigate") {
-    return true;
-  } else if (action.name === "click") {
-    return previousContext?.frameUrl === frameUrl && action.signals.length > 0;
-  }
-  return false;
 }
 
 export function actionTitle(action: Action) {
@@ -125,5 +103,6 @@ export function generateMergedIR(
       : currActionContexts[j];
     item && mergedActions.push(item);
   }
+
   return generateIR(mergedActions);
 }
