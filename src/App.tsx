@@ -26,8 +26,7 @@ const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 const MAIN_CONTROLS_MIN_WIDTH = 600;
 
-const SYNTHETICS_DISCUSS_FORUM_URL =
-  "https://discuss.elastic.co/tags/c/observability/uptime/75/synthetics";
+const SYNTHETICS_DISCUSS_FORUM_URL = "https://forms.gle/PzVtYoExfqQ9UMkY6";
 
 export default function App() {
   const [url, setUrl] = useState("");
