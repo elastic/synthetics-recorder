@@ -1,6 +1,7 @@
-const { generateIR } = require("./generator");
+import type { ActionContext } from "../common/types";
+import { generateIR } from "./generator";
 
-const actions = [
+const actions: ActionContext[] = [
   {
     pageAlias: "page",
     isMainFrame: true,
@@ -124,4 +125,12 @@ const actions = [
   },
 ];
 
-console.log(generateIR(actions));
+describe("generator", () => {
+  describe("generateIR", () => {
+    it("creates single step for all non-open/close actions", () => {
+      const ir = generateIR(actions);
+      expect(ir).toHaveLength(1);
+      expect(ir[0]).toHaveLength(6);
+    });
+  });
+});
