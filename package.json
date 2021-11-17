@@ -15,7 +15,8 @@
     "release": "npm run build && electron-builder -mwl --publish=always",
     "clean": "rm -rf ./build && rm -rf ./dist",
     "lint": "eslint .",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "author": {
     "name": "Elastic Synthetics Team",
