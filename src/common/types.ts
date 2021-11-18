@@ -2,26 +2,29 @@ export interface ActionContext {
   action: Action;
   frameUrl: string;
   isMainFrame: boolean;
-  modified: boolean;
   pageAlias: string;
+  // optional
+  committed?: boolean;
+  modified?: boolean;
   title?: string;
 }
 
 export interface Action {
-  command: string;
-  isAssert: boolean;
   name: string;
-  selector: string;
-  signals: Record<string, string>[];
-  value: string | null;
+  signals: Record<string, string | boolean>[];
   // optional
+  button?: string;
+  command?: string;
   clickCount?: number;
   files?: string[];
+  isAssert?: boolean;
   key?: string;
-  modifiers?: string;
+  modifiers?: number;
   options?: string[];
+  selector?: string;
   text?: string;
   url?: string;
+  value?: string | null;
 }
 
 export interface Result {

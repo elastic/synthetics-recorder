@@ -1,3 +1,4 @@
+import React from "react";
 import { EuiFlexGroup, EuiFlexItem, EuiText } from "@elastic/eui";
 import { StepTitleEditField } from "./StepTitleEditField";
 import { Setter } from "../../common/types";

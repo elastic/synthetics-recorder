@@ -1,3 +1,4 @@
+import React from "react";
 import { useContext } from "react";
 import { EuiCode, EuiEmptyPrompt, EuiSpacer, EuiTitle } from "@elastic/eui";
 

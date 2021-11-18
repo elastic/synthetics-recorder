@@ -1,6 +1,7 @@
-const { generateIR } = require("./generator");
+import { ActionContext } from "../common/types";
+import { generateIR } from "./generator";
 
-const actions = [
+const actions: ActionContext[] = [
   {
     pageAlias: "page",
     isMainFrame: true,
@@ -124,4 +125,14 @@ const actions = [
   },
 ];
 
-console.log(generateIR(actions));
+describe("generator", () => {
+  describe("generateIR", () => {
+    it("creates a multi-step IR", () => {
+      const ir = generateIR(actions);
+
+      expect(ir).toHaveLength(2);
+      expect(ir[0]).toHaveLength(3);
+      expect(ir[1]).toHaveLength(3);
+    });
+  });
+});
