@@ -7,7 +7,7 @@
 We publish releases of the Script Recorder on its [GitHub repo](https://github.com/elastic/synthetics-recorder/releases).
 You can find binaries there for a variety of platforms.
 
-**Note that the Script Recorder is just in a Tech Preview phase at the moment, and not supported.**
+**Note that the Script Recorder is in a Tech Preview phase at the moment, and not supported.**
 
 Download and unpack the appropriate binary for your platform, and install it.
 
