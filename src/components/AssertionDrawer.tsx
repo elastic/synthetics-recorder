@@ -19,6 +19,7 @@ import {
   COMMAND_SELECTOR_OPTIONS,
   createExternalLinkHandler,
   performSelectorLookup,
+  updateAction,
 } from "../common/shared";
 import { StepsContext } from "../contexts/StepsContext";
 import { AssertionContext } from "../contexts/AssertionContext";
@@ -52,6 +53,8 @@ function getInsertionIndex(step: ActionContext[], actionIndex: number) {
   return i;
 }
 
+const textFieldAssertionValues = ["innerText", "textContent"];
+
 export function AssertionDrawer() {
   const { actions, setActions } = useContext(StepsContext);
   const {
@@ -68,7 +71,6 @@ export function AssertionDrawer() {
     stepIndex,
     mode,
   } = useContext(AssertionContext);
-
   function addAssertion() {
     const newActions = actions.map((step, sidx) => {
       if (stepIndex === sidx && action) {
@@ -98,7 +100,29 @@ export function AssertionDrawer() {
     });
 
     setActions(newActions);
-    onHideAssertionDrawer();
+  }
+
+  function updateAssertion() {
+    if (typeof stepIndex === "undefined" || typeof actionIndex === "undefined")
+      return;
+    setActions(oldActions =>
+      updateAction(oldActions, value || "", stepIndex, actionIndex)
+    );
+  }
+
+  function getCloseHandler() {
+    let func: () => void | undefined;
+    if (mode === "create") {
+      func = addAssertion;
+    } else if (mode === "edit") {
+      func = updateAssertion;
+    }
+    return () => {
+      if (func) {
+        func();
+      }
+      onHideAssertionDrawer();
+    };
   }
 
   if (!isVisible) return null;
@@ -191,7 +215,9 @@ export function AssertionDrawer() {
               title={<EuiText textAlign="right">Value</EuiText>}
               content={
                 <EuiFieldText
-                  disabled={commandValue !== "textContent"}
+                  disabled={
+                    textFieldAssertionValues.indexOf(commandValue) === -1
+                  }
                   onChange={e => {
                     setValue(e.target.value);
                   }}
@@ -206,7 +232,7 @@ export function AssertionDrawer() {
             <EuiButton
               disabled={!selector}
               aria-label="Create the assertion you have defined"
-              onClick={addAssertion}
+              onClick={getCloseHandler()}
               size="s"
             >
               {mode === "create" ? "Add" : "Update"}
