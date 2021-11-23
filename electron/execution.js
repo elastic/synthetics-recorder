@@ -82,10 +82,11 @@ async function recordJourneys(data, browserWindow) {
     });
     await openPage(context, data.url);
 
-    async function closeBrowser() {
+    const closeBrowser = async () => {
       browserContext = null;
       await browser.close().catch({});
     }
+
     ipc.on("stop", closeBrowser);
     await once(browser, "disconnected");
   } catch (e) {

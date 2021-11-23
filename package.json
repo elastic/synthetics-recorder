@@ -96,12 +96,24 @@
     "last 1 version"
   ],
   "eslintConfig": {
+    "env": {
+      "es2021": true
+    },
     "extends": [
       "react-app",
       "plugin:react/recommended"
     ],
     "ignorePatterns": "build",
     "overrides": [
+      {
+        "extends": [
+          "eslint:recommended"
+        ],
+        "files": [
+          "*.js",
+          "*.jsx"
+        ]
+      },
       {
         "extends": [
           "plugin:@typescript-eslint/recommended",
