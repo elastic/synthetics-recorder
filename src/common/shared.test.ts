@@ -61,7 +61,7 @@ describe("shared", () => {
       expect(JSON.stringify(updatedSteps[0][1])).toEqual(
         JSON.stringify(steps[0][1])
       );
-      expect(updatedSteps[0][2].action.value).toEqual("nextValue");
+      expect(JSON.stringify(updatedSteps[0][2])).toEqual(JSON.stringify({...steps[0][2], action: { ...steps[0][2].action, value: 'nextValue' }}));
     });
   });
 });
