@@ -106,8 +106,7 @@
       "plugin:react/recommended"
     ],
     "ignorePatterns": [
-      "build",
-      "local-browsers"
+      "build"
     ],
     "overrides": [
       {
