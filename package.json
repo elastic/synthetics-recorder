@@ -105,7 +105,10 @@
       "react-app",
       "plugin:react/recommended"
     ],
-    "ignorePatterns": ["build", "local-browsers"],
+    "ignorePatterns": [
+      "build",
+      "local-browsers"
+    ],
     "overrides": [
       {
         "extends": [
@@ -142,7 +145,7 @@
     "suiteName": "eslint tests",
     "output": "./eslint-junit.xml",
     "classNameTemplate": "{ruleId}",
-    "titleTemplate": "{filePath}:{line}:{column} - {ruleId}"
+    "titleTemplate": "{name}:{line}:{column} - {ruleId}"
   },
   "engines": {
     "node": ">14.14.0",
