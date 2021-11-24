@@ -34,10 +34,18 @@ pipeline {
     }
     stage('Install'){
       steps {
+<<<<<<< HEAD
         withGithubNotify(context: "Install") {
           withNodeJSEnv() {
             dir("${BASE_DIR}") {
               sh(label: 'npm install', script: 'npm install')
+=======
+        withGithubNotify(context: "Lint") {
+          withNodeJSEnv() {
+            dir("${BASE_DIR}"){
+              sh(label: 'npm install', script: 'npm install')
+              sh(label: 'npm lint', script: 'npm run lint')
+>>>>>>> 337479f (Use withNodeJSEnv to configure the nvm and nodejs)
             }
           }
         }
@@ -45,10 +53,17 @@ pipeline {
     }
     stage('Lint'){
       steps {
+<<<<<<< HEAD
         withGithubNotify(context: "Lint") {
           withNodeJSEnv() {
             dir("${BASE_DIR}"){
               sh(label: 'npm lint', script: 'npm run lint')
+=======
+        withGithubNotify(context: "Build") {
+          withNodeJSEnv() {
+            dir("${BASE_DIR}"){
+              sh(label: 'npm build', script: 'npm run build')
+>>>>>>> 337479f (Use withNodeJSEnv to configure the nvm and nodejs)
             }
           }
         }
@@ -61,6 +76,7 @@ pipeline {
             dir("${BASE_DIR}"){
               sh(label: 'npm test', script: 'npm test')
             }
+<<<<<<< HEAD
           }
         }
       }
@@ -72,6 +88,8 @@ pipeline {
             dir("${BASE_DIR}"){
               sh(label: 'npm build', script: 'npm run build')
             }
+=======
+>>>>>>> 337479f (Use withNodeJSEnv to configure the nvm and nodejs)
           }
         }
       }
