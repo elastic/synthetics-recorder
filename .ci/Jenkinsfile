@@ -53,11 +53,6 @@ pipeline {
           }
         }
       }
-      post {
-        always {
-          junit(allowEmptyResults: true, keepLongStdio: true, testResults: "${BASE_DIR}/eslint-junit.xml")
-        }
-      }
     }
     stage('Test'){
       steps {
