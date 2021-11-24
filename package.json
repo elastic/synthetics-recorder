@@ -103,7 +103,7 @@
       "react-app",
       "plugin:react/recommended"
     ],
-    "ignorePatterns": "build",
+    "ignorePatterns": ["build", "local-browsers"],
     "overrides": [
       {
         "extends": [
