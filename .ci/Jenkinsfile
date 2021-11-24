@@ -42,11 +42,6 @@ pipeline {
           }
         }
       }
-      post {
-        always {
-          junit(allowEmptyResults: true, keepLongStdio: true, testResults: "${BASE_DIR}/eslint-junit.xml")
-        }
-      }
     }
     stage('Lint'){
       steps {
@@ -56,6 +51,11 @@ pipeline {
               sh(label: 'npm lint-ci', script: 'npm run lint-ci')
             }
           }
+        }
+      }
+      post {
+        always {
+          junit(allowEmptyResults: true, keepLongStdio: true, testResults: "${BASE_DIR}/eslint-junit.xml")
         }
       }
     }
