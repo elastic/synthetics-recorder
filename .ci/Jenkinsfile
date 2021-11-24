@@ -32,24 +32,23 @@ pipeline {
         stash allowEmpty: true, name: 'source', useDefaultExcludes: false
       }
     }
-    stage('Lint'){
+    stage('Install'){
       steps {
-        withGithubNotify(context: "Lint") {
+        withGithubNotify(context: "Install") {
           withNodeJSEnv() {
-            dir("${BASE_DIR}"){
+            dir("${BASE_DIR}") {
               sh(label: 'npm install', script: 'npm install')
-              sh(label: 'npm lint', script: 'npm run lint')
             }
           }
         }
       }
     }
-    stage('Build'){
+    stage('Lint'){
       steps {
-        withGithubNotify(context: "Build") {
+        withGithubNotify(context: "Lint") {
           withNodeJSEnv() {
             dir("${BASE_DIR}"){
-              sh(label: 'npm build', script: 'npm run build')
+              sh(label: 'npm lint', script: 'npm run lint')
             }
           }
         }
@@ -61,6 +60,17 @@ pipeline {
           withNodeJSEnv() {
             dir("${BASE_DIR}"){
               sh(label: 'npm test', script: 'npm test')
+            }
+          }
+        }
+      }
+    }
+    stage('Build'){
+      steps {
+        withGithubNotify(context: "Build") {
+          withNodeJSEnv() {
+            dir("${BASE_DIR}"){
+              sh(label: 'npm build', script: 'npm run build')
             }
           }
         }
