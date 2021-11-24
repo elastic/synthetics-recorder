@@ -142,7 +142,7 @@
     "suiteName": "eslint tests",
     "output": "./eslint-junit.xml",
     "classNameTemplate": "{ruleId}",
-    "titleTemplate": "{line} : {source}"
+    "titleTemplate": "{source} - {ruleId} - {messageId}"
   },
   "engines": {
     "node": ">14.14.0",
