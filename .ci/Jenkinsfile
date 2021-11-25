@@ -48,7 +48,7 @@ pipeline {
         withGithubNotify(context: "Lint") {
           withNodeJSEnv() {
             dir("${BASE_DIR}"){
-              sh(label: 'npm lint-ci', script: 'npm run lint-ci')
+              sh(label: 'npm lint', script: 'npm run lint')
             }
           }
         }
