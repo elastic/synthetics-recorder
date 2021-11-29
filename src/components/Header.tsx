@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   EuiButton,
   EuiButtonIcon,
@@ -39,7 +39,7 @@ interface IHeader {
 }
 
 export function Header(props: IHeader) {
-  const { isRecording, isPaused, toggleRecording, togglePause } =
+  const { abortSession, isRecording, isPaused, togglePause, toggleRecording } =
     useContext(RecordingContext);
 
   const onUrlFieldKeyUp = async (e: React.KeyboardEvent) => {
@@ -47,6 +47,8 @@ export function Header(props: IHeader) {
       await toggleRecording();
     }
   };
+
+  const urlRef = useRef<null | HTMLInputElement>(null);
 
   return (
     <>
@@ -58,28 +60,32 @@ export function Header(props: IHeader) {
             onKeyUp={onUrlFieldKeyUp}
             onChange={e => props.onUrlChange(e.target.value)}
             fullWidth
+            inputRef={urlRef}
           />
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <ControlButton
-            aria-label="Toggle script recording on/off"
+            aria-label="Toggle the script recorder between recording and paused"
             fill
             color="primary"
-            iconType={isRecording ? "stop" : "play"}
-            onClick={toggleRecording}
+            iconType={isRecording ? "pause" : "play"}
+            onClick={!isRecording ? toggleRecording : togglePause}
           >
-            {isRecording ? "Stop" : "Start recording"}
+            {isRecording ? (isPaused ? "Resume" : "Pause") : "Start recording"}
           </ControlButton>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <ControlButton
-            aria-label="Toggle script recording pause/continue"
+            aria-label="Stop recording and clear all recorded actions"
             disabled={!isRecording}
             color="primary"
-            iconType={isPaused ? "play" : "pause"}
-            onClick={togglePause}
+            iconType="refresh"
+            onClick={async () => {
+              await abortSession();
+              if (urlRef) urlRef.current?.focus();
+            }}
           >
-            {isPaused ? "Resume" : "Pause"}
+            Start over
           </ControlButton>
         </EuiFlexItem>
       </EuiFlexGroup>

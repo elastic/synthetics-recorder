@@ -28,7 +28,8 @@ function notImplemented() {
   throw Error("Recording context not initialized");
 }
 
-interface IRecordingContext {
+export interface IRecordingContext {
+  abortSession: () => Promise<void>;
   isPaused: boolean;
   isRecording: boolean;
   togglePause: () => void;
@@ -36,6 +37,9 @@ interface IRecordingContext {
 }
 
 export const RecordingContext = createContext<IRecordingContext>({
+  abortSession: async function () {
+    throw Error("RecordingContext abort session not implemented");
+  },
   isPaused: false,
   isRecording: false,
   togglePause: notImplemented,

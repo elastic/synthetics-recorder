@@ -95,6 +95,12 @@ export default function App() {
         <AssertionContext.Provider value={assertionDrawerUtils}>
           <RecordingContext.Provider
             value={{
+              abortSession: async () => {
+                if (!isRecording) return;
+                await ipc.send("abort");
+                setIsRecording(false);
+                setIsPaused(false);
+              },
               isRecording,
               toggleRecording: async () => {
                 if (isRecording) {
