@@ -14,7 +14,7 @@
     "pack": "npm run build && electron-builder",
     "release": "npm run build && electron-builder -mwl --publish=always",
     "clean": "rm -rf ./build && rm -rf ./dist",
-    "lint": "eslint .",
+    "lint": "eslint --format eslint-formatter-multiple .",
     "test": "jest"
   },
   "author": {
