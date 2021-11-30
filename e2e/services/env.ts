@@ -22,45 +22,4 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-const { spawn } = require("child_process");
-const { env } = require("../services");
-
-const packageFiles = async () => {
-  return new Promise((resolve, reject) => {
-    const ls = spawn("npm", ["run", "react:start"], {
-      env: {
-        PORT: env.TEST_PORT,
-        PATH: process.env.PATH,
-        BROWSER: "none",
-      },
-      shell: true,
-      detached: true,
-    });
-
-    ls.stdout.setEncoding("utf8");
-    ls.stderr.setEncoding("utf8");
-
-    ls.stdout.on("data", async data => {
-      if (data.indexOf("Something is already running on port") !== -1) {
-        // eslint-disable-next-line no-console
-        console.warn(`Something is already running on port ${env.TEST_PORT}.`);
-        reject();
-      }
-
-      if (data.indexOf("You can now view") !== -1) {
-        resolve(ls);
-      }
-    });
-
-    ls.stderr.on("data", data => {
-      // eslint-disable-next-line no-console
-      console.error(data);
-      reject();
-    });
-  });
-};
-
-module.exports = async () => {
-  const packager = await packageFiles();
-  global.__packager__ = packager;
-};
+export const TEST_PORT = process.env.TEST_PORT ?? "61337";

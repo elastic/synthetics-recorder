@@ -24,9 +24,10 @@ THE SOFTWARE.
 
 /* eslint-disable import/first */
 window.require = require;
-
 import { updateAction } from "./shared";
 import { ActionContext } from "./types";
+
+window.require = require;
 
 describe("shared", () => {
   describe("updateAction", () => {

@@ -22,45 +22,32 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-const { spawn } = require("child_process");
-const { env } = require("../services");
+import { ElectronServiceFactory } from "../services";
 
-const packageFiles = async () => {
-  return new Promise((resolve, reject) => {
-    const ls = spawn("npm", ["run", "react:start"], {
-      env: {
-        PORT: env.TEST_PORT,
-        PATH: process.env.PATH,
-        BROWSER: "none",
-      },
-      shell: true,
-      detached: true,
-    });
+const electronService = new ElectronServiceFactory();
 
-    ls.stdout.setEncoding("utf8");
-    ls.stderr.setEncoding("utf8");
+afterEach(() => {
+  electronService.terminate();
+});
 
-    ls.stdout.on("data", async data => {
-      if (data.indexOf("Something is already running on port") !== -1) {
-        // eslint-disable-next-line no-console
-        console.warn(`Something is already running on port ${env.TEST_PORT}.`);
-        reject();
-      }
+describe("Navigation", () => {
+  it("records chromium's opened pages", async () => {
+    const electronWindow = await electronService.getWindow();
 
-      if (data.indexOf("You can now view") !== -1) {
-        resolve(ls);
-      }
-    });
+    await electronService.enterTestUrl("https://www.elastic.co/");
 
-    ls.stderr.on("data", data => {
-      // eslint-disable-next-line no-console
-      console.error(data);
-      reject();
-    });
+    await electronService.clickStartRecording();
+    await electronService.waitForPageToBeIdle();
+    await electronService.navigateRecordingBrowser("http://example.com");
+
+    global.electronWindow = electronWindow;
+
+    expect(await electronWindow.$("text=2 Recorded Steps")).toBeTruthy();
+    expect(
+      await electronWindow.$("text=Go to https://www.elastic.co/")
+    ).toBeTruthy();
+    expect(
+      await electronWindow.$("text=Go to http://example.com/")
+    ).toBeTruthy();
   });
-};
-
-module.exports = async () => {
-  const packager = await packageFiles();
-  global.__packager__ = packager;
-};
+});
