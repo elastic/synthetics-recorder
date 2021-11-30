@@ -32,13 +32,16 @@ import {
   useEuiTheme,
 } from "@elastic/eui";
 import { RecordingContext } from "../contexts/RecordingContext";
+import { StartOverWarningModal } from "./StartOverWarningModal";
 
 interface IHeader {
   onUrlChange: (url: string) => void;
+  stepCount: number;
   url: string;
 }
 
 export function Header(props: IHeader) {
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const { abortSession, isRecording, isPaused, togglePause, toggleRecording } =
     useContext(RecordingContext);
 
@@ -50,8 +53,21 @@ export function Header(props: IHeader) {
 
   const urlRef = useRef<null | HTMLInputElement>(null);
 
+  const startOver = React.useCallback(async () => {
+    await abortSession();
+    setIsModalVisible(false);
+    if (urlRef) urlRef.current?.focus();
+  }, [abortSession]);
+
   return (
     <>
+      {isModalVisible && (
+        <StartOverWarningModal
+          close={() => setIsModalVisible(false)}
+          startOver={startOver}
+          stepCount={props.stepCount}
+        />
+      )}
       <EuiFlexGroup wrap gutterSize="s">
         <EuiFlexItem>
           <EuiFieldText
@@ -80,9 +96,10 @@ export function Header(props: IHeader) {
             disabled={!isRecording}
             color="primary"
             iconType="refresh"
-            onClick={async () => {
-              await abortSession();
-              if (urlRef) urlRef.current?.focus();
+            onClick={() => {
+              if (!isModalVisible) {
+                setIsModalVisible(true);
+              }
             }}
           >
             Start over
