@@ -22,8 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React from "react";
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { EuiCode, EuiEmptyPrompt, EuiSpacer, EuiTitle } from "@elastic/eui";
 
 import { StepAccordions } from "./StepList/StepDetails";

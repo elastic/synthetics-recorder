@@ -170,7 +170,11 @@ export default function App() {
                 <EuiFlexItem>
                   <EuiFlexGroup direction="column">
                     <EuiFlexItem grow={false}>
-                      <Header url={url} onUrlChange={onUrlChange} />
+                      <Header
+                        url={url}
+                        onUrlChange={onUrlChange}
+                        stepCount={stepActions.length}
+                      />
                     </EuiFlexItem>
                     <EuiFlexItem style={{ minWidth: MAIN_CONTROLS_MIN_WIDTH }}>
                       <StepsMonitor />
