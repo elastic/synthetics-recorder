@@ -40,6 +40,7 @@ module.exports = {
   },
   extends: ["react-app", "plugin:react/recommended"],
   ignorePatterns: ["build", "local-browsers"],
+  plugins: ["custom-eslint-rules"],
   overrides: [
     {
       extends: ["eslint:recommended"],
@@ -60,7 +61,7 @@ module.exports = {
   ],
   rules: {
     "default-case": 0,
-    "require-license-header": [
+    "custom-eslint-rules/require-license-header": [
       "error",
       {
         license: LICENSE_HEADER,
