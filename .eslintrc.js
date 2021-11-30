@@ -22,22 +22,37 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { createContext } from "react";
+const { readFileSync } = require("fs");
+const LICENSE = readFileSync("./LICENSE", "utf-8");
+const LICENSE_HEADER = "\n" + LICENSE;
 
-function notImplemented() {
-  throw Error("Recording context not initialized");
-}
-
-interface IRecordingContext {
-  isPaused: boolean;
-  isRecording: boolean;
-  togglePause: () => void;
-  toggleRecording: () => void;
-}
-
-export const RecordingContext = createContext<IRecordingContext>({
-  isPaused: false,
-  isRecording: false,
-  togglePause: notImplemented,
-  toggleRecording: notImplemented,
-});
+module.exports = {
+  env: {
+    es2021: true,
+  },
+  plugins: ["header"],
+  extends: ["react-app", "plugin:react/recommended"],
+  ignorePatterns: ["build", "local-browsers"],
+  overrides: [
+    {
+      extends: ["eslint:recommended"],
+      files: ["*.js", "*.jsx"],
+    },
+    {
+      extends: [
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+      ],
+      files: ["*.ts", "*.tsx"],
+      plugins: ["@typescript-eslint"],
+      rules: {
+        "@typescript-eslint/explicit-module-boundary-types": 0,
+        "@typescript-eslint/no-non-null-assertion": 0,
+      },
+    },
+  ],
+  rules: {
+    "default-case": 0,
+    "header/header": [2, "block", LICENSE_HEADER],
+  },
+};

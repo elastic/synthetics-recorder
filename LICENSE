@@ -1,4 +1,3 @@
-/*
 MIT License
 
 Copyright (c) 2021-present, Elastic NV
@@ -20,24 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-*/
-
-import { createContext } from "react";
-
-function notImplemented() {
-  throw Error("Recording context not initialized");
-}
-
-interface IRecordingContext {
-  isPaused: boolean;
-  isRecording: boolean;
-  togglePause: () => void;
-  toggleRecording: () => void;
-}
-
-export const RecordingContext = createContext<IRecordingContext>({
-  isPaused: false,
-  isRecording: false,
-  togglePause: notImplemented,
-  toggleRecording: notImplemented,
-});
