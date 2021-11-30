@@ -22,47 +22,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-const { spawn } = require('child_process');
-const { env } = require("../services");
+import { ElectronServiceFactory } from "../services";
 
-const packageFiles = async () => {
-  return new Promise((resolve, reject) => {
-    const ls = spawn('npm', ["run", "react:start"], {
-      env: {
-        PORT: env.TEST_PORT,
-        PATH: process.env.PATH,
-        BROWSER: "none",
-      },
-      shell: true,
-      detached: true
-    });
+const electronService = new ElectronServiceFactory();
 
+afterEach(() => {
+  electronService.terminate();
+});
 
-    ls.stdout.on('data', async (data) => {
-      if (data.indexOf("Something is already running on port") !== -1) {
-        const killProcess = spawn(`lsof -i 'tcp':${env.TEST_PORT} | grep 'LISTEN' | awk '{print $2}' | xargs kill -9`, {
-          shell: true,
-          detached: true
-        });
+describe("Navigation", () => {
+  it("records chromium's opened pages", async () => {
+    const electronWindow = await electronService.getWindow();
 
-        await new Promise(resolve => killProcess.on("close", resolve));
-        resolve(packageFiles());
-      }
+    await electronService.enterTestUrl("https://www.elastic.co/")
 
-      if (data.indexOf("You can now view") !== -1) {
-        resolve(ls);
-      }
-    });
+    await electronService.clickStartRecording();
+    await electronService.navigateRecordingBrowser("http://example.com");
 
-    ls.stderr.on('data', (data) => {
-      console.error(data.toString());
-      reject();
-    });
+    global.electronWindow = electronWindow;
+
+    expect(await electronWindow.$("text=2 Recorded Steps")).toBeTruthy();
+    expect(await electronWindow.$('text=Go to https://www.elastic.co/')).toBeTruthy();
+    expect(await electronWindow.$('text=Go to http://example.com/')).toBeTruthy();
   });
-};
-
-module.exports = async () => {
-  const packager = await packageFiles();
-  global.__packager__ = packager;
-}
-
+});

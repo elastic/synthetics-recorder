@@ -19,7 +19,7 @@
     "lint:fix": "npm run lint -- --fix",
     "prepare": "husky install",
     "test:unit": "jest --config ./jest.unit.config.js ./src",
-    "test:e2e": "jest --config ./jest.e2e.config.js ./e2e"
+    "test:e2e": "jest --config ./jest.e2e.config.js ./e2e/tests"
   },
   "author": {
     "name": "Elastic Synthetics Team",

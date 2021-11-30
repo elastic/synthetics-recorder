@@ -42,11 +42,16 @@ const {
   EXECUTABLE_PATH,
 } = require("./config");
 
+const IS_TEST_ENV = process.env.NODE_ENV === "test"
+const CDP_TEST_PORT = parseInt(process.env.TEST_PORT) + 1;
+
 async function launchContext() {
   const browser = await chromium.launch({
     headless: false,
     executablePath: EXECUTABLE_PATH,
+    args: IS_TEST_ENV ? [`--remote-debugging-port=${CDP_TEST_PORT}`] : []
   });
+
   const context = await browser.newContext();
 
   let closingBrowser = false;
@@ -63,7 +68,7 @@ async function launchContext() {
         .contexts()
         .some(context => context.pages().length > 0);
       if (hasPage) return;
-      closeBrowser().catch(e => null);
+      closeBrowser().catch(_e => null);
     });
   });
   return { browser, context };
