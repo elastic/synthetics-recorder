@@ -14,7 +14,8 @@
     "pack": "npm run build && electron-builder",
     "release": "npm run build && electron-builder -mwl --publish=always",
     "clean": "rm -rf ./build && rm -rf ./dist",
-    "lint": "eslint --format eslint-formatter-multiple .",
+    "lint": "eslint . --format eslint-formatter-multiple --rulesdir scripts/eslint-rules",
+    "lint:fix": "npm run lint -- --fix",
     "test": "jest"
   },
   "author": {
@@ -96,50 +97,6 @@
   "browserslist": [
     "last 1 version"
   ],
-  "eslintConfig": {
-    "env": {
-      "es2021": true
-    },
-    "extends": [
-      "react-app",
-      "plugin:react/recommended"
-    ],
-    "ignorePatterns": [
-      "build",
-      "local-browsers"
-    ],
-    "overrides": [
-      {
-        "extends": [
-          "eslint:recommended"
-        ],
-        "files": [
-          "*.js",
-          "*.jsx"
-        ]
-      },
-      {
-        "extends": [
-          "plugin:@typescript-eslint/recommended",
-          "plugin:@typescript-eslint/eslint-recommended"
-        ],
-        "files": [
-          "*.ts",
-          "*.tsx"
-        ],
-        "plugins": [
-          "@typescript-eslint"
-        ],
-        "rules": {
-          "@typescript-eslint/explicit-module-boundary-types": 0,
-          "@typescript-eslint/no-non-null-assertion": 0
-        }
-      }
-    ],
-    "rules": {
-      "default-case": 0
-    }
-  },
   "eslint-formatter-multiple": {
     "formatters": [
       {
