@@ -4,7 +4,6 @@
   "description": "Record synthetics user journey flow of a website",
   "repository": "https://github.com/elastic/synthetics-recorder",
   "scripts": {
-    "prettier": "prettier --check .",
     "install:pw": "node scripts/install-pw.js",
     "postinstall": "npm run install:pw && electron-builder install-app-deps",
     "react:start": "react-scripts start",
@@ -15,8 +14,8 @@
     "pack": "npm run build && electron-builder",
     "release": "npm run build && electron-builder -mwl --publish=always",
     "clean": "rm -rf ./build && rm -rf ./dist",
-    "lint": "eslint . --format eslint-formatter-multiple",
-    "lint:fix": "npm run lint -- --fix",
+    "lint": "eslint . --format eslint-formatter-multiple && prettier --check .",
+    "lint:fix": "npm run lint -- --fix && prettier --write .",
     "test": "jest"
   },
   "author": {
