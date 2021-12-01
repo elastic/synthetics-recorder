@@ -74,7 +74,6 @@ export default function App() {
       });
     });
   }, [setStepActions]);
-  console.log("hi");
 
   return (
     <div style={{ padding: 4 }}>
