@@ -97,9 +97,10 @@ export default function App() {
             value={{
               abortSession: async () => {
                 if (!isRecording) return;
-                await ipc.send("abort");
+                await ipc.send("close");
                 setIsRecording(false);
                 setIsPaused(false);
+                setStepActions([]);
               },
               isRecording,
               toggleRecording: async () => {

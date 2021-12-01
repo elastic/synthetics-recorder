@@ -111,17 +111,7 @@ async function recordJourneys(data, browserWindow) {
       await browser.close().catch({});
     };
 
-    // indicates the client wants to quit the session and keep
-    // the current state
     ipc.on("stop", closeBrowser);
-
-    // indicates the client wants to quit the session and
-    // discard the current state
-    ipc.on("abort", () => {
-      closeBrowser();
-      actionListener.removeAllListeners();
-      ipc.callRenderer(browserWindow, "change", { actions: [] });
-    });
 
     await once(browser, "disconnected");
   } catch (e) {
