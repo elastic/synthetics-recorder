@@ -28,11 +28,32 @@ function notImplemented() {
   throw Error("Recording context not initialized");
 }
 
+/**
+ * Exposes functions and flags for the purpose of controlling
+ * a browser recording session.
+ */
 export interface IRecordingContext {
+  /**
+   * Messages the main process to stop the recording, discards
+   * the actions the user has recorded.
+   */
   abortSession: () => Promise<void>;
+  /**
+   * Is a recording session paused.
+   */
   isPaused: boolean;
+  /**
+   * Is there a recording session taking place.
+   */
   isRecording: boolean;
+  /**
+   * Pauses or unpauses a recording session. If the user
+   * is not recording, nothing happens.
+   */
   togglePause: () => void;
+  /**
+   * Starts or stops a recording session.
+   */
   toggleRecording: () => void;
 }
 
