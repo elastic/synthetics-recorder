@@ -34,7 +34,7 @@ import {
 import { RecordingContext } from "../contexts/RecordingContext";
 import { StartOverWarningModal } from "./StartOverWarningModal";
 
-interface IHeader {
+export interface IHeader {
   onUrlChange: (url: string) => void;
   stepCount: number;
   url: string;
