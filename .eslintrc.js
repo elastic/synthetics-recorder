@@ -30,8 +30,8 @@ module.exports = {
   env: {
     es2021: true,
   },
-  plugins: ["header"],
-  extends: ["react-app", "plugin:react/recommended"],
+  plugins: ["header", "prettier"],
+  extends: ["react-app", "plugin:react/recommended", "prettier"],
   ignorePatterns: ["build", "local-browsers"],
   overrides: [
     {
@@ -48,12 +48,13 @@ module.exports = {
       rules: {
         "@typescript-eslint/explicit-module-boundary-types": 0,
         "@typescript-eslint/no-non-null-assertion": 0,
-        "no-console": 1,
       },
     },
   ],
   rules: {
     "default-case": 0,
     "header/header": [2, "block", LICENSE_HEADER],
+    "no-console": 1,
+    "prettier/prettier": 2,
   },
 };

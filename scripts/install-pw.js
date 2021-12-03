@@ -50,8 +50,10 @@ module.exports.getExecutablePath = function (browserName = "chromium") {
   if (require.main === module) {
     try {
       await registry.install();
+      // eslint-disable-next-line no-console
       console.log("Installation complete");
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error(e);
       process.exit(1);
     }

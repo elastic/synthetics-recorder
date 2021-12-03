@@ -55,7 +55,7 @@ npm run dev
 #### Possible install issues
 
 If you receive a set of error logs like those listed below, it is likely because your
-version of `npm` is higher than `v6`.  Later versions of `npm` are stricter about peer
+version of `npm` is higher than `v6`. Later versions of `npm` are stricter about peer
 dependency resolution, and thus it will refuse to install.
 
 ```
