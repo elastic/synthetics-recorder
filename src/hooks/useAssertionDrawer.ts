@@ -36,7 +36,7 @@ export function useAssertionDrawer() {
   const [selector, setSelector] = useState<string | undefined>();
   const [stepIndex, setStepIndex] = useState<number | undefined>();
   const [mode, setMode] = useState<AssertionDrawerMode>("create");
-  const [value, setValue] = useState<string | undefined>();
+  const [value, setValue] = useState<string>("");
 
   const onShowAssertionDrawer = useCallback(
     function ({ previousAction, actionIndex: aidx, stepIndex: sidx, mode: m }) {

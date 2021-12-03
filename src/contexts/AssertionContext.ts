@@ -57,9 +57,9 @@ interface IAssertionContext {
   setMode: Setter<"create" | "edit">;
   setSelector: Setter<string | undefined>;
   setStepIndex: Setter<number | undefined>;
-  setValue: Setter<string | undefined>;
+  setValue: Setter<string>;
   stepIndex?: number;
-  value?: string;
+  value: string;
 }
 
 export const AssertionContext = createContext<IAssertionContext>({
@@ -76,4 +76,5 @@ export const AssertionContext = createContext<IAssertionContext>({
   setSelector: notInitialized,
   setStepIndex: notInitialized,
   setValue: notInitialized,
+  value: "",
 });
