@@ -23,7 +23,13 @@ THE SOFTWARE.
 */
 
 import React from "react";
-import type { ActionContext, JourneyType, Setter } from "./types";
+import type {
+  ActionContext,
+  Journey,
+  JourneyStep,
+  JourneyType,
+  Setter,
+} from "./types";
 
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
@@ -108,3 +114,50 @@ export function updateAction(
     });
   });
 }
+
+export const SYNTHETICS_DISCUSS_FORUM_URL =
+  "https://forms.gle/PzVtYoExfqQ9UMkY6";
+
+export function combineResultJourneys(journey: Journey) {
+  const journeyArr = [];
+  if (journey.inline) {
+    journeyArr.push(journey.inline);
+  }
+  if (journey.suite) {
+    journeyArr.push(journey.suite);
+  }
+  return journeyArr;
+}
+
+function getStepActions(step: JourneyStep, currentActions: ActionContext[][]) {
+  if (!step.name) return;
+  for (let i = 0; i < currentActions.length; i++) {
+    if (
+      currentActions[i].length > 0 &&
+      currentActions[i][0].title === step.name
+    ) {
+      return currentActions[i];
+    }
+  }
+}
+
+export async function getCodeForResult(
+  actions: ActionContext[][],
+  journeys: Journey | undefined,
+  type: string
+) {
+  if (!journeys) return "";
+  const journeyArr = combineResultJourneys(journeys);
+  const stepActions = journeyArr
+    .map(({ steps }) => {
+      for (const step of steps) {
+        return getStepActions(step, actions) ?? null;
+      }
+      return null;
+    })
+    .filter(f => f !== null);
+
+  // @ts-expect-error null elements are filtered out
+  return await getCodeFromActions(stepActions ?? [], type);
+}
+

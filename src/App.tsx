@@ -24,34 +24,28 @@ THE SOFTWARE.
 
 import React from "react";
 import { useEffect, useState } from "react";
-import {
-  EuiBetaBadge,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiIcon,
-  EuiLink,
-  EuiPageTemplate,
-  EuiSpacer,
-} from "@elastic/eui";
+import { EuiFlexGroup, EuiFlexItem, EuiPageBody } from "@elastic/eui";
 import "./App.css";
 import "@elastic/eui/dist/eui_theme_amsterdam_light.css";
 import { Header } from "./components/Header";
 import { StepsMonitor } from "./components/StepsMonitor";
 import { TestResult } from "./components/TestResult";
-import { RecordingContext } from "./contexts/RecordingContext";
 import { AssertionDrawer } from "./components/AssertionDrawer";
+import { Title } from "./components/Header/Title";
+import { HeaderControls } from "./components/Header/HeaderControls";
 import { AssertionContext } from "./contexts/AssertionContext";
+import { RecordingContext } from "./contexts/RecordingContext";
 import { StepsContext } from "./contexts/StepsContext";
+import { TestContext } from "./contexts/TestContext";
+import type { ActionContext, JourneyType } from "./common/types";
+import { RecordingStatus } from "./common/types";
 import { useAssertionDrawer } from "./hooks/useAssertionDrawer";
-import { createExternalLinkHandler } from "./common/shared";
-import { ActionContext, JourneyType, RecordingStatus } from "./common/types";
+import { useSyntheticsTest } from "./hooks/useSyntheticsTest";
 import { generateIR, generateMergedIR } from "./helpers/generator";
 
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 const MAIN_CONTROLS_MIN_WIDTH = 600;
-
-const SYNTHETICS_DISCUSS_FORUM_URL = "https://forms.gle/PzVtYoExfqQ9UMkY6";
 
 export default function App() {
   const [url, setUrl] = useState("");
@@ -60,8 +54,10 @@ export default function App() {
   const [recordingStatus, setRecordingStatus] = useState(
     RecordingStatus.NotRecording
   );
+  const [isCodeFlyoutVisible, setIsCodeFlyoutVisible] = useState(false);
 
   const assertionDrawerUtils = useAssertionDrawer();
+  const syntheticsTestUtils = useSyntheticsTest(stepActions);
 
   const onUrlChange = (value: string) => {
     setUrl(value);
@@ -77,7 +73,7 @@ export default function App() {
   }, [setStepActions]);
 
   return (
-    <div style={{ padding: 4 }}>
+    <div>
       <StepsContext.Provider
         value={{
           actions: stepActions,
@@ -126,65 +122,40 @@ export default function App() {
               },
             }}
           >
-            <EuiPageTemplate
-              pageHeader={{
-                bottomBorder: true,
-                // the bottom border didn't grow without providing a value for
-                // `restrictWidth`. We always want there to be a border and we
-                // always want the header to fill the full width.
-                restrictWidth: 4000,
-                pageTitle: (
-                  <EuiFlexGroup>
-                    <EuiFlexItem grow={false}>
-                      <EuiIcon size="xxl" type="logoElastic" />
-                    </EuiFlexItem>
-                    <EuiFlexItem grow={false}>Script recorder</EuiFlexItem>
-                    <EuiFlexItem grow={false}>
-                      <EuiBetaBadge
-                        style={{ marginTop: 10 }}
-                        label="BETA"
-                        color="accent"
-                      />
-                    </EuiFlexItem>
-                  </EuiFlexGroup>
-                ),
-                paddingSize: "s",
-                rightSideItems: [
-                  <EuiLink
-                    key="link-to-synthetics-help"
-                    href={SYNTHETICS_DISCUSS_FORUM_URL}
-                    style={{ marginTop: 16 }}
-                    onClick={createExternalLinkHandler(
-                      SYNTHETICS_DISCUSS_FORUM_URL
-                    )}
-                  >
-                    Send feedback
-                  </EuiLink>,
-                ],
-              }}
-            >
-              <EuiSpacer />
-              <EuiFlexGroup>
-                <EuiFlexItem>
-                  <EuiFlexGroup direction="column">
-                    <EuiFlexItem grow={false}>
-                      <Header
-                        url={url}
-                        onUrlChange={onUrlChange}
-                        stepCount={stepActions.length}
-                      />
-                    </EuiFlexItem>
-                    <EuiFlexItem style={{ minWidth: MAIN_CONTROLS_MIN_WIDTH }}>
-                      <StepsMonitor />
-                    </EuiFlexItem>
-                  </EuiFlexGroup>
-                </EuiFlexItem>
-                <EuiFlexItem style={{ minWidth: 300 }}>
-                  <TestResult setType={setJourneyType} type={type} />
-                </EuiFlexItem>
-              </EuiFlexGroup>
-              <AssertionDrawer />
-            </EuiPageTemplate>
+            <TestContext.Provider value={syntheticsTestUtils}>
+              <Title />
+              <HeaderControls
+                hasActions={stepActions.length === 0}
+                setIsCodeFlyoutVisible={setIsCodeFlyoutVisible}
+              />
+              <EuiPageBody>
+                <EuiFlexGroup>
+                  <EuiFlexItem>
+                    <EuiFlexGroup direction="column">
+                      <EuiFlexItem grow={false}>
+                        <Header
+                          url={url}
+                          onUrlChange={onUrlChange}
+                          stepCount={stepActions.length}
+                        />
+                      </EuiFlexItem>
+                      <EuiFlexItem
+                        style={{ minWidth: MAIN_CONTROLS_MIN_WIDTH }}
+                      >
+                        <StepsMonitor
+                          isFlyoutVisible={isCodeFlyoutVisible}
+                          setIsFlyoutVisible={setIsCodeFlyoutVisible}
+                        />
+                      </EuiFlexItem>
+                    </EuiFlexGroup>
+                  </EuiFlexItem>
+                  <EuiFlexItem style={{ minWidth: 300 }}>
+                    <TestResult setType={setJourneyType} type={type} />
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+                <AssertionDrawer />
+              </EuiPageBody>
+            </TestContext.Provider>
           </RecordingContext.Provider>
         </AssertionContext.Provider>
       </StepsContext.Provider>
