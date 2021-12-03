@@ -71,7 +71,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
         style={{
           backgroundColor: euiTheme.colors.lightestShade,
           borderBottom: euiTheme.border.thin,
-          margin: "0px 0px 4px 0px",
+          margin: 0,
           padding: 8,
         }}
       >

@@ -66,7 +66,7 @@ export function Steps() {
       <EuiTitle size="s">
         <h2>
           {actions.length}&nbsp;
-          {actions.length === 1 ? "Recorded Step" : "Recorded Steps"}
+          {actions.length === 1 ? "step recorded" : "steps recorded"}
         </h2>
       </EuiTitle>
       <EuiSpacer />

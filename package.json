@@ -78,6 +78,7 @@
     "@testing-library/react": "^12.1.2",
     "@types/jest": "^27.0.2",
     "@types/react-dom": "^17.0.10",
+    "@types/styled-components": "^5.1.17",
     "concurrently": "^6.2.0",
     "electron": "^14.0.1",
     "electron-builder": "^22.11.7",
@@ -108,7 +109,8 @@
     "moment": "^2.29.1",
     "playwright": "git+https://github.com/vigneshshanmugam/playwright.git#separate-recorder",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "styled-components": "^5.3.3"
   },
   "resolutions": {
     "trim": "0.0.3"

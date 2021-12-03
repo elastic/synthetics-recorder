@@ -22,31 +22,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { createContext } from "react";
-import type { ActionContext, Setter } from "../common/types";
+import { useEuiTheme } from "@elastic/eui";
+import React from "react";
 
-function notImplemented() {
-  throw Error("Step context not initialized");
+export function ActionStatusIndicator() {
+  const { euiTheme } = useEuiTheme();
+  return (
+    <svg
+      width="50"
+      height="50"
+      style={{ left: 26, top: 12, position: "relative" }}
+    >
+      <circle cx="25" cy="25" r="12" fill={euiTheme.colors.lightestShade} />
+      <circle cx="25" cy="25" r="3" fill={euiTheme.colors.darkestShade} />
+    </svg>
+  );
 }
-
-export interface IStepsContext {
-  actions: ActionContext[][];
-  onDeleteAction: (stepIndex: number, actionIndex: number) => void;
-  onInsertAction: (
-    action: ActionContext,
-    stepIndex: number,
-    actionIndex: number
-  ) => void;
-  onStepDetailChange: (step: ActionContext[], stepIndex: number) => void;
-  setActions: Setter<ActionContext[][]>;
-}
-
-export const StepsContext = createContext<IStepsContext>({
-  actions: [],
-  onDeleteAction: notImplemented,
-  onInsertAction: (_action, _stepIndex, _actionIndex) => {
-    throw Error("not implemented");
-  },
-  onStepDetailChange: notImplemented,
-  setActions: notImplemented,
-});

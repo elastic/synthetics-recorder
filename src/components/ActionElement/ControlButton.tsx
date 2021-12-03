@@ -22,31 +22,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { createContext } from "react";
-import type { ActionContext, Setter } from "../common/types";
+import { EuiButtonIcon } from "@elastic/eui";
+import React from "react";
 
-function notImplemented() {
-  throw Error("Step context not initialized");
+interface IActionControlButton {
+  iconType: string;
+  isVisible: boolean;
+  onClick: () => void;
 }
 
-export interface IStepsContext {
-  actions: ActionContext[][];
-  onDeleteAction: (stepIndex: number, actionIndex: number) => void;
-  onInsertAction: (
-    action: ActionContext,
-    stepIndex: number,
-    actionIndex: number
-  ) => void;
-  onStepDetailChange: (step: ActionContext[], stepIndex: number) => void;
-  setActions: Setter<ActionContext[][]>;
+export function ActionControlButton({
+  iconType,
+  isVisible,
+  onClick,
+}: IActionControlButton) {
+  return (
+    <EuiButtonIcon
+      color="text"
+      iconType={iconType}
+      onClick={onClick}
+      style={{
+        visibility: isVisible ? "visible" : "hidden",
+      }}
+    ></EuiButtonIcon>
+  );
 }
-
-export const StepsContext = createContext<IStepsContext>({
-  actions: [],
-  onDeleteAction: notImplemented,
-  onInsertAction: (_action, _stepIndex, _actionIndex) => {
-    throw Error("not implemented");
-  },
-  onStepDetailChange: notImplemented,
-  setActions: notImplemented,
-});

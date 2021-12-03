@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 import React from "react";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useState } from "react";
 import {
   EuiAccordion,
   EuiButtonIcon,
@@ -31,7 +31,6 @@ import {
   EuiFlexItem,
   useEuiTheme,
 } from "@elastic/eui";
-import "./StepList.css";
 import { ActionDetail } from "../ActionDetail";
 import { StepAccordionTitle } from "./StepAccordionTitle";
 import "./StepDetails.css";
@@ -41,33 +40,9 @@ import { ActionContext, RecordingStatus } from "../../common/types";
 interface IStepDetail {
   step: ActionContext[];
   stepIndex: number;
-  onStepDetailChange: StepChangeHandler;
 }
 
-function StepDetail({ step, stepIndex, onStepDetailChange }: IStepDetail) {
-  const assertionNumberTable = useMemo(() => {
-    let assertionCount = 0;
-    return step.reduce<Record<number, number>>(
-      (table, actionContext, index) => {
-        if (actionContext.action.isAssert) {
-          table[index] = ++assertionCount;
-        }
-        return table;
-      },
-      {}
-    );
-  }, [step]);
-
-  const onActionContextChange = (
-    actionContext: ActionContext,
-    actionIndex: number
-  ) => {
-    onStepDetailChange(
-      step.map((a, index) => (index === actionIndex ? actionContext : a)),
-      stepIndex
-    );
-  };
-
+function StepDetail({ step, stepIndex }: IStepDetail) {
   return (
     <>
       {step.map((actionContext, index) => (
@@ -75,8 +50,6 @@ function StepDetail({ step, stepIndex, onStepDetailChange }: IStepDetail) {
           key={index}
           actionContext={actionContext}
           actionIndex={index}
-          assertionCount={assertionNumberTable[index]}
-          onActionContextChange={onActionContextChange}
           stepIndex={stepIndex}
         />
       ))}
@@ -183,11 +156,7 @@ function StepAccordion({
         </EuiFlexGroup>
       }
     >
-      <StepDetail
-        step={step}
-        stepIndex={index}
-        onStepDetailChange={onStepDetailChange}
-      />
+      <StepDetail step={step} stepIndex={index} />
     </EuiAccordion>
   );
 }

@@ -30,7 +30,6 @@ import { UrlContext } from "../contexts/UrlContext";
 
 export interface IHeader {
   onUrlChange: (url: string) => void;
-  stepCount: number;
   url: string;
 }
 
