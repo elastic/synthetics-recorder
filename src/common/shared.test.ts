@@ -25,6 +25,8 @@ THE SOFTWARE.
 import { updateAction } from "./shared";
 import type { ActionContext } from "./types";
 
+window.require = require;
+
 describe("shared", () => {
   describe("updateAction", () => {
     const steps: ActionContext[][] = [

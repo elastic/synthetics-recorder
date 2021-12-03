@@ -22,19 +22,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React, { useContext, useState } from "react";
+import React, { ChangeEventHandler, useContext, useState } from "react";
 import {
-  EuiButtonIcon,
+  EuiButton,
+  EuiButtonEmpty,
   EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiFormRow,
   EuiPanel,
+  EuiSpacer,
   EuiText,
-  EuiToolTip,
 } from "@elastic/eui";
-import { AssertionContext } from "../contexts/AssertionContext";
 import { StepsContext } from "../contexts/StepsContext";
-import { Assertion } from "./Assertion";
 import type { ActionContext } from "../common/types";
 
 function createUpdatedAction(
@@ -52,28 +52,32 @@ function createUpdatedAction(
 interface IActionDetail {
   actionContext: ActionContext;
   actionIndex: number;
-  assertionCount: number;
-  onActionContextChange: (
-    actionContext: ActionContext,
-    actionIndex: number
-  ) => void;
   stepIndex: number;
+  close?: () => void;
 }
 
 export function ActionDetail({
   actionContext,
   actionIndex,
-  assertionCount,
-  onActionContextChange,
+  close,
   stepIndex,
 }: IActionDetail) {
-  const { onDeleteAction } = useContext(StepsContext);
+  const { actions, onStepDetailChange } = useContext(StepsContext);
+  const onActionContextChange = (
+    updatedAction: ActionContext,
+    updatedActionIndex: number
+  ) => {
+    onStepDetailChange(
+      actions[stepIndex].map((actionToUpdate, index) =>
+        index === updatedActionIndex ? updatedAction : actionToUpdate
+      ),
+      stepIndex
+    );
+  };
   const { action } = actionContext;
   const [selector, setSelector] = useState(action.selector || "");
   const [text, setText] = useState(action.text || "");
   const [url, setUrl] = useState(action.url || "");
-
-  const { onShowAssertionDrawer } = useContext(AssertionContext);
 
   const onSelectorChange = (value: string) => {
     if (!value) return;
@@ -99,75 +103,103 @@ export function ActionDetail({
       actionIndex
     );
   };
-  const title = action.name[0].toUpperCase() + action.name.slice(1);
 
   if (action.text !== text && typeof action.text !== "undefined") {
     setText(action.text);
   }
 
   return (
-    <EuiPanel style={{ margin: "16px 0px" }} hasShadow={false} paddingSize="s">
+    <EuiPanel hasShadow={false} paddingSize="none">
+      <EuiText>
+        <h4>Edit action</h4>
+      </EuiText>
+      <EuiSpacer />
       <EuiFlexGroup alignItems="baseline">
-        <EuiFlexItem grow={false} style={{ width: 50 }}>
-          {title !== "Assert" && <EuiText size="s">{title}</EuiText>}
-        </EuiFlexItem>
         {url && (
           <EuiFlexItem>
-            <EuiFieldText
+            <FormControl
+              name={action.name}
+              onChange={e => setUrl(e.target.value)}
               value={url}
-              onChange={e => onURLChange(e.target.value)}
-            ></EuiFieldText>
+            />
           </EuiFlexItem>
         )}
         {selector && !action.isAssert && (
           <EuiFlexItem>
-            <EuiFieldText
+            <FormControl
+              name={action.name}
+              onChange={e => setSelector(e.target.value)}
               value={selector}
-              onChange={e => onSelectorChange(e.target.value)}
-            ></EuiFieldText>
+            />
           </EuiFlexItem>
         )}
         {text && (
           <EuiFlexItem>
-            <EuiFieldText
+            <FormControl
+              label="Value"
+              name={action.name}
+              noPrepend
+              onChange={e => setText(e.target.value)}
               value={text}
-              onChange={e => onTextChange(e.target.value)}
-            ></EuiFieldText>
-          </EuiFlexItem>
-        )}
-        {!action.isAssert && (
-          <EuiFlexItem grow={false}>
-            <EuiToolTip content="Add an assertion">
-              <EuiButtonIcon
-                aria-label="Opens a dialogue to create an assertion after this action"
-                color="text"
-                iconType="plusInCircle"
-                onClick={() =>
-                  onShowAssertionDrawer({
-                    previousAction: actionContext,
-                    stepIndex,
-                    actionIndex,
-                    mode: "create",
-                  })
-                }
-              />
-            </EuiToolTip>
-          </EuiFlexItem>
-        )}
-        {action.isAssert && (
-          <EuiFlexItem>
-            <Assertion
-              action={action}
-              actionContext={actionContext}
-              actionIndex={actionIndex}
-              assertionCount={assertionCount}
-              onDeleteAction={onDeleteAction}
-              onShowAssertionDrawer={onShowAssertionDrawer}
-              stepIndex={stepIndex}
             />
           </EuiFlexItem>
         )}
       </EuiFlexGroup>
+      <EuiSpacer />
+      <EuiFlexGroup>
+        <EuiFlexItem grow={false}>
+          <EuiButton
+            onClick={() => {
+              if (url) {
+                onURLChange(url);
+              } else if (selector && !action.isAssert) {
+                onSelectorChange(selector);
+              } else if (text) {
+                onTextChange(text);
+              }
+              if (close) {
+                close();
+              }
+            }}
+          >
+            Save
+          </EuiButton>
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          <EuiButtonEmpty
+            color="danger"
+            onClick={() => {
+              if (close) close();
+            }}
+          >
+            Cancel
+          </EuiButtonEmpty>
+        </EuiFlexItem>
+      </EuiFlexGroup>
     </EuiPanel>
+  );
+}
+
+function FormControl({
+  label,
+  name,
+  noPrepend,
+  onChange,
+  value,
+}: {
+  label?: string;
+  name: string;
+  noPrepend?: boolean;
+  onChange: ChangeEventHandler<HTMLInputElement>;
+  value: string;
+}) {
+  return (
+    <EuiFormRow label={label ?? "Command"}>
+      <EuiFieldText
+        onChange={onChange}
+        prepend={noPrepend === true ? undefined : name}
+        value={value}
+      />
+    </EuiFormRow>
   );
 }

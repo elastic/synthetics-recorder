@@ -22,103 +22,129 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React from "react";
+import React, { ChangeEventHandler, useContext, useState } from "react";
 import {
-  EuiBadge,
-  EuiButtonIcon,
+  EuiButton,
+  EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiToolTip,
-  useEuiTheme,
+  EuiFormRow,
+  EuiIcon,
+  EuiSelect,
+  EuiSpacer,
+  EuiText,
 } from "@elastic/eui";
 import { COMMAND_SELECTOR_OPTIONS } from "../common/shared";
 import type { Action, ActionContext } from "../common/types";
-import { AssertionDrawerHandler } from "../contexts/AssertionContext";
+import { StepsContext } from "../contexts/StepsContext";
 
 interface IAssertion {
   action: Action;
   actionContext: ActionContext;
   actionIndex: number;
-  assertionCount: number;
+  close?: () => void;
   onDeleteAction: (stepIndex: number, actionIndex: number) => void;
-  onShowAssertionDrawer: AssertionDrawerHandler;
   stepIndex: number;
+}
+
+function AssertionSelect({
+  onChange,
+  value,
+}: {
+  onChange: ChangeEventHandler<HTMLSelectElement>;
+  value?: string;
+}) {
+  return (
+    <EuiSelect
+      options={COMMAND_SELECTOR_OPTIONS}
+      onChange={onChange}
+      value={value || COMMAND_SELECTOR_OPTIONS[0].value}
+    />
+  );
 }
 
 export function Assertion({
   action,
   actionContext,
   actionIndex,
-  assertionCount,
-  onDeleteAction,
-  onShowAssertionDrawer,
+  close,
   stepIndex,
 }: IAssertion) {
-  const {
-    euiTheme: {
-      border: {
-        thin,
-        radius: { medium },
-      },
-    },
-  } = useEuiTheme();
-
-  const commandOption = COMMAND_SELECTOR_OPTIONS.find(
-    ({ value: v }) => v === action.command
-  );
-  const commandText = commandOption ? commandOption.text : action.command;
-
+  const { actions: steps, onStepDetailChange } = useContext(StepsContext);
+  /**
+   * TODO: this functionality is shared between ActionDetail, refactor to centralized place.
+   */
+  const onUpdateAssertion = (
+    updatedAssertion: ActionContext,
+    assertionIndex: number
+  ) => {
+    onStepDetailChange(
+      steps[stepIndex].map((actionToUpdate, currentIndex) =>
+        currentIndex === assertionIndex ? updatedAssertion : actionToUpdate
+      ),
+      stepIndex
+    );
+  };
+  const [command, setCommand] = useState(action.command || "");
+  const [selector, setSelector] = useState(action.selector);
+  const [value, setValue] = useState(action.value || "");
   return (
-    <EuiFlexGroup
-      alignItems="center"
-      style={{
-        border: thin,
-        borderRadius: medium,
-        marginTop: 0,
-        marginLeft: 0,
-        marginBottom: 0,
-        marginRight: 36,
-        maxHeight: 40,
-        minWidth: 310,
-      }}
-    >
-      <EuiFlexItem>
-        <EuiFlexGroup alignItems="center" gutterSize="none">
-          <EuiFlexItem>Assertion {assertionCount}&nbsp;</EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiToolTip
-              content={`${action.selector}${
-                action.value ? `: "${action.value}"` : ""
-              }`}
-            >
-              <EuiBadge>{commandText}</EuiBadge>
-            </EuiToolTip>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      </EuiFlexItem>
-      <EuiFlexItem grow={false}>
-        <EuiButtonIcon
-          aria-label="Open a dialogue to edit this assertion."
-          color="text"
-          iconType="pencil"
-          onClick={() => {
-            onShowAssertionDrawer({
-              previousAction: actionContext,
-              actionIndex,
-              stepIndex,
-              mode: "edit",
-            });
-          }}
-        />
-      </EuiFlexItem>
-      <EuiFlexItem grow={false}>
-        <EuiButtonIcon
-          aria-label="Delete this assertion."
-          color="text"
-          iconType="trash"
-          onClick={() => onDeleteAction(stepIndex, actionIndex)}
-        />
-      </EuiFlexItem>
-    </EuiFlexGroup>
+    <>
+      <EuiFlexGroup alignItems="center" gutterSize="s">
+        <EuiFlexItem grow={false}>
+          <EuiText>
+            <h4>Add assertion</h4>
+          </EuiText>
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          <EuiIcon type="iInCircle" />
+        </EuiFlexItem>
+      </EuiFlexGroup>
+      <EuiSpacer />
+      <EuiFlexGroup direction="column">
+        <EuiFlexItem>
+          <AssertionSelect
+            onChange={e => setCommand(e.target.value)}
+            value={action.command}
+          />
+        </EuiFlexItem>
+        <EuiFlexItem>
+          <EuiFormRow label="Selector">
+            <EuiFieldText
+              onChange={e => setSelector(e.target.value)}
+              value={selector}
+            />
+          </EuiFormRow>
+        </EuiFlexItem>
+        <EuiFlexItem>
+          <EuiFormRow label="Value">
+            <EuiFieldText
+              disabled={["innerText", "textContent"].indexOf(command) !== 1}
+              onChange={e => setValue(e.target.value)}
+              value={value}
+            />
+          </EuiFormRow>
+        </EuiFlexItem>
+      </EuiFlexGroup>
+      <EuiSpacer />
+      <EuiButton
+        onClick={() => {
+          onUpdateAssertion(
+            {
+              ...actionContext,
+              action: {
+                ...actionContext.action,
+                command,
+                selector,
+              },
+            },
+            actionIndex
+          );
+          if (close) close();
+        }}
+      >
+        Save
+      </EuiButton>
+    </>
   );
 }
