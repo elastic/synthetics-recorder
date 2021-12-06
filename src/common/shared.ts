@@ -29,16 +29,20 @@ const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export const COMMAND_SELECTOR_OPTIONS = [
   {
+    value: "innerText",
+    text: "Inner Text",
+  },
+  {
+    value: "textContent",
+    text: "Text content",
+  },
+  {
     value: "isHidden",
     text: "Check Hidden",
   },
   {
     value: "isVisible",
     text: "Check Visibility",
-  },
-  {
-    value: "innerText",
-    text: "Inner Text",
   },
   {
     value: "isChecked",
@@ -55,10 +59,6 @@ export const COMMAND_SELECTOR_OPTIONS = [
   {
     value: "isEnabled",
     text: "Is Enabled",
-  },
-  {
-    value: "textContent",
-    text: "Text content",
   },
 ];
 
