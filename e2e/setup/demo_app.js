@@ -22,30 +22,38 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ElectronServiceFactory, env } from "../services";
+const http = require("http");
+const url = require("url");
+const path = require("path");
+const next = require("../../demo-app/node_modules/next");
+const { env } = require("../services");
 
-const electronService = new ElectronServiceFactory();
+const NEXT_DIR = path.join(__dirname, "../..", "demo-app");
 
-afterEach(() => {
-  electronService.terminate();
-});
+const startServer = async () => {
+  const app = next({ dev: false, dir: NEXT_DIR });
+  const handle = app.getRequestHandler();
 
-describe("Navigation", () => {
-  it("records chromium's opened pages", async () => {
-    const electronWindow = await electronService.getWindow();
+  await app.prepare();
 
-    await electronService.enterTestUrl(env.DEMO_APP_URL);
-
-    await electronService.clickStartRecording();
-    await electronService.waitForPageToBeIdle();
-    await electronService.navigateRecordingBrowser("http://example.com");
-
-    expect(await electronWindow.$("text=2 Recorded Steps")).toBeTruthy();
-    expect(
-      await electronWindow.$(`text=Go to ${env.DEMO_APP_URL}`)
-    ).toBeTruthy();
-    expect(
-      await electronWindow.$("text=Go to http://example.com/")
-    ).toBeTruthy();
+  const httpServer = http.createServer((req, res) => {
+    const parsedUrl = url.parse(req.url, true);
+    handle(req, res, parsedUrl);
   });
-});
+
+  httpServer.listen(env.DEMO_APP_PORT, err => {
+    if (err) throw err;
+
+    // eslint-disable-next-line no-console
+    console.log(`> Demo app ready on http://localhost:${env.DEMO_APP_PORT}`);
+  });
+
+  return httpServer;
+};
+
+const startDemoApp = async () => {
+  const demoAppServer = await startServer();
+  global.__demoApp__ = demoAppServer;
+};
+
+module.exports = { startDemoApp };

@@ -25,3 +25,6 @@ THE SOFTWARE.
 export const TEST_PORT = process.env.TEST_PORT;
 export const CDP_TEST_PORT = parseInt(TEST_PORT ?? "61337") + 1;
 export const DISPLAY = process.env.DISPLAY ?? ":99";
+
+export const DEMO_APP_PORT = process.env.DEMO_APP_PORT ?? "11337";
+export const DEMO_APP_URL = `http://localhost:${DEMO_APP_PORT}`;

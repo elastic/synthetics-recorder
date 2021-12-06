@@ -29,7 +29,7 @@ type ConnectRetryParams = { url?: string; timeout?: number; interval?: number };
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const DEFAULT_TIMEOUT = 3000;
+const DEFAULT_TIMEOUT = 10000;
 const DEFAULT_INTERVAL = 250;
 
 export class TestBrowserService {
