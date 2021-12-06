@@ -93,9 +93,10 @@ async function recordJourneys(data, browserWindow) {
     browserContext = context;
     actionListener = new EventEmitter();
     // Listen to actions from Playwright recording session
-    actionListener.on("actions", actions => {
+    const actionsHandler = actions => {
       ipc.callRenderer(browserWindow, "change", { actions });
-    });
+    };
+    actionListener.on("actions", actionsHandler);
 
     await context._enableRecorder({
       launchOptions: {},
@@ -108,6 +109,7 @@ async function recordJourneys(data, browserWindow) {
 
     const closeBrowser = async () => {
       browserContext = null;
+      actionListener.removeListener("actions", actionsHandler);
       await browser.close().catch({});
     };
 
