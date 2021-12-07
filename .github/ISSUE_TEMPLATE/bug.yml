@@ -33,6 +33,7 @@ body:
       label: Recorder Version
       description: |
         Which version of the script recorder are you using?
+        You can see the recorder's version number in the "Elastic Synthetics Recorder > About" menu.
         If you're unsure, provide us with the date in which you've downloaded it (if you remember it).
       placeholder: 1.0.1
     validations:

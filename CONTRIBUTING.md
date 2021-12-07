@@ -24,6 +24,6 @@ When opening a pull-request, make sure to specify which issue it solves, so that
 
 Just like when opening an issue, it's important to fill all the sections in our pull-request templates appropriately, so that we can review your contribution sooner, and provide actionable feedback in less time.
 
-After your issue is opened **and CI is passing*, the team will do its best to review it and get back to you as soon as we can, although we can't commit to a specific timeframe.
+After your issue is opened **and CI is passing**, the team will do its best to review it and get back to you as soon as we can, although we can't commit to a specific timeframe.
 
 Please note that you'll have to sign [Elastic's CLA to be able to contribute code to this repo](https://www.elastic.co/contributor-agreement).
