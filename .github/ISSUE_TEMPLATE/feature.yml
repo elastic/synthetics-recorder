@@ -1,0 +1,36 @@
+name: Enhancement 🚀
+description: Propose a new feature or enhancement.
+title: '[Enhancement] '
+labels: ['enhancement']
+body:
+  - type: textarea
+    id: feature_summary
+    attributes:
+      label: Feature summary
+      description: A description of the feature.
+      placeholder: I want the script recorder to be able to assert on the page's title.
+    validations:
+      required: true
+  - type: textarea
+    id: feature_reason
+    attributes:
+      label: Why is this feature important?
+      description: |
+        Explain why this feature is important for our users, or how it makes the script recorder better.
+      placeholder: Allowing the recorder to assert on the page's title is a use-case that 99% of our users have requested, as it's a crucial part of a web page.
+    validations:
+      required: false
+  - type: textarea
+    id: resources
+    attributes:
+      label: Linked resources
+      description: Link any designs or other resources which might be relevant for implementing this feature.
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional information
+      description: Any other relevant pieces of information.
+    validations:
+      required: false

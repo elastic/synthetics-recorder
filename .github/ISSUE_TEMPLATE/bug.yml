@@ -1,0 +1,67 @@
+name: Bug 🐛
+description: Something is not behaving as expected.
+title: '[Bug] '
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Before creating your issue
+  - type: markdown
+    attributes:
+      value: |
+        ## Troubleshoot locally
+        Please try to ensure that the bug you're reporting is _not_ caused by any misconfiguration on your machine or network. Ideally, try to reproduce the problem on a different environment.
+  - type: markdown
+    attributes:
+      value: |
+        ## Identify the steps to reproduce the issue
+        The fewer and simpler the steps we can take to reproduce your issue, the sooner we can get back to you, and solve your problem.
+        If possible, please include a GIF or screenshots for each of the steps you followed to reproduce the bug.
+        Please provide as much relevant information as possible about your environment if you think that could be interfering with the app's behavior.
+  - type: textarea
+    id: bug_summary
+    attributes:
+      label: Bug summary
+      description: A concise description of the bug.
+      placeholder: The recorder crashed when I started recording.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Recorder Version
+      description: |
+        Which version of the script recorder are you using?
+        If you're unsure, provide us with the date in which you've downloaded it (if you remember it).
+      placeholder: 1.0.1
+    validations:
+      required: false
+  - type: textarea
+    id: how_to_reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Describe the steps to reproduce your issue.
+      placeholder: |
+        Example issue:
+        1. Start the script recorder
+        2. Type www.example.com in the main URL field
+        3. Click start recording
+        4. Do XYZ and you'll see that undesired behavior ABC happens.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: Explain what should the desired behaviour be.
+      placeholder: XYZ should not appear
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional information
+      description: Any other relevant pieces of information.
+    validations:
+      required: false
