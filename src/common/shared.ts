@@ -160,4 +160,3 @@ export async function getCodeForResult(
   // @ts-expect-error null elements are filtered out
   return await getCodeFromActions(stepActions ?? [], type);
 }
-
