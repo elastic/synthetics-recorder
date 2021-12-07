@@ -47,13 +47,13 @@ export class ElectronServiceFactory {
       return this.#instance;
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.log(e);
+      console.error(e);
       throw e;
     }
   }
 
   async getWindow() {
-    if (!this.#instance) await this.getInstance();
+    await this.getInstance();
     return this.#instance.firstWindow();
   }
 

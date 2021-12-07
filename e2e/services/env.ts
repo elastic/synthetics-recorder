@@ -22,4 +22,5 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-export const TEST_PORT = process.env.TEST_PORT ?? "61337";
+export const TEST_PORT = process.env.TEST_PORT;
+export const CDP_TEST_PORT = parseInt(TEST_PORT ?? "61337") + 1;

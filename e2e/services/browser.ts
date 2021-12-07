@@ -23,23 +23,23 @@ THE SOFTWARE.
 */
 
 import { chromium, Browser } from "playwright";
+import { env } from "../services";
 
 type ConnectRetryParams = { url?: string; timeout?: number; interval?: number };
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
+const DEFAULT_TIMEOUT = 3000;
+const DEFAULT_INTERVAL = 250;
+
 export class TestBrowserService {
   static #remoteBrowser: Browser;
 
   static async getRemoteBrowser(
-    {
-      url = "http://localhost:61338",
-      timeout = 3000,
-      interval = 250,
-    }: ConnectRetryParams = {
-      url: "http://localhost:61338",
-      timeout: 3000,
-      interval: 250,
+    { url, timeout, interval }: ConnectRetryParams = {
+      url: `http://localhost:${env.CDP_TEST_PORT}`,
+      timeout: DEFAULT_TIMEOUT,
+      interval: DEFAULT_INTERVAL,
     }
   ) {
     if (TestBrowserService.#remoteBrowser) {
@@ -79,13 +79,24 @@ export class TestBrowserService {
     return browserContext;
   }
 
-  static async getRemoteBrowserPage(connectParams?: ConnectRetryParams) {
+  static async getRemoteBrowserPage(
+    connectParams: ConnectRetryParams = {
+      url: `http://localhost:${env.CDP_TEST_PORT}`,
+      timeout: DEFAULT_TIMEOUT,
+      interval: DEFAULT_INTERVAL,
+    }
+  ) {
     const browserContext = await TestBrowserService.getRemoteBrowserContext(
       connectParams
     );
 
+    const startTime = Date.now();
+
     while (browserContext.pages().length === 0 || !browserContext.pages()[0]) {
-      await sleep(100);
+      const elapsedTime = Date.now() - startTime;
+      if (elapsedTime > connectParams.timeout)
+        throw new Error("Can't obtain a browser page.");
+      await sleep(connectParams.interval);
     }
 
     return browserContext.pages()[0];

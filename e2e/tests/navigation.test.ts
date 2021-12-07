@@ -40,8 +40,6 @@ describe("Navigation", () => {
     await electronService.waitForPageToBeIdle();
     await electronService.navigateRecordingBrowser("http://example.com");
 
-    global.electronWindow = electronWindow;
-
     expect(await electronWindow.$("text=2 Recorded Steps")).toBeTruthy();
     expect(
       await electronWindow.$("text=Go to https://www.elastic.co/")

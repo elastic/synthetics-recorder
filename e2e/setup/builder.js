@@ -23,13 +23,11 @@ THE SOFTWARE.
 */
 
 const { spawn } = require("child_process");
-const { env } = require("../services");
 
-const packageFiles = async () => {
+const buildFiles = async () => {
   return new Promise((resolve, reject) => {
-    const ls = spawn("npm", ["run", "react:start"], {
+    const ls = spawn("npm", ["run", "react:build"], {
       env: {
-        PORT: env.TEST_PORT,
         PATH: process.env.PATH,
         BROWSER: "none",
       },
@@ -37,19 +35,14 @@ const packageFiles = async () => {
       detached: true,
     });
 
+    ls.on("close", resolve);
+
     ls.stdout.setEncoding("utf8");
     ls.stderr.setEncoding("utf8");
 
-    ls.stdout.on("data", async data => {
-      if (data.indexOf("Something is already running on port") !== -1) {
-        // eslint-disable-next-line no-console
-        console.warn(`Something is already running on port ${env.TEST_PORT}.`);
-        reject();
-      }
-
-      if (data.indexOf("You can now view") !== -1) {
-        resolve(ls);
-      }
+    ls.stdout.on("data", data => {
+      // eslint-disable-next-line no-console
+      console.log(data);
     });
 
     ls.stderr.on("data", data => {
@@ -61,6 +54,5 @@ const packageFiles = async () => {
 };
 
 module.exports = async () => {
-  const packager = await packageFiles();
-  global.__packager__ = packager;
+  await buildFiles();
 };

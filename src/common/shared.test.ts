@@ -27,8 +27,6 @@ window.require = require;
 import { updateAction } from "./shared";
 import { ActionContext } from "./types";
 
-window.require = require;
-
 describe("shared", () => {
   describe("updateAction", () => {
     const steps: ActionContext[][] = [

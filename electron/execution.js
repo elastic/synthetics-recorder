@@ -43,7 +43,7 @@ const {
 } = require("./config");
 
 const IS_TEST_ENV = process.env.NODE_ENV === "test";
-const CDP_TEST_PORT = parseInt(process.env.TEST_PORT) + 1;
+const CDP_TEST_PORT = parseInt(process.env.TEST_PORT ?? 61337) + 1;
 
 async function launchContext() {
   const browser = await chromium.launch({

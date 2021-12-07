@@ -29,8 +29,7 @@ module.exports = {
   // The paths to modules that run some code to configure or set up the testing environment before each test
   // setupFiles: [],
 
-  globalSetup: "<rootDir>/e2e/setup/packager.js",
-  globalTeardown: "<rootDir>/e2e/teardown/packager.js",
+  globalSetup: "<rootDir>/e2e/setup/builder.js",
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
   setupFilesAfterEnv: [],

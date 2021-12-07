@@ -55,9 +55,13 @@ async function createWindow() {
     },
   });
 
-  isDev
-    ? win.loadURL(`http://localhost:${IS_TEST ? TEST_PORT : "3000"}`)
-    : win.loadFile(join(BUILD_DIR, "index.html"));
+  if (isDev && !IS_TEST) {
+    win.loadURL("http://localhost:3000");
+  } else if (IS_TEST && TEST_PORT) {
+    win.loadURL(`http://localhost:${TEST_PORT}`);
+  } else {
+    win.loadFile(join(BUILD_DIR, "index.html"));
+  }
 }
 
 function createMenu() {
