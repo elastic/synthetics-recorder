@@ -1,0 +1,27 @@
+name: Other ⚙
+description: Register a chore, or some other type of task.
+title: '[Other] '
+labels: ['chore']
+body:
+  - type: textarea
+    id: task_summary
+    attributes:
+      label: Task summary
+      description: A description of the task.
+      placeholder: We must implement the infrastructure for E2E tests.
+    validations:
+      required: true
+  - type: textarea
+    id: resources
+    attributes:
+      label: Linked resources
+      description: Link any designs or other resources which might be relevant for implementing this feature.
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional information
+      description: Any other relevant pieces of information.
+    validations:
+      required: false
