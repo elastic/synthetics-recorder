@@ -47,7 +47,7 @@ const CDP_TEST_PORT = parseInt(process.env.TEST_PORT ?? 61337) + 1;
 
 async function launchContext() {
   const browser = await chromium.launch({
-    headless: false,
+    headless: IS_TEST_ENV,
     executablePath: EXECUTABLE_PATH,
     args: IS_TEST_ENV ? [`--remote-debugging-port=${CDP_TEST_PORT}`] : [],
   });

@@ -1,0 +1,54 @@
+FROM ubuntu:20.04
+
+# Setting bash as the default shell
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+
+# Set directories we'll copy things from and to (respectively)
+ARG BASE_DIR
+ARG DOCKER_BASE_DIR
+
+# Install dependencies before we actually
+# switch into the unprivileged jenkins user.
+RUN apt-get -qq update
+RUN apt-get -y -qq install curl git
+
+# Installing XVFB and other GUI-related deps for E2E tests
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get -y -qq install xvfb \
+    libgtk-3-0 \
+    libxtst6 \
+    libnotify-dev \
+    libgconf-2-4 \
+    libnss3 \
+    libxss1 \
+    libasound2 \
+    libgbm-dev \
+    --no-install-recommends \
+  && rm -rf /var/lib/apt/lists/*
+
+# Adding a jenkins user so that we can install
+# and access everything within the user's own folder
+# We must also give the jenkins user permissions to
+# the $DOCKER_BASE_DIR where the synthetics app is
+# Note: 1167 is Jenkin's $UID
+RUN useradd -m -r -u 1167 jenkins
+RUN usermod -s /bin/bash jenkins
+
+# Copying repo directory
+ADD --chown=jenkins $BASE_DIR $DOCKER_BASE_DIR
+
+USER jenkins
+
+# Installing NVM
+ENV NVM_DIR /home/jenkins/.nvm
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+RUN source $NVM_DIR/nvm.sh \
+  && source /home/jenkins/.bashrc \
+  && ( \
+    cd $DOCKER_BASE_DIR \
+    && nvm install \
+    && nvm use \
+    # We must install dependencies again so
+    # that they're compatible with Ubuntu
+    && npm ci --prefix $DOCKER_BASE_DIR \
+  )

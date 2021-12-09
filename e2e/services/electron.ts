@@ -36,8 +36,13 @@ export class ElectronServiceFactory {
 
     try {
       this.#instance = await _electron.launch({
-        args: [path.join(__dirname, "../..", "electron", "electron.js")],
+        args: [
+          path.join(__dirname, "../..", "electron", "electron.js"),
+          "--no-sandbox",
+          "--enable-logging",
+        ],
         env: {
+          DISPLAY: env.DISPLAY,
           TEST_PORT: env.TEST_PORT,
           PW_DEBUG: "console",
           NODE_ENV: process.env.NODE_ENV,
