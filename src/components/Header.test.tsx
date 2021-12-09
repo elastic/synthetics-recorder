@@ -24,6 +24,7 @@ THE SOFTWARE.
 
 import { fireEvent, render, waitFor } from "@testing-library/react";
 import React from "react";
+import { RecordingStatus } from "../common/types";
 import {
   IRecordingContext,
   RecordingContext,
@@ -31,18 +32,27 @@ import {
 import { Header, IHeader } from "./Header";
 
 describe("<Header />", () => {
-  let isPaused = false;
-  let isRecording = false;
   let contextValues: IRecordingContext;
+  let recordingStatus: RecordingStatus;
 
   beforeEach(() => {
+    recordingStatus = RecordingStatus.NotRecording;
     contextValues = {
-      isPaused,
-      isRecording,
       abortSession: jest.fn(),
-      togglePause: jest.fn().mockImplementation(() => (isPaused = !isPaused)),
+      recordingStatus: recordingStatus,
+      togglePause: jest.fn().mockImplementation(() => {
+        if (recordingStatus === RecordingStatus.Paused) {
+          recordingStatus = RecordingStatus.Recording;
+        } else {
+          recordingStatus = RecordingStatus.Paused;
+        }
+      }),
       toggleRecording: jest.fn().mockImplementation(() => {
-        isRecording = !isRecording;
+        if (recordingStatus === RecordingStatus.Recording) {
+          recordingStatus = RecordingStatus.NotRecording;
+        } else {
+          recordingStatus = RecordingStatus.Recording;
+        }
       }),
     };
   });
@@ -73,14 +83,16 @@ describe("<Header />", () => {
   });
 
   it("displays pause text when recording", () => {
-    const { getByLabelText } = render(componentToRender({ isRecording: true }));
+    const { getByLabelText } = render(
+      componentToRender({ recordingStatus: RecordingStatus.Recording })
+    );
 
     expect(getByLabelText(START_ARIA).textContent).toBe("Pause");
   });
 
   it("displays resume text when paused", () => {
     const { getByLabelText } = render(
-      componentToRender({ isRecording: true, isPaused: true })
+      componentToRender({ recordingStatus: RecordingStatus.Paused })
     );
 
     expect(getByLabelText(START_ARIA).textContent).toBe("Resume");
@@ -88,7 +100,10 @@ describe("<Header />", () => {
 
   it("displays modal when start over is clicked", async () => {
     const { getByText, getByLabelText } = render(
-      componentToRender({ isRecording: true }, { stepCount: 23 })
+      componentToRender(
+        { recordingStatus: RecordingStatus.Recording },
+        { stepCount: 23 }
+      )
     );
 
     const restartButton = getByLabelText(RESTART_ARIA);

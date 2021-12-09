@@ -23,6 +23,7 @@ THE SOFTWARE.
 */
 
 import { createContext } from "react";
+import { RecordingStatus } from "../common/types";
 
 function notImplemented() {
   throw Error("Recording context not initialized");
@@ -39,13 +40,9 @@ export interface IRecordingContext {
    */
   abortSession: () => Promise<void>;
   /**
-   * Is a recording session paused.
+   * Contains info about the current state of the recorder session.
    */
-  isPaused: boolean;
-  /**
-   * Is there a recording session taking place.
-   */
-  isRecording: boolean;
+  recordingStatus: RecordingStatus;
   /**
    * Pauses or unpauses a recording session. If the user
    * is not recording, nothing happens.
@@ -61,8 +58,7 @@ export const RecordingContext = createContext<IRecordingContext>({
   abortSession: async function () {
     throw Error("RecordingContext abort session not implemented");
   },
-  isPaused: false,
-  isRecording: false,
+  recordingStatus: RecordingStatus.NotRecording,
   togglePause: notImplemented,
   toggleRecording: notImplemented,
 });

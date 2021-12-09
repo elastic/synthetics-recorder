@@ -33,6 +33,7 @@ import {
 } from "@elastic/eui";
 import { RecordingContext } from "../contexts/RecordingContext";
 import { StartOverWarningModal } from "./StartOverWarningModal";
+import { RecordingStatus } from "../common/types";
 
 export interface IHeader {
   onUrlChange: (url: string) => void;
@@ -42,11 +43,11 @@ export interface IHeader {
 
 export function Header(props: IHeader) {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { abortSession, isRecording, isPaused, togglePause, toggleRecording } =
+  const { abortSession, recordingStatus, togglePause, toggleRecording } =
     useContext(RecordingContext);
 
   const onUrlFieldKeyUp = async (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !isRecording) {
+    if (e.key === "Enter" && recordingStatus !== RecordingStatus.Recording) {
       await toggleRecording();
     }
   };
@@ -84,16 +85,22 @@ export function Header(props: IHeader) {
             aria-label="Toggle the script recorder between recording and paused"
             fill
             color="primary"
-            iconType={isRecording ? "pause" : "play"}
-            onClick={!isRecording ? toggleRecording : togglePause}
+            iconType={
+              recordingStatus === RecordingStatus.Recording ? "pause" : "play"
+            }
+            onClick={
+              recordingStatus !== RecordingStatus.Recording
+                ? toggleRecording
+                : togglePause
+            }
           >
-            {isRecording ? (isPaused ? "Resume" : "Pause") : "Start recording"}
+            {getPlayPauseCopy(recordingStatus)}
           </ControlButton>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <ControlButton
             aria-label="Stop recording and clear all recorded actions"
-            disabled={!isRecording}
+            disabled={recordingStatus !== RecordingStatus.Recording}
             color="primary"
             iconType="refresh"
             onClick={() => {
@@ -147,3 +154,16 @@ const ControlButton: React.FC<IControlButton> = props => {
   }
   return <EuiButton {...props} />;
 };
+
+function getPlayPauseCopy(status: RecordingStatus) {
+  switch (status) {
+    case RecordingStatus.NotRecording:
+      return "Start recording";
+    case RecordingStatus.Recording:
+      return "Pause";
+    case RecordingStatus.Paused:
+      return "Resume";
+    default:
+      return "";
+  }
+}
