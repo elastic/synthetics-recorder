@@ -89,7 +89,7 @@ export function Header(props: IHeader) {
               recordingStatus === RecordingStatus.Recording ? "pause" : "play"
             }
             onClick={
-              recordingStatus !== RecordingStatus.Recording
+              recordingStatus === RecordingStatus.NotRecording
                 ? toggleRecording
                 : togglePause
             }

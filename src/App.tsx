@@ -57,7 +57,7 @@ export default function App() {
   const [url, setUrl] = useState("");
   const [stepActions, setStepActions] = useState<ActionContext[][]>([]);
   const [type, setJourneyType] = useState<JourneyType>("inline");
-  const [recordingStatus, setRecordingStatus] = useState<RecordingStatus>(
+  const [recordingStatus, setRecordingStatus] = useState(
     RecordingStatus.NotRecording
   );
 
@@ -115,11 +115,7 @@ export default function App() {
                 }
               },
               togglePause: async () => {
-                if (
-                  recordingStatus !== RecordingStatus.Recording &&
-                  recordingStatus !== RecordingStatus.Paused
-                )
-                  return;
+                if (recordingStatus === RecordingStatus.NotRecording) return;
                 if (recordingStatus !== RecordingStatus.Paused) {
                   setRecordingStatus(RecordingStatus.Paused);
                   await ipc.callMain("set-mode", "none");
