@@ -70,7 +70,7 @@ export function Assertion({
   close,
   stepIndex,
 }: IAssertion) {
-  const { actions: steps, onStepDetailChange } = useContext(StepsContext);
+  const { steps, onStepDetailChange } = useContext(StepsContext);
   /**
    * TODO: this functionality is shared between ActionDetail, refactor to centralized place.
    */

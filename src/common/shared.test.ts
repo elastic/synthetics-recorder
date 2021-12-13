@@ -23,13 +23,13 @@ THE SOFTWARE.
 */
 
 import { updateAction } from "./shared";
-import type { ActionContext } from "./types";
+import type { Steps } from "./types";
 
 window.require = require;
 
 describe("shared", () => {
   describe("updateAction", () => {
-    const steps: ActionContext[][] = [
+    const steps: Steps = [
       [
         {
           pageAlias: "page",

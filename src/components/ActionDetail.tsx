@@ -62,13 +62,13 @@ export function ActionDetail({
   close,
   stepIndex,
 }: IActionDetail) {
-  const { actions, onStepDetailChange } = useContext(StepsContext);
+  const { steps, onStepDetailChange } = useContext(StepsContext);
   const onActionContextChange = (
     updatedAction: ActionContext,
     updatedActionIndex: number
   ) => {
     onStepDetailChange(
-      actions[stepIndex].map((actionToUpdate, index) =>
+      steps[stepIndex].map((actionToUpdate, index) =>
         index === updatedActionIndex ? updatedAction : actionToUpdate
       ),
       stepIndex

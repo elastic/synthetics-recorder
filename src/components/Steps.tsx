@@ -27,25 +27,27 @@ import { EuiCode, EuiEmptyPrompt, EuiSpacer, EuiTitle } from "@elastic/eui";
 
 import { StepAccordions } from "./StepList/StepDetails";
 import { StepsContext } from "../contexts/StepsContext";
-import type { ActionContext } from "../common/types";
+import type { Step } from "../common/types";
 
 export function Steps() {
-  const { actions, setActions } = useContext(StepsContext);
+  const { steps, setSteps } = useContext(StepsContext);
 
-  const onStepDetailChange = (step: ActionContext[], stepIndex: number) => {
-    const newActions = actions.map((a, ind) => (ind === stepIndex ? step : a));
-    setActions(newActions);
+  const onStepDetailChange = (updatedStep: Step, stepIndex: number) => {
+    const newActions = steps.map((currentStep, currentStepIdx) =>
+      currentStepIdx === stepIndex ? updatedStep : currentStep
+    );
+    setSteps(newActions);
   };
 
   const onStepDelete = (stepIndex: number) => {
     const newActions = [
-      ...actions.slice(0, stepIndex),
-      ...actions.slice(stepIndex + 1),
+      ...steps.slice(0, stepIndex),
+      ...steps.slice(stepIndex + 1),
     ];
-    setActions(newActions);
+    setSteps(newActions);
   };
 
-  if (actions.length === 0) {
+  if (steps.length === 0) {
     return (
       <EuiEmptyPrompt
         aria-label="This empty prompt indicates that you have not recorded any journey steps yet."
@@ -65,13 +67,13 @@ export function Steps() {
     <>
       <EuiTitle size="s">
         <h2>
-          {actions.length}&nbsp;
-          {actions.length === 1 ? "step recorded" : "steps recorded"}
+          {steps.length}&nbsp;
+          {steps.length === 1 ? "step recorded" : "steps recorded"}
         </h2>
       </EuiTitle>
       <EuiSpacer />
       <StepAccordions
-        steps={actions}
+        steps={steps}
         onStepDetailChange={onStepDetailChange}
         onStepDelete={onStepDelete}
       />

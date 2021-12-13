@@ -44,23 +44,26 @@ import { RecordingContext } from "./contexts/RecordingContext";
 import { UrlContext } from "./contexts/UrlContext";
 import { StepsContext } from "./contexts/StepsContext";
 import { TestContext } from "./contexts/TestContext";
-import type { ActionContext } from "./common/types";
+import type { Step } from "./common/types";
 import { useSyntheticsTest } from "./hooks/useSyntheticsTest";
 import { generateIR, generateMergedIR } from "./helpers/generator";
+import { StepSeparator } from "./components/StepSeparator";
+
 import "@elastic/eui/dist/eui_theme_amsterdam_light.css";
 import "./App.css";
-import { StepSeparator } from "./components/StepSeparator";
+import { useStepsContext } from "./hooks/useStepsContext";
 
 export default function App() {
   const [url, setUrl] = useState("");
-  const [stepActions, setStepActions] = useState<ActionContext[][]>([]);
   const [recordingStatus, setRecordingStatus] = useState(
     RecordingStatus.NotRecording
   );
   const [isCodeFlyoutVisible, setIsCodeFlyoutVisible] = useState(false);
 
   const { ipc } = useContext(CommunicationContext);
-  const syntheticsTestUtils = useSyntheticsTest(stepActions);
+  const stepsContextUtils = useStepsContext();
+  const { steps, setSteps } = stepsContextUtils;
+  const syntheticsTestUtils = useSyntheticsTest(steps);
 
   const onUrlChange = (value: string) => {
     setUrl(value);
@@ -69,57 +72,26 @@ export default function App() {
   const urlRef = useRef(null);
 
   useEffect(() => {
-    ipc.answerMain("change", ({ actions }: { actions: ActionContext[] }) => {
-      setStepActions((prevActionContexts: ActionContext[][]) => {
-        const currActionsContexts = generateIR(actions);
-        return generateMergedIR(prevActionContexts, currActionsContexts);
+    // `actions` here is a set of `ActionContext`s that make up a `Step`
+    ipc.answerMain("change", ({ actions: step }: { actions: Step }) => {
+      setSteps(prevSteps => {
+        const nextSteps = generateIR(step);
+        return generateMergedIR(prevSteps, nextSteps);
       });
     });
-  }, [setStepActions, ipc]);
+  }, [ipc, setSteps]);
 
   const { euiTheme } = useEuiTheme();
   return (
     <StyledComponentsThemeProvider theme={euiTheme}>
-      <StepsContext.Provider
-        value={{
-          actions: stepActions,
-          // stepsTable,
-          onDeleteAction: (sIdx, aIdx) => {
-            setStepActions(value =>
-              value.map((s, idx) => {
-                if (idx !== sIdx) return s;
-                s.splice(aIdx, 1);
-                return [...s];
-              })
-            );
-          },
-          onInsertAction: (action, stepIndex, actionIndex) => {
-            setStepActions(
-              stepActions.map((step, ind) => {
-                if (ind !== stepIndex) return step;
-                step.splice(actionIndex, 0, action);
-                return [...step];
-              })
-            );
-          },
-          onStepDetailChange: (step, stepIndex) => {
-            const newActions = stepActions.map(
-              (a: ActionContext[], ind: number) => {
-                return ind === stepIndex ? step : a;
-              }
-            );
-            setStepActions(newActions);
-          },
-          setActions: setStepActions,
-        }}
-      >
+      <StepsContext.Provider value={stepsContextUtils}>
         <RecordingContext.Provider
           value={{
             abortSession: async () => {
               if (recordingStatus !== RecordingStatus.Recording) return;
               await ipc.send("stop");
               setRecordingStatus(RecordingStatus.NotRecording);
-              setStepActions([]);
+              setSteps([]);
             },
             recordingStatus,
             toggleRecording: async () => {
@@ -155,7 +127,7 @@ export default function App() {
                   padding: "0px 0px 0px 40px",
                 }}
               >
-                {stepActions.map((step, index) => (
+                {steps.map((step, index) => (
                   <StepSeparator
                     index={index}
                     key={`step-separator-${index + 1}`}

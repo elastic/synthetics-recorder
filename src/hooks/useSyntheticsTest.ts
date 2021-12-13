@@ -24,10 +24,10 @@ THE SOFTWARE.
 
 import { useCallback, useContext, useState } from "react";
 import { getCodeForResult, getCodeFromActions } from "../common/shared";
-import { ActionContext, Result } from "../common/types";
 import { CommunicationContext } from "../contexts/CommunicationContext";
+import { Result, Steps } from "../common/types";
 
-export function useSyntheticsTest(actions: ActionContext[][]) {
+export function useSyntheticsTest(actions: Steps) {
   const [result, setResult] = useState<Result | undefined>(undefined);
   const [codeBlocks, setCodeBlocks] = useState("");
   const { ipc } = useContext(CommunicationContext);

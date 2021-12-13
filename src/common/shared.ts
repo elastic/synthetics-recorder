@@ -24,7 +24,13 @@ THE SOFTWARE.
 
 import { RendererProcessIpc } from "electron-better-ipc";
 import React from "react";
-import type { ActionContext, Journey, JourneyType, Setter } from "./types";
+import type {
+  ActionContext,
+  Journey,
+  JourneyType,
+  Setter,
+  Steps,
+} from "./types";
 
 export const COMMAND_SELECTOR_OPTIONS = [
   {
@@ -101,11 +107,11 @@ export function createExternalLinkHandler(
 }
 
 export function updateAction(
-  steps: ActionContext[][],
+  steps: Steps,
   value: string,
   stepIndex: number,
   actionIndex: number
-): ActionContext[][] {
+): Steps {
   return steps.map((step, sidx) => {
     if (sidx !== stepIndex) return step;
     return step.map((ac, aidx) => {

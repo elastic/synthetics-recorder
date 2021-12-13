@@ -26,12 +26,12 @@ import { EuiFlexItem, EuiAccordion, EuiFlexGroup } from "@elastic/eui";
 import React from "react";
 import styled from "styled-components";
 import { SMALL_SCREEN_BREAKPOINT } from "../common/shared";
-import { ActionContext } from "../common/types";
+import { Step } from "../common/types";
 import { ActionElement } from "./ActionElement/ActionElement";
 
 interface IStepSeparator {
   index: number;
-  step: ActionContext[];
+  step: Step;
 }
 
 const StepSeparatorTopBorder = styled(EuiFlexItem)`
