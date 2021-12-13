@@ -143,11 +143,11 @@ function getStepActions(step: JourneyStep, currentActions: ActionContext[][]) {
 
 export async function getCodeForResult(
   actions: ActionContext[][],
-  journeys: Journey | undefined,
+  journey: Journey | undefined,
   type: string
 ) {
-  if (!journeys) return "";
-  const journeyArr = combineResultJourneys(journeys);
+  if (!journey) return "";
+  const journeyArr = combineResultJourneys(journey);
   const stepActions = journeyArr
     .map(({ steps }) => {
       for (const step of steps) {
