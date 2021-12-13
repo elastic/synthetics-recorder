@@ -42,6 +42,7 @@ export function Title() {
   return (
     <EuiPageHeader
       style={{
+        backgroundColor: euiTheme.colors.emptyShade,
         padding: 4,
         boxShadow: `0px 2px ${euiTheme.colors.lightestShade}`,
       }}
