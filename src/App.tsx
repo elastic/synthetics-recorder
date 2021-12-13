@@ -37,7 +37,7 @@ import { AssertionContext } from "./contexts/AssertionContext";
 import { RecordingContext } from "./contexts/RecordingContext";
 import { StepsContext } from "./contexts/StepsContext";
 import { TestContext } from "./contexts/TestContext";
-import type { ActionContext, JourneyType } from "./common/types";
+import type { ActionContext } from "./common/types";
 import { RecordingStatus } from "./common/types";
 import { useAssertionDrawer } from "./hooks/useAssertionDrawer";
 import { useSyntheticsTest } from "./hooks/useSyntheticsTest";
@@ -50,7 +50,6 @@ const MAIN_CONTROLS_MIN_WIDTH = 600;
 export default function App() {
   const [url, setUrl] = useState("");
   const [stepActions, setStepActions] = useState<ActionContext[][]>([]);
-  const [type, setJourneyType] = useState<JourneyType>("inline");
   const [recordingStatus, setRecordingStatus] = useState(
     RecordingStatus.NotRecording
   );
@@ -150,7 +149,7 @@ export default function App() {
                     </EuiFlexGroup>
                   </EuiFlexItem>
                   <EuiFlexItem style={{ minWidth: 300 }}>
-                    <TestResult setType={setJourneyType} type={type} />
+                    <TestResult />
                   </EuiFlexItem>
                 </EuiFlexGroup>
                 <AssertionDrawer />

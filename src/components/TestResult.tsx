@@ -40,10 +40,8 @@ import { StepsContext } from "../contexts/StepsContext";
 import type {
   Journey,
   JourneyStep,
-  JourneyType,
   Result,
   ResultCategory,
-  Setter,
 } from "../common/types";
 import { TestContext } from "../contexts/TestContext";
 
@@ -109,12 +107,7 @@ function ResultAccordions({ codeBlocks, journey }: IResultAccordions) {
   );
 }
 
-interface ITestResult {
-  setType: Setter<JourneyType>;
-  type: JourneyType;
-}
-
-export function TestResult(props: ITestResult) {
+export function TestResult() {
   const { actions } = useContext(StepsContext);
   const { codeBlocks, result, setResult } = useContext(TestContext);
 
@@ -170,7 +163,6 @@ export function TestResult(props: ITestResult) {
         <EuiFlexGroup>
           <EuiFlexItem>
             <ResultAccordions
-              {...props}
               codeBlocks={codeBlocks}
               journey={result.journey}
             />

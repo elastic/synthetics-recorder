@@ -85,8 +85,6 @@ interface ICodeFlyout {
   code: string;
   setCode: Setter<string>;
   setIsFlyoutVisible: Setter<boolean>;
-  setType: Setter<JourneyType>;
-  type: JourneyType;
 }
 
 function CodeFlyout({
@@ -94,9 +92,8 @@ function CodeFlyout({
   code,
   setCode,
   setIsFlyoutVisible,
-  setType,
-  type,
 }: ICodeFlyout) {
+  const [type, setType] = useState<JourneyType>("inline");
   useEffect(() => {
     (async function getCode() {
       const codeFromActions = await getCodeFromActions(actions, type);
@@ -136,7 +133,6 @@ export function StepsMonitor({
 }: IStepsMonitor) {
   const { actions } = useContext(StepsContext);
   const [code, setCode] = useState("");
-  const [type, setType] = useState<JourneyType>("inline");
 
   return (
     <EuiPanel
@@ -153,8 +149,6 @@ export function StepsMonitor({
           code={code}
           setCode={setCode}
           setIsFlyoutVisible={setIsFlyoutVisible}
-          setType={setType}
-          type={type}
         />
       )}
     </EuiPanel>
