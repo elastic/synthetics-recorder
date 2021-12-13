@@ -37,7 +37,7 @@ pipeline {
         withGithubNotify(context: "Install") {
           withNodeJSEnv() {
             dir("${BASE_DIR}") {
-              sh(label: 'npm install', script: 'npm install')
+              sh(label: 'npm ci', script: 'npm ci')
             }
           }
         }
