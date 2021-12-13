@@ -55,17 +55,13 @@ export interface Result {
   failed: number;
   skipped: number;
   succeeded: number;
-  journeys: Journey;
+  journey: Journey;
 }
 
 export interface Journey {
-  inline?: JourneyStatus;
-  suite?: JourneyStatus;
-}
-
-export interface JourneyStatus {
   status: string;
   steps: Array<JourneyStep>;
+  type: JourneyType;
 }
 
 export type ResultCategory = "succeeded" | "failed" | "skipped";

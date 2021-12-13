@@ -42,12 +42,11 @@ export function useSyntheticsTest(actions: ActionContext[][]) {
         code,
         isSuite: false,
       });
-      setCodeBlocks(
-        await getCodeForResult(actions, result?.journeys, "inline")
-      );
+
+      setCodeBlocks(await getCodeForResult(actions, result?.journey));
       setResult(resultFromServer);
     },
-    [result?.journeys, setCodeBlocks, setResult, actions]
+    [actions, result]
   );
   return {
     codeBlocks,

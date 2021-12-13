@@ -36,7 +36,6 @@ import {
   useEuiTheme,
 } from "@elastic/eui";
 
-import { combineResultJourneys } from "../common/shared";
 import { StepsContext } from "../contexts/StepsContext";
 import type {
   Journey,
@@ -61,55 +60,50 @@ function removeColorCodes(str = "") {
 
 interface IResultAccordions {
   codeBlocks: string;
-  journeys: Journey;
+  journey: Journey;
 }
 
-function ResultAccordions({ codeBlocks, journeys }: IResultAccordions) {
-  const journeyArr = combineResultJourneys(journeys);
-  if (journeyArr.length === 0) return null;
-
+function ResultAccordions({ codeBlocks, journey }: IResultAccordions) {
   return (
     <>
-      {journeyArr.map(({ steps }) => {
-        return steps.map((step: JourneyStep, stepIndex: number) => {
-          const { name, status, error, duration } = step;
-          return (
-            <EuiAccordion
-              id={step.name}
-              key={stepIndex}
-              arrowDisplay="none"
-              forceState={status === "failed" ? "open" : "closed"}
-              buttonContent={
-                <EuiFlexGroup alignItems="center">
-                  <EuiFlexItem grow={false}>{symbols[status]}</EuiFlexItem>
-                  <EuiFlexItem grow={false}>
-                    <EuiText size="s" style={{ fontWeight: 500 }}>
-                      {name} ({duration} ms)
-                    </EuiText>
-                  </EuiFlexItem>
-                </EuiFlexGroup>
-              }
-              paddingSize="s"
-              buttonClassName="euiAccordionForm__button"
-            >
-              {error && (
-                <>
-                  <EuiCodeBlock
-                    language="js"
-                    paddingSize="m"
-                    style={{ maxWidth: 300 }}
-                    transparentBackground={true}
-                  >
-                    {codeBlocks ?? null}
-                  </EuiCodeBlock>
-                  <EuiCodeBlock paddingSize="m" transparentBackground={true}>
-                    {removeColorCodes(error.message)}
-                  </EuiCodeBlock>
-                </>
-              )}
-            </EuiAccordion>
-          );
-        });
+      {journey.steps.map((step: JourneyStep, stepIndex: number) => {
+        const { name, status, error, duration } = step;
+        return (
+          <EuiAccordion
+            id={step.name}
+            key={stepIndex}
+            arrowDisplay="none"
+            forceState={status === "failed" ? "open" : "closed"}
+            buttonContent={
+              <EuiFlexGroup alignItems="center">
+                <EuiFlexItem grow={false}>{symbols[status]}</EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiText size="s" style={{ fontWeight: 500 }}>
+                    {name} ({duration} ms)
+                  </EuiText>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            }
+            paddingSize="s"
+            buttonClassName="euiAccordionForm__button"
+          >
+            {error && (
+              <>
+                <EuiCodeBlock
+                  language="js"
+                  paddingSize="m"
+                  style={{ maxWidth: 300 }}
+                  transparentBackground={true}
+                >
+                  {codeBlocks ?? null}
+                </EuiCodeBlock>
+                <EuiCodeBlock paddingSize="m" transparentBackground={true}>
+                  {removeColorCodes(error.message)}
+                </EuiCodeBlock>
+              </>
+            )}
+          </EuiAccordion>
+        );
       })}
     </>
   );
@@ -178,7 +172,7 @@ export function TestResult(props: ITestResult) {
             <ResultAccordions
               {...props}
               codeBlocks={codeBlocks}
-              journeys={result.journeys}
+              journey={result.journey}
             />
           </EuiFlexItem>
         </EuiFlexGroup>
