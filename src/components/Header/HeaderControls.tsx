@@ -53,7 +53,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
   const { abortSession, recordingStatus, togglePause, toggleRecording } =
     useContext(RecordingContext);
 
-  const { actions: stepActions } = useContext(StepsContext);
+  const { steps } = useContext(StepsContext);
 
   const { onTest } = useContext(TestContext);
 
@@ -115,7 +115,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
         <EuiFlexItem grow={false}>
           <EuiFlexGroup gutterSize="m">
             <EuiFlexItem>
-              <TestButton disabled={stepActions.length === 0} onTest={onTest} />
+              <TestButton disabled={steps.length === 0} onTest={onTest} />
             </EuiFlexItem>
             <EuiFlexItem
               style={{
@@ -144,7 +144,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
         <StartOverWarningModal
           close={() => setIsModalVisible(false)}
           startOver={startOver}
-          stepCount={stepActions.length}
+          stepCount={steps.length}
         />
       )}
     </>

@@ -22,29 +22,42 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { createContext } from "react";
-import type { ActionContext, Setter, Step, Steps } from "../common/types";
+import { useState } from "react";
+import { Step, Steps } from "../common/types";
+import { IStepsContext } from "../contexts/StepsContext";
 
-function notImplemented() {
-  throw Error("Step context not initialized");
+export function useStepsContext(): IStepsContext {
+  const [steps, setSteps] = useState<Steps>([]);
+  return {
+    steps,
+    setSteps,
+    onDeleteAction: (targetStepIdx, actionToDeleteIdx) => {
+      setSteps(steps =>
+        steps.map((step, currentStepIndex) => {
+          if (currentStepIndex !== targetStepIdx) return step;
+
+          step.splice(actionToDeleteIdx, 1);
+
+          return [...step];
+        })
+      );
+    },
+    onInsertAction: (action, targetStepIdx, indexToInsert) => {
+      setSteps(
+        steps.map((step, currentStepIndex) => {
+          if (currentStepIndex !== targetStepIdx) return step;
+
+          step.splice(indexToInsert, 0, action);
+
+          return [...step];
+        })
+      );
+    },
+    onStepDetailChange: (step: Step, stepIndex: number) => {
+      const newActions = steps.map((a, ind) => {
+        return ind === stepIndex ? step : a;
+      });
+      setSteps(newActions);
+    },
+  };
 }
-
-export interface IStepsContext {
-  steps: Steps;
-  setSteps: Setter<Steps>;
-  onDeleteAction: (stepIndex: number, actionIndex: number) => void;
-  onInsertAction: (
-    action: ActionContext,
-    stepIndex: number,
-    actionIndex: number
-  ) => void;
-  onStepDetailChange: (step: Step, stepIndex: number) => void;
-}
-
-export const StepsContext = createContext<IStepsContext>({
-  steps: [],
-  setSteps: notImplemented,
-  onDeleteAction: notImplemented,
-  onInsertAction: notImplemented,
-  onStepDetailChange: notImplemented,
-});

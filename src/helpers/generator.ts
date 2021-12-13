@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { Action, ActionContext } from "../common/types";
+import { Action, ActionContext, Step, Steps } from "../common/types";
 
-export function generateIR(actionContexts: ActionContext[]) {
+export function generateIR(actionContexts: Step) {
   const result = [];
   let steps = [];
   let previousContext = null;
@@ -108,19 +108,16 @@ export function actionTitle(action: Action) {
  * the actions generated/modified by the UI and merges them
  * to display the correct modified actions on the UI
  */
-export function generateMergedIR(
-  prevAcs: ActionContext[][],
-  currAcs: ActionContext[][]
-): ActionContext[][] {
-  const prevActionContexts = prevAcs.flat();
-  const currActionContexts = currAcs.flat();
+export function generateMergedIR(prevSteps: Steps, currSteps: Steps): Steps {
+  const prevActionContexts = prevSteps.flat();
+  const currActionContexts = currSteps.flat();
   const prevLength = prevActionContexts.length;
   const currLength = currActionContexts.length;
   /**
    * when recorder is started/resetted
    */
   if (currLength === 0 || prevLength === 0) {
-    return currAcs;
+    return currSteps;
   }
 
   const mergedActions = [];

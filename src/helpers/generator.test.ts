@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ActionContext } from "../common/types";
+import { Step } from "../common/types";
 import { generateIR } from "./generator";
 
-const actions: ActionContext[] = [
+const actions: Step = [
   {
     pageAlias: "page",
     isMainFrame: true,

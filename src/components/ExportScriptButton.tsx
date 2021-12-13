@@ -29,10 +29,10 @@ import { CommunicationContext } from "../contexts/CommunicationContext";
 import { StepsContext } from "../contexts/StepsContext";
 
 export function SaveCodeButton() {
-  const { actions } = useContext(StepsContext);
   const { ipc } = useContext(CommunicationContext);
+  const { steps } = useContext(StepsContext);
   const onSave = async () => {
-    const codeFromActions = await getCodeFromActions(ipc, actions, "inline");
+    const codeFromActions = await getCodeFromActions(ipc, steps, "inline");
     await ipc.callMain("save-file", codeFromActions);
   };
   return (

@@ -35,10 +35,10 @@ import {
   EuiTitle,
 } from "@elastic/eui";
 import { getCodeFromActions } from "../common/shared";
-import { Steps } from "./Steps";
 import { StepsContext } from "../contexts/StepsContext";
-import type { ActionContext, JourneyType, Setter } from "../common/types";
 import { CommunicationContext } from "../contexts/CommunicationContext";
+import type { JourneyType, Setter, Steps } from "../common/types";
+import { Steps as StepsComponent } from "./Steps";
 
 interface IRecordedCodeTabs {
   selectedTab: JourneyType;
@@ -82,26 +82,21 @@ function RecordedCodeTabs({ selectedTab, setSelectedTab }: IRecordedCodeTabs) {
 }
 
 interface ICodeFlyout {
-  actions: ActionContext[][];
+  steps: Steps;
   code: string;
   setCode: Setter<string>;
   setIsFlyoutVisible: Setter<boolean>;
 }
 
-function CodeFlyout({
-  actions,
-  code,
-  setCode,
-  setIsFlyoutVisible,
-}: ICodeFlyout) {
+function CodeFlyout({ steps, code, setCode, setIsFlyoutVisible }: ICodeFlyout) {
   const { ipc } = useContext(CommunicationContext);
   const [type, setType] = useState<JourneyType>("inline");
   useEffect(() => {
     (async function getCode() {
-      const codeFromActions = await getCodeFromActions(ipc, actions, type);
+      const codeFromActions = await getCodeFromActions(ipc, steps, type);
       setCode(codeFromActions);
     })();
-  }, [actions, setCode, type, ipc]);
+  }, [setCode, steps, type, ipc]);
 
   return (
     <EuiFlyout
@@ -133,7 +128,7 @@ export function StepsMonitor({
   isFlyoutVisible,
   setIsFlyoutVisible,
 }: IStepsMonitor) {
-  const { actions } = useContext(StepsContext);
+  const { steps } = useContext(StepsContext);
   const [code, setCode] = useState("");
 
   return (
@@ -143,12 +138,12 @@ export function StepsMonitor({
       hasBorder={false}
       style={{ minHeight: 500 }}
     >
-      <Steps />
+      <StepsComponent />
       <EuiSpacer />
 
       {isFlyoutVisible && (
         <CodeFlyout
-          actions={actions}
+          steps={steps}
           code={code}
           setCode={setCode}
           setIsFlyoutVisible={setIsFlyoutVisible}

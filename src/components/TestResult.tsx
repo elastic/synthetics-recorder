@@ -108,12 +108,12 @@ function ResultAccordions({ codeBlocks, journey }: IResultAccordions) {
 }
 
 export function TestResult() {
-  const { actions } = useContext(StepsContext);
+  const { steps } = useContext(StepsContext);
   const { codeBlocks, result, setResult } = useContext(TestContext);
 
   useEffect(() => {
-    if (actions.length === 0 && result) setResult(undefined);
-  }, [actions.length, result, setResult]);
+    if (steps.length === 0 && result) setResult(undefined);
+  }, [steps.length, result, setResult]);
 
   const {
     euiTheme: {

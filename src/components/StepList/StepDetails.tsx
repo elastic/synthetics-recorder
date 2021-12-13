@@ -35,10 +35,11 @@ import { ActionDetail } from "../ActionDetail";
 import { StepAccordionTitle } from "./StepAccordionTitle";
 import "./StepDetails.css";
 import { RecordingContext } from "../../contexts/RecordingContext";
-import { ActionContext, RecordingStatus } from "../../common/types";
+import { RecordingStatus } from "../../common/types";
+import type { Step, Steps } from "../../common/types";
 
 interface IStepDetail {
-  step: ActionContext[];
+  step: Step;
   stepIndex: number;
 }
 
@@ -58,14 +59,14 @@ function StepDetail({ step, stepIndex }: IStepDetail) {
 }
 
 type StepDeleteHandler = (stepIndex: number) => void;
-type StepChangeHandler = (step: ActionContext[], stepIndex: number) => void;
+type StepChangeHandler = (step: Step, stepIndex: number) => void;
 
 interface IStepAccordion {
   title: string;
   index: number;
   onStepDetailChange: StepChangeHandler;
   onStepDelete: StepDeleteHandler;
-  step: ActionContext[];
+  step: Step;
 }
 
 function StepAccordion({
@@ -162,7 +163,7 @@ function StepAccordion({
 }
 
 interface IStepAccordions {
-  steps: ActionContext[][];
+  steps: Steps;
   onStepDelete: StepDeleteHandler;
   onStepDetailChange: StepChangeHandler;
 }
