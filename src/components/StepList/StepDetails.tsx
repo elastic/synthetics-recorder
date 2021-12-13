@@ -36,7 +36,7 @@ import { ActionDetail } from "../ActionDetail";
 import { StepAccordionTitle } from "./StepAccordionTitle";
 import "./StepDetails.css";
 import { RecordingContext } from "../../contexts/RecordingContext";
-import type { ActionContext } from "../../common/types";
+import { ActionContext, RecordingStatus } from "../../common/types";
 
 interface IStepDetail {
   step: ActionContext[];
@@ -110,7 +110,7 @@ function StepAccordion({
       },
     },
   } = useEuiTheme();
-  const { isRecording } = useContext(RecordingContext);
+  const { recordingStatus } = useContext(RecordingContext);
   const [isEditing, setIsEditing] = useState(false);
   const onStepTitleChange = (updatedTitle: string) => {
     onStepDetailChange(
@@ -168,14 +168,14 @@ function StepAccordion({
           <EuiFlexItem grow={false}>
             <EuiButtonIcon
               aria-label={
-                isRecording
+                recordingStatus === RecordingStatus.Recording
                   ? "Delete this step. You cannot delete steps until you end the recording session."
                   : "Delete this step."
               }
               className="euiAccordionForm__extraAction"
               // @ts-expect-error using EUI theme colors
               color={darkShade}
-              isDisabled={isRecording}
+              isDisabled={recordingStatus === RecordingStatus.Recording}
               iconType="trash"
               onClick={() => onStepDelete(index)}
             />

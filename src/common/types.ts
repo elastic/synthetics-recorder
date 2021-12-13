@@ -82,3 +82,9 @@ export type JourneyType = "suite" | "inline";
 export type AssertionDrawerMode = "create" | "edit";
 
 export type Setter<T> = React.Dispatch<React.SetStateAction<T>>;
+
+export enum RecordingStatus {
+  NotRecording = "NOT_RECORDING",
+  Recording = "RECORDING",
+  Paused = "PAUSED",
+}

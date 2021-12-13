@@ -44,7 +44,7 @@ import { AssertionContext } from "./contexts/AssertionContext";
 import { StepsContext } from "./contexts/StepsContext";
 import { useAssertionDrawer } from "./hooks/useAssertionDrawer";
 import { createExternalLinkHandler } from "./common/shared";
-import type { ActionContext, JourneyType } from "./common/types";
+import { ActionContext, JourneyType, RecordingStatus } from "./common/types";
 import { generateIR, generateMergedIR } from "./helpers/generator";
 
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
@@ -57,8 +57,9 @@ export default function App() {
   const [url, setUrl] = useState("");
   const [stepActions, setStepActions] = useState<ActionContext[][]>([]);
   const [type, setJourneyType] = useState<JourneyType>("inline");
-  const [isRecording, setIsRecording] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
+  const [recordingStatus, setRecordingStatus] = useState(
+    RecordingStatus.NotRecording
+  );
 
   const assertionDrawerUtils = useAssertionDrawer();
 
@@ -95,29 +96,32 @@ export default function App() {
         <AssertionContext.Provider value={assertionDrawerUtils}>
           <RecordingContext.Provider
             value={{
-              isRecording,
+              abortSession: async () => {
+                if (recordingStatus !== RecordingStatus.Recording) return;
+                await ipc.send("stop");
+                setRecordingStatus(RecordingStatus.NotRecording);
+                setStepActions([]);
+              },
+              recordingStatus,
               toggleRecording: async () => {
-                if (isRecording) {
-                  setIsRecording(false);
-                  setIsPaused(false);
+                if (recordingStatus === RecordingStatus.Recording) {
+                  setRecordingStatus(RecordingStatus.NotRecording);
                   // Stop browser process
                   ipc.send("stop");
                 } else {
-                  setIsRecording(true);
+                  setRecordingStatus(RecordingStatus.Recording);
                   await ipc.callMain("record-journey", { url });
-                  setIsRecording(false);
-                  setIsPaused(false);
+                  setRecordingStatus(RecordingStatus.NotRecording);
                 }
               },
-              isPaused,
               togglePause: async () => {
-                if (!isRecording) return;
-                if (!isPaused) {
-                  setIsPaused(true);
+                if (recordingStatus === RecordingStatus.NotRecording) return;
+                if (recordingStatus !== RecordingStatus.Paused) {
+                  setRecordingStatus(RecordingStatus.Paused);
                   await ipc.callMain("set-mode", "none");
                 } else {
                   await ipc.callMain("set-mode", "recording");
-                  setIsPaused(false);
+                  setRecordingStatus(RecordingStatus.Recording);
                 }
               },
             }}
@@ -164,7 +168,11 @@ export default function App() {
                 <EuiFlexItem>
                   <EuiFlexGroup direction="column">
                     <EuiFlexItem grow={false}>
-                      <Header url={url} onUrlChange={onUrlChange} />
+                      <Header
+                        url={url}
+                        onUrlChange={onUrlChange}
+                        stepCount={stepActions.length}
+                      />
                     </EuiFlexItem>
                     <EuiFlexItem style={{ minWidth: MAIN_CONTROLS_MIN_WIDTH }}>
                       <StepsMonitor />

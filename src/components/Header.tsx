@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   EuiButton,
   EuiButtonIcon,
@@ -32,24 +32,43 @@ import {
   useEuiTheme,
 } from "@elastic/eui";
 import { RecordingContext } from "../contexts/RecordingContext";
+import { StartOverWarningModal } from "./StartOverWarningModal";
+import { RecordingStatus } from "../common/types";
 
-interface IHeader {
+export interface IHeader {
   onUrlChange: (url: string) => void;
+  stepCount: number;
   url: string;
 }
 
 export function Header(props: IHeader) {
-  const { isRecording, isPaused, toggleRecording, togglePause } =
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const { abortSession, recordingStatus, togglePause, toggleRecording } =
     useContext(RecordingContext);
 
   const onUrlFieldKeyUp = async (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !isRecording) {
+    if (e.key === "Enter" && recordingStatus !== RecordingStatus.Recording) {
       await toggleRecording();
     }
   };
 
+  const urlRef = useRef<null | HTMLInputElement>(null);
+
+  const startOver = React.useCallback(async () => {
+    await abortSession();
+    setIsModalVisible(false);
+    if (urlRef) urlRef.current?.focus();
+  }, [abortSession]);
+
   return (
     <>
+      {isModalVisible && (
+        <StartOverWarningModal
+          close={() => setIsModalVisible(false)}
+          startOver={startOver}
+          stepCount={props.stepCount}
+        />
+      )}
       <EuiFlexGroup wrap gutterSize="s">
         <EuiFlexItem>
           <EuiFieldText
@@ -58,28 +77,39 @@ export function Header(props: IHeader) {
             onKeyUp={onUrlFieldKeyUp}
             onChange={e => props.onUrlChange(e.target.value)}
             fullWidth
+            inputRef={urlRef}
           />
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <ControlButton
-            aria-label="Toggle script recording on/off"
+            aria-label="Toggle the script recorder between recording and paused"
             fill
             color="primary"
-            iconType={isRecording ? "stop" : "play"}
-            onClick={toggleRecording}
+            iconType={
+              recordingStatus === RecordingStatus.Recording ? "pause" : "play"
+            }
+            onClick={
+              recordingStatus === RecordingStatus.NotRecording
+                ? toggleRecording
+                : togglePause
+            }
           >
-            {isRecording ? "Stop" : "Start recording"}
+            {getPlayPauseCopy(recordingStatus)}
           </ControlButton>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <ControlButton
-            aria-label="Toggle script recording pause/continue"
-            disabled={!isRecording}
+            aria-label="Stop recording and clear all recorded actions"
+            disabled={recordingStatus !== RecordingStatus.Recording}
             color="primary"
-            iconType={isPaused ? "play" : "pause"}
-            onClick={togglePause}
+            iconType="refresh"
+            onClick={() => {
+              if (!isModalVisible) {
+                setIsModalVisible(true);
+              }
+            }}
           >
-            {isPaused ? "Resume" : "Pause"}
+            Start over
           </ControlButton>
         </EuiFlexItem>
       </EuiFlexGroup>
@@ -124,3 +154,16 @@ const ControlButton: React.FC<IControlButton> = props => {
   }
   return <EuiButton {...props} />;
 };
+
+function getPlayPauseCopy(status: RecordingStatus) {
+  switch (status) {
+    case RecordingStatus.NotRecording:
+      return "Start recording";
+    case RecordingStatus.Recording:
+      return "Pause";
+    case RecordingStatus.Paused:
+      return "Resume";
+    default:
+      return "";
+  }
+}
