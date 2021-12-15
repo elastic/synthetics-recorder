@@ -30,7 +30,7 @@ interface IRecordingHealth {
   status: RecordingStatus;
 }
 
-export function RecordingHealth({ status }: IRecordingHealth) {
+export function RecordingStatusIndicator({ status }: IRecordingHealth) {
   if (status === RecordingStatus.Recording)
     return <EuiHealth color="danger">Recording</EuiHealth>;
   if (status === RecordingStatus.Paused)

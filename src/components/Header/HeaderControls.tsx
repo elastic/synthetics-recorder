@@ -35,7 +35,7 @@ import { TestContext } from "../../contexts/TestContext";
 import { ControlButton } from "../ControlButton";
 import { SaveCodeButton } from "../ExportScriptButton";
 import { TestButton } from "../TestButton";
-import { RecordingHealth } from "./StatusIndicator";
+import { RecordingStatusIndicator } from "./StatusIndicator";
 
 interface IHeaderControls {
   hasActions: boolean;
@@ -75,7 +75,7 @@ export function HeaderControls({
         </ControlButton>
       </EuiFlexItem>
       <EuiFlexItem>
-        <RecordingHealth status={recordingStatus} />
+        <RecordingStatusIndicator status={recordingStatus} />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <EuiFlexGroup gutterSize="m">
