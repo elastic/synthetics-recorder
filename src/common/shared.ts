@@ -62,6 +62,11 @@ export const COMMAND_SELECTOR_OPTIONS = [
   },
 ];
 
+export const SYNTHETICS_DISCUSS_FORUM_URL =
+  "https://forms.gle/PzVtYoExfqQ9UMkY6";
+
+export const SMALL_SCREEN_BREAKPOINT = 850;
+
 export function performSelectorLookup(
   onSelectorChange: Setter<string | undefined>
 ) {
@@ -109,9 +114,6 @@ export function updateAction(
   });
 }
 
-export const SYNTHETICS_DISCUSS_FORUM_URL =
-  "https://forms.gle/PzVtYoExfqQ9UMkY6";
-
 export async function getCodeForResult(
   steps: ActionContext[][],
   journey: Journey | undefined
@@ -130,5 +132,3 @@ export async function getCodeForResult(
     journey.type
   );
 }
-
-export const SMALL_SCREEN_BREAKPOINT = 850;
