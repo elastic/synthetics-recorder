@@ -32,13 +32,13 @@ export function TestButton({
   disabled: boolean;
   onTest: React.MouseEventHandler<HTMLButtonElement>;
 }) {
-  const ariaLabel = disabled
-    ? "Record a step in order to run a test"
-    : "Perform a test run for the journey you have recorded";
-
   const button = (
     <EuiButton
-      aria-label={ariaLabel}
+      aria-label={
+        disabled
+          ? "Record a step in order to run a test"
+          : "Perform a test run for the journey you have recorded"
+      }
       color="primary"
       iconType="beaker"
       isDisabled={disabled}
