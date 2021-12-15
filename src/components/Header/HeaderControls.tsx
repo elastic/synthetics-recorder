@@ -26,29 +26,16 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiButton,
-  EuiHealth,
   useEuiTheme,
 } from "@elastic/eui";
 import React, { useContext } from "react";
-import { Setter } from "../../common/types";
+import { RecordingStatus, Setter } from "../../common/types";
 import { RecordingContext } from "../../contexts/RecordingContext";
 import { TestContext } from "../../contexts/TestContext";
 import { ControlButton } from "../ControlButton";
 import { SaveCodeButton } from "../ExportScriptButton";
 import { TestButton } from "../TestButton";
-
-interface IRecordingHealth {
-  isPaused: boolean;
-  isRecording: boolean;
-}
-
-function RecordingHealth({ isPaused, isRecording }: IRecordingHealth) {
-  if (isRecording && !isPaused)
-    return <EuiHealth color="danger">Recording</EuiHealth>;
-  if (isRecording && isPaused)
-    return <EuiHealth color="warning">Recording paused</EuiHealth>;
-  return <EuiHealth color="subdued">Not recording</EuiHealth>;
-}
+import { RecordingHealth } from "./StatusIndicator";
 
 interface IHeaderControls {
   hasActions: boolean;
@@ -60,8 +47,7 @@ export function HeaderControls({
   setIsCodeFlyoutVisible,
 }: IHeaderControls) {
   const { euiTheme } = useEuiTheme();
-  const { isPaused, isRecording, toggleRecording } =
-    useContext(RecordingContext);
+  const { recordingStatus, toggleRecording } = useContext(RecordingContext);
   const { onTest } = useContext(TestContext);
   return (
     <EuiFlexGroup
@@ -78,14 +64,18 @@ export function HeaderControls({
         <ControlButton
           aria-label="Toggle script recording on/off"
           color="primary"
-          iconType={isRecording ? "stop" : "play"}
+          iconType={
+            recordingStatus === RecordingStatus.Recording ? "stop" : "play"
+          }
           onClick={toggleRecording}
         >
-          {isRecording ? "Stop" : "Start recording"}
+          {recordingStatus === RecordingStatus.Recording
+            ? "Stop"
+            : "Start recording"}
         </ControlButton>
       </EuiFlexItem>
       <EuiFlexItem>
-        <RecordingHealth isPaused={isPaused} isRecording={isRecording} />
+        <RecordingHealth status={recordingStatus} />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <EuiFlexGroup gutterSize="m">
