@@ -31,7 +31,7 @@ import {
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { SMALL_SCREEN_BREAKPOINT } from "../../common/shared";
-import { ActionContext } from "../../common/types";
+import { ActionContext, ResultCategory } from "../../common/types";
 import { StepsContext } from "../../contexts/StepsContext";
 import { ActionDetail } from "../ActionDetail";
 import { HeadingText } from "./HeadingText";
@@ -46,6 +46,7 @@ interface IActionElement {
   initialIsOpen?: boolean;
   step: ActionContext;
   stepIndex: number;
+  testStatus?: ResultCategory;
 }
 
 const ActionAccordion = styled(EuiAccordion)`
@@ -65,6 +66,7 @@ function ActionComponent({
   initialIsOpen,
   step,
   stepIndex,
+  testStatus,
 }: IActionElement) {
   const { onDeleteAction, onInsertAction } = useContext(StepsContext);
   const { euiTheme } = useEuiTheme();
@@ -86,7 +88,7 @@ function ActionComponent({
   return (
     <Container className={className} gutterSize="none">
       <EuiFlexItem grow={false}>
-        {!step.action.isAssert && <ActionStatusIndicator />}
+        {!step.action.isAssert && <ActionStatusIndicator status={testStatus} />}
       </EuiFlexItem>
       <EuiFlexItem
         style={{
