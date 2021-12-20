@@ -22,46 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiThemeComputed, useEuiTheme } from "@elastic/eui";
-import React from "react";
+import { useContext, useEffect, useState } from "react";
 import { ResultCategory } from "../common/types";
+import { TestContext } from "../contexts/TestContext";
 
-interface IActionStatusIndicator {
-  status?: ResultCategory;
-}
+export function useTestResult(stepName?: string): ResultCategory | undefined {
+  const { result } = useContext(TestContext);
+  const [statuses, setStatuses] = useState<Record<string, ResultCategory>>({});
 
-export function ActionStatusIndicator({ status }: IActionStatusIndicator) {
-  const { euiTheme } = useEuiTheme();
+  useEffect(() => {
+    setStatuses(
+      result
+        ? result.journey.steps.reduce((prev, { name, status }) => {
+            return { ...prev, [name]: status };
+          }, {})
+        : {}
+    );
+  }, [result, setStatuses]);
 
-  return (
-    <svg
-      width="50"
-      height="50"
-      style={{ left: 26, top: 12, position: "relative" }}
-    >
-      <circle cx="25" cy="25" r="12" fill={euiTheme.colors.lightestShade} />
-      <circle
-        cx="25"
-        cy="25"
-        r="3"
-        fill={getColorForStatus(euiTheme, status)}
-      />
-    </svg>
-  );
-}
+  if (!stepName) return undefined;
+  if (!statuses[stepName]) return undefined;
 
-function getColorForStatus(
-  euiTheme: EuiThemeComputed,
-  status?: ResultCategory
-) {
-  switch (status) {
-    case "succeeded":
-      return euiTheme.colors.success;
-    case "skipped":
-      return euiTheme.colors.warning;
-    case "failed":
-      return euiTheme.colors.danger;
-    default:
-      return euiTheme.colors.darkestShade;
-  }
+  return statuses[stepName];
 }

@@ -27,6 +27,7 @@ import React from "react";
 import styled from "styled-components";
 import { SMALL_SCREEN_BREAKPOINT } from "../common/shared";
 import { Step } from "../common/types";
+import { useTestResult } from "../hooks/useTestResult";
 import { ActionElement } from "./ActionElement/ActionElement";
 
 interface IStepSeparator {
@@ -55,6 +56,8 @@ const StepSeparatorAccordion = styled(EuiAccordion)`
 `;
 
 export function StepSeparator({ index, step }: IStepSeparator) {
+  const testStatus = useTestResult(step.length ? step[0].title : undefined);
+
   return (
     <StepSeparatorAccordion
       extraAction={
@@ -75,6 +78,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
           step={s}
           actionIndex={actionIndex}
           stepIndex={index}
+          testStatus={testStatus}
         />
       ))}
     </StepSeparatorAccordion>
