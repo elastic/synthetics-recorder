@@ -126,7 +126,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
               <EuiButton
                 color="text"
                 iconType="editorCodeBlock"
-                onClick={async function () {
+                onClick={function () {
                   setIsCodeFlyoutVisible(true);
                 }}
               >
