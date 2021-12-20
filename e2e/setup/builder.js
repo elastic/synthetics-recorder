@@ -54,6 +54,4 @@ const buildFiles = async () => {
   });
 };
 
-module.exports = async () => {
-  await buildFiles();
-};
+module.exports = { buildFiles };

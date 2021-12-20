@@ -22,30 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ElectronServiceFactory, env } from "../services";
+const { stopDemoApp } = require("./demo_app");
 
-const electronService = new ElectronServiceFactory();
-
-afterEach(() => {
-  electronService.terminate();
-});
-
-describe("Navigation", () => {
-  it("records chromium's opened pages", async () => {
-    const electronWindow = await electronService.getWindow();
-
-    await electronService.enterTestUrl(env.DEMO_APP_URL);
-
-    await electronService.clickStartRecording();
-    await electronService.waitForPageToBeIdle();
-    await electronService.navigateRecordingBrowser("http://example.com");
-
-    expect(await electronWindow.$("text=2 Recorded Steps")).toBeTruthy();
-    expect(
-      await electronWindow.$(`text=Go to ${env.DEMO_APP_URL}`)
-    ).toBeTruthy();
-    expect(
-      await electronWindow.$("text=Go to http://example.com/")
-    ).toBeTruthy();
-  });
-});
+module.exports = async () => {
+  await stopDemoApp();
+};
