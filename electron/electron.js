@@ -30,12 +30,16 @@ const debug = require("electron-debug");
 const logger = require("electron-log");
 const setupListeners = require("./execution");
 const buildMenu = require("./menu");
-
 // For dev
 unhandled({ logger: err => logger.error(err) });
 debug({ enabled: true, showDevTools: false });
 
 const BUILD_DIR = join(__dirname, "..", "build");
+
+// We can't read from the `env` file within `services` here
+// so we must access the process env directly
+const IS_TEST = process.env.NODE_ENV === "test";
+const TEST_PORT = process.env.TEST_PORT;
 
 async function createWindow() {
   const win = new BrowserWindow({
@@ -44,16 +48,20 @@ async function createWindow() {
     minHeight: 500,
     minWidth: 800,
     webPreferences: {
-      devTools: isDev,
+      devTools: isDev || IS_TEST,
       nodeIntegration: true,
       contextIsolation: false,
       nativeWindowOpen: true,
     },
   });
 
-  isDev
-    ? win.loadURL("http://localhost:3000")
-    : win.loadFile(join(BUILD_DIR, "index.html"));
+  if (isDev && !IS_TEST) {
+    win.loadURL("http://localhost:3000");
+  } else if (IS_TEST && TEST_PORT) {
+    win.loadURL(`http://localhost:${TEST_PORT}`);
+  } else {
+    win.loadFile(join(BUILD_DIR, "index.html"));
+  }
 }
 
 function createMenu() {
