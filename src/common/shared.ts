@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 import React from "react";
-import type { ActionContext, JourneyType, Setter } from "./types";
+import type { ActionContext, Journey, JourneyType, Setter } from "./types";
 
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
@@ -61,6 +61,11 @@ export const COMMAND_SELECTOR_OPTIONS = [
     text: "Is Enabled",
   },
 ];
+
+export const SYNTHETICS_DISCUSS_FORUM_URL =
+  "https://forms.gle/PzVtYoExfqQ9UMkY6";
+
+export const SMALL_SCREEN_BREAKPOINT = 850;
 
 export function performSelectorLookup(
   onSelectorChange: Setter<string | undefined>
@@ -107,4 +112,23 @@ export function updateAction(
       return { action: { ...action, value }, ...rest };
     });
   });
+}
+
+export async function getCodeForResult(
+  steps: ActionContext[][],
+  journey: Journey | undefined
+): Promise<string> {
+  if (!journey) return "";
+  const journeyStepNames = new Set(journey.steps.map(({ name }) => name));
+
+  return await getCodeFromActions(
+    steps.filter(
+      step =>
+        step !== null &&
+        step.length > 0 &&
+        step[0].title &&
+        journeyStepNames.has(step[0].title)
+    ),
+    journey.type
+  );
 }

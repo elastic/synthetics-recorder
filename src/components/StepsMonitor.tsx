@@ -24,11 +24,7 @@ THE SOFTWARE.
 
 import React, { useContext, useEffect, useState } from "react";
 import {
-  EuiButton,
-  EuiButtonEmpty,
   EuiCodeBlock,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFlyout,
   EuiFlyoutBody,
   EuiFlyoutHeader,
@@ -42,58 +38,6 @@ import { getCodeFromActions } from "../common/shared";
 import { Steps } from "./Steps";
 import { StepsContext } from "../contexts/StepsContext";
 import type { ActionContext, JourneyType, Setter } from "../common/types";
-
-const { ipcRenderer: ipc } = window.require("electron-better-ipc");
-
-interface IStepsFooter {
-  actions: ActionContext[][];
-  setCode: Setter<string>;
-  setIsFlyoutVisible: Setter<boolean>;
-  type: JourneyType;
-}
-
-function StepsFooter({
-  actions,
-  setCode,
-  setIsFlyoutVisible,
-  type,
-}: IStepsFooter) {
-  useEffect(() => {
-    (async function getCode() {
-      const codeFromActions = await getCodeFromActions(actions, type);
-      setCode(codeFromActions);
-    })();
-  }, [actions, setCode, type]);
-
-  const showFlyout = async () => {
-    setIsFlyoutVisible(true);
-  };
-
-  const onSave = async () => {
-    const codeFromActions = await getCodeFromActions(actions, "inline");
-    await ipc.callMain("save-file", codeFromActions);
-  };
-
-  return (
-    <EuiFlexGroup justifyContent="spaceBetween">
-      <EuiFlexItem grow={false}>
-        <EuiButtonEmpty
-          iconType="eye"
-          iconSide="right"
-          color="text"
-          onClick={showFlyout}
-        >
-          Show recorded code
-        </EuiButtonEmpty>
-      </EuiFlexItem>
-      <EuiFlexItem grow={false}>
-        <EuiButton fill color="success" onClick={onSave}>
-          Export script
-        </EuiButton>
-      </EuiFlexItem>
-    </EuiFlexGroup>
-  );
-}
 
 interface IRecordedCodeTabs {
   selectedTab: JourneyType;
@@ -141,8 +85,6 @@ interface ICodeFlyout {
   code: string;
   setCode: Setter<string>;
   setIsFlyoutVisible: Setter<boolean>;
-  setType: Setter<JourneyType>;
-  type: JourneyType;
 }
 
 function CodeFlyout({
@@ -150,9 +92,8 @@ function CodeFlyout({
   code,
   setCode,
   setIsFlyoutVisible,
-  setType,
-  type,
 }: ICodeFlyout) {
+  const [type, setType] = useState<JourneyType>("inline");
   useEffect(() => {
     (async function getCode() {
       const codeFromActions = await getCodeFromActions(actions, type);
@@ -181,39 +122,35 @@ function CodeFlyout({
   );
 }
 
-export function StepsMonitor() {
+interface IStepsMonitor {
+  isFlyoutVisible: boolean;
+  setIsFlyoutVisible: Setter<boolean>;
+}
+
+export function StepsMonitor({
+  isFlyoutVisible,
+  setIsFlyoutVisible,
+}: IStepsMonitor) {
   const { actions } = useContext(StepsContext);
-  const [isFlyoutVisible, setIsFlyoutVisible] = useState(false);
   const [code, setCode] = useState("");
-  const [type, setType] = useState<JourneyType>("inline");
 
   return (
-    <>
-      <EuiPanel
-        color="transparent"
-        borderRadius="none"
-        style={{ minHeight: 500 }}
-      >
-        <Steps />
-        <EuiSpacer />
+    <EuiPanel
+      color="transparent"
+      borderRadius="none"
+      style={{ minHeight: 500 }}
+    >
+      <Steps />
+      <EuiSpacer />
 
-        {isFlyoutVisible && (
-          <CodeFlyout
-            actions={actions}
-            code={code}
-            setCode={setCode}
-            setIsFlyoutVisible={setIsFlyoutVisible}
-            setType={setType}
-            type={type}
-          />
-        )}
-      </EuiPanel>
-      <StepsFooter
-        actions={actions}
-        setCode={setCode}
-        setIsFlyoutVisible={setIsFlyoutVisible}
-        type={type}
-      />
-    </>
+      {isFlyoutVisible && (
+        <CodeFlyout
+          actions={actions}
+          code={code}
+          setCode={setCode}
+          setIsFlyoutVisible={setIsFlyoutVisible}
+        />
+      )}
+    </EuiPanel>
   );
 }

@@ -131,7 +131,7 @@ async function onTest(data) {
     succeeded: 0,
     failed: 0,
     skipped: 0,
-    journeys: {},
+    journey: {},
   };
 
   const parseOrSkip = chunk => {
@@ -146,13 +146,17 @@ async function onTest(data) {
     switch (parsed.type) {
       case "journey/start": {
         const { journey } = parsed;
-        result.journeys[journey.name] = { status: "succeeded", steps: [] };
+        result.journey = {
+          status: "succeeded",
+          steps: [],
+          type: journey.name,
+        };
         break;
       }
       case "step/end": {
-        const { journey, step, error } = parsed;
+        const { step, error } = parsed;
         result[step.status]++;
-        result.journeys[journey.name].steps.push({
+        result.journey.steps.push({
           name: step.name,
           status: step.status,
           error,
@@ -162,7 +166,7 @@ async function onTest(data) {
       }
       case "journey/end": {
         const { journey } = parsed;
-        result.journeys[journey.name].status = journey.status;
+        result.journey.status = journey.status;
         break;
       }
     }
