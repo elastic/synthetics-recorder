@@ -7,6 +7,9 @@ RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 ARG BASE_DIR
 ARG DOCKER_BASE_DIR
 
+# Get desired XVFB display
+ARG DISPLAY
+
 # Install dependencies before we actually
 # switch into the unprivileged jenkins user.
 RUN apt-get -qq update
@@ -38,6 +41,10 @@ RUN usermod -s /bin/bash jenkins
 ADD --chown=jenkins $BASE_DIR $DOCKER_BASE_DIR
 
 USER jenkins
+
+# Make relevant environment variables available for tests
+ENV DOCKER_BASE_DIR $DOCKER_BASE_DIR
+ENV DISPLAY $DISPLAY
 
 # Installing NVM
 ENV NVM_DIR /home/jenkins/.nvm

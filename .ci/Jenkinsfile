@@ -29,9 +29,9 @@ pipeline {
     stage('Checkout') {
       steps {
         pipelineManager([ cancelPreviousRunningBuilds: [ when: 'PR' ] ])
-          deleteDir()
-          gitCheckout(basedir: "${BASE_DIR}", githubNotifyFirstTimeContributor: true)
-          stash allowEmpty: true, name: 'source', useDefaultExcludes: false
+        deleteDir()
+        gitCheckout(basedir: "${BASE_DIR}", githubNotifyFirstTimeContributor: true)
+        stash allowEmpty: true, name: 'source', useDefaultExcludes: false
       }
     }
     stage('Install'){
@@ -58,7 +58,7 @@ pipeline {
       post {
         always {
           archiveArtifacts(allowEmptyArchive: true, artifacts: "${BASE_DIR}/eslint-junit.xml")
-            junit(allowEmptyResults: true, keepLongStdio: true, testResults: "${BASE_DIR}/eslint-junit.xml")
+          junit(allowEmptyResults: true, keepLongStdio: true, testResults: "${BASE_DIR}/eslint-junit.xml")
         }
       }
     }
@@ -68,21 +68,14 @@ pipeline {
           reuseNode true
             dir "$BASE_DIR"
             filename './e2e/Dockerfile.jenkins'
-            additionalBuildArgs  "--build-arg BASE_DIR=\".\" --build-arg DOCKER_BASE_DIR=\"${DOCKER_BASE_DIR}\""
+            additionalBuildArgs  "--build-arg BASE_DIR=\".\" --build-arg DOCKER_BASE_DIR=\"${DOCKER_BASE_DIR}\" --build-arg DISPLAY=\"${DISPLAY}\""
         }
       }
       stages {
         stage('Test'){
           steps {
             withGithubNotify(context: "Test") {
-              sh(label: 'start Xvfb', script: "Xvfb ${DISPLAY} -screen 0 1024x768x16 &")
-              sh(label: 'npm test', script: '''
-                #!/bin/bash
-                source $NVM_DIR/nvm.sh
-                cd $DOCKER_BASE_DIR
-                nvm use
-                npm test
-              ''')
+              sh(label: 'run tests', script: "${DOCKER_BASE_DIR}/.ci/scripts/run-test.sh")
             }
           }
         }
