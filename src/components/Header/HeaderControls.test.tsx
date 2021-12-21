@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 import { fireEvent, render, waitFor } from "@testing-library/react";
 import React from "react";
-import { RecordingStatus } from "../../common/types";
+import { ActionContext, RecordingStatus } from "../../common/types";
 import { UrlContext } from "../../contexts/UrlContext";
 import {
   IRecordingContext,
@@ -72,11 +72,9 @@ describe("<HeaderControls />", () => {
       >
         <StepsContext.Provider
           value={{
-            steps: [],
-            setSteps: jest.fn(),
+            actions: [],
+            setActions: jest.fn(),
             onDeleteAction: jest.fn(),
-            onInsertAction: jest.fn(),
-            onStepDetailChange: jest.fn(),
             ...stepsCtxOverrides,
           }}
         >
@@ -117,7 +115,7 @@ describe("<HeaderControls />", () => {
         recordingStatus: RecordingStatus.Recording,
       },
       undefined,
-      { steps: [[]] }
+      { actions: [[]] }
     );
     const { getByText, getByLabelText } = render(comp);
 
