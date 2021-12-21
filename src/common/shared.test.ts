@@ -25,8 +25,6 @@ THE SOFTWARE.
 import { updateAction } from "./shared";
 import type { Steps } from "./types";
 
-window.require = require;
-
 describe("shared", () => {
   describe("updateAction", () => {
     const steps: Steps = [
