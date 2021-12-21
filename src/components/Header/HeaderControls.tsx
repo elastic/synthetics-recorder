@@ -40,7 +40,7 @@ import { StartOverWarningModal } from "../StartOverWarningModal";
 import { TestButton } from "../TestButton";
 import { RecordingStatusIndicator } from "./StatusIndicator";
 
-interface IHeaderControls {
+export interface IHeaderControls {
   setIsCodeFlyoutVisible: Setter<boolean>;
 }
 

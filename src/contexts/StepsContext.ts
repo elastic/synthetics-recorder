@@ -29,7 +29,7 @@ function notImplemented() {
   throw Error("Step context not initialized");
 }
 
-interface IStepsContext {
+export interface IStepsContext {
   actions: ActionContext[][];
   onDeleteAction: (stepIndex: number, actionIndex: number) => void;
   setActions: Setter<ActionContext[][]>;

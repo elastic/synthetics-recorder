@@ -24,14 +24,17 @@ THE SOFTWARE.
 
 import { fireEvent, render, waitFor } from "@testing-library/react";
 import React from "react";
-import { RecordingStatus } from "../common/types";
+import { RecordingStatus } from "../../common/types";
+import { UrlContext } from "../../contexts/UrlContext";
 import {
   IRecordingContext,
   RecordingContext,
-} from "../contexts/RecordingContext";
-import { Header, IHeader } from "./Header";
+} from "../../contexts/RecordingContext";
+import type { IHeaderControls } from "./HeaderControls";
+import { HeaderControls } from "./HeaderControls";
+import { IStepsContext, StepsContext } from "../../contexts/StepsContext";
 
-describe("<Header />", () => {
+describe("<HeaderControls />", () => {
   let contextValues: IRecordingContext;
   let recordingStatus: RecordingStatus;
 
@@ -56,24 +59,34 @@ describe("<Header />", () => {
       }),
     };
   });
-
-  const START_ARIA = "Toggle the script recorder between recording and paused";
   const RESTART_ARIA = "Stop recording and clear all recorded actions";
-
+  const START_ARIA = "Toggle the script recorder between recording and paused";
   const componentToRender = (
-    contextOverrides?: Partial<IRecordingContext>,
-    propsOverrides?: Partial<IHeader>
+    recordingCtxOverrides?: Partial<IRecordingContext>,
+    propsOverrides?: Partial<IHeaderControls>,
+    stepsCtxOverrides?: Partial<IStepsContext>
   ) => (
-    <RecordingContext.Provider
-      value={{ ...contextValues, ...contextOverrides }}
-    >
-      <Header
-        onUrlChange={jest.fn()}
-        stepCount={1}
-        url="https://www.elastic.co/"
-        {...propsOverrides}
-      />
-    </RecordingContext.Provider>
+    <UrlContext.Provider value={{}}>
+      <RecordingContext.Provider
+        value={{ ...contextValues, ...recordingCtxOverrides }}
+      >
+        <StepsContext.Provider
+          value={{
+            steps: [],
+            setSteps: jest.fn(),
+            onDeleteAction: jest.fn(),
+            onInsertAction: jest.fn(),
+            onStepDetailChange: jest.fn(),
+            ...stepsCtxOverrides,
+          }}
+        >
+          <HeaderControls
+            setIsCodeFlyoutVisible={jest.fn()}
+            {...propsOverrides}
+          />
+        </StepsContext.Provider>
+      </RecordingContext.Provider>
+    </UrlContext.Provider>
   );
 
   it("displays start text when not recording", async () => {
@@ -99,19 +112,21 @@ describe("<Header />", () => {
   });
 
   it("displays modal when start over is clicked", async () => {
-    const { getByText, getByLabelText } = render(
-      componentToRender(
-        { recordingStatus: RecordingStatus.Recording },
-        { stepCount: 23 }
-      )
+    const comp = componentToRender(
+      {
+        recordingStatus: RecordingStatus.Recording,
+      },
+      undefined,
+      { steps: [[]] }
     );
+    const { getByText, getByLabelText } = render(comp);
 
     const restartButton = getByLabelText(RESTART_ARIA);
 
     fireEvent.click(restartButton);
 
     await waitFor(() => {
-      expect(getByText("Delete 23 steps?"));
+      expect(getByText("Delete 1 step?"));
       expect(getByText("This action cannot be undone."));
       expect(getByText("Cancel"));
       expect(getByText("Delete and start over"));
