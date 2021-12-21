@@ -72,9 +72,11 @@ describe("<HeaderControls />", () => {
       >
         <StepsContext.Provider
           value={{
-            actions: [],
-            setActions: jest.fn(),
+            steps: [],
+            setSteps: jest.fn(),
             onDeleteAction: jest.fn(),
+            onInsertAction: jest.fn(),
+            onStepDetailChange: jest.fn(),
             ...stepsCtxOverrides,
           }}
         >
@@ -115,7 +117,7 @@ describe("<HeaderControls />", () => {
         recordingStatus: RecordingStatus.Recording,
       },
       undefined,
-      { actions: [[]] }
+      { steps: [[]] }
     );
     const { getByText, getByLabelText } = render(comp);
 
