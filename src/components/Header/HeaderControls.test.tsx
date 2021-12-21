@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 import { fireEvent, render, waitFor } from "@testing-library/react";
 import React from "react";
-import { RecordingStatus } from "../../common/types";
+import { ActionContext, RecordingStatus } from "../../common/types";
 import { UrlContext } from "../../contexts/UrlContext";
 import {
   IRecordingContext,
