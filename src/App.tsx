@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 import React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { EuiFlexGroup, EuiFlexItem, EuiPageBody } from "@elastic/eui";
 import "./App.css";
 import "@elastic/eui/dist/eui_theme_amsterdam_light.css";
@@ -42,6 +42,7 @@ import { RecordingStatus } from "./common/types";
 import { useAssertionDrawer } from "./hooks/useAssertionDrawer";
 import { useSyntheticsTest } from "./hooks/useSyntheticsTest";
 import { generateIR, generateMergedIR } from "./helpers/generator";
+import { UrlContext } from "./contexts/UrlContext";
 
 const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
@@ -61,6 +62,8 @@ export default function App() {
   const onUrlChange = (value: string) => {
     setUrl(value);
   };
+
+  const urlRef = useRef(null);
 
   useEffect(() => {
     ipc.answerMain("change", ({ actions }: { actions: ActionContext[] }) => {
@@ -122,38 +125,39 @@ export default function App() {
             }}
           >
             <TestContext.Provider value={syntheticsTestUtils}>
-              <Title />
-              <HeaderControls
-                hasActions={stepActions.length === 0}
-                setIsCodeFlyoutVisible={setIsCodeFlyoutVisible}
-              />
-              <EuiPageBody>
-                <EuiFlexGroup>
-                  <EuiFlexItem>
-                    <EuiFlexGroup direction="column">
-                      <EuiFlexItem grow={false}>
-                        <Header
-                          url={url}
-                          onUrlChange={onUrlChange}
-                          stepCount={stepActions.length}
-                        />
-                      </EuiFlexItem>
-                      <EuiFlexItem
-                        style={{ minWidth: MAIN_CONTROLS_MIN_WIDTH }}
-                      >
-                        <StepsMonitor
-                          isFlyoutVisible={isCodeFlyoutVisible}
-                          setIsFlyoutVisible={setIsCodeFlyoutVisible}
-                        />
-                      </EuiFlexItem>
-                    </EuiFlexGroup>
-                  </EuiFlexItem>
-                  <EuiFlexItem style={{ minWidth: 300 }}>
-                    <TestResult />
-                  </EuiFlexItem>
-                </EuiFlexGroup>
-                <AssertionDrawer />
-              </EuiPageBody>
+              <UrlContext.Provider value={{ urlRef }}>
+                <Title />
+                <HeaderControls
+                  setIsCodeFlyoutVisible={setIsCodeFlyoutVisible}
+                />
+                <EuiPageBody>
+                  <EuiFlexGroup>
+                    <EuiFlexItem>
+                      <EuiFlexGroup direction="column">
+                        <EuiFlexItem grow={false}>
+                          <Header
+                            url={url}
+                            onUrlChange={onUrlChange}
+                            stepCount={stepActions.length}
+                          />
+                        </EuiFlexItem>
+                        <EuiFlexItem
+                          style={{ minWidth: MAIN_CONTROLS_MIN_WIDTH }}
+                        >
+                          <StepsMonitor
+                            isFlyoutVisible={isCodeFlyoutVisible}
+                            setIsFlyoutVisible={setIsCodeFlyoutVisible}
+                          />
+                        </EuiFlexItem>
+                      </EuiFlexGroup>
+                    </EuiFlexItem>
+                    <EuiFlexItem style={{ minWidth: 300 }}>
+                      <TestResult />
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                  <AssertionDrawer />
+                </EuiPageBody>
+              </UrlContext.Provider>
             </TestContext.Provider>
           </RecordingContext.Provider>
         </AssertionContext.Provider>

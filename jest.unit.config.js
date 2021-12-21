@@ -25,4 +25,5 @@ THE SOFTWARE.
 module.exports = {
   preset: "ts-jest",
   testPathIgnorePatterns: [`node_modules`, `\\.cache`, `e2e`],
+  setupFilesAfterEnv: ["./jest.unit.setup.js"],
 };

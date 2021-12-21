@@ -22,10 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-/* eslint-disable import/first */
-window.require = require;
 import { updateAction } from "./shared";
-import { ActionContext } from "./types";
+import type { ActionContext } from "./types";
 
 describe("shared", () => {
   describe("updateAction", () => {

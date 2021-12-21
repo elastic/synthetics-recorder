@@ -28,81 +28,138 @@ import {
   EuiButton,
   useEuiTheme,
 } from "@elastic/eui";
-import React, { useContext } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { RecordingStatus, Setter } from "../../common/types";
 import { RecordingContext } from "../../contexts/RecordingContext";
+import { StepsContext } from "../../contexts/StepsContext";
 import { TestContext } from "../../contexts/TestContext";
+import { UrlContext } from "../../contexts/UrlContext";
 import { ControlButton } from "../ControlButton";
 import { SaveCodeButton } from "../ExportScriptButton";
+import { StartOverWarningModal } from "../StartOverWarningModal";
 import { TestButton } from "../TestButton";
 import { RecordingStatusIndicator } from "./StatusIndicator";
 
-interface IHeaderControls {
-  hasActions: boolean;
+export interface IHeaderControls {
   setIsCodeFlyoutVisible: Setter<boolean>;
 }
 
-export function HeaderControls({
-  hasActions: disabled,
-  setIsCodeFlyoutVisible,
-}: IHeaderControls) {
+export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
   const { euiTheme } = useEuiTheme();
-  const { recordingStatus, toggleRecording } = useContext(RecordingContext);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const { urlRef } = useContext(UrlContext);
+
+  const { abortSession, recordingStatus, togglePause, toggleRecording } =
+    useContext(RecordingContext);
+
+  const { actions: stepActions } = useContext(StepsContext);
+
   const { onTest } = useContext(TestContext);
+
+  const startOver = useCallback(async () => {
+    await abortSession();
+    setIsModalVisible(false);
+    if (urlRef) urlRef.current?.focus();
+  }, [abortSession, urlRef]);
+
   return (
-    <EuiFlexGroup
-      alignItems="center"
-      gutterSize="m"
-      style={{
-        backgroundColor: euiTheme.colors.lightestShade,
-        borderBottom: euiTheme.border.thin,
-        margin: "0px 0px 4px 0px",
-        padding: 8,
-      }}
-    >
-      <EuiFlexItem grow={false}>
-        <ControlButton
-          aria-label="Toggle script recording on/off"
-          color="primary"
-          iconType={
-            recordingStatus === RecordingStatus.Recording ? "stop" : "play"
-          }
-          onClick={toggleRecording}
-        >
-          {recordingStatus === RecordingStatus.Recording
-            ? "Stop"
-            : "Start recording"}
-        </ControlButton>
-      </EuiFlexItem>
-      <EuiFlexItem>
-        <RecordingStatusIndicator status={recordingStatus} />
-      </EuiFlexItem>
-      <EuiFlexItem grow={false}>
-        <EuiFlexGroup gutterSize="m">
-          <EuiFlexItem>
-            <TestButton disabled={disabled} onTest={onTest} />
-          </EuiFlexItem>
-          <EuiFlexItem
-            style={{
-              borderRight: euiTheme.border.thin,
-              paddingRight: 16,
-            }}
+    <>
+      <EuiFlexGroup
+        alignItems="center"
+        gutterSize="m"
+        style={{
+          backgroundColor: euiTheme.colors.lightestShade,
+          borderBottom: euiTheme.border.thin,
+          margin: "0px 0px 4px 0px",
+          padding: 8,
+        }}
+      >
+        <EuiFlexItem grow={false}>
+          <ControlButton
+            aria-label="Toggle the script recorder between recording and paused"
+            color="primary"
+            iconType={
+              recordingStatus === RecordingStatus.Recording ? "pause" : "play"
+            }
+            fill
+            onClick={
+              recordingStatus === RecordingStatus.NotRecording
+                ? toggleRecording
+                : togglePause
+            }
           >
-            <EuiButton
-              color="text"
-              iconType="editorCodeBlock"
-              onClick={async function () {
-                setIsCodeFlyoutVisible(true);
+            {getPlayControlCopy(recordingStatus)}
+          </ControlButton>
+        </EuiFlexItem>
+        {recordingStatus !== RecordingStatus.NotRecording && (
+          <EuiFlexItem grow={false}>
+            <ControlButton
+              aria-label="Stop recording and clear all recorded actions"
+              disabled={recordingStatus !== RecordingStatus.Recording}
+              color="primary"
+              iconType="refresh"
+              onClick={() => {
+                if (!isModalVisible) {
+                  setIsModalVisible(true);
+                }
               }}
             >
-              View code
-            </EuiButton>
+              Start over
+            </ControlButton>
           </EuiFlexItem>
-          <EuiFlexItem>
-            <SaveCodeButton />
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      </EuiFlexItem>
-    </EuiFlexGroup>
+        )}
+        <EuiFlexItem>
+          <RecordingStatusIndicator status={recordingStatus} />
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          <EuiFlexGroup gutterSize="m">
+            <EuiFlexItem>
+              <TestButton disabled={stepActions.length === 0} onTest={onTest} />
+            </EuiFlexItem>
+            <EuiFlexItem
+              style={{
+                borderRight: euiTheme.border.thin,
+                paddingRight: 16,
+              }}
+            >
+              <EuiButton
+                color="text"
+                iconType="editorCodeBlock"
+                onClick={function () {
+                  setIsCodeFlyoutVisible(true);
+                }}
+              >
+                View code
+              </EuiButton>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <SaveCodeButton />
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </EuiFlexItem>
+      </EuiFlexGroup>
+
+      {isModalVisible && (
+        <StartOverWarningModal
+          close={() => setIsModalVisible(false)}
+          startOver={startOver}
+          stepCount={stepActions.length}
+        />
+      )}
+    </>
   );
+}
+
+function getPlayControlCopy(status: RecordingStatus) {
+  switch (status) {
+    case RecordingStatus.NotRecording:
+      return "Start recording";
+    case RecordingStatus.Recording:
+      return "Pause";
+    case RecordingStatus.Paused:
+      return "Resume";
+    default:
+      return "";
+  }
 }

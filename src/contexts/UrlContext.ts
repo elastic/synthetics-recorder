@@ -22,21 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { createContext } from "react";
-import type { ActionContext, Setter } from "../common/types";
+import { createContext, MutableRefObject } from "react";
 
-function notImplemented() {
-  throw Error("Step context not initialized");
+interface IUrlContext {
+  urlRef?: MutableRefObject<HTMLInputElement | null>;
 }
 
-export interface IStepsContext {
-  actions: ActionContext[][];
-  onDeleteAction: (stepIndex: number, actionIndex: number) => void;
-  setActions: Setter<ActionContext[][]>;
-}
-
-export const StepsContext = createContext<IStepsContext>({
-  actions: [],
-  onDeleteAction: notImplemented,
-  setActions: notImplemented,
-});
+export const UrlContext = createContext<IUrlContext>({});

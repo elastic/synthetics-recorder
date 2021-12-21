@@ -22,21 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { createContext } from "react";
-import type { ActionContext, Setter } from "../common/types";
+/**
+ * We do this because there are numerous places in the frontend code that
+ * need to call `window.require("electron-better-ipc"). Because the tests
+ * are not configured to run with node env features, `window.require` will
+ * not be defined.
+ *
+ * We rely on e2e testing to ensure that our communications via IPC to the
+ * electron process are working, so for the most part we can ignore this
+ * feature, and mock its responses when testing frontend functionality in
+ * unit tests. This setup will preclude the need to include the declaration
+ * of `require` on the `window` object before any test that depends on this.
+ */
 
-function notImplemented() {
-  throw Error("Step context not initialized");
-}
-
-export interface IStepsContext {
-  actions: ActionContext[][];
-  onDeleteAction: (stepIndex: number, actionIndex: number) => void;
-  setActions: Setter<ActionContext[][]>;
-}
-
-export const StepsContext = createContext<IStepsContext>({
-  actions: [],
-  onDeleteAction: notImplemented,
-  setActions: notImplemented,
-});
+window.require = require;
