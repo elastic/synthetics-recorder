@@ -5,6 +5,7 @@
   "repository": "https://github.com/elastic/synthetics-recorder",
   "scripts": {
     "install:pw": "node scripts/install-pw.js",
+    "preinstall": "npx npm-force-resolutions@0.0.10",
     "postinstall": "npm run install:pw && electron-builder install-app-deps && npm run prepare-demo-app",
     "prepare-demo-app": "npm install --prefix demo-app && npm run build --prefix demo-app",
     "react:start": "react-scripts start",
@@ -108,6 +109,9 @@
     "playwright": "git+https://github.com/vigneshshanmugam/playwright.git#separate-recorder",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
+  },
+  "resolutions": {
+    "trim": "0.0.3"
   },
   "browserslist": [
     "last 1 version"
