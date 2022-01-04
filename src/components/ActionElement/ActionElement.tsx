@@ -193,7 +193,7 @@ export const ActionElement = styled(ActionComponent)`
     padding: 12px;
   }
 
-  .euiAccordion__childWrapper {
+  .euiAccordion-isOpen > .euiAccordion__childWrapper {
     border-right: ${props => props.theme.border.thin};
     border-bottom: ${props => props.theme.border.thin};
     border-left: ${props => props.theme.border.thin};
