@@ -25,17 +25,14 @@ THE SOFTWARE.
 import React, { useContext } from "react";
 import { useEffect, useRef, useState } from "react";
 import {
-  EuiFlexGroup,
-  EuiFlexItem,
+  EuiCode,
+  EuiEmptyPrompt,
   EuiPageBody,
   useEuiTheme,
 } from "@elastic/eui";
 import "./App.css";
 import "@elastic/eui/dist/eui_legacy_light.css";
 import { ThemeProvider as StyledComponentsThemeProvider } from "styled-components";
-import { Header } from "./components/Header";
-import { StepsMonitor } from "./components/StepsMonitor";
-import { TestResult } from "./components/TestResult";
 import { Title } from "./components/Header/Title";
 import { HeaderControls } from "./components/Header/HeaderControls";
 import { CommunicationContext } from "./contexts/CommunicationContext";
@@ -54,20 +51,20 @@ import "./App.css";
 import { useStepsContext } from "./hooks/useStepsContext";
 
 export default function App() {
-  const [url, setUrl] = useState("");
+  const [url] = useState("");
   const [recordingStatus, setRecordingStatus] = useState(
     RecordingStatus.NotRecording
   );
-  const [isCodeFlyoutVisible, setIsCodeFlyoutVisible] = useState(false);
+  const [, setIsCodeFlyoutVisible] = useState(false);
 
   const { ipc } = useContext(CommunicationContext);
   const stepsContextUtils = useStepsContext();
   const { steps, setSteps } = stepsContextUtils;
   const syntheticsTestUtils = useSyntheticsTest(steps);
 
-  const onUrlChange = (value: string) => {
-    setUrl(value);
-  };
+  // const onUrlChange = (value: string) => {
+  //   setUrl(value);
+  // };
 
   const urlRef = useRef(null);
 
@@ -127,6 +124,18 @@ export default function App() {
                   padding: "0px 0px 0px 40px",
                 }}
               >
+                {steps.length === 0 && (
+                  <EuiEmptyPrompt
+                    aria-label="This empty prompt indicates that you have not recorded any journey steps yet."
+                    title={<h3>No steps recorded yet</h3>}
+                    body={
+                      <p>
+                        Click on <EuiCode>Start recording</EuiCode> to get
+                        started with your script.
+                      </p>
+                    }
+                  />
+                )}
                 {steps.map((step, index) => (
                   <StepSeparator
                     index={index}
@@ -134,6 +143,9 @@ export default function App() {
                     step={step}
                   />
                 ))}
+                {/*
+                // this contains the old app layout code, kept here for reference purposes
+                // during development. It should be removed before merging.
                 <EuiFlexGroup>
                   <EuiFlexItem>
                     <EuiFlexGroup direction="column">
@@ -151,7 +163,7 @@ export default function App() {
                   <EuiFlexItem style={{ minWidth: 300 }}>
                     <TestResult />
                   </EuiFlexItem>
-                </EuiFlexGroup>
+                </EuiFlexGroup> */}
               </EuiPageBody>
             </UrlContext.Provider>
           </TestContext.Provider>
