@@ -1,7 +1,8 @@
-html {
-  height: 100%;
+body {
+  height: inherit;
 }
 
-body {
-  min-height: 100%;
+#root {
+  background-color: #ffffff;
+  height: inherit;
 }
