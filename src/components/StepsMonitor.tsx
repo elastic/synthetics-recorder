@@ -138,6 +138,7 @@ export function StepsMonitor({
     <EuiPanel
       color="transparent"
       borderRadius="none"
+      hasBorder={false}
       style={{ minHeight: 500 }}
     >
       <Steps />
