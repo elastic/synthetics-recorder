@@ -69,6 +69,7 @@ pipeline {
             dir "$BASE_DIR"
             filename './e2e/Dockerfile.jenkins'
             additionalBuildArgs  "--build-arg BASE_DIR=\".\" --build-arg DOCKER_BASE_DIR=\"${DOCKER_BASE_DIR}\" --build-arg DISPLAY=\"${DISPLAY}\""
+            args "-v /etc/passwd:/etc/passwd"
         }
       }
       stages {

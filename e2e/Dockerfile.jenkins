@@ -33,8 +33,8 @@ RUN apt-get -y -qq install xvfb \
 # and access everything within the user's own folder
 # We must also give the jenkins user permissions to
 # the $DOCKER_BASE_DIR where the synthetics app is
-# Note: 1167 is Jenkin's $UID
-RUN useradd -m -r -u 1167 jenkins
+# Note: 1166 is Jenkin's $UID
+RUN useradd -m -r -u 1166 jenkins
 RUN usermod -s /bin/bash jenkins
 
 # Copying repo directory
