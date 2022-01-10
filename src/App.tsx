@@ -26,7 +26,7 @@ import React from "react";
 import { useEffect, useRef, useState } from "react";
 import { EuiFlexGroup, EuiFlexItem, EuiPageBody } from "@elastic/eui";
 import "./App.css";
-import "@elastic/eui/dist/eui_theme_amsterdam_light.css";
+import "@elastic/eui/dist/eui_legacy_light.css";
 import { Header } from "./components/Header";
 import { StepsMonitor } from "./components/StepsMonitor";
 import { TestResult } from "./components/TestResult";

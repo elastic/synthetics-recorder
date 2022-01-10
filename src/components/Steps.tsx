@@ -50,6 +50,7 @@ export function Steps() {
       <EuiEmptyPrompt
         aria-label="This empty prompt indicates that you have not recorded any journey steps yet."
         title={<h3>No steps recorded yet</h3>}
+        hasBorder={false}
         body={
           <p>
             Click on <EuiCode>Start recording</EuiCode> to get started with your

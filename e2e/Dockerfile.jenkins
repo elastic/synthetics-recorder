@@ -29,28 +29,18 @@ RUN apt-get -y -qq install xvfb \
     --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 
-# Adding a jenkins user so that we can install
-# and access everything within the user's own folder
-# We must also give the jenkins user permissions to
-# the $DOCKER_BASE_DIR where the synthetics app is
-# Note: 1167 is Jenkin's $UID
-RUN useradd -m -r -u 1167 jenkins
-RUN usermod -s /bin/bash jenkins
-
 # Copying repo directory
-ADD --chown=jenkins $BASE_DIR $DOCKER_BASE_DIR
-
-USER jenkins
+ADD $BASE_DIR $DOCKER_BASE_DIR
 
 # Make relevant environment variables available for tests
 ENV DOCKER_BASE_DIR $DOCKER_BASE_DIR
 ENV DISPLAY $DISPLAY
 
 # Installing NVM
-ENV NVM_DIR /home/jenkins/.nvm
+ENV NVM_DIR /root
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 RUN source $NVM_DIR/nvm.sh \
-  && source /home/jenkins/.bashrc \
+  && source /root/.bashrc \
   && ( \
     cd $DOCKER_BASE_DIR \
     && nvm install \
