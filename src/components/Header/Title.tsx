@@ -41,6 +41,7 @@ import { CommunicationContext } from "../../contexts/CommunicationContext";
 export function Title() {
   const { ipc } = useContext(CommunicationContext);
   const { euiTheme } = useEuiTheme();
+
   return (
     <EuiPageHeader
       style={{
