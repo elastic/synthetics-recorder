@@ -98,6 +98,7 @@ function ActionComponent({
         }}
       >
         <ActionAccordion
+          arrowDisplay="none"
           buttonProps={{ style: { display: "none" } }}
           paddingSize="m"
           id={`step-accordion-${step.title}`}

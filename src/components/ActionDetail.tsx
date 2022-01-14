@@ -109,7 +109,7 @@ export function ActionDetail({
   }
 
   return (
-    <EuiPanel hasShadow={false} paddingSize="none">
+    <EuiPanel hasBorder={false} hasShadow={false} paddingSize="none">
       <EuiText>
         <h4>Edit action</h4>
       </EuiText>
