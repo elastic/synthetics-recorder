@@ -31,7 +31,11 @@ import {
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { SMALL_SCREEN_BREAKPOINT } from "../../common/shared";
-import { ActionContext, ResultCategory } from "../../common/types";
+import {
+  ActionContext,
+  RecordingStatus,
+  ResultCategory,
+} from "../../common/types";
 import { StepsContext } from "../../contexts/StepsContext";
 import { ActionDetail } from "../ActionDetail";
 import { HeadingText } from "./HeadingText";
@@ -39,6 +43,7 @@ import { ActionStatusIndicator } from "../ActionStatusIndicator";
 import { Assertion } from "../Assertion";
 import { ActionControlButton } from "./ControlButton";
 import { ActionSettingsPopover } from "./SettingsPopover";
+import { RecordingContext } from "../../contexts/RecordingContext";
 
 interface IActionElement {
   actionIndex: number;
@@ -69,6 +74,7 @@ function ActionComponent({
   testStatus,
 }: IActionElement) {
   const { onDeleteAction, onInsertAction } = useContext(StepsContext);
+  const { recordingStatus } = useContext(RecordingContext);
   const { euiTheme } = useEuiTheme();
   const [isOpen, setIsOpen] = useState(false);
   const [isSettingsPopoverOpen, setIsSettingsPopoverOpen] = useState(false);
@@ -123,6 +129,7 @@ function ActionComponent({
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
                 <ActionControlButton
+                  isDisabled={recordingStatus !== RecordingStatus.NotRecording}
                   iconType="pencil"
                   isVisible={areControlsVisible}
                   onClick={onEdit}
@@ -130,6 +137,7 @@ function ActionComponent({
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
                 <ActionSettingsPopover
+                  isRecording={recordingStatus !== RecordingStatus.NotRecording}
                   isVisible={areControlsVisible || isSettingsPopoverOpen}
                   onAddAssertion={settingsHandler(() => {
                     onInsertAction(
