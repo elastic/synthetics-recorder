@@ -29,12 +29,14 @@ import { ActionControlButton } from "./ControlButton";
 
 export function ActionSettingsPopover({
   isVisible: visible,
+  isRecording,
   isOpen,
   setIsOpen,
   onAddAssertion,
   onDelete,
   onEdit,
 }: {
+  isRecording: boolean;
   isVisible: boolean;
   isOpen: boolean;
   onAddAssertion: () => void;
@@ -67,13 +69,24 @@ export function ActionSettingsPopover({
                 onClick: onAddAssertion,
               },
               {
+                disabled: isRecording,
                 icon: "pencil",
                 name: "Edit action",
                 onClick: onEdit,
               },
               {
-                icon: <EuiIcon type="trash" color="danger" />,
-                name: <EuiText color="danger">Delete action</EuiText>,
+                icon: (
+                  <EuiIcon
+                    type="trash"
+                    color={isRecording ? "disabledText" : "danger"}
+                  />
+                ),
+                disabled: isRecording,
+                name: (
+                  <EuiText color={isRecording ? "disabledText" : "danger"}>
+                    Delete action
+                  </EuiText>
+                ),
                 onClick: onDelete,
               },
             ],
