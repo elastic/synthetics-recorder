@@ -27,12 +27,11 @@ import { useEffect, useRef, useState } from "react";
 import {
   EuiCode,
   EuiEmptyPrompt,
-  EuiPageBody,
-  useEuiTheme,
+  EuiThemeProvider,
+  EuiThemeAmsterdam,
 } from "@elastic/eui";
 import "./App.css";
 import "@elastic/eui/dist/eui_legacy_light.css";
-import { ThemeProvider as StyledComponentsThemeProvider } from "styled-components";
 import { Title } from "./components/Header/Title";
 import { HeaderControls } from "./components/Header/HeaderControls";
 import { CommunicationContext } from "./contexts/CommunicationContext";
@@ -51,6 +50,8 @@ import "./App.css";
 import { useStepsContext } from "./hooks/useStepsContext";
 import { CodeFlyout } from "./components/StepsMonitor";
 import { TestResult } from "./components/TestResult";
+import { AppPageBody } from "./components/AppPageBody";
+import { StyledComponentsEuiProvider } from "./contexts/StyledComponentsEuiProvider";
 
 export default function App() {
   const [url] = useState("");
@@ -80,73 +81,70 @@ export default function App() {
     });
   }, [ipc, setSteps]);
 
-  const { euiTheme } = useEuiTheme();
   return (
-    <StyledComponentsThemeProvider theme={euiTheme}>
-      <StepsContext.Provider value={stepsContextUtils}>
-        <RecordingContext.Provider
-          value={{
-            abortSession: async () => {
-              if (recordingStatus !== RecordingStatus.Recording) return;
-              await ipc.send("stop");
-              setRecordingStatus(RecordingStatus.NotRecording);
-              setSteps([]);
-            },
-            recordingStatus,
-            toggleRecording: async () => {
-              if (recordingStatus === RecordingStatus.Recording) {
+    <EuiThemeProvider theme={EuiThemeAmsterdam}>
+      <StyledComponentsEuiProvider>
+        <StepsContext.Provider value={stepsContextUtils}>
+          <RecordingContext.Provider
+            value={{
+              abortSession: async () => {
+                if (recordingStatus !== RecordingStatus.Recording) return;
+                await ipc.send("stop");
                 setRecordingStatus(RecordingStatus.NotRecording);
-                // Stop browser process
-                ipc.send("stop");
-              } else {
-                setRecordingStatus(RecordingStatus.Recording);
-                await ipc.callMain("record-journey", { url });
-                setRecordingStatus(RecordingStatus.NotRecording);
-              }
-            },
-            togglePause: async () => {
-              if (recordingStatus === RecordingStatus.NotRecording) return;
-              if (recordingStatus !== RecordingStatus.Paused) {
-                setRecordingStatus(RecordingStatus.Paused);
-                await ipc.callMain("set-mode", "none");
-              } else {
-                await ipc.callMain("set-mode", "recording");
-                setRecordingStatus(RecordingStatus.Recording);
-              }
-            },
-          }}
-        >
-          <TestContext.Provider value={syntheticsTestUtils}>
-            <UrlContext.Provider value={{ urlRef }}>
-              <Title />
-              <HeaderControls setIsCodeFlyoutVisible={setIsCodeFlyoutVisible} />
-              <EuiPageBody
-                style={{
-                  backgroundColor: euiTheme.colors.emptyShade,
-                  padding: "0px 0px 0px 40px",
-                }}
-              >
-                {steps.length === 0 && (
-                  <EuiEmptyPrompt
-                    aria-label="This empty prompt indicates that you have not recorded any journey steps yet."
-                    hasBorder={false}
-                    title={<h3>No steps recorded yet</h3>}
-                    body={
-                      <p>
-                        Click on <EuiCode>Start recording</EuiCode> to get
-                        started with your script.
-                      </p>
-                    }
-                  />
-                )}
-                {steps.map((step, index) => (
-                  <StepSeparator
-                    index={index}
-                    key={`step-separator-${index + 1}`}
-                    step={step}
-                  />
-                ))}
-                {/*
+                setSteps([]);
+              },
+              recordingStatus,
+              toggleRecording: async () => {
+                if (recordingStatus === RecordingStatus.Recording) {
+                  setRecordingStatus(RecordingStatus.NotRecording);
+                  // Stop browser process
+                  ipc.send("stop");
+                } else {
+                  setRecordingStatus(RecordingStatus.Recording);
+                  await ipc.callMain("record-journey", { url });
+                  setRecordingStatus(RecordingStatus.NotRecording);
+                }
+              },
+              togglePause: async () => {
+                if (recordingStatus === RecordingStatus.NotRecording) return;
+                if (recordingStatus !== RecordingStatus.Paused) {
+                  setRecordingStatus(RecordingStatus.Paused);
+                  await ipc.callMain("set-mode", "none");
+                } else {
+                  await ipc.callMain("set-mode", "recording");
+                  setRecordingStatus(RecordingStatus.Recording);
+                }
+              },
+            }}
+          >
+            <TestContext.Provider value={syntheticsTestUtils}>
+              <UrlContext.Provider value={{ urlRef }}>
+                <Title />
+                <HeaderControls
+                  setIsCodeFlyoutVisible={setIsCodeFlyoutVisible}
+                />
+                <AppPageBody>
+                  {steps.length === 0 && (
+                    <EuiEmptyPrompt
+                      aria-label="This empty prompt indicates that you have not recorded any journey steps yet."
+                      hasBorder={false}
+                      title={<h3>No steps recorded yet</h3>}
+                      body={
+                        <p>
+                          Click on <EuiCode>Start recording</EuiCode> to get
+                          started with your script.
+                        </p>
+                      }
+                    />
+                  )}
+                  {steps.map((step, index) => (
+                    <StepSeparator
+                      index={index}
+                      key={`step-separator-${index + 1}`}
+                      step={step}
+                    />
+                  ))}
+                  {/*
                 // this contains the old app layout code, kept here for reference purposes
                 // during development. It should be removed before merging.
                 <EuiFlexGroup>
@@ -167,18 +165,19 @@ export default function App() {
                     <TestResult />
                   </EuiFlexItem>
                 </EuiFlexGroup> */}
-                <TestResult />
-                {isCodeFlyoutVisible && (
-                  <CodeFlyout
-                    steps={steps}
-                    setIsFlyoutVisible={setIsCodeFlyoutVisible}
-                  />
-                )}
-              </EuiPageBody>
-            </UrlContext.Provider>
-          </TestContext.Provider>
-        </RecordingContext.Provider>
-      </StepsContext.Provider>
-    </StyledComponentsThemeProvider>
+                  <TestResult />
+                  {isCodeFlyoutVisible && (
+                    <CodeFlyout
+                      steps={steps}
+                      setIsFlyoutVisible={setIsCodeFlyoutVisible}
+                    />
+                  )}
+                </AppPageBody>
+              </UrlContext.Provider>
+            </TestContext.Provider>
+          </RecordingContext.Provider>
+        </StepsContext.Provider>
+      </StyledComponentsEuiProvider>
+    </EuiThemeProvider>
   );
 }
