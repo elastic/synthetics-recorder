@@ -65,10 +65,6 @@ export default function App() {
   const { steps, setSteps } = stepsContextUtils;
   const syntheticsTestUtils = useSyntheticsTest(steps);
 
-  // const onUrlChange = (value: string) => {
-  //   setUrl(value);
-  // };
-
   const urlRef = useRef(null);
 
   useEffect(() => {
@@ -144,27 +140,6 @@ export default function App() {
                       step={step}
                     />
                   ))}
-                  {/*
-                // this contains the old app layout code, kept here for reference purposes
-                // during development. It should be removed before merging.
-                <EuiFlexGroup>
-                  <EuiFlexItem>
-                    <EuiFlexGroup direction="column">
-                      <EuiFlexItem grow={false}>
-                        <Header url={url} onUrlChange={onUrlChange} />
-                      </EuiFlexItem>
-                      <EuiFlexItem>
-                        <StepsMonitor
-                          isFlyoutVisible={isCodeFlyoutVisible}
-                          setIsFlyoutVisible={setIsCodeFlyoutVisible}
-                        />
-                      </EuiFlexItem>
-                    </EuiFlexGroup>
-                  </EuiFlexItem>
-                  <EuiFlexItem style={{ minWidth: 300 }}>
-                    <TestResult />
-                  </EuiFlexItem>
-                </EuiFlexGroup> */}
                   <TestResult />
                   {isCodeFlyoutVisible && (
                     <CodeFlyout
