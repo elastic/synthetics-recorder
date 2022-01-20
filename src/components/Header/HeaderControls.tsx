@@ -35,7 +35,6 @@ import { StepsContext } from "../../contexts/StepsContext";
 import { TestContext } from "../../contexts/TestContext";
 import { UrlContext } from "../../contexts/UrlContext";
 import { ControlButton } from "../ControlButton";
-import { SaveCodeButton } from "../ExportScriptButton";
 import { StartOverWarningModal } from "../StartOverWarningModal";
 import { TestButton } from "../TestButton";
 import { RecordingStatusIndicator } from "./StatusIndicator";
@@ -114,28 +113,22 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiFlexGroup gutterSize="m">
-            <EuiFlexItem>
-              <TestButton disabled={steps.length === 0} onTest={onTest} />
-            </EuiFlexItem>
             <EuiFlexItem
               style={{
                 borderRight: euiTheme.border.thin,
                 paddingRight: 16,
               }}
             >
-              <EuiButton
-                color="text"
-                iconType="editorCodeBlock"
-                isDisabled={steps.length === 0}
-                onClick={function () {
-                  setIsCodeFlyoutVisible(true);
-                }}
-              >
-                View code
-              </EuiButton>
+              <TestButton disabled={steps.length === 0} onTest={onTest} />
             </EuiFlexItem>
             <EuiFlexItem>
-              <SaveCodeButton />
+              <EuiButton
+                iconType="exportAction"
+                fill
+                onClick={() => setIsCodeFlyoutVisible(true)}
+              >
+                Export script
+              </EuiButton>
             </EuiFlexItem>
           </EuiFlexGroup>
         </EuiFlexItem>

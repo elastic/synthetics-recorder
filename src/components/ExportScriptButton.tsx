@@ -25,19 +25,20 @@ THE SOFTWARE.
 import { EuiButton } from "@elastic/eui";
 import React, { useContext } from "react";
 import { getCodeFromActions } from "../common/shared";
+import type { JourneyType } from "../common/types";
 import { CommunicationContext } from "../contexts/CommunicationContext";
 import { StepsContext } from "../contexts/StepsContext";
 
-export function SaveCodeButton() {
+export function SaveCodeButton({ type }: { type: JourneyType }) {
   const { ipc } = useContext(CommunicationContext);
   const { steps } = useContext(StepsContext);
   const onSave = async () => {
-    const codeFromActions = await getCodeFromActions(ipc, steps, "inline");
+    const codeFromActions = await getCodeFromActions(ipc, steps, type);
     await ipc.callMain("save-file", codeFromActions);
   };
   return (
     <EuiButton fill color="primary" iconType="exportAction" onClick={onSave}>
-      Export script
+      Export
     </EuiButton>
   );
 }

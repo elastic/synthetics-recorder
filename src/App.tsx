@@ -48,10 +48,10 @@ import { StepSeparator } from "./components/StepSeparator";
 import "@elastic/eui/dist/eui_theme_light.json";
 import "./App.css";
 import { useStepsContext } from "./hooks/useStepsContext";
-import { CodeFlyout } from "./components/StepsMonitor";
 import { TestResult } from "./components/TestResult";
 import { AppPageBody } from "./components/AppPageBody";
 import { StyledComponentsEuiProvider } from "./contexts/StyledComponentsEuiProvider";
+import { ExportScriptFlyout } from "./components/ExportScriptFlyout";
 
 export default function App() {
   const [url] = useState("");
@@ -142,9 +142,9 @@ export default function App() {
                   ))}
                   <TestResult />
                   {isCodeFlyoutVisible && (
-                    <CodeFlyout
+                    <ExportScriptFlyout
+                      setVisible={setIsCodeFlyoutVisible}
                       steps={steps}
-                      setIsFlyoutVisible={setIsCodeFlyoutVisible}
                     />
                   )}
                 </AppPageBody>
