@@ -125,6 +125,7 @@ export function TestResult() {
               <ResultHeader>{resultIndicator}</ResultHeader>
               <EuiAccordion
                 id={step.name}
+                initialIsOpen
                 buttonContent={
                   <EuiFlexGroup alignItems="center" gutterSize="xs">
                     <EuiFlexItem grow={false}>{symbols["failed"]}</EuiFlexItem>
