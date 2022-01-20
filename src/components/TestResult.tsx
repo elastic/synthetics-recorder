@@ -22,32 +22,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   EuiAccordion,
   EuiCodeBlock,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiFlyout,
+  EuiFlyoutBody,
+  EuiFlyoutHeader,
   EuiIcon,
   EuiPanel,
-  EuiSpacer,
   EuiText,
   EuiTitle,
-  useEuiTheme,
 } from "@elastic/eui";
-
 import { StepsContext } from "../contexts/StepsContext";
-import type {
-  Journey,
-  JourneyStep,
-  Result,
-  ResultCategory,
-} from "../common/types";
+import type { JourneyStep, Result, ResultCategory } from "../common/types";
 import { TestContext } from "../contexts/TestContext";
+import { getCodeFromActions } from "../common/shared";
+import styled from "styled-components";
 
 const symbols: Record<ResultCategory, JSX.Element> = {
   succeeded: <EuiIcon color="success" type="check" />,
-  failed: <EuiIcon color="danger" type="alert" />,
+  failed: <EuiIcon color="danger" type="cross" />,
   skipped: <EuiIcon color="warning" type="flag" />,
 };
 
@@ -56,140 +53,126 @@ function removeColorCodes(str = "") {
   return str.replace(/\u001b\[.*?m/g, "");
 }
 
-interface IResultAccordions {
-  codeBlocks: string;
-  journey: Journey;
-}
+const ResultContainer = styled(EuiPanel)`
+  padding: 0px;
+  margin: 0px 0px 24px 0px;
+`;
 
-function ResultAccordions({ codeBlocks, journey }: IResultAccordions) {
-  return (
-    <>
-      {journey.steps.map((step: JourneyStep, stepIndex: number) => {
-        const { name, status, error, duration } = step;
-        return (
-          <EuiAccordion
-            id={step.name}
-            key={stepIndex}
-            arrowDisplay="none"
-            forceState={status === "failed" ? "open" : "closed"}
-            buttonContent={
-              <EuiFlexGroup alignItems="center">
-                <EuiFlexItem grow={false}>{symbols[status]}</EuiFlexItem>
-                <EuiFlexItem grow={false}>
-                  <EuiText size="s" style={{ fontWeight: 500 }}>
-                    {name} ({duration} ms)
-                  </EuiText>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            }
-            paddingSize="s"
-            buttonClassName="euiAccordionForm__button"
-          >
-            {error && (
-              <>
-                <EuiCodeBlock
-                  language="js"
-                  paddingSize="m"
-                  style={{ maxWidth: 300 }}
-                  transparentBackground={true}
-                >
-                  {codeBlocks ?? null}
-                </EuiCodeBlock>
-                <EuiCodeBlock paddingSize="m" transparentBackground={true}>
-                  {removeColorCodes(error.message)}
-                </EuiCodeBlock>
-              </>
-            )}
-          </EuiAccordion>
-        );
-      })}
-    </>
-  );
-}
+const ResultHeader = styled.div`
+  border-bottom: ${props => props.theme.border.thin};
+  padding: 8px;
+`;
+
+const ResultContentWithoutAccordion = styled(EuiFlexGroup)`
+  padding: 8px;
+`;
+
+const Bold = styled(EuiText)`
+  font-weight: 500;
+`;
 
 export function TestResult() {
   const { steps } = useContext(StepsContext);
-  const { codeBlocks, result, setResult } = useContext(TestContext);
+  const { isResultFlyoutVisible, result, setResult, setIsResultFlyoutVisible } =
+    useContext(TestContext);
+  const [stepCodeToDisplay, setStepCodeToDisplay] = useState("");
 
   useEffect(() => {
-    if (steps.length === 0 && result) setResult(undefined);
-  }, [steps.length, result, setResult]);
+    async function fetchCodeForFailure(r: Result) {
+      const failedCode = await getCodeFromActions(
+        // index of failed step will equal number of successful items
+        [steps[r.succeeded]],
+        "inline"
+      );
+      setStepCodeToDisplay(failedCode);
+    }
 
-  const {
-    euiTheme: {
-      colors: { danger, success, warning },
-    },
-  } = useEuiTheme();
+    if (steps.length === 0 && result) {
+      setResult(undefined);
+    }
 
-  const styles: Record<ResultCategory, { color: string }> = {
-    succeeded: { color: success },
-    failed: { color: danger },
-    skipped: { color: warning },
-  };
+    if (steps.length && result) {
+      fetchCodeForFailure(result);
+    }
+  }, [steps, result, setResult]);
 
-  const text: Record<
-    ResultCategory,
-    "success" | "error" | "errors" | "skipped"
-  > = {
-    succeeded: "success",
-    failed: result?.failed === 1 ? "error" : "errors",
-    skipped: "skipped",
-  };
+  if (!isResultFlyoutVisible || !result) return null;
 
-  const ResultComponent = ({ result }: { result: Result }) => {
-    const total = result.succeeded + result.skipped + result.failed;
-    if (total === 0) return <EuiText color="subdued">No tests found</EuiText>;
+  const total = result.succeeded + result.skipped + result.failed;
 
-    return (
-      <EuiFlexGroup
-        direction="column"
-        gutterSize="s"
-        style={{ padding: "0 7px" }}
-      >
-        <EuiFlexGroup gutterSize="m">
-          {Object.keys(symbols).map((key, index) => {
-            const keyAsCategory = key as ResultCategory;
-            return (
-              <EuiFlexItem key={index} grow={false}>
-                <EuiText style={styles[key as ResultCategory]}>
-                  {symbols[keyAsCategory]} {result[keyAsCategory]}{" "}
-                  {text[keyAsCategory]}
-                </EuiText>
-              </EuiFlexItem>
-            );
-          })}
-        </EuiFlexGroup>
-        <EuiSpacer />
-        <EuiFlexGroup>
-          <EuiFlexItem>
-            <ResultAccordions
-              codeBlocks={codeBlocks}
-              journey={result.journey}
-            />
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      </EuiFlexGroup>
-    );
-  };
+  if (total === 0) return null;
 
-  return (
-    <>
-      <EuiFlexGroup
-        alignItems="baseline"
-        gutterSize="m"
-        style={{ minHeight: 130, maxHeight: 130 }}
-        wrap
-      >
-        <EuiFlexItem grow={false}>
-          <EuiTitle size="xs">
-            <h3>Test your script</h3>
-          </EuiTitle>
-        </EuiFlexItem>
-        <EuiFlexItem />
-      </EuiFlexGroup>
-      <EuiPanel color="subdued">
-        {result && <ResultComponent result={result}></ResultComponent>}
-      </EuiPanel>
-    </>
-  );
+  return result ? (
+    <EuiFlyout
+      aria-labelledby="result-flyout-title"
+      onClose={() => setIsResultFlyoutVisible(false)}
+      size={result.failed === 0 ? "s" : "l"}
+    >
+      <EuiFlyoutHeader hasBorder>
+        <EuiTitle size="s">
+          <h2 id="result-flyout-title">Journey Test Result</h2>
+        </EuiTitle>
+      </EuiFlyoutHeader>
+      <EuiFlyoutBody>
+        {result.journey.steps.map((step: JourneyStep, stepIndex: number) => {
+          const { name, status, error, duration } = step;
+          const resultIndicator = <Bold>{`Step ${stepIndex + 1}`}</Bold>;
+          const durationElement = (
+            <EuiText size="s">{Math.round(duration / 1000)}s</EuiText>
+          );
+          return error ? (
+            <ResultContainer hasShadow={false}>
+              <ResultHeader>{resultIndicator}</ResultHeader>
+              <EuiAccordion
+                id={step.name}
+                buttonContent={
+                  <EuiFlexGroup alignItems="center" gutterSize="xs">
+                    <EuiFlexItem grow={false}>{symbols["failed"]}</EuiFlexItem>
+                    <EuiFlexItem>
+                      <EuiText size="s">{name}</EuiText>
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                }
+                extraAction={durationElement}
+                key={stepIndex}
+                paddingSize="s"
+                buttonClassName="euiAccordionForm__button"
+                style={{ marginRight: 8 }}
+              >
+                {error && (
+                  <>
+                    <EuiCodeBlock
+                      language="js"
+                      paddingSize="m"
+                      style={{ maxWidth: 300 }}
+                      whiteSpace="pre"
+                    >
+                      {stepCodeToDisplay}
+                    </EuiCodeBlock>
+                    <EuiCodeBlock paddingSize="m">
+                      {removeColorCodes(error.message)}
+                    </EuiCodeBlock>
+                  </>
+                )}
+              </EuiAccordion>
+            </ResultContainer>
+          ) : (
+            <ResultContainer hasShadow={false}>
+              <ResultHeader>{resultIndicator}</ResultHeader>
+              <ResultContentWithoutAccordion
+                alignItems="center"
+                gutterSize="xs"
+              >
+                <EuiFlexItem grow={false}>{symbols[status]}</EuiFlexItem>
+                <EuiFlexItem>
+                  <EuiText size="s">{name}</EuiText>
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>{durationElement}</EuiFlexItem>
+              </ResultContentWithoutAccordion>
+            </ResultContainer>
+          );
+        })}
+      </EuiFlyoutBody>
+    </EuiFlyout>
+  ) : null;
 }

@@ -29,6 +29,7 @@ import { Result, Steps } from "../common/types";
 
 export function useSyntheticsTest(actions: Steps) {
   const [result, setResult] = useState<Result | undefined>(undefined);
+  const [isResultFlyoutVisible, setIsResultFlyoutVisible] = useState(false);
   const [codeBlocks, setCodeBlocks] = useState("");
   const { ipc } = useContext(CommunicationContext);
 
@@ -45,14 +46,17 @@ export function useSyntheticsTest(actions: Steps) {
 
       setCodeBlocks(await getCodeForResult(ipc, actions, result?.journey));
       setResult(resultFromServer);
+      setIsResultFlyoutVisible(true);
     },
     [actions, ipc, result]
   );
   return {
     codeBlocks,
+    isResultFlyoutVisible,
     result,
     onTest,
     setCodeBlocks,
+    setIsResultFlyoutVisible,
     setResult,
   };
 }
