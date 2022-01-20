@@ -26,7 +26,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiButton,
-  useEuiTheme,
+  EuiThemeContext,
 } from "@elastic/eui";
 import React, { useCallback, useContext, useState } from "react";
 import { RecordingStatus, Setter } from "../../common/types";
@@ -45,7 +45,7 @@ export interface IHeaderControls {
 }
 
 export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
-  const { euiTheme } = useEuiTheme();
+  const euiTheme = useContext(EuiThemeContext);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const { urlRef } = useContext(UrlContext);

@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiThemeComputed, useEuiTheme } from "@elastic/eui";
-import React from "react";
+import { EuiThemeComputed, EuiThemeContext } from "@elastic/eui";
+import React, { useContext } from "react";
 import { ResultCategory } from "../common/types";
 
 interface IActionStatusIndicator {
@@ -31,7 +31,7 @@ interface IActionStatusIndicator {
 }
 
 export function ActionStatusIndicator({ status }: IActionStatusIndicator) {
-  const { euiTheme } = useEuiTheme();
+  const euiTheme = useContext(EuiThemeContext);
 
   return (
     <svg

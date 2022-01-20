@@ -29,7 +29,7 @@ import {
   EuiButtonIcon,
   EuiFlexGroup,
   EuiFlexItem,
-  useEuiTheme,
+  EuiThemeContext,
 } from "@elastic/eui";
 import { ActionDetail } from "../ActionDetail";
 import { StepAccordionTitle } from "./StepAccordionTitle";
@@ -77,13 +77,12 @@ function StepAccordion({
   step,
 }: IStepAccordion) {
   const {
-    euiTheme: {
-      border: {
-        thin,
-        radius: { medium },
-      },
+    border: {
+      thin,
+      radius: { medium },
     },
-  } = useEuiTheme();
+    colors: { darkShade },
+  } = useContext(EuiThemeContext);
   const { recordingStatus } = useContext(RecordingContext);
   const [isEditing, setIsEditing] = useState(false);
   const onStepTitleChange = (updatedTitle: string) => {
@@ -97,12 +96,6 @@ function StepAccordion({
       index
     );
   };
-
-  const {
-    euiTheme: {
-      colors: { darkShade },
-    },
-  } = useEuiTheme();
 
   return (
     <EuiAccordion

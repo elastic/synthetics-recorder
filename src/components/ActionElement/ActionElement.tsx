@@ -23,10 +23,10 @@ THE SOFTWARE.
 */
 
 import {
-  useEuiTheme,
   EuiFlexGroup,
   EuiFlexItem,
   EuiAccordion,
+  EuiThemeContext,
 } from "@elastic/eui";
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
@@ -75,7 +75,7 @@ function ActionComponent({
 }: IActionElement) {
   const { onDeleteAction, onInsertAction } = useContext(StepsContext);
   const { recordingStatus } = useContext(RecordingContext);
-  const { euiTheme } = useEuiTheme();
+  const euiTheme = useContext(EuiThemeContext);
   const [isOpen, setIsOpen] = useState(false);
   const [isSettingsPopoverOpen, setIsSettingsPopoverOpen] = useState(false);
   const [areControlsVisible, setAreControlsVisible] = useState(false);
