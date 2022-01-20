@@ -23,10 +23,11 @@ THE SOFTWARE.
 */
 
 import { EuiFlexGroup, EuiFlexItem, EuiAccordion } from "@elastic/eui";
+import { ActionInContext } from "@elastic/synthetics";
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { SMALL_SCREEN_BREAKPOINT } from "../../common/shared";
-import { ActionContext, ResultCategory } from "../../common/types";
+import { ResultCategory } from "../../common/types";
 import { StepsContext } from "../../contexts/StepsContext";
 import { ActionDetail } from "../ActionDetail";
 import { ActionStatusIndicator } from "../ActionStatusIndicator";
@@ -39,7 +40,7 @@ interface IActionElement {
   className?: string;
   initialIsOpen?: boolean;
   isLast?: boolean;
-  step: ActionContext;
+  step: ActionInContext;
   stepIndex: number;
   testStatus?: ResultCategory;
 }

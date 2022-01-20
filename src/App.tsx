@@ -67,7 +67,7 @@ export default function App() {
   const syntheticsTestUtils = useSyntheticsTest(steps);
 
   useEffect(() => {
-    // `actions` here is a set of `ActionContext`s that make up a `Step`
+    // `actions` here is a set of `ActionInContext`s that make up a `Step`
     ipc.answerMain("change", ({ actions: step }: { actions: Step }) => {
       setSteps(prevSteps => {
         const nextSteps = generateIR(step);

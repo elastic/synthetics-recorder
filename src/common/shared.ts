@@ -23,14 +23,9 @@ THE SOFTWARE.
 */
 
 import { RendererProcessIpc } from "electron-better-ipc";
+import type { ActionInContext } from "@elastic/synthetics";
 import React from "react";
-import type {
-  ActionContext,
-  Journey,
-  JourneyType,
-  Setter,
-  Steps,
-} from "./types";
+import type { Journey, JourneyType, Setter, Steps } from "./types";
 
 export const COMMAND_SELECTOR_OPTIONS = [
   {
@@ -130,7 +125,7 @@ export function updateAction(
  */
 export async function getCodeForFailedResult(
   ipc: RendererProcessIpc,
-  steps: ActionContext[][],
+  steps: ActionInContext[][],
   journey?: Journey
 ): Promise<string> {
   if (!journey) return "";

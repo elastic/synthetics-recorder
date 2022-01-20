@@ -62,7 +62,7 @@ describe("shared", () => {
             isAssert: true,
             selector: "text=Hello world",
             command: "innerText",
-            value: null,
+            value: undefined,
             signals: [],
           },
           frameUrl: "http://localhost:12349/html",

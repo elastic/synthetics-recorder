@@ -22,7 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { Action, ActionContext, Step, Steps } from "../common/types";
+import { ActionInContext } from "@elastic/synthetics";
+import { Action, Step, Steps } from "../common/types";
 
 export function generateIR(actionContexts: Step) {
   const result = [];
@@ -56,8 +57,8 @@ export function generateIR(actionContexts: Step) {
 }
 
 function isNewStep(
-  actionContext: ActionContext,
-  previousContext: ActionContext | null
+  actionContext: ActionInContext,
+  previousContext: ActionInContext | null
 ) {
   const { action, frameUrl } = actionContext;
 
@@ -69,7 +70,9 @@ function isNewStep(
   return false;
 }
 
-export function actionTitle(action: Action) {
+export function actionTitle(
+  action: Action & { files?: string[]; options?: string[] }
+) {
   switch (action.name) {
     case "openPage":
       return `Open new page`;
