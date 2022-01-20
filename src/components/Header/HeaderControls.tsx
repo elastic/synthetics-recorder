@@ -123,6 +123,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiButton
+                isDisabled={steps.length === 0}
                 iconType="exportAction"
                 fill
                 onClick={() => setIsCodeFlyoutVisible(true)}
