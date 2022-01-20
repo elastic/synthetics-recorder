@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiButton, EuiButtonIcon, useEuiTheme } from "@elastic/eui";
-import React, { useEffect, useState } from "react";
+import { EuiButton, EuiButtonIcon, EuiThemeContext } from "@elastic/eui";
+import React, { useContext, useEffect, useState } from "react";
 
 interface IControlButton {
   "aria-label": string;
@@ -37,10 +37,8 @@ interface IControlButton {
 export const ControlButton: React.FC<IControlButton> = props => {
   const [showIconOnly, setShowIconOnly] = useState(false);
   const {
-    euiTheme: {
-      breakpoint: { l },
-    },
-  } = useEuiTheme();
+    breakpoint: { l },
+  } = useContext(EuiThemeContext);
 
   useEffect(() => {
     function evaluateSize() {
