@@ -87,7 +87,7 @@ export function performSelectorLookup(
 
 export async function getCodeFromActions(
   ipc: RendererProcessIpc,
-  actions: ActionContext[][],
+  actions: Steps,
   type: JourneyType
 ): Promise<string> {
   return await ipc.callMain("actions-to-code", {
