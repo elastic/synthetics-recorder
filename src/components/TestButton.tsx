@@ -44,7 +44,7 @@ export function TestButton({
       isDisabled={disabled}
       onClick={onTest}
     >
-      Replay steps
+      Test Steps
     </EuiButton>
   );
 
