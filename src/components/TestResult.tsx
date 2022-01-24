@@ -121,7 +121,7 @@ export function TestResult() {
             <EuiText size="s">{Math.round(duration / 1000)}s</EuiText>
           );
           return error ? (
-            <ResultContainer hasShadow={false}>
+            <ResultContainer key={`result-step-${stepIndex}`} hasShadow={false}>
               <ResultHeader>{resultIndicator}</ResultHeader>
               <EuiAccordion
                 id={step.name}
