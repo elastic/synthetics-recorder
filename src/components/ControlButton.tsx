@@ -22,19 +22,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiButton, EuiButtonIcon, EuiThemeContext } from "@elastic/eui";
+import {
+  EuiButton,
+  EuiButtonProps,
+  EuiButtonIcon,
+  EuiButtonIconProps,
+  EuiThemeContext,
+} from "@elastic/eui";
 import React, { useContext, useEffect, useState } from "react";
 
 interface IControlButton {
-  "aria-label": string;
-  color: "primary";
-  disabled?: boolean;
-  fill?: boolean;
-  iconType: string;
-  onClick: () => void;
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-export const ControlButton: React.FC<IControlButton> = props => {
+type Props = IControlButton & EuiButtonIconProps & EuiButtonProps;
+
+export const ControlButton: React.FC<Props> = props => {
   const [showIconOnly, setShowIconOnly] = useState(false);
   const {
     breakpoint: { l },
