@@ -95,7 +95,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
           <EuiFlexItem grow={false}>
             <ControlButton
               aria-label="Stop recording and clear all recorded actions"
-              disabled={recordingStatus !== RecordingStatus.Recording}
+              isDisabled={recordingStatus !== RecordingStatus.Recording}
               color="primary"
               iconType="refresh"
               onClick={() => {
@@ -123,6 +123,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
             </EuiFlexItem>
             <EuiFlexItem>
               <EuiButton
+                aria-label="Export recorded steps to a location you specify"
                 isDisabled={steps.length === 0}
                 iconType="exportAction"
                 fill
