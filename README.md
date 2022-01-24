@@ -40,6 +40,11 @@ Additionally, you can display the generated JavaScript code using the `Show scri
 
 ### Develop
 
+**Note:** the recorder is intended to be run against a specific version of `node`/`npm`.
+If you use `nvm` to manage your versions, you can simply run `nvm use` to switch to the
+appropriate version. If not, you can view the current supported version in the `.nvmrc` file.
+You can see potential error outputs as a result of using the incorrect version below in the troubleshooting section.
+
 Install the dependencies
 
 ```
