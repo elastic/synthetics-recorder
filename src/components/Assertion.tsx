@@ -25,6 +25,7 @@ THE SOFTWARE.
 import React, { ChangeEventHandler, useContext, useState } from "react";
 import {
   EuiButton,
+  EuiButtonEmpty,
   EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
@@ -127,25 +128,34 @@ export function Assertion({
         </EuiFlexItem>
       </EuiFlexGroup>
       <EuiSpacer />
-      <EuiButton
-        onClick={() => {
-          onUpdateAssertion(
-            {
-              ...actionContext,
-              action: {
-                ...actionContext.action,
-                command,
-                selector,
-                value,
-              },
-            },
-            actionIndex
-          );
-          if (close) close();
-        }}
-      >
-        Save
-      </EuiButton>
+      <EuiFlexGroup>
+        <EuiFlexItem grow={false}>
+          <EuiButton
+            onClick={() => {
+              onUpdateAssertion(
+                {
+                  ...actionContext,
+                  action: {
+                    ...actionContext.action,
+                    command,
+                    selector,
+                    value,
+                  },
+                },
+                actionIndex
+              );
+              if (close) close();
+            }}
+          >
+            Save
+          </EuiButton>
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          <EuiButtonEmpty color="danger" onClick={close}>
+            Cancel
+          </EuiButtonEmpty>
+        </EuiFlexItem>
+      </EuiFlexGroup>
     </>
   );
 }
