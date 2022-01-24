@@ -23,6 +23,7 @@ THE SOFTWARE.
 */
 
 import React, { useContext, useEffect, useState } from "react";
+import styled from "styled-components";
 import {
   EuiAccordion,
   EuiCodeBlock,
@@ -40,7 +41,6 @@ import { StepsContext } from "../contexts/StepsContext";
 import type { JourneyStep, Result, ResultCategory } from "../common/types";
 import { TestContext } from "../contexts/TestContext";
 import { getCodeFromActions } from "../common/shared";
-import styled from "styled-components";
 
 const symbols: Record<ResultCategory, JSX.Element> = {
   succeeded: <EuiIcon color="success" type="check" />,
@@ -54,6 +54,9 @@ function removeColorCodes(str = "") {
 }
 
 const ResultContainer = styled(EuiPanel)`
+  && {
+    border-radius: ${props => props.theme.border.radius.medium};
+  }
   padding: 0px;
   margin: 0px 0px 24px 0px;
 `;
@@ -121,7 +124,7 @@ export function TestResult() {
             <EuiText size="s">{Math.round(duration / 1000)}s</EuiText>
           );
           return error ? (
-            <ResultContainer key={`result-step-${stepIndex}`} hasShadow={false}>
+            <ResultContainer key={`result-step-${stepIndex}`}>
               <ResultHeader>{resultIndicator}</ResultHeader>
               <EuiAccordion
                 id={step.name}
