@@ -123,8 +123,9 @@ export function TestResult() {
           const durationElement = (
             <EuiText size="s">{Math.round(duration / 1000)}s</EuiText>
           );
+          const key = `result-step-${stepIndex}`;
           return error ? (
-            <ResultContainer key={`result-step-${stepIndex}`}>
+            <ResultContainer key={key} hasShadow={false}>
               <ResultHeader>{resultIndicator}</ResultHeader>
               <EuiAccordion
                 id={step.name}
@@ -161,7 +162,7 @@ export function TestResult() {
               </EuiAccordion>
             </ResultContainer>
           ) : (
-            <ResultContainer hasShadow={false}>
+            <ResultContainer key={key} hasShadow={false}>
               <ResultHeader>{resultIndicator}</ResultHeader>
               <ResultContentWithoutAccordion
                 alignItems="center"
