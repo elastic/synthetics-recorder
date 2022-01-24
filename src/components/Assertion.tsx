@@ -105,7 +105,7 @@ export function Assertion({
         <EuiFlexItem>
           <AssertionSelect
             onChange={e => setCommand(e.target.value)}
-            value={action.command}
+            value={command}
           />
         </EuiFlexItem>
         <EuiFlexItem>
@@ -119,7 +119,7 @@ export function Assertion({
         <EuiFlexItem>
           <EuiFormRow label="Value">
             <EuiFieldText
-              disabled={["innerText", "textContent"].indexOf(command) !== 1}
+              disabled={["innerText", "textContent"].indexOf(command) === 1}
               onChange={e => setValue(e.target.value)}
               value={value}
             />
@@ -136,6 +136,7 @@ export function Assertion({
                 ...actionContext.action,
                 command,
                 selector,
+                value,
               },
             },
             actionIndex
