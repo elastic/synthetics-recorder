@@ -129,6 +129,7 @@ function ActionComponent({
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
                 <ActionControlButton
+                  aria-label="Begin editing this action"
                   isDisabled={recordingStatus !== RecordingStatus.NotRecording}
                   iconType="pencil"
                   isVisible={areControlsVisible}

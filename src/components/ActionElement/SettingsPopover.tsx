@@ -48,6 +48,7 @@ export function ActionSettingsPopover({
     <EuiPopover
       button={
         <ActionControlButton
+          aria-label="Expand the settings menu for this action"
           iconType="boxesHorizontal"
           isVisible={visible}
           onClick={() => setIsOpen(!isOpen)}
