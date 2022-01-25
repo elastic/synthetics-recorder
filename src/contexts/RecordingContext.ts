@@ -24,6 +24,7 @@ THE SOFTWARE.
 
 import { createContext } from "react";
 import { RecordingStatus } from "../common/types";
+import type { Setter } from "../common/types";
 
 function notImplemented() {
   throw Error("Recording context not initialized");
@@ -34,6 +35,16 @@ function notImplemented() {
  * a browser recording session.
  */
 export interface IRecordingContext {
+  /**
+   * When `true` the UI displays a modal warning users that they are about
+   * to delete previously-recorded steps.
+   */
+  isStartOverModalVisible: boolean;
+  /**
+   * Controls visibility of a modal warning users when they are about
+   * to take an action that will erase previously-recorded steps.
+   */
+  setIsStartOverModalVisible: Setter<boolean>;
   /**
    * Contains info about the current state of the recorder session.
    */
@@ -50,6 +61,10 @@ export interface IRecordingContext {
 }
 
 export const RecordingContext = createContext<IRecordingContext>({
+  isStartOverModalVisible: false,
+  setIsStartOverModalVisible: () => {
+    throw Error("not implemented");
+  },
   recordingStatus: RecordingStatus.NotRecording,
   togglePause: notImplemented,
   toggleRecording: notImplemented,

@@ -35,23 +35,26 @@ import {
 import { Setter } from "../common/types";
 
 interface Props {
-  close: Setter<boolean>;
-  startOver: () => void;
+  setVisibility: Setter<boolean>;
+  eraseSteps: () => void;
   stepCount: number;
 }
 
 function headerCopy(n: number) {
   const step = n === 1 ? "step" : "steps";
-  return `Delete ${n} ${step}?`;
+  return `Restart and delete ${n} ${step}?`;
 }
 
 export function StartOverWarningModal({
-  close: setVisibility,
-  startOver,
+  setVisibility,
+  eraseSteps,
   stepCount,
 }: Props) {
-  if (stepCount < 1) return null;
   const close = () => setVisibility(false);
+  const startOver = () => {
+    eraseSteps();
+    setVisibility(false);
+  };
   return (
     <EuiModal onClose={close}>
       <EuiModalHeader>

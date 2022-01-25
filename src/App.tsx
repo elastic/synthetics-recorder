@@ -52,17 +52,22 @@ import { TestResult } from "./components/TestResult";
 import { AppPageBody } from "./components/AppPageBody";
 import { StyledComponentsEuiProvider } from "./contexts/StyledComponentsEuiProvider";
 import { ExportScriptFlyout } from "./components/ExportScriptFlyout";
+import { useRecordingContext } from "./hooks/useRecordingContext";
+import { StartOverWarningModal } from "./components/StartOverWarningModal";
 
 export default function App() {
   const [url, setUrl] = useState("");
-  const [recordingStatus, setRecordingStatus] = useState(
-    RecordingStatus.NotRecording
-  );
   const [isCodeFlyoutVisible, setIsCodeFlyoutVisible] = useState(false);
 
   const { ipc } = useContext(CommunicationContext);
   const stepsContextUtils = useStepsContext();
   const { steps, setSteps } = stepsContextUtils;
+  const {
+    eraseSteps,
+    isStartOverModalVisible,
+    setIsStartOverModalVisible,
+    ...recordingContextUtils
+  } = useRecordingContext(ipc, url, steps.length);
   const syntheticsTestUtils = useSyntheticsTest(steps);
 
   useEffect(() => {
@@ -81,28 +86,9 @@ export default function App() {
         <StepsContext.Provider value={stepsContextUtils}>
           <RecordingContext.Provider
             value={{
-              recordingStatus,
-              toggleRecording: async () => {
-                if (recordingStatus === RecordingStatus.Recording) {
-                  setRecordingStatus(RecordingStatus.NotRecording);
-                  // Stop browser process
-                  ipc.send("stop");
-                } else {
-                  setRecordingStatus(RecordingStatus.Recording);
-                  await ipc.callMain("record-journey", { url });
-                  setRecordingStatus(RecordingStatus.NotRecording);
-                }
-              },
-              togglePause: async () => {
-                if (recordingStatus === RecordingStatus.NotRecording) return;
-                if (recordingStatus !== RecordingStatus.Paused) {
-                  setRecordingStatus(RecordingStatus.Paused);
-                  await ipc.callMain("set-mode", "none");
-                } else {
-                  await ipc.callMain("set-mode", "recording");
-                  setRecordingStatus(RecordingStatus.Recording);
-                }
-              },
+              isStartOverModalVisible,
+              setIsStartOverModalVisible,
+              ...recordingContextUtils,
             }}
           >
             <TestContext.Provider value={syntheticsTestUtils}>
@@ -137,6 +123,13 @@ export default function App() {
                     <ExportScriptFlyout
                       setVisible={setIsCodeFlyoutVisible}
                       steps={steps}
+                    />
+                  )}
+                  {isStartOverModalVisible && (
+                    <StartOverWarningModal
+                      eraseSteps={eraseSteps}
+                      setVisibility={setIsStartOverModalVisible}
+                      stepCount={steps.length}
                     />
                   )}
                 </AppPageBody>
