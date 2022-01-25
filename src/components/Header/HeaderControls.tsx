@@ -86,7 +86,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
                 : togglePause
             }
           >
-            {getPlayControlCopy(recordingStatus)}
+            {getPlayControlCopy(recordingStatus, steps.length)}
           </ControlButton>
         </EuiFlexItem>
         {recordingStatus !== RecordingStatus.NotRecording && (
@@ -141,7 +141,10 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
   );
 }
 
-function getPlayControlCopy(status: RecordingStatus) {
+function getPlayControlCopy(status: RecordingStatus, stepCount: number) {
+  if (status === RecordingStatus.NotRecording && stepCount > 0) {
+    return "Start over";
+  }
   switch (status) {
     case RecordingStatus.NotRecording:
       return "Start";
