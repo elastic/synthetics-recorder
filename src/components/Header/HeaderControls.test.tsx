@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { fireEvent, render, waitFor } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import React from "react";
 import { RecordingStatus } from "../../common/types";
 import { UrlContext } from "../../contexts/UrlContext";
@@ -41,7 +41,8 @@ describe("<HeaderControls />", () => {
   beforeEach(() => {
     recordingStatus = RecordingStatus.NotRecording;
     contextValues = {
-      abortSession: jest.fn(),
+      isStartOverModalVisible: false,
+      setIsStartOverModalVisible: jest.fn(),
       recordingStatus: recordingStatus,
       togglePause: jest.fn().mockImplementation(() => {
         if (recordingStatus === RecordingStatus.Paused) {
@@ -59,14 +60,13 @@ describe("<HeaderControls />", () => {
       }),
     };
   });
-  const RESTART_ARIA = "Stop recording and clear all recorded actions";
   const START_ARIA = "Toggle the script recorder between recording and paused";
   const componentToRender = (
     recordingCtxOverrides?: Partial<IRecordingContext>,
     propsOverrides?: Partial<IHeaderControls>,
     stepsCtxOverrides?: Partial<IStepsContext>
   ) => (
-    <UrlContext.Provider value={{}}>
+    <UrlContext.Provider value={{ url: "", setUrl: jest.fn() }}>
       <RecordingContext.Provider
         value={{ ...contextValues, ...recordingCtxOverrides }}
       >
@@ -109,27 +109,5 @@ describe("<HeaderControls />", () => {
     );
 
     expect(getByLabelText(START_ARIA).textContent).toBe("Resume");
-  });
-
-  it("displays modal when start over is clicked", async () => {
-    const comp = componentToRender(
-      {
-        recordingStatus: RecordingStatus.Recording,
-      },
-      undefined,
-      { steps: [[]] }
-    );
-    const { getByText, getByLabelText } = render(comp);
-
-    const restartButton = getByLabelText(RESTART_ARIA);
-
-    fireEvent.click(restartButton);
-
-    await waitFor(() => {
-      expect(getByText("Delete 1 step?"));
-      expect(getByText("This action cannot be undone."));
-      expect(getByText("Cancel"));
-      expect(getByText("Delete and start over"));
-    });
   });
 });
