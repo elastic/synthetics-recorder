@@ -22,8 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiButton, EuiToolTip } from "@elastic/eui";
+import { EuiToolTip } from "@elastic/eui";
 import React from "react";
+import { ControlButton } from "./ControlButton";
 
 export function TestButton({
   disabled,
@@ -33,7 +34,7 @@ export function TestButton({
   onTest: React.MouseEventHandler<HTMLButtonElement>;
 }) {
   const button = (
-    <EuiButton
+    <ControlButton
       aria-label={
         disabled
           ? "Record a step in order to run a test"
@@ -44,8 +45,8 @@ export function TestButton({
       isDisabled={disabled}
       onClick={onTest}
     >
-      Test Steps
-    </EuiButton>
+      Test
+    </ControlButton>
   );
 
   if (disabled) {
