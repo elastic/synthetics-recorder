@@ -27,29 +27,29 @@ import React from "react";
 import { ControlButton } from "./ControlButton";
 
 export function TestButton({
-  disabled,
+  isDisabled,
   onTest,
 }: {
-  disabled: boolean;
+  isDisabled: boolean;
   onTest: React.MouseEventHandler<HTMLButtonElement>;
 }) {
   const button = (
     <ControlButton
       aria-label={
-        disabled
+        isDisabled
           ? "Record a step in order to run a test"
           : "Perform a test run for the journey you have recorded"
       }
       color="primary"
       iconType="beaker"
-      isDisabled={disabled}
+      isDisabled={isDisabled}
       onClick={onTest}
     >
       Test
     </ControlButton>
   );
 
-  if (disabled) {
+  if (isDisabled) {
     return (
       <EuiToolTip content="Record a step in order to run a test" delay="long">
         {button}

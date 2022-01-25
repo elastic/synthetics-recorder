@@ -22,22 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiButton,
-  EuiThemeContext,
-} from "@elastic/eui";
-import React, { useCallback, useContext, useState } from "react";
+import { EuiFlexGroup, EuiFlexItem, EuiThemeContext } from "@elastic/eui";
+import React, { useContext } from "react";
 import { RecordingStatus, Setter } from "../../common/types";
 import { RecordingContext } from "../../contexts/RecordingContext";
 import { StepsContext } from "../../contexts/StepsContext";
 import { TestContext } from "../../contexts/TestContext";
 import { UrlContext } from "../../contexts/UrlContext";
 import { ControlButton } from "../ControlButton";
-import { StartOverWarningModal } from "../StartOverWarningModal";
 import { TestButton } from "../TestButton";
 import { RecordingStatusIndicator } from "./StatusIndicator";
+import { UrlField } from "./UrlField";
 
 export interface IHeaderControls {
   setIsCodeFlyoutVisible: Setter<boolean>;
@@ -45,22 +40,15 @@ export interface IHeaderControls {
 
 export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
   const euiTheme = useContext(EuiThemeContext);
-  const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const { urlRef } = useContext(UrlContext);
-
-  const { abortSession, recordingStatus, togglePause, toggleRecording } =
+  const { recordingStatus, togglePause, toggleRecording } =
     useContext(RecordingContext);
+
+  const { url, setUrl } = useContext(UrlContext);
 
   const { steps } = useContext(StepsContext);
 
   const { onTest } = useContext(TestContext);
-
-  const startOver = useCallback(async () => {
-    await abortSession();
-    setIsModalVisible(false);
-    if (urlRef) urlRef.current?.focus();
-  }, [abortSession, urlRef]);
 
   return (
     <>
@@ -74,6 +62,16 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
           padding: 8,
         }}
       >
+        {recordingStatus === RecordingStatus.NotRecording && (
+          <EuiFlexItem>
+            <UrlField
+              recordingStatus={recordingStatus}
+              setUrl={setUrl}
+              toggleRecording={toggleRecording}
+              url={url}
+            />
+          </EuiFlexItem>
+        )}
         <EuiFlexItem grow={false}>
           <ControlButton
             aria-label="Toggle the script recorder between recording and paused"
@@ -97,14 +95,12 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
               aria-label="Stop recording and clear all recorded actions"
               isDisabled={recordingStatus !== RecordingStatus.Recording}
               color="primary"
-              iconType="refresh"
+              iconType="stop"
               onClick={() => {
-                if (!isModalVisible) {
-                  setIsModalVisible(true);
-                }
+                toggleRecording();
               }}
             >
-              Start over
+              Stop
             </ControlButton>
           </EuiFlexItem>
         )}
@@ -119,30 +115,28 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
                 paddingRight: 16,
               }}
             >
-              <TestButton disabled={steps.length === 0} onTest={onTest} />
+              <TestButton
+                isDisabled={
+                  steps.length === 0 ||
+                  recordingStatus === RecordingStatus.Recording
+                }
+                onTest={onTest}
+              />
             </EuiFlexItem>
             <EuiFlexItem>
-              <EuiButton
+              <ControlButton
                 aria-label="Export recorded steps to a location you specify"
                 isDisabled={steps.length === 0}
                 iconType="exportAction"
                 fill
                 onClick={() => setIsCodeFlyoutVisible(true)}
               >
-                Export script
-              </EuiButton>
+                Export
+              </ControlButton>
             </EuiFlexItem>
           </EuiFlexGroup>
         </EuiFlexItem>
       </EuiFlexGroup>
-
-      {isModalVisible && (
-        <StartOverWarningModal
-          close={() => setIsModalVisible(false)}
-          startOver={startOver}
-          stepCount={steps.length}
-        />
-      )}
     </>
   );
 }
@@ -150,7 +144,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
 function getPlayControlCopy(status: RecordingStatus) {
   switch (status) {
     case RecordingStatus.NotRecording:
-      return "Start recording";
+      return "Start";
     case RecordingStatus.Recording:
       return "Pause";
     case RecordingStatus.Paused:
