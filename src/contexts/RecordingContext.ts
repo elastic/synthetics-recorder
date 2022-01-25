@@ -35,11 +35,6 @@ function notImplemented() {
  */
 export interface IRecordingContext {
   /**
-   * Messages the main process to stop the recording, discards
-   * the actions the user has recorded.
-   */
-  abortSession: () => Promise<void>;
-  /**
    * Contains info about the current state of the recorder session.
    */
   recordingStatus: RecordingStatus;
@@ -55,9 +50,6 @@ export interface IRecordingContext {
 }
 
 export const RecordingContext = createContext<IRecordingContext>({
-  abortSession: async function () {
-    throw Error("RecordingContext abort session not implemented");
-  },
   recordingStatus: RecordingStatus.NotRecording,
   togglePause: notImplemented,
   toggleRecording: notImplemented,

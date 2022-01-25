@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 import React, { useContext } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   EuiCode,
   EuiEmptyPrompt,
@@ -54,7 +54,7 @@ import { StyledComponentsEuiProvider } from "./contexts/StyledComponentsEuiProvi
 import { ExportScriptFlyout } from "./components/ExportScriptFlyout";
 
 export default function App() {
-  const [url] = useState("");
+  const [url, setUrl] = useState("");
   const [recordingStatus, setRecordingStatus] = useState(
     RecordingStatus.NotRecording
   );
@@ -64,8 +64,6 @@ export default function App() {
   const stepsContextUtils = useStepsContext();
   const { steps, setSteps } = stepsContextUtils;
   const syntheticsTestUtils = useSyntheticsTest(steps);
-
-  const urlRef = useRef(null);
 
   useEffect(() => {
     // `actions` here is a set of `ActionContext`s that make up a `Step`
@@ -83,12 +81,6 @@ export default function App() {
         <StepsContext.Provider value={stepsContextUtils}>
           <RecordingContext.Provider
             value={{
-              abortSession: async () => {
-                if (recordingStatus !== RecordingStatus.Recording) return;
-                await ipc.send("stop");
-                setRecordingStatus(RecordingStatus.NotRecording);
-                setSteps([]);
-              },
               recordingStatus,
               toggleRecording: async () => {
                 if (recordingStatus === RecordingStatus.Recording) {
@@ -114,7 +106,7 @@ export default function App() {
             }}
           >
             <TestContext.Provider value={syntheticsTestUtils}>
-              <UrlContext.Provider value={{ urlRef }}>
+              <UrlContext.Provider value={{ url, setUrl }}>
                 <Title />
                 <HeaderControls
                   setIsCodeFlyoutVisible={setIsCodeFlyoutVisible}
