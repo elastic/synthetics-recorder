@@ -26,8 +26,14 @@ import { createContext } from "react";
 import { RecordingStatus } from "../common/types";
 import type { Setter } from "../common/types";
 
+const UNINITIALIZED_MSG = "Recording context not initialized";
+
+async function notImplementedAsync() {
+  throw Error(UNINITIALIZED_MSG);
+}
+
 function notImplemented() {
-  throw Error("Recording context not initialized");
+  throw Error(UNINITIALIZED_MSG);
 }
 
 /**
@@ -35,6 +41,10 @@ function notImplemented() {
  * a browser recording session.
  */
 export interface IRecordingContext {
+  /**
+   * If not recording, will initiate a new recording session.
+   */
+  startOver: () => Promise<void>;
   /**
    * When `true` the UI displays a modal warning users that they are about
    * to delete previously-recorded steps.
@@ -61,6 +71,7 @@ export interface IRecordingContext {
 }
 
 export const RecordingContext = createContext<IRecordingContext>({
+  startOver: notImplementedAsync,
   isStartOverModalVisible: false,
   setIsStartOverModalVisible: () => {
     throw Error("not implemented");
