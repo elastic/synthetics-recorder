@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexItem, EuiAccordion, EuiFlexGroup } from "@elastic/eui";
+import { EuiAccordion, EuiFlexItem, EuiFlexGroup } from "@elastic/eui";
 import React from "react";
 import styled from "styled-components";
 import { SMALL_SCREEN_BREAKPOINT } from "../common/shared";
@@ -30,12 +30,7 @@ import { Step } from "../common/types";
 import { useStepResultStatus } from "../hooks/useTestResult";
 import { ActionElement } from "./ActionElement/ActionElement";
 
-interface IStepSeparator {
-  index: number;
-  step: Step;
-}
-
-const StepSeparatorTopBorder = styled(EuiFlexItem)`
+export const StepSeparatorTopBorder = styled(EuiFlexItem)`
   border-top: ${props => props.theme.border.thin};
 
   @media (max-width: ${SMALL_SCREEN_BREAKPOINT}px) {
@@ -43,7 +38,7 @@ const StepSeparatorTopBorder = styled(EuiFlexItem)`
   }
 `;
 
-const StepSeparatorAccordion = styled(EuiAccordion)`
+export const StepSeparatorAccordion = styled(EuiAccordion)`
   .euiAccordion__button {
     width: auto;
     flex-grow: 0;
@@ -53,7 +48,14 @@ const StepSeparatorAccordion = styled(EuiAccordion)`
     flex-grow: 1;
     flex-shrink: 1;
   }
+
+  margin: 16px;
 `;
+
+interface IStepSeparator {
+  index: number;
+  step: Step;
+}
 
 export function StepSeparator({ index, step }: IStepSeparator) {
   const testStatus = useStepResultStatus(
@@ -72,7 +74,6 @@ export function StepSeparator({ index, step }: IStepSeparator) {
       }
       id={`step-separator-${index}`}
       initialIsOpen
-      style={{ margin: 16 }}
     >
       {step.map((s, actionIndex) => (
         <ActionElement
