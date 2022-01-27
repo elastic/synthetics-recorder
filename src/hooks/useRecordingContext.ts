@@ -25,12 +25,21 @@ THE SOFTWARE.
 import { useCallback, useState } from "react";
 import { RecordingStatus } from "../common/types";
 import { RendererProcessIpc } from "electron-better-ipc";
+import { IRecordingContext } from "../contexts/RecordingContext";
 
+/**
+ * Initializes recording state and defines handler functions to manipulate recording.
+ *
+ * @param ipc client to communicate with backend.
+ * @param url starting URL for recordings.
+ * @param stepCount current number of steps.
+ * @returns state/functions to manage recording.
+ */
 export function useRecordingContext(
   ipc: RendererProcessIpc,
   url: string,
   stepCount: number
-) {
+): IRecordingContext {
   const [isStartOverModalVisible, setIsStartOverModalVisible] = useState(false);
   const [recordingStatus, setRecordingStatus] = useState(
     RecordingStatus.NotRecording
@@ -49,7 +58,7 @@ export function useRecordingContext(
     }
   }, [ipc, recordingStatus, stepCount, url]);
 
-  const eraseSteps = useCallback(async () => {
+  const startOver = useCallback(async () => {
     if (recordingStatus === RecordingStatus.NotRecording) {
       setRecordingStatus(RecordingStatus.Recording);
       await ipc.callMain("record-journey", { url });
@@ -69,7 +78,7 @@ export function useRecordingContext(
   };
 
   return {
-    eraseSteps,
+    startOver,
     isStartOverModalVisible,
     setIsStartOverModalVisible,
     recordingStatus,

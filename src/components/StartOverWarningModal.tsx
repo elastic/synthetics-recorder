@@ -36,7 +36,7 @@ import { Setter } from "../common/types";
 
 interface Props {
   setVisibility: Setter<boolean>;
-  eraseSteps: () => void;
+  startOver: () => Promise<void>;
   stepCount: number;
 }
 
@@ -47,14 +47,10 @@ function headerCopy(n: number) {
 
 export function StartOverWarningModal({
   setVisibility,
-  eraseSteps,
+  startOver,
   stepCount,
 }: Props) {
   const close = () => setVisibility(false);
-  const startOver = () => {
-    eraseSteps();
-    setVisibility(false);
-  };
   return (
     <EuiModal onClose={close}>
       <EuiModalHeader>
@@ -65,7 +61,14 @@ export function StartOverWarningModal({
       <EuiModalBody>This action cannot be undone.</EuiModalBody>
       <EuiModalFooter>
         <EuiButtonEmpty onClick={close}>Cancel</EuiButtonEmpty>
-        <EuiButton color="danger" fill onClick={startOver}>
+        <EuiButton
+          color="danger"
+          fill
+          onClick={() => {
+            startOver();
+            setVisibility(false);
+          }}
+        >
           Delete and start over
         </EuiButton>
       </EuiModalFooter>

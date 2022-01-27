@@ -64,9 +64,9 @@ export default function App() {
   const stepsContextUtils = useStepsContext();
   const { steps, setSteps } = stepsContextUtils;
   const {
-    eraseSteps,
     isStartOverModalVisible,
     setIsStartOverModalVisible,
+    startOver,
     ...recordingContextUtils
   } = useRecordingContext(ipc, url, steps.length);
   const syntheticsTestUtils = useSyntheticsTest(steps);
@@ -89,6 +89,7 @@ export default function App() {
             value={{
               isStartOverModalVisible,
               setIsStartOverModalVisible,
+              startOver,
               ...recordingContextUtils,
             }}
           >
@@ -128,7 +129,7 @@ export default function App() {
                   )}
                   {isStartOverModalVisible && (
                     <StartOverWarningModal
-                      eraseSteps={eraseSteps}
+                      startOver={startOver}
                       setVisibility={setIsStartOverModalVisible}
                       stepCount={steps.length}
                     />
