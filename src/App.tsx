@@ -54,6 +54,7 @@ import { StyledComponentsEuiProvider } from "./contexts/StyledComponentsEuiProvi
 import { ExportScriptFlyout } from "./components/ExportScriptFlyout";
 import { useRecordingContext } from "./hooks/useRecordingContext";
 import { StartOverWarningModal } from "./components/StartOverWarningModal";
+import { RendererProcessIpc } from "electron-better-ipc";
 
 export default function App() {
   const [url, setUrl] = useState("");
