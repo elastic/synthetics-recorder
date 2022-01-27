@@ -23,6 +23,7 @@ THE SOFTWARE.
 */
 
 import { useCallback, useContext, useEffect, useState } from "react";
+import { IpcRendererEvent } from "electron";
 import { getCodeForResult, getCodeFromActions } from "../common/shared";
 import { CommunicationContext } from "../contexts/CommunicationContext";
 import { Result, Steps, TestEvent } from "../common/types";
@@ -44,8 +45,9 @@ export function useSyntheticsTest(steps: Steps) {
     }
   }, [steps.length, result]);
 
-  const onTestEvent = (ev: TestEvent) => {
-    console.log(ev);
+  const onTestEvent = (_event: IpcRendererEvent, data: TestEvent) => {
+    //TODO: display the data
+    console.log(data);
   };
   const onTest = useCallback(
     async function () {

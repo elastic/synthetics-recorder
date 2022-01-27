@@ -28,7 +28,7 @@ const { existsSync } = require("fs");
 const { writeFile, rm, mkdir } = require("fs/promises");
 const { ipcMain: ipc } = require("electron-better-ipc");
 const { EventEmitter, once } = require("events");
-const { dialog, shell, BrowserWindow, webContents } = require("electron");
+const { dialog, shell, BrowserWindow } = require("electron");
 const { fork } = require("child_process");
 const logger = require("electron-log");
 const isDev = require("electron-is-dev");
@@ -127,54 +127,13 @@ async function recordJourneys(data, browserWindow) {
 }
 
 async function onTest(data, browserWindow) {
-  const result = {
-    succeeded: 0,
-    failed: 0,
-    skipped: 0,
-    journey: {},
-  };
-
   const parseOrSkip = chunk => {
-    // Chunk could contain only part of the object so that it can throw an error.
-    // Then the result will be empty object
     try {
       return JSON.parse(chunk);
     } catch (_) {
       return {};
     }
   };
-  /*
-  const constructResult = chunk => {
-    const parsed = parseOrSkip(chunk);
-    switch (parsed.type) {
-      case "journey/start": {
-        const { journey } = parsed;
-        result.journey = {
-          status: "succeeded",
-          steps: [],
-          type: journey.name, // either "suite" | "inline" in type definition
-        };
-        break;
-      }
-      case "step/end": {
-        const { step, error } = parsed;
-        result[step.status]++;
-        result.journey.steps.push({
-          name: step.name,
-          status: step.status,
-          error,
-          duration: Math.ceil(step.duration.us / 1000),
-        });
-        break;
-      }
-      case "journey/end": {
-        const { journey } = parsed;
-        result.journey.status = journey.status;
-        break;
-      }
-    }
-  };
-  */
 
   // returns TestEvent interface defined in common/types.ts
   const constructEvent = chunk => {
@@ -211,15 +170,12 @@ async function onTest(data, browserWindow) {
           },
         };
       }
-      default: {
-        console.log(chunk);
-      }
     }
   };
 
   const sendEvent = (event, browserWindow) => {
     console.log("SEND EVENT", event);
-    ipc.callRenderer(browserWindow, "test-event", event);
+    browserWindow.webContents.send("test-event", event);
   };
 
   let synthCliProcess = null; // child process, define here to kill when finished
@@ -241,7 +197,7 @@ async function onTest(data, browserWindow) {
     }
     /**
      * Fork the Synthetics CLI with correct browser path and
-     * cwd correctly spanws the process
+     * cwd correctly spawns the process
      */
     synthCliProcess = fork(`${SYNTHETICS_CLI}`, args, {
       env: {
@@ -258,8 +214,8 @@ async function onTest(data, browserWindow) {
     stdout.setEncoding("utf-8");
     stderr.setEncoding("utf-8");
     for await (const chunk of stdout) {
+      // TODO: Is it safe to assume the chunk always contains the whole object?
       const event = constructEvent(chunk);
-      // constructResult(output);
       sendEvent(event, browserWindow);
     }
     for await (const chunk of stderr) {
@@ -268,7 +224,6 @@ async function onTest(data, browserWindow) {
     if (isSuite) {
       await rm(filePath, { recursive: true, force: true });
     }
-    // return result;
   } catch (error) {
     logger.error(error);
     sendEvent(
@@ -280,7 +235,6 @@ async function onTest(data, browserWindow) {
       },
       browserWindow
     );
-    // return result;
   } finally {
     if (synthCliProcess) {
       synthCliProcess.kill();
