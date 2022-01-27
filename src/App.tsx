@@ -63,12 +63,9 @@ export default function App() {
   const { ipc } = useContext(CommunicationContext);
   const stepsContextUtils = useStepsContext();
   const { steps, setSteps } = stepsContextUtils;
-  const {
-    isStartOverModalVisible,
-    setIsStartOverModalVisible,
-    startOver,
-    ...recordingContextUtils
-  } = useRecordingContext(ipc, url, steps.length);
+  const recordingContextUtils = useRecordingContext(ipc, url, steps.length);
+  const { isStartOverModalVisible, setIsStartOverModalVisible, startOver } =
+    recordingContextUtils;
   const syntheticsTestUtils = useSyntheticsTest(steps);
 
   useEffect(() => {
@@ -85,14 +82,7 @@ export default function App() {
     <EuiThemeProvider theme={EuiThemeAmsterdam}>
       <StyledComponentsEuiProvider>
         <StepsContext.Provider value={stepsContextUtils}>
-          <RecordingContext.Provider
-            value={{
-              isStartOverModalVisible,
-              setIsStartOverModalVisible,
-              startOver,
-              ...recordingContextUtils,
-            }}
-          >
+          <RecordingContext.Provider value={recordingContextUtils}>
             <TestContext.Provider value={syntheticsTestUtils}>
               <UrlContext.Provider value={{ url, setUrl }}>
                 <Title />
