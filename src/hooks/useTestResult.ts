@@ -26,22 +26,34 @@ import { useContext, useEffect, useState } from "react";
 import { ResultCategory } from "../common/types";
 import { TestContext } from "../contexts/TestContext";
 
-export function useTestResult(stepName?: string): ResultCategory | undefined {
+/**
+ * Today test results are limited to the resolution of step-level.
+ *
+ * As such, we can simply check a step's status and apply that to its
+ * constitutent actions.
+ * @param stepName The name of the step to check
+ * @returns The status of the step, if available
+ */
+export function useStepResultStatus(
+  stepName?: string
+): ResultCategory | undefined {
   const { result } = useContext(TestContext);
   const [statuses, setStatuses] = useState<Record<string, ResultCategory>>({});
 
   useEffect(() => {
-    setStatuses(
-      result
-        ? result.journey.steps.reduce((prev, { name, status }) => {
-            return { ...prev, [name]: status };
-          }, {})
-        : {}
-    );
+    if (!result) {
+      setStatuses({});
+    } else {
+      // make a map with key:stepname, val:status
+      setStatuses(
+        result.journey.steps.reduce((prev, { name, status }) => {
+          return { ...prev, [name]: status };
+        }, {})
+      );
+    }
   }, [result, setStatuses]);
 
-  if (!stepName) return undefined;
-  if (!statuses[stepName]) return undefined;
+  if (!stepName || !statuses[stepName]) return undefined;
 
   return statuses[stepName];
 }
