@@ -23,20 +23,20 @@ THE SOFTWARE.
 */
 
 import { useState } from "react";
-import { Step, Steps } from "../common/types";
-import { IStepsContext } from "../contexts/StepsContext";
+import type { Steps } from "../common/types";
+import type { IStepsContext } from "../contexts/StepsContext";
 
 export function useStepsContext(): IStepsContext {
   const [steps, setSteps] = useState<Steps>([]);
   return {
     steps,
     setSteps,
-    onDeleteAction: (targetStepIdx, actionToDeleteIdx) => {
+    onDeleteAction: (targetStepIdx, indexToDelete) => {
       setSteps(steps =>
         steps.map((step, currentStepIndex) => {
           if (currentStepIndex !== targetStepIdx) return step;
 
-          step.splice(actionToDeleteIdx, 1);
+          step.splice(indexToDelete, 1);
 
           return [...step];
         })
@@ -53,9 +53,9 @@ export function useStepsContext(): IStepsContext {
         })
       );
     },
-    onStepDetailChange: (step: Step, stepIndex: number) => {
+    onStepDetailChange: (step, indexToUpdate) => {
       const newActions = steps.map((a, ind) => {
-        return ind === stepIndex ? step : a;
+        return ind === indexToUpdate ? step : a;
       });
       setSteps(newActions);
     },
