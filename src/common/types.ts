@@ -87,9 +87,3 @@ export enum RecordingStatus {
   Recording = "RECORDING",
   Paused = "PAUSED",
 }
-
-// A boilerplate type for IPC as it does not export its own types
-export interface IPC {
-  send: (channel: string) => Promise<void>;
-  callMain: (channel: string, args: unknown) => Promise<void>;
-}

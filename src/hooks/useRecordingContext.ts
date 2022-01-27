@@ -24,9 +24,13 @@ THE SOFTWARE.
 
 import { useCallback, useState } from "react";
 import { RecordingStatus } from "../common/types";
-import type { IPC } from "../common/types";
+import { RendererProcessIpc } from "electron-better-ipc";
 
-export function useRecordingContext(ipc: IPC, url: string, stepCount: number) {
+export function useRecordingContext(
+  ipc: RendererProcessIpc,
+  url: string,
+  stepCount: number
+) {
   const [isStartOverModalVisible, setIsStartOverModalVisible] = useState(false);
   const [recordingStatus, setRecordingStatus] = useState(
     RecordingStatus.NotRecording
