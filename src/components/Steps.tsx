@@ -27,25 +27,9 @@ import { EuiCode, EuiEmptyPrompt, EuiSpacer, EuiTitle } from "@elastic/eui";
 
 import { StepAccordions } from "./StepList/StepDetails";
 import { StepsContext } from "../contexts/StepsContext";
-import type { Step } from "../common/types";
 
 export function Steps() {
-  const { steps, setSteps } = useContext(StepsContext);
-
-  const onStepDetailChange = (updatedStep: Step, stepIndex: number) => {
-    const newActions = steps.map((currentStep, currentStepIdx) =>
-      currentStepIdx === stepIndex ? updatedStep : currentStep
-    );
-    setSteps(newActions);
-  };
-
-  const onStepDelete = (stepIndex: number) => {
-    const newActions = [
-      ...steps.slice(0, stepIndex),
-      ...steps.slice(stepIndex + 1),
-    ];
-    setSteps(newActions);
-  };
+  const { steps, onStepDetailChange, onDeleteStep } = useContext(StepsContext);
 
   if (steps.length === 0) {
     return (
@@ -75,7 +59,7 @@ export function Steps() {
       <StepAccordions
         steps={steps}
         onStepDetailChange={onStepDetailChange}
-        onStepDelete={onStepDelete}
+        onStepDelete={onDeleteStep}
       />
     </>
   );
