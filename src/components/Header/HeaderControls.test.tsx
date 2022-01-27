@@ -44,6 +44,7 @@ describe("<HeaderControls />", () => {
       isStartOverModalVisible: false,
       setIsStartOverModalVisible: jest.fn(),
       recordingStatus: recordingStatus,
+      startOver: jest.fn(),
       togglePause: jest.fn().mockImplementation(() => {
         if (recordingStatus === RecordingStatus.Paused) {
           recordingStatus = RecordingStatus.Recording;
