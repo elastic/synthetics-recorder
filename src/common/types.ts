@@ -62,7 +62,7 @@ export interface Result {
 }
 
 export interface Journey {
-  status: string;
+  status: string; //TODO: define type? e.g. "create"
   steps: Array<JourneyStep>;
   type: JourneyType;
 }
@@ -87,3 +87,24 @@ export enum RecordingStatus {
   Recording = "RECORDING",
   Paused = "PAUSED",
 }
+
+export interface JourneyStartEvent {
+  event: "journey/start";
+  data: {
+    name: string;
+  };
+}
+
+export interface JourneyEndEvent {
+  event: "journey/end";
+  data: {
+    name: string;
+    status: "succeeded" | "failed"; // TBC
+  };
+}
+export interface StepEndEvent {
+  event: "step/end";
+  data: JourneyStep;
+}
+
+export type TestEvent = JourneyStartEvent | JourneyEndEvent | StepEndEvent;

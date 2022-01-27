@@ -25,7 +25,7 @@ THE SOFTWARE.
 import { useCallback, useContext, useEffect, useState } from "react";
 import { getCodeForResult, getCodeFromActions } from "../common/shared";
 import { CommunicationContext } from "../contexts/CommunicationContext";
-import { Result, Steps } from "../common/types";
+import { Result, Steps, TestEvent } from "../common/types";
 
 export function useSyntheticsTest(steps: Steps) {
   const [result, setResult] = useState<Result | undefined>(undefined);
@@ -44,12 +44,16 @@ export function useSyntheticsTest(steps: Steps) {
     }
   }, [steps.length, result]);
 
+  const onTestEvent = (ev: TestEvent) => {
+    console.log(ev);
+  };
   const onTest = useCallback(
     async function () {
       /**
        * For the time being we are only running tests as inline.
        */
       const code = await getCodeFromActions(ipc, steps, "inline");
+      ipc.on("test-event", onTestEvent);
       const resultFromServer: Result = await ipc.callMain("run-journey", {
         code,
         isSuite: false,
@@ -59,6 +63,7 @@ export function useSyntheticsTest(steps: Steps) {
       setResult(resultFromServer);
       setIsResultFlyoutVisible(true);
       setIsTestInProgress(false);
+      ipc.removeListener("test-event", onTestEvent);
     },
     [steps, ipc, result]
   );

@@ -28,7 +28,7 @@ const { existsSync } = require("fs");
 const { writeFile, rm, mkdir } = require("fs/promises");
 const { ipcMain: ipc } = require("electron-better-ipc");
 const { EventEmitter, once } = require("events");
-const { dialog, shell, BrowserWindow } = require("electron");
+const { dialog, shell, BrowserWindow, webContents } = require("electron");
 const { fork } = require("child_process");
 const logger = require("electron-log");
 const isDev = require("electron-is-dev");
@@ -126,7 +126,7 @@ async function recordJourneys(data, browserWindow) {
   }
 }
 
-async function onTest(data) {
+async function onTest(data, browserWindow) {
   const result = {
     succeeded: 0,
     failed: 0,
@@ -135,12 +135,15 @@ async function onTest(data) {
   };
 
   const parseOrSkip = chunk => {
+    // Chunk could contain only part of the object so that it can throw an error.
+    // Then the result will be empty object
     try {
       return JSON.parse(chunk);
     } catch (_) {
       return {};
     }
   };
+  /*
   const constructResult = chunk => {
     const parsed = parseOrSkip(chunk);
     switch (parsed.type) {
@@ -149,7 +152,7 @@ async function onTest(data) {
         result.journey = {
           status: "succeeded",
           steps: [],
-          type: journey.name,
+          type: journey.name, // either "suite" | "inline" in type definition
         };
         break;
       }
@@ -171,7 +174,55 @@ async function onTest(data) {
       }
     }
   };
+  */
 
+  // returns TestEvent interface defined in common/types.ts
+  const constructEvent = chunk => {
+    const parsed = parseOrSkip(chunk);
+    switch (parsed.type) {
+      case "journey/start": {
+        const { journey } = parsed;
+        return {
+          event: "journey/start",
+          data: {
+            name: journey.name,
+          },
+        };
+      }
+      case "step/end": {
+        const { step, error } = parsed;
+        return {
+          event: "step/end",
+          data: {
+            name: step.name,
+            status: step.status,
+            error,
+            duration: Math.ceil(step.duration.us / 1000),
+          },
+        };
+      }
+      case "journey/end": {
+        const { journey } = parsed;
+        return {
+          event: "journey/end",
+          data: {
+            name: journey.name,
+            status: journey.status,
+          },
+        };
+      }
+      default: {
+        console.log(chunk);
+      }
+    }
+  };
+
+  const sendEvent = (event, browserWindow) => {
+    console.log("SEND EVENT", event);
+    ipc.callRenderer(browserWindow, "test-event", event);
+  };
+
+  let synthCliProcess = null; // child process, define here to kill when finished
   try {
     const isSuite = data.isSuite;
     const args = [
@@ -192,13 +243,14 @@ async function onTest(data) {
      * Fork the Synthetics CLI with correct browser path and
      * cwd correctly spanws the process
      */
-    const { stdout, stdin, stderr } = fork(`${SYNTHETICS_CLI}`, args, {
+    synthCliProcess = fork(`${SYNTHETICS_CLI}`, args, {
       env: {
         PLAYWRIGHT_BROWSERS_PATH,
       },
       cwd: isDev ? process.cwd() : process.resourcesPath,
       stdio: "pipe",
     });
+    const { stdout, stdin, stderr } = synthCliProcess;
     if (!isSuite) {
       stdin.write(data.code);
       stdin.end();
@@ -206,7 +258,9 @@ async function onTest(data) {
     stdout.setEncoding("utf-8");
     stderr.setEncoding("utf-8");
     for await (const chunk of stdout) {
-      constructResult(chunk);
+      const event = constructEvent(chunk);
+      // constructResult(output);
+      sendEvent(event, browserWindow);
     }
     for await (const chunk of stderr) {
       logger.error(chunk);
@@ -214,10 +268,23 @@ async function onTest(data) {
     if (isSuite) {
       await rm(filePath, { recursive: true, force: true });
     }
-    return result;
-  } catch (err) {
-    logger.error(err);
-    return result;
+    // return result;
+  } catch (error) {
+    logger.error(error);
+    sendEvent(
+      {
+        event: "journey/end",
+        data: {
+          error,
+        },
+      },
+      browserWindow
+    );
+    // return result;
+  } finally {
+    if (synthCliProcess) {
+      synthCliProcess.kill();
+    }
   }
 }
 
