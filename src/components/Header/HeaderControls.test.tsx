@@ -76,6 +76,7 @@ describe("<HeaderControls />", () => {
             steps: [],
             setSteps: jest.fn(),
             onDeleteAction: jest.fn(),
+            onDeleteStep: jest.fn(),
             onInsertAction: jest.fn(),
             onStepDetailChange: jest.fn(),
             ...stepsCtxOverrides,
