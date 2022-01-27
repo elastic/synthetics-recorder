@@ -26,13 +26,12 @@ import { EuiToolTip } from "@elastic/eui";
 import React from "react";
 import { ControlButton } from "./ControlButton";
 
-export function TestButton({
-  isDisabled,
-  onTest,
-}: {
+interface Props {
   isDisabled: boolean;
   onTest: React.MouseEventHandler<HTMLButtonElement>;
-}) {
+}
+
+export function TestButton({ isDisabled, onTest }: Props) {
   const button = (
     <ControlButton
       aria-label={
