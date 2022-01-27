@@ -42,6 +42,7 @@ export interface IStepsContext {
    * Deletes the action at the `actionIndex` in the given step.
    */
   onDeleteAction: (stepIndex: number, actionIndex: number) => void;
+  onDeleteStep: (stepIndex: number) => void;
   /**
    * Inserts the `action` to the given step at `actionIndex`.
    */
@@ -60,6 +61,7 @@ export const StepsContext = createContext<IStepsContext>({
   steps: [],
   setSteps: notImplemented,
   onDeleteAction: notImplemented,
+  onDeleteStep: notImplemented,
   onInsertAction: notImplemented,
   onStepDetailChange: notImplemented,
 });

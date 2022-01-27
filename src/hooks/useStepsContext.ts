@@ -42,6 +42,9 @@ export function useStepsContext(): IStepsContext {
         })
       );
     },
+    onDeleteStep: stepIndex => {
+      setSteps([...steps.slice(0, stepIndex), ...steps.slice(stepIndex + 1)]);
+    },
     onInsertAction: (action, targetStepIdx, indexToInsert) => {
       setSteps(
         steps.map((step, currentStepIndex) => {
