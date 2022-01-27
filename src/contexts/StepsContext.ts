@@ -30,14 +30,29 @@ function notImplemented() {
 }
 
 export interface IStepsContext {
+  /**
+   * Represents the actions and assertions that the user has recorded.
+   */
   steps: Steps;
+  /**
+   * Updates the steps.
+   */
   setSteps: Setter<Steps>;
+  /**
+   * Deletes the action at the `actionIndex` in the given step.
+   */
   onDeleteAction: (stepIndex: number, actionIndex: number) => void;
+  /**
+   * Inserts the `action` to the given step at `actionIndex`.
+   */
   onInsertAction: (
     action: ActionContext,
     stepIndex: number,
     actionIndex: number
   ) => void;
+  /**
+   * Overwrites the step at `stepIndex` with `step`.
+   */
   onStepDetailChange: (step: Step, stepIndex: number) => void;
 }
 
