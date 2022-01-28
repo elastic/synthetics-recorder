@@ -52,13 +52,7 @@ export function Body({ code, exportAsSuite, setExportAsSuite }: Props) {
         onChange={() => setExportAsSuite(!exportAsSuite)}
       />
       <EuiSpacer />
-      <Code
-        isCopyable
-        language="js"
-        paddingSize="m"
-        style={{ maxWidth: 300 }}
-        whiteSpace="pre"
-      >
+      <Code isCopyable language="js" paddingSize="m" whiteSpace="pre">
         {code}
       </Code>
     </EuiFlyoutBody>
