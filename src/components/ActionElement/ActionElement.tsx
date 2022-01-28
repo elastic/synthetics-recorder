@@ -42,7 +42,7 @@ import { HeadingText } from "./HeadingText";
 import { ActionStatusIndicator } from "../ActionStatusIndicator";
 import { Assertion } from "../Assertion";
 import { ActionControlButton } from "./ControlButton";
-import { ActionSettingsPopover } from "./SettingsPopover";
+import { SettingsPopover } from "./SettingsPopover";
 import { RecordingContext } from "../../contexts/RecordingContext";
 
 interface IActionElement {
@@ -137,7 +137,7 @@ function ActionComponent({
                 />
               </EuiFlexItem>
               <EuiFlexItem grow={false}>
-                <ActionSettingsPopover
+                <SettingsPopover
                   isRecording={recordingStatus !== RecordingStatus.NotRecording}
                   isVisible={areControlsVisible || isSettingsPopoverOpen}
                   onAddAssertion={settingsHandler(() => {

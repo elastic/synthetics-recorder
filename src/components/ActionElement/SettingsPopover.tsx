@@ -27,15 +27,7 @@ import React from "react";
 import { Setter } from "../../common/types";
 import { ActionControlButton } from "./ControlButton";
 
-export function ActionSettingsPopover({
-  isVisible: visible,
-  isRecording,
-  isOpen,
-  setIsOpen,
-  onAddAssertion,
-  onDelete,
-  onEdit,
-}: {
+interface ISettingsPopover {
   isRecording: boolean;
   isVisible: boolean;
   isOpen: boolean;
@@ -43,7 +35,17 @@ export function ActionSettingsPopover({
   onDelete: () => void;
   onEdit: () => void;
   setIsOpen: Setter<boolean>;
-}) {
+}
+
+export function SettingsPopover({
+  isVisible: visible,
+  isRecording,
+  isOpen,
+  setIsOpen,
+  onAddAssertion,
+  onDelete,
+  onEdit,
+}: ISettingsPopover) {
   return (
     <EuiPopover
       button={
