@@ -22,29 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
-import React from "react";
-import { COMMAND_SELECTOR_OPTIONS } from "../../common/shared";
-import { ActionContext } from "../../common/types";
-import { Bold } from "./styles";
+import { EuiFlexItem } from "@elastic/eui";
+import styled from "styled-components";
 
-interface IAssertionHeadingText {
-  actionContext: ActionContext;
-}
-
-export function AssertionHeadingText({ actionContext }: IAssertionHeadingText) {
-  return (
-    <EuiFlexGroup gutterSize="xs">
-      <Bold grow={false}>{actionContext.action.name}</Bold>
-      <EuiFlexItem grow={false}>
-        {
-          COMMAND_SELECTOR_OPTIONS.find(
-            option => option.value === actionContext.action.command
-          )?.text
-        }
-      </EuiFlexItem>
-      <EuiFlexItem grow={false}>{actionContext.action.selector}</EuiFlexItem>
-      <EuiFlexItem grow={false}>{actionContext.action.value}</EuiFlexItem>
-    </EuiFlexGroup>
-  );
-}
+export const Bold = styled(EuiFlexItem)`
+  font-weight: bold;
+`;
