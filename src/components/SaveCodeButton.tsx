@@ -29,7 +29,11 @@ import type { JourneyType } from "../common/types";
 import { CommunicationContext } from "../contexts/CommunicationContext";
 import { StepsContext } from "../contexts/StepsContext";
 
-export function SaveCodeButton({ type }: { type: JourneyType }) {
+interface ISaveCodeButton {
+  type: JourneyType;
+}
+
+export function SaveCodeButton({ type }: ISaveCodeButton) {
   const { ipc } = useContext(CommunicationContext);
   const { steps } = useContext(StepsContext);
   const onSave = async () => {

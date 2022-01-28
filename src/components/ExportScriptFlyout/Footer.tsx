@@ -30,7 +30,7 @@ import {
 } from "@elastic/eui";
 import React from "react";
 import type { JourneyType, Setter } from "../../common/types";
-import { SaveCodeButton } from "../ExportScriptButton";
+import { SaveCodeButton } from "../SaveCodeButton";
 
 interface IFlyoutFooter {
   setVisible: Setter<boolean>;
