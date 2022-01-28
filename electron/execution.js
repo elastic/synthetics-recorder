@@ -174,8 +174,9 @@ async function onTest(data, browserWindow) {
   };
 
   const sendEvent = (event, browserWindow) => {
-    console.log("SEND EVENT", event);
-    browserWindow.webContents.send("test-event", event);
+    if (typeof event !== "undefined") {
+      browserWindow.webContents.send("test-event", event);
+    }
   };
 
   let synthCliProcess = null; // child process, define here to kill when finished
@@ -214,9 +215,12 @@ async function onTest(data, browserWindow) {
     stdout.setEncoding("utf-8");
     stderr.setEncoding("utf-8");
     for await (const chunk of stdout) {
-      // TODO: Is it safe to assume the chunk always contains the whole object?
-      const event = constructEvent(chunk);
-      sendEvent(event, browserWindow);
+      // at times stdout ships multiple steps in one chunk, broken by newline,
+      // so here we split on the newline
+      chunk.split("\n").forEach(subchunk => {
+        const event = constructEvent(subchunk);
+        sendEvent(event, browserWindow);
+      });
     }
     for await (const chunk of stderr) {
       logger.error(chunk);

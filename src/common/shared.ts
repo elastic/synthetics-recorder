@@ -122,13 +122,21 @@ export function updateAction(
   });
 }
 
+/**
+ * Gets code string for failed step in result object.
+ * @param steps steps to analyze
+ * @param journey journey result data
+ * @returns code string
+ */
 export async function getCodeForResult(
   ipc: RendererProcessIpc,
   steps: ActionContext[][],
   journey: Journey | undefined
 ): Promise<string> {
   if (!journey) return "";
-  const journeyStepNames = new Set(journey.steps.map(({ name }) => name));
+  const journeyStepNames = new Set(
+    journey.steps.filter(s => s.status === "failed").map(({ name }) => name)
+  );
 
   return await getCodeFromActions(
     ipc,

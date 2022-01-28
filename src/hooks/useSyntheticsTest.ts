@@ -22,57 +22,79 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { useCallback, useContext, useEffect, useState } from "react";
 import { IpcRendererEvent } from "electron";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import { getCodeForResult, getCodeFromActions } from "../common/shared";
-import { CommunicationContext } from "../contexts/CommunicationContext";
 import { Result, Steps, TestEvent } from "../common/types";
+import { ITestContext } from "../contexts/TestContext";
+import { CommunicationContext } from "../contexts/CommunicationContext";
+import { resultReducer } from "../helpers/resultReducer";
 
-export function useSyntheticsTest(steps: Steps) {
-  const [result, setResult] = useState<Result | undefined>(undefined);
+export function useSyntheticsTest(steps: Steps): ITestContext {
+  const [result, dispatch] = useReducer(resultReducer, undefined);
   const [isResultFlyoutVisible, setIsResultFlyoutVisible] = useState(false);
   const [codeBlocks, setCodeBlocks] = useState("");
   const [isTestInProgress, setIsTestInProgress] = useState(false);
   const { ipc } = useContext(CommunicationContext);
 
-  /**
-   * The absence of steps with a truthy result indicates the result value
-   * is stale, and should be destroyed.
-   */
-  useEffect(() => {
-    if (steps.length === 0 && result) {
-      setResult(undefined);
-    }
-  }, [steps.length, result]);
-
-  const onTestEvent = (_event: IpcRendererEvent, data: TestEvent) => {
-    //TODO: display the data
-    console.log(data);
-  };
   const onTest = useCallback(
     async function () {
-      /**
-       * For the time being we are only running tests as inline.
-       */
       const code = await getCodeFromActions(ipc, steps, "inline");
-      ipc.on("test-event", onTestEvent);
-      const resultFromServer: Result = await ipc.callMain("run-journey", {
-        code,
-        isSuite: false,
-      });
+      if (!isTestInProgress) {
+        const onTestEvent = (_event: IpcRendererEvent, data: TestEvent) => {
+          dispatch(data);
+        };
 
-      setCodeBlocks(await getCodeForResult(ipc, steps, result?.journey));
-      setResult(resultFromServer);
-      setIsResultFlyoutVisible(true);
-      setIsTestInProgress(false);
-      ipc.removeListener("test-event", onTestEvent);
+        ipc.on("test-event", onTestEvent);
+
+        try {
+          const promise = ipc.callMain("run-journey", {
+            code,
+            isSuite: false,
+          });
+          setIsTestInProgress(true);
+          setIsResultFlyoutVisible(true);
+          await promise;
+        } catch (e: unknown) {
+          // eslint-disable-next-line no-console
+          console.error(e);
+        } finally {
+          ipc.removeListener("test-event", onTestEvent);
+          setIsTestInProgress(false);
+        }
+      }
     },
-    [steps, ipc, result]
+    [ipc, isTestInProgress, steps]
   );
+
+  useEffect(() => {
+    getCodeForResult(ipc, steps, result?.journey).then(code =>
+      setCodeBlocks(code)
+    );
+  }, [ipc, result?.journey, steps]);
+
+  /**
+   * This is needed to satisfy some tech debt where we reference a function by this
+   * name elsewhere in the application. This functionality is removed by a downstream branch,
+   * when it's merged we can delete this handler.
+   */
+  const setResult = useCallback((data: Result | undefined) => {
+    dispatch({
+      event: "override",
+      data,
+    });
+  }, []);
+
   return {
     codeBlocks,
-    isTestInProgress,
     isResultFlyoutVisible,
+    isTestInProgress,
     result,
     onTest,
     setCodeBlocks,

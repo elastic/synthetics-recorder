@@ -67,13 +67,15 @@ export interface Journey {
   type: JourneyType;
 }
 
-export type ResultCategory = "succeeded" | "failed" | "skipped";
+export type StepStatus = "succeeded" | "failed" | "skipped";
+
+export type ResultCategory = StepStatus | "running";
 
 export interface JourneyStep {
   duration: number;
   error?: Error;
   name: string;
-  status: ResultCategory;
+  status: StepStatus;
 }
 
 export type JourneyType = "suite" | "inline";
@@ -107,4 +109,13 @@ export interface StepEndEvent {
   data: JourneyStep;
 }
 
-export type TestEvent = JourneyStartEvent | JourneyEndEvent | StepEndEvent;
+export interface ResultOverride {
+  event: "override";
+  data: Result | undefined;
+}
+
+export type TestEvent =
+  | JourneyStartEvent
+  | JourneyEndEvent
+  | StepEndEvent
+  | ResultOverride;

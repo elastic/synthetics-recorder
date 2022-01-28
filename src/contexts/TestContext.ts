@@ -32,7 +32,7 @@ async function notImplementedAsync() {
   notImplemented();
 }
 
-interface ITestContext {
+export interface ITestContext {
   codeBlocks: string;
   isResultFlyoutVisible: boolean;
   isTestInProgress: boolean;
@@ -40,8 +40,8 @@ interface ITestContext {
   result?: Result;
   setIsTestInProgress: Setter<boolean>;
   setCodeBlocks: Setter<string>;
-  setResult: Setter<Result | undefined>;
   setIsResultFlyoutVisible: Setter<boolean>;
+  setResult: (data: Result | undefined) => void;
 }
 
 export const TestContext = createContext<ITestContext>({

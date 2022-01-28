@@ -63,12 +63,14 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
     isTestInProgress,
     onTest: startTest,
     setIsTestInProgress,
+    setResult,
   } = useContext(TestContext);
 
   const onTest = useCallback(() => {
+    setResult(undefined);
     setIsTestInProgress(true);
     startTest();
-  }, [setIsTestInProgress, startTest]);
+  }, [setIsTestInProgress, setResult, startTest]);
 
   return (
     <Header alignItems="center" gutterSize="m">
