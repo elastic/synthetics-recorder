@@ -56,11 +56,13 @@ export function useStepsContext(): IStepsContext {
         })
       );
     },
-    onStepDetailChange: (step, indexToUpdate) => {
-      const newActions = steps.map((a, ind) => {
-        return ind === indexToUpdate ? step : a;
-      });
-      setSteps(newActions);
+    onStepDetailChange: (updatedStep, indexToUpdate) => {
+      setSteps(
+        steps.map((currentStep, iterIndex) =>
+          // if the `currentStep` is at the `indexToUpdate`, return `updatedStep` instead of stale object
+          iterIndex === indexToUpdate ? updatedStep : currentStep
+        )
+      );
     },
   };
 }
