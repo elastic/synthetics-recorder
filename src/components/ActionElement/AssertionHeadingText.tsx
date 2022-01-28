@@ -22,32 +22,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React from "react";
 import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
+import React from "react";
+import { COMMAND_SELECTOR_OPTIONS } from "../../common/shared";
 import { ActionContext } from "../../common/types";
-import { AssertionHeadingText } from "./AssertionHeadingText";
 
-interface IHeadingText {
+interface IAssertionHeadingText {
   actionContext: ActionContext;
 }
 
-export function HeadingText({ actionContext }: IHeadingText) {
-  if (actionContext.action.isAssert) {
-    return <AssertionHeadingText actionContext={actionContext} />;
-  }
+export function AssertionHeadingText({ actionContext }: IAssertionHeadingText) {
   return (
     <EuiFlexGroup gutterSize="xs">
       <EuiFlexItem grow={false} style={{ fontWeight: "bold" }}>
         {actionContext.action.name}
       </EuiFlexItem>
-      <EuiFlexItem>
-        &nbsp;
-        {actionContext.action.name !== "navigate" &&
-          actionContext.action.selector}
-        {actionContext.action.name === "navigate"
-          ? actionContext.frameUrl
-          : null}
+      <EuiFlexItem grow={false}>
+        {
+          COMMAND_SELECTOR_OPTIONS.find(
+            option => option.value === actionContext.action.command
+          )?.text
+        }
       </EuiFlexItem>
+      <EuiFlexItem grow={false}>{actionContext.action.selector}</EuiFlexItem>
+      <EuiFlexItem grow={false}>{actionContext.action.value}</EuiFlexItem>
     </EuiFlexGroup>
   );
 }
