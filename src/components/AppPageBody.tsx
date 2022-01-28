@@ -22,20 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiPageBody, EuiThemeContext } from "@elastic/eui";
-import React, { useContext } from "react";
+import { EuiPageBody } from "@elastic/eui";
+import React from "react";
+import styled from "styled-components";
+
+const PageBody = styled(EuiPageBody)`
+  background-color: ${props => props.theme.colors.emptyShade};
+  padding: 0px 0px 0px 40px;
+`;
 
 export const AppPageBody: React.FC = ({ children }) => {
-  const euiTheme = useContext(EuiThemeContext);
-
-  return (
-    <EuiPageBody
-      style={{
-        backgroundColor: euiTheme.colors.emptyShade,
-        padding: "0px 0px 0px 40px",
-      }}
-    >
-      {children}
-    </EuiPageBody>
-  );
+  return <PageBody>{children}</PageBody>;
 };
