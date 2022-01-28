@@ -22,28 +22,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import {
-  EuiButtonEmpty,
-  EuiCheckbox,
-  EuiCodeBlock,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiFlyout,
-  EuiFlyoutBody,
-  EuiFlyoutFooter,
-  EuiFlyoutHeader,
-  EuiSpacer,
-  EuiTitle,
-} from "@elastic/eui";
+import { EuiFlyout } from "@elastic/eui";
 import React, { useEffect, useState } from "react";
-import { getCodeFromActions } from "../common/shared";
-import type { JourneyType, Setter, Steps } from "../common/types";
-import { SaveCodeButton } from "./ExportScriptButton";
+import { getCodeFromActions } from "../../common/shared";
+import type { JourneyType, Setter, Steps } from "../../common/types";
+import { Body } from "./Body";
+import { Footer } from "./Footer";
+import { Header } from "./Header";
 
 interface IExportScriptFlyout {
   setVisible: Setter<boolean>;
   steps: Steps;
 }
+
+const FLYOUT_ID = "export-script-flyout-title";
 
 export function ExportScriptFlyout({ setVisible, steps }: IExportScriptFlyout) {
   const [code, setCode] = useState("");
@@ -59,42 +51,14 @@ export function ExportScriptFlyout({ setVisible, steps }: IExportScriptFlyout) {
   }, [steps, setCode, type]);
 
   return (
-    <EuiFlyout onClose={() => setVisible(false)}>
-      <EuiFlyoutHeader hasBorder>
-        <EuiTitle size="s">
-          <h2 id="export-script-flyout-title">Journey code</h2>
-        </EuiTitle>
-      </EuiFlyoutHeader>
-      <EuiFlyoutBody>
-        <EuiCheckbox
-          id="export-as-suite-checkbox"
-          label="Export as suite"
-          checked={exportAsSuite}
-          onChange={() => setExportAsSuite(!exportAsSuite)}
-        />
-        <EuiSpacer />
-        <EuiCodeBlock
-          isCopyable
-          language="js"
-          paddingSize="m"
-          style={{ maxWidth: 300 }}
-          whiteSpace="pre"
-        >
-          {code}
-        </EuiCodeBlock>
-      </EuiFlyoutBody>
-      <EuiFlyoutFooter>
-        <EuiFlexGroup justifyContent="spaceBetween">
-          <EuiFlexItem grow={false}>
-            <EuiButtonEmpty onClick={() => setVisible(false)}>
-              Close
-            </EuiButtonEmpty>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <SaveCodeButton type={type} />
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      </EuiFlyoutFooter>
+    <EuiFlyout aria-labelledby={FLYOUT_ID} onClose={() => setVisible(false)}>
+      <Header headerText="Journey code" id={FLYOUT_ID} />
+      <Body
+        code={code}
+        exportAsSuite={exportAsSuite}
+        setExportAsSuite={setExportAsSuite}
+      />
+      <Footer setVisible={setVisible} type={type} />
     </EuiFlyout>
   );
 }
