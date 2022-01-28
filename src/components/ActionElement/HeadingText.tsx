@@ -26,6 +26,7 @@ import React from "react";
 import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
 import { ActionContext } from "../../common/types";
 import { AssertionHeadingText } from "./AssertionHeadingText";
+import { Bold } from "./styles";
 
 interface IHeadingText {
   actionContext: ActionContext;
@@ -37,9 +38,7 @@ export function HeadingText({ actionContext }: IHeadingText) {
   }
   return (
     <EuiFlexGroup gutterSize="xs">
-      <EuiFlexItem grow={false} style={{ fontWeight: "bold" }}>
-        {actionContext.action.name}
-      </EuiFlexItem>
+      <Bold grow={false}>{actionContext.action.name}</Bold>
       <EuiFlexItem>
         &nbsp;
         {actionContext.action.name !== "navigate" &&
