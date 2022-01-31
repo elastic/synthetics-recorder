@@ -67,11 +67,20 @@ export function Assertion({
   close,
   stepIndex,
 }: IAssertion) {
-  const { steps, onStepDetailChange } = useContext(StepsContext);
+  const { onUpdateAction } = useContext(StepsContext);
 
   const [command, setCommand] = useState(action.command || "");
   const [selector, setSelector] = useState(action.selector);
   const [value, setValue] = useState(action.value || "");
+
+  const saveAssertion = () => {
+    onUpdateAction(
+      updateAction(actionContext, command, selector, value),
+      stepIndex,
+      actionIndex
+    );
+    if (close) close();
+  };
 
   return (
     <>
@@ -114,23 +123,7 @@ export function Assertion({
       <EuiSpacer />
       <EuiFlexGroup>
         <EuiFlexItem grow={false}>
-          <EuiButton
-            onClick={() => {
-              const currentStep = steps[stepIndex];
-              onStepDetailChange(
-                currentStep.map((action, index) => {
-                  if (index === actionIndex) {
-                    return updateAction(action, command, selector, value);
-                  }
-                  return action;
-                }),
-                stepIndex
-              );
-              if (close) close();
-            }}
-          >
-            Save
-          </EuiButton>
+          <EuiButton onClick={saveAssertion}>Save</EuiButton>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiButtonEmpty color="danger" onClick={close}>

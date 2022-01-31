@@ -51,6 +51,11 @@ export interface IStepsContext {
     stepIndex: number,
     actionIndex: number
   ) => void;
+  onUpdateAction: (
+    action: ActionContext,
+    stepIndex: number,
+    actionIndex: number
+  ) => void;
   /**
    * Overwrites the step at `stepIndex` with `step`.
    */
@@ -64,4 +69,5 @@ export const StepsContext = createContext<IStepsContext>({
   onDeleteStep: notImplemented,
   onInsertAction: notImplemented,
   onStepDetailChange: notImplemented,
+  onUpdateAction: notImplemented,
 });
