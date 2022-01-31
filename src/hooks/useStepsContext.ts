@@ -23,11 +23,19 @@ THE SOFTWARE.
 */
 
 import { useState } from "react";
-import type { Steps } from "../common/types";
+import type { ActionContext, Step, Steps } from "../common/types";
 import type { IStepsContext } from "../contexts/StepsContext";
 
 export function useStepsContext(): IStepsContext {
   const [steps, setSteps] = useState<Steps>([]);
+  const onStepDetailChange = (updatedStep: Step, indexToUpdate: number) => {
+    setSteps(
+      steps.map((currentStep, iterIndex) =>
+        // if the `currentStep` is at the `indexToUpdate`, return `updatedStep` instead of stale object
+        iterIndex === indexToUpdate ? updatedStep : currentStep
+      )
+    );
+  };
   return {
     steps,
     setSteps,
@@ -56,12 +64,20 @@ export function useStepsContext(): IStepsContext {
         })
       );
     },
-    onStepDetailChange: (updatedStep, indexToUpdate) => {
-      setSteps(
-        steps.map((currentStep, iterIndex) =>
-          // if the `currentStep` is at the `indexToUpdate`, return `updatedStep` instead of stale object
-          iterIndex === indexToUpdate ? updatedStep : currentStep
-        )
+    onStepDetailChange,
+    onUpdateAction: (
+      action: ActionContext,
+      stepIndex: number,
+      actionIndex: number
+    ) => {
+      const step = steps[stepIndex];
+      onStepDetailChange(
+        [
+          ...step.slice(0, actionIndex),
+          action,
+          ...step.slice(actionIndex + 1, step.length),
+        ],
+        stepIndex
       );
     },
   };
