@@ -41,8 +41,8 @@ interface Props {
 }
 
 function headerCopy(n: number) {
-  const step = n === 1 ? "step" : "steps";
-  return `Restart and delete ${n} ${step}?`;
+  const stepCopy = n === 1 ? "step" : "steps";
+  return `Restart and delete ${n} ${stepCopy}?`;
 }
 
 export function StartOverWarningModal({
