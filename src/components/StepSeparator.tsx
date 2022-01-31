@@ -33,6 +33,10 @@ import { ActionElement } from "./ActionElement/ActionElement";
 export const StepSeparatorTopBorder = styled(EuiFlexItem)`
   border-top: ${props => props.theme.border.thin};
 
+  && {
+    margin-top: 20px;
+  }
+
   @media (max-width: ${SMALL_SCREEN_BREAKPOINT}px) {
     max-width: 586px;
   }
@@ -52,6 +56,10 @@ export const StepSeparatorAccordion = styled(EuiAccordion)`
   margin: 16px;
 `;
 
+export const StepSeparatorHeading = styled(EuiFlexItem)`
+  font-weight: bold;
+`;
+
 interface IStepSeparator {
   index: number;
   step: Step;
@@ -66,10 +74,10 @@ export function StepSeparator({ index, step }: IStepSeparator) {
     <StepSeparatorAccordion
       extraAction={
         <EuiFlexGroup>
-          <EuiFlexItem grow={false} style={{ fontWeight: "bold" }}>
+          <StepSeparatorHeading grow={false}>
             Step {index + 1}
-          </EuiFlexItem>
-          <StepSeparatorTopBorder style={{ marginTop: 20 }} />
+          </StepSeparatorHeading>
+          <StepSeparatorTopBorder />
         </EuiFlexGroup>
       }
       id={`step-separator-${index}`}
