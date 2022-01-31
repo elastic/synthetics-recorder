@@ -22,20 +22,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React, { ChangeEventHandler, useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   EuiButton,
   EuiButtonEmpty,
-  EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiFormRow,
   EuiPanel,
   EuiSpacer,
   EuiText,
 } from "@elastic/eui";
-import { StepsContext } from "../contexts/StepsContext";
-import type { ActionContext } from "../common/types";
+import { StepsContext } from "../../contexts/StepsContext";
+import type { ActionContext } from "../../common/types";
+import { FormControl } from "./FormControl";
 
 function createUpdatedAction(
   field: string,
@@ -177,29 +176,5 @@ export function ActionDetail({
         </EuiFlexItem>
       </EuiFlexGroup>
     </EuiPanel>
-  );
-}
-
-function FormControl({
-  label,
-  name,
-  noPrepend,
-  onChange,
-  value,
-}: {
-  label?: string;
-  name: string;
-  noPrepend?: boolean;
-  onChange: ChangeEventHandler<HTMLInputElement>;
-  value: string;
-}) {
-  return (
-    <EuiFormRow label={label ?? "Command"}>
-      <EuiFieldText
-        onChange={onChange}
-        prepend={noPrepend === true ? undefined : name}
-        value={value}
-      />
-    </EuiFormRow>
   );
 }
