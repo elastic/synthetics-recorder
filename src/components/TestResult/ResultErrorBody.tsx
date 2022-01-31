@@ -70,12 +70,7 @@ export function ResultErrorBody({
     >
       {errorMessage && (
         <>
-          <EuiCodeBlock
-            language="js"
-            paddingSize="m"
-            style={{ maxWidth: 300 }}
-            whiteSpace="pre"
-          >
+          <EuiCodeBlock language="js" paddingSize="m" whiteSpace="pre">
             {code}
           </EuiCodeBlock>
           <EuiCodeBlock paddingSize="m">
