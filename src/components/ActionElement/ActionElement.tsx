@@ -22,12 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiAccordion,
-  EuiThemeContext,
-} from "@elastic/eui";
+import { EuiFlexGroup, EuiFlexItem, EuiAccordion } from "@elastic/eui";
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { SMALL_SCREEN_BREAKPOINT } from "../../common/shared";
@@ -44,6 +39,7 @@ import { Assertion } from "../Assertion";
 import { ActionControlButton } from "./ControlButton";
 import { SettingsPopover } from "./SettingsPopover";
 import { RecordingContext } from "../../contexts/RecordingContext";
+import { ActionWrapper } from "./ActionWrapper";
 
 interface IActionElement {
   actionIndex: number;
@@ -75,7 +71,6 @@ function ActionComponent({
 }: IActionElement) {
   const { onDeleteAction, onInsertAction } = useContext(StepsContext);
   const { recordingStatus } = useContext(RecordingContext);
-  const euiTheme = useContext(EuiThemeContext);
   const [isOpen, setIsOpen] = useState(false);
   const [isSettingsPopoverOpen, setIsSettingsPopoverOpen] = useState(false);
   const [areControlsVisible, setAreControlsVisible] = useState(false);
@@ -96,13 +91,7 @@ function ActionComponent({
       <EuiFlexItem grow={false}>
         {!step.action.isAssert && <ActionStatusIndicator status={testStatus} />}
       </EuiFlexItem>
-      <EuiFlexItem
-        style={{
-          borderLeft: euiTheme.border.thick,
-          paddingLeft: step.action.isAssert ? 20 : 20,
-          marginLeft: step.action.isAssert ? 50 : 0,
-        }}
-      >
+      <ActionWrapper isAssert={step.action.isAssert}>
         <ActionAccordion
           arrowDisplay="none"
           buttonProps={{ style: { display: "none" } }}
@@ -189,7 +178,7 @@ function ActionComponent({
             />
           )}
         </ActionAccordion>
-      </EuiFlexItem>
+      </ActionWrapper>
     </Container>
   );
 }
