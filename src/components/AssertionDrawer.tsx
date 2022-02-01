@@ -48,6 +48,7 @@ import {
 import { StepsContext } from "../contexts/StepsContext";
 import { AssertionContext } from "../contexts/AssertionContext";
 import type { ActionContext } from "../common/types";
+import { CommunicationContext } from "../contexts/CommunicationContext";
 
 const PLAYWRIGHT_ASSERTIONS_DOCS_LINK =
   "https://playwright.dev/docs/assertions/";
@@ -81,6 +82,7 @@ const textFieldAssertionValues = ["innerText", "textContent"];
 
 export function AssertionDrawer() {
   const { actions, setActions } = useContext(StepsContext);
+  const { ipc } = useContext(CommunicationContext);
   const {
     actionIndex,
     action,
@@ -185,6 +187,7 @@ export function AssertionDrawer() {
                     iconSide="right"
                     iconType="popout"
                     onClick={createExternalLinkHandler(
+                      ipc,
                       PLAYWRIGHT_ASSERTIONS_DOCS_LINK
                     )}
                     size="xs"
@@ -210,7 +213,7 @@ export function AssertionDrawer() {
                     <EuiButtonIcon
                       aria-label="Choose the type of assertion command"
                       iconType="search"
-                      onClick={performSelectorLookup(setSelector)}
+                      onClick={performSelectorLookup(ipc, setSelector)}
                     />
                   }
                   onChange={e => setSelector(e.target.value)}

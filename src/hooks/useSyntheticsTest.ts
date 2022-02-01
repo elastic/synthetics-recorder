@@ -22,31 +22,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { getCodeForResult, getCodeFromActions } from "../common/shared";
 import { ActionContext, Result } from "../common/types";
-
-const { ipcRenderer: ipc } = window.require("electron-better-ipc");
+import { CommunicationContext } from "../contexts/CommunicationContext";
 
 export function useSyntheticsTest(actions: ActionContext[][]) {
   const [result, setResult] = useState<Result | undefined>(undefined);
   const [codeBlocks, setCodeBlocks] = useState("");
+  const { ipc } = useContext(CommunicationContext);
 
   const onTest = useCallback(
     async function () {
       /**
        * For the time being we are only running tests as inline.
        */
-      const code = await getCodeFromActions(actions, "inline");
+      const code = await getCodeFromActions(ipc, actions, "inline");
       const resultFromServer: Result = await ipc.callMain("run-journey", {
         code,
         isSuite: false,
       });
 
-      setCodeBlocks(await getCodeForResult(actions, result?.journey));
+      setCodeBlocks(await getCodeForResult(ipc, actions, result?.journey));
       setResult(resultFromServer);
     },
-    [actions, result]
+    [actions, ipc, result]
   );
   return {
     codeBlocks,

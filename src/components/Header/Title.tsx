@@ -31,13 +31,15 @@ import {
   EuiPageHeader,
   useEuiTheme,
 } from "@elastic/eui";
-import React from "react";
+import React, { useContext } from "react";
 import {
   createExternalLinkHandler,
   SYNTHETICS_DISCUSS_FORUM_URL,
 } from "../../common/shared";
+import { CommunicationContext } from "../../contexts/CommunicationContext";
 
 export function Title() {
+  const { ipc } = useContext(CommunicationContext);
   const { euiTheme } = useEuiTheme();
   return (
     <EuiPageHeader
@@ -76,7 +78,10 @@ export function Title() {
             iconSide="left"
             iconType="popout"
             key="link-to-synthetics-help"
-            onClick={createExternalLinkHandler(SYNTHETICS_DISCUSS_FORUM_URL)}
+            onClick={createExternalLinkHandler(
+              ipc,
+              SYNTHETICS_DISCUSS_FORUM_URL
+            )}
           >
             Send feedback
           </EuiButtonEmpty>

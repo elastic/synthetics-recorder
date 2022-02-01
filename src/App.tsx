@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React from "react";
+import React, { useContext } from "react";
 import { useEffect, useRef, useState } from "react";
 import { EuiFlexGroup, EuiFlexItem, EuiPageBody } from "@elastic/eui";
 import "./App.css";
@@ -34,6 +34,7 @@ import { AssertionDrawer } from "./components/AssertionDrawer";
 import { Title } from "./components/Header/Title";
 import { HeaderControls } from "./components/Header/HeaderControls";
 import { AssertionContext } from "./contexts/AssertionContext";
+import { CommunicationContext } from "./contexts/CommunicationContext";
 import { RecordingContext } from "./contexts/RecordingContext";
 import { StepsContext } from "./contexts/StepsContext";
 import { TestContext } from "./contexts/TestContext";
@@ -43,8 +44,6 @@ import { useAssertionDrawer } from "./hooks/useAssertionDrawer";
 import { useSyntheticsTest } from "./hooks/useSyntheticsTest";
 import { generateIR, generateMergedIR } from "./helpers/generator";
 import { UrlContext } from "./contexts/UrlContext";
-
-const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 const MAIN_CONTROLS_MIN_WIDTH = 600;
 
@@ -56,6 +55,7 @@ export default function App() {
   );
   const [isCodeFlyoutVisible, setIsCodeFlyoutVisible] = useState(false);
 
+  const { ipc } = useContext(CommunicationContext);
   const assertionDrawerUtils = useAssertionDrawer();
   const syntheticsTestUtils = useSyntheticsTest(stepActions);
 
@@ -72,7 +72,7 @@ export default function App() {
         return generateMergedIR(prevActionContexts, currActionsContexts);
       });
     });
-  }, [setStepActions]);
+  }, [setStepActions, ipc]);
 
   return (
     <div>
