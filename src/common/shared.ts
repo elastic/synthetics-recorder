@@ -22,10 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import { RendererProcessIpc } from "electron-better-ipc";
 import React from "react";
 import type { ActionContext, Journey, JourneyType, Setter } from "./types";
-
-const { ipcRenderer: ipc } = window.require("electron-better-ipc");
 
 export const COMMAND_SELECTOR_OPTIONS = [
   {
@@ -68,11 +67,12 @@ export const SYNTHETICS_DISCUSS_FORUM_URL =
 export const SMALL_SCREEN_BREAKPOINT = 850;
 
 export function performSelectorLookup(
+  ipc: RendererProcessIpc,
   onSelectorChange: Setter<string | undefined>
 ) {
   return async () => {
     const selector = await ipc.callMain("set-mode", "inspecting");
-    if (selector) {
+    if (typeof selector === "string" && selector.length) {
       onSelectorChange(selector);
       await ipc.callMain("set-mode", "recording");
     }
@@ -80,9 +80,10 @@ export function performSelectorLookup(
 }
 
 export async function getCodeFromActions(
+  ipc: RendererProcessIpc,
   actions: ActionContext[][],
   type: JourneyType
-) {
+): Promise<string> {
   return await ipc.callMain("actions-to-code", {
     actions: actions.flat(),
     isSuite: type === "suite",
@@ -90,6 +91,7 @@ export async function getCodeFromActions(
 }
 
 export function createExternalLinkHandler(
+  ipc: RendererProcessIpc,
   url: string
 ): React.MouseEventHandler<HTMLAnchorElement> {
   return async e => {
@@ -115,6 +117,7 @@ export function updateAction(
 }
 
 export async function getCodeForResult(
+  ipc: RendererProcessIpc,
   steps: ActionContext[][],
   journey: Journey | undefined
 ): Promise<string> {
@@ -122,6 +125,7 @@ export async function getCodeForResult(
   const journeyStepNames = new Set(journey.steps.map(({ name }) => name));
 
   return await getCodeFromActions(
+    ipc,
     steps.filter(
       step =>
         step !== null &&

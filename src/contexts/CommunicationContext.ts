@@ -22,22 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiButton } from "@elastic/eui";
-import React, { useContext } from "react";
-import { getCodeFromActions } from "../common/shared";
-import { CommunicationContext } from "../contexts/CommunicationContext";
-import { StepsContext } from "../contexts/StepsContext";
+import { RendererProcessIpc } from "electron-better-ipc";
+import { createContext } from "react";
 
-export function SaveCodeButton() {
-  const { actions } = useContext(StepsContext);
-  const { ipc } = useContext(CommunicationContext);
-  const onSave = async () => {
-    const codeFromActions = await getCodeFromActions(ipc, actions, "inline");
-    await ipc.callMain("save-file", codeFromActions);
-  };
-  return (
-    <EuiButton fill color="primary" iconType="exportAction" onClick={onSave}>
-      Export script
-    </EuiButton>
-  );
+const { ipcRenderer } = window.require("electron-better-ipc");
+
+export interface ICommunicationContext {
+  ipc: RendererProcessIpc;
 }
+
+export const CommunicationContext = createContext<ICommunicationContext>({
+  ipc: ipcRenderer,
+});

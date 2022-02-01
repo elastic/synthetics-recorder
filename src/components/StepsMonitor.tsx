@@ -38,6 +38,7 @@ import { getCodeFromActions } from "../common/shared";
 import { Steps } from "./Steps";
 import { StepsContext } from "../contexts/StepsContext";
 import type { ActionContext, JourneyType, Setter } from "../common/types";
+import { CommunicationContext } from "../contexts/CommunicationContext";
 
 interface IRecordedCodeTabs {
   selectedTab: JourneyType;
@@ -93,13 +94,14 @@ function CodeFlyout({
   setCode,
   setIsFlyoutVisible,
 }: ICodeFlyout) {
+  const { ipc } = useContext(CommunicationContext);
   const [type, setType] = useState<JourneyType>("inline");
   useEffect(() => {
     (async function getCode() {
-      const codeFromActions = await getCodeFromActions(actions, type);
+      const codeFromActions = await getCodeFromActions(ipc, actions, type);
       setCode(codeFromActions);
     })();
-  }, [actions, setCode, type]);
+  }, [actions, setCode, type, ipc]);
 
   return (
     <EuiFlyout
