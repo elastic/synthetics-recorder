@@ -42,7 +42,7 @@
   "homepage": "./",
   "build": {
     "productName": "Elastic Synthetics Recorder",
-    "appId": "com.elastic.synthetics-recorder",
+    "appId": "co.elastic.synthetics-recorder",
     "files": [
       "build/**/*",
       "scripts/**/*",
