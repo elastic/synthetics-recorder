@@ -7,4 +7,3 @@ local-browsers
 .synthetics
 react-app-env.d.ts
 eslint-junit.xml
-demo-app/package-lock.json
