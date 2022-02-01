@@ -128,16 +128,19 @@ async function recordJourneys(data, browserWindow) {
 
 async function onTest(data, browserWindow) {
   const parseOrSkip = chunk => {
-    try {
-      return JSON.parse(chunk);
-    } catch (_) {
-      return {};
-    }
+    // at times stdout ships multiple steps in one chunk, broken by newline,
+    // so here we split on the newline
+    return chunk.split("\n").map(subChunk => {
+      try {
+        return JSON.parse(subChunk);
+      } catch (_) {
+        return {};
+      }
+    });
   };
 
   // returns TestEvent interface defined in common/types.ts
-  const constructEvent = chunk => {
-    const parsed = parseOrSkip(chunk);
+  const constructEvent = parsed => {
     switch (parsed.type) {
       case "journey/start": {
         const { journey } = parsed;
@@ -173,10 +176,17 @@ async function onTest(data, browserWindow) {
     }
   };
 
-  const sendEvent = (event, browserWindow) => {
-    if (typeof event !== "undefined") {
-      browserWindow.webContents.send("test-event", event);
-    }
+  const sendTestEvent = event => {
+    browserWindow.webContents.send("test-event", event);
+  };
+
+  const emitResult = chunk => {
+    parseOrSkip(chunk).forEach(parsed => {
+      const event = constructEvent(parsed);
+      if (event) {
+        sendTestEvent(event);
+      }
+    });
   };
 
   let synthCliProcess = null; // child process, define here to kill when finished
@@ -215,12 +225,7 @@ async function onTest(data, browserWindow) {
     stdout.setEncoding("utf-8");
     stderr.setEncoding("utf-8");
     for await (const chunk of stdout) {
-      // at times stdout ships multiple steps in one chunk, broken by newline,
-      // so here we split on the newline
-      chunk.split("\n").forEach(subchunk => {
-        const event = constructEvent(subchunk);
-        sendEvent(event, browserWindow);
-      });
+      emitResult(chunk);
     }
     for await (const chunk of stderr) {
       logger.error(chunk);
@@ -230,15 +235,12 @@ async function onTest(data, browserWindow) {
     }
   } catch (error) {
     logger.error(error);
-    sendEvent(
-      {
-        event: "journey/end",
-        data: {
-          error,
-        },
+    sendTestEvent({
+      event: "journey/end",
+      data: {
+        error,
       },
-      browserWindow
-    );
+    });
   } finally {
     if (synthCliProcess) {
       synthCliProcess.kill();

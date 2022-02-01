@@ -53,11 +53,7 @@ function buildMenu(appName) {
     },
     {
       label: "View",
-      submenu: [
-        { role: "reload" },
-        { role: "forcereload" },
-        { role: "toggleDevTools" },
-      ],
+      submenu: [{ role: "reload" }, { role: "forcereload" }],
     },
     {
       role: "window",
