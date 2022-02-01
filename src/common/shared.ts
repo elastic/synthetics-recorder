@@ -128,25 +128,24 @@ export function updateAction(
  * @param journey journey result data
  * @returns code string
  */
-export async function getCodeForResult(
+export async function getCodeForFailedResult(
   ipc: RendererProcessIpc,
   steps: ActionContext[][],
-  journey: Journey | undefined
+  journey?: Journey
 ): Promise<string> {
   if (!journey) return "";
-  const journeyStepNames = new Set(
-    journey.steps.filter(s => s.status === "failed").map(({ name }) => name)
+
+  const failedJourneyStep = journey.steps.find(
+    ({ status }) => status === "failed"
   );
 
-  return await getCodeFromActions(
-    ipc,
-    steps.filter(
-      step =>
-        step !== null &&
-        step.length > 0 &&
-        step[0].title &&
-        journeyStepNames.has(step[0].title)
-    ),
-    journey.type
+  if (typeof failedJourneyStep === "undefined") return "";
+
+  const failedStep = steps.find(
+    step => step.length > 0 && step[0].title === failedJourneyStep.name
   );
+
+  if (typeof failedStep === "undefined") return "";
+
+  return getCodeFromActions(ipc, [failedStep], journey.type);
 }
