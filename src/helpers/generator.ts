@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ActionInContext } from "@elastic/synthetics";
-import { Action, Step, Steps } from "../common/types";
+import type { ActionInContext } from "@elastic/synthetics";
+import type { Action, Step, Steps } from "../common/types";
 
 export function generateIR(actionContexts: Step) {
   const result = [];
