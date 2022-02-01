@@ -35,7 +35,6 @@ import "@elastic/eui/dist/eui_legacy_light.css";
 import { Title } from "./components/Header/Title";
 import { HeaderControls } from "./components/Header/HeaderControls";
 import { CommunicationContext } from "./contexts/CommunicationContext";
-import { RecordingStatus } from "./common/types";
 import { RecordingContext } from "./contexts/RecordingContext";
 import { UrlContext } from "./contexts/UrlContext";
 import { StepsContext } from "./contexts/StepsContext";
@@ -54,7 +53,6 @@ import { StyledComponentsEuiProvider } from "./contexts/StyledComponentsEuiProvi
 import { ExportScriptFlyout } from "./components/ExportScriptFlyout";
 import { useRecordingContext } from "./hooks/useRecordingContext";
 import { StartOverWarningModal } from "./components/StartOverWarningModal";
-import { RendererProcessIpc } from "electron-better-ipc";
 
 export default function App() {
   const [url, setUrl] = useState("");
