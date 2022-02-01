@@ -151,7 +151,22 @@ describe("result reducer", () => {
           data: { name: "inline", status: "succeeded" },
         }
       )
-    );
+    ).toEqual({
+      failed: 0,
+      skipped: 0,
+      succeeded: 1,
+      journey: {
+        status: "succeeded",
+        steps: [
+          {
+            duration: 100,
+            name: "Go to https://www.elastic.co",
+            status: "succeeded",
+          },
+        ],
+        type: "inline",
+      },
+    });
   });
 
   it("constructs expected result for multiple calls", () => {
