@@ -23,9 +23,10 @@ THE SOFTWARE.
 */
 
 import { EuiFlyout } from "@elastic/eui";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { getCodeFromActions } from "../../common/shared";
 import type { JourneyType, Setter, Steps } from "../../common/types";
+import { CommunicationContext } from "../../contexts/CommunicationContext";
 import { Body } from "./Body";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
@@ -37,21 +38,34 @@ interface IExportScriptFlyout {
 
 const FLYOUT_ID = "export-script-flyout-title";
 
+const LARGE_FLYOUT_SIZE_LINE_LENGTH = 100;
+
 export function ExportScriptFlyout({ setVisible, steps }: IExportScriptFlyout) {
   const [code, setCode] = useState("");
+  const { ipc } = useContext(CommunicationContext);
   const [exportAsSuite, setExportAsSuite] = useState(false);
 
   const type: JourneyType = exportAsSuite ? "suite" : "inline";
 
+  const maxLineSize = useMemo(
+    // get max line size in code string
+    () => code.split("\n").reduce((prev, cur) => Math.max(prev, cur.length), 0),
+    [code]
+  );
+
   useEffect(() => {
     (async function getCode() {
-      const codeFromActions = await getCodeFromActions(steps, type);
+      const codeFromActions = await getCodeFromActions(ipc, steps, type);
       setCode(codeFromActions);
     })();
-  }, [steps, setCode, type]);
+  }, [ipc, steps, setCode, type]);
 
   return (
-    <EuiFlyout aria-labelledby={FLYOUT_ID} onClose={() => setVisible(false)}>
+    <EuiFlyout
+      aria-labelledby={FLYOUT_ID}
+      onClose={() => setVisible(false)}
+      size={maxLineSize > LARGE_FLYOUT_SIZE_LINE_LENGTH ? "l" : "m"}
+    >
       <Header headerText="Journey code" id={FLYOUT_ID} />
       <Body
         code={code}

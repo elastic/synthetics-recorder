@@ -29,12 +29,7 @@ import {
   EuiSpacer,
 } from "@elastic/eui";
 import React from "react";
-import styled from "styled-components";
 import type { Setter } from "../../common/types";
-
-const Code = styled(EuiCodeBlock)`
-  max-width: 300px;
-`;
 
 interface Props {
   code: string;
@@ -52,9 +47,9 @@ export function Body({ code, exportAsSuite, setExportAsSuite }: Props) {
         onChange={() => setExportAsSuite(!exportAsSuite)}
       />
       <EuiSpacer />
-      <Code isCopyable language="js" paddingSize="m" whiteSpace="pre">
+      <EuiCodeBlock isCopyable language="js" paddingSize="m" whiteSpace="pre">
         {code}
-      </Code>
+      </EuiCodeBlock>
     </EuiFlyoutBody>
   );
 }
