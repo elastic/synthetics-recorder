@@ -30,6 +30,7 @@ import { TestContext } from "../../contexts/TestContext";
 import { getCodeFromActions } from "../../common/shared";
 import { ResultFlyoutItem } from "./ResultFlyoutItem";
 import { TestResultFlyoutHeader } from "./TestResultFlyoutHeader";
+import { CommunicationContext } from "../../contexts/CommunicationContext";
 
 const FLYOUT_TITLE = "result-flyout-title";
 
@@ -37,6 +38,7 @@ export function TestResult() {
   const { steps } = useContext(StepsContext);
   const { isResultFlyoutVisible, result, setResult, setIsResultFlyoutVisible } =
     useContext(TestContext);
+  const { ipc } = useContext(CommunicationContext);
   const [stepCodeToDisplay, setStepCodeToDisplay] = useState("");
 
   /**
@@ -46,6 +48,7 @@ export function TestResult() {
   useEffect(() => {
     async function fetchCodeForFailure(r: Result) {
       const failedCode = await getCodeFromActions(
+        ipc,
         // index of failed step will equal number of successful items
         [steps[r.succeeded]],
         "inline"
@@ -57,7 +60,7 @@ export function TestResult() {
     if (steps.length && result?.failed) {
       fetchCodeForFailure(result);
     }
-  }, [steps, result, setResult]);
+  }, [ipc, result, setResult, steps]);
 
   // flyout shold not show without result data
   if (!isResultFlyoutVisible || !result) return null;
