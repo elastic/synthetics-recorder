@@ -75,7 +75,5 @@ export function resultReducer(
     case "override": {
       return action.data;
     }
-    default:
-      return state;
   }
 }
