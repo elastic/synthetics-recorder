@@ -22,17 +22,4 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { createContext } from "react";
-import { Setter } from "../common/types";
-
-export interface IUrlContext {
-  setUrl: Setter<string>;
-  url: string;
-}
-
-export const UrlContext = createContext<IUrlContext>({
-  url: "",
-  setUrl: () => {
-    throw Error("not implemented");
-  },
-});
+export { render } from "./render";
