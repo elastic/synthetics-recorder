@@ -22,85 +22,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { render } from "@testing-library/react";
 import React from "react";
 import { RecordingStatus } from "../../common/types";
-import { UrlContext } from "../../contexts/UrlContext";
-import {
-  IRecordingContext,
-  RecordingContext,
-} from "../../contexts/RecordingContext";
-import type { IHeaderControls } from "./HeaderControls";
 import { HeaderControls } from "./HeaderControls";
-import { IStepsContext, StepsContext } from "../../contexts/StepsContext";
+import { render } from "../../helpers/test";
 
 describe("<HeaderControls />", () => {
-  let contextValues: IRecordingContext;
-  let recordingStatus: RecordingStatus;
-
-  beforeEach(() => {
-    recordingStatus = RecordingStatus.NotRecording;
-    contextValues = {
-      isStartOverModalVisible: false,
-      setIsStartOverModalVisible: jest.fn(),
-      recordingStatus: recordingStatus,
-      startOver: jest.fn(),
-      togglePause: jest.fn().mockImplementation(() => {
-        if (recordingStatus === RecordingStatus.Paused) {
-          recordingStatus = RecordingStatus.Recording;
-        } else {
-          recordingStatus = RecordingStatus.Paused;
-        }
-      }),
-      toggleRecording: jest.fn().mockImplementation(() => {
-        if (recordingStatus === RecordingStatus.Recording) {
-          recordingStatus = RecordingStatus.NotRecording;
-        } else {
-          recordingStatus = RecordingStatus.Recording;
-        }
-      }),
-    };
-  });
   const START_ARIA = "Toggle the script recorder between recording and paused";
-  const componentToRender = (
-    recordingCtxOverrides?: Partial<IRecordingContext>,
-    propsOverrides?: Partial<IHeaderControls>,
-    stepsCtxOverrides?: Partial<IStepsContext>
-  ) => (
-    <UrlContext.Provider value={{ url: "", setUrl: jest.fn() }}>
-      <RecordingContext.Provider
-        value={{ ...contextValues, ...recordingCtxOverrides }}
-      >
-        <StepsContext.Provider
-          value={{
-            steps: [],
-            setSteps: jest.fn(),
-            onDeleteAction: jest.fn(),
-            onDeleteStep: jest.fn(),
-            onInsertAction: jest.fn(),
-            onStepDetailChange: jest.fn(),
-            onUpdateAction: jest.fn(),
-            ...stepsCtxOverrides,
-          }}
-        >
-          <HeaderControls
-            setIsCodeFlyoutVisible={jest.fn()}
-            {...propsOverrides}
-          />
-        </StepsContext.Provider>
-      </RecordingContext.Provider>
-    </UrlContext.Provider>
-  );
 
   it("displays start text when not recording", async () => {
-    const { getByLabelText } = render(componentToRender());
+    const { getByLabelText } = render(
+      <HeaderControls setIsCodeFlyoutVisible={jest.fn()} />
+    );
 
-    expect(getByLabelText(START_ARIA).textContent).toBe("Start recording");
+    expect(getByLabelText(START_ARIA).textContent).toBe("Start");
   });
 
   it("displays pause text when recording", () => {
     const { getByLabelText } = render(
-      componentToRender({ recordingStatus: RecordingStatus.Recording })
+      <HeaderControls setIsCodeFlyoutVisible={jest.fn()} />,
+      {
+        contextOverrides: {
+          recording: { recordingStatus: RecordingStatus.Recording },
+        },
+      }
     );
 
     expect(getByLabelText(START_ARIA).textContent).toBe("Pause");
@@ -108,7 +53,12 @@ describe("<HeaderControls />", () => {
 
   it("displays resume text when paused", () => {
     const { getByLabelText } = render(
-      componentToRender({ recordingStatus: RecordingStatus.Paused })
+      <HeaderControls setIsCodeFlyoutVisible={jest.fn()} />,
+      {
+        contextOverrides: {
+          recording: { recordingStatus: RecordingStatus.Paused },
+        },
+      }
     );
 
     expect(getByLabelText(START_ARIA).textContent).toBe("Resume");
