@@ -22,7 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { render as rtlRender, RenderResult } from "@testing-library/react";
+import {
+  render as rtlRender,
+  RenderResult,
+  RenderOptions,
+} from "@testing-library/react";
 import React from "react";
 import {
   IRecordingContext,
@@ -39,6 +43,7 @@ import { RenderContexts } from "./RenderContexts";
 
 export function render<ComponentType>(
   component: React.ReactElement<ComponentType>,
+  rtlRenderOptions?: Omit<RenderOptions, "queries">,
   options?: {
     contextOverrides?: {
       recording?: Partial<IRecordingContext>;
@@ -66,6 +71,7 @@ export function render<ComponentType>(
   ];
 
   return rtlRender(
-    <RenderContexts contexts={contexts}>{component}</RenderContexts>
+    <RenderContexts contexts={contexts}>{component}</RenderContexts>,
+    rtlRenderOptions
   );
 }
