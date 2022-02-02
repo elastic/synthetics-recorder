@@ -22,10 +22,4 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { createContext, MutableRefObject } from "react";
-
-export interface IUrlContext {
-  urlRef?: MutableRefObject<HTMLInputElement | null>;
-}
-
-export const UrlContext = createContext<IUrlContext>({});
+export { render } from "./render";
