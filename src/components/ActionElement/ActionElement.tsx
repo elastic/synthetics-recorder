@@ -26,20 +26,13 @@ import { EuiFlexGroup, EuiFlexItem, EuiAccordion } from "@elastic/eui";
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { SMALL_SCREEN_BREAKPOINT } from "../../common/shared";
-import {
-  ActionContext,
-  RecordingStatus,
-  ResultCategory,
-} from "../../common/types";
+import { ActionContext, ResultCategory } from "../../common/types";
 import { StepsContext } from "../../contexts/StepsContext";
 import { ActionDetail } from "../ActionDetail";
-import { HeadingText } from "./HeadingText";
 import { ActionStatusIndicator } from "../ActionStatusIndicator";
 import { Assertion } from "../Assertion";
-import { ActionControlButton } from "./ControlButton";
-import { SettingsPopover } from "./SettingsPopover";
-import { RecordingContext } from "../../contexts/RecordingContext";
 import { ActionWrapper } from "./ActionWrapper";
+import { ExtraActions } from "./ExtraActions";
 
 interface IActionElement {
   actionIndex: number;
@@ -69,22 +62,9 @@ function ActionComponent({
   stepIndex,
   testStatus,
 }: IActionElement) {
-  const { onDeleteAction, onInsertAction } = useContext(StepsContext);
-  const { recordingStatus } = useContext(RecordingContext);
+  const { onDeleteAction } = useContext(StepsContext);
   const [isOpen, setIsOpen] = useState(false);
-  const [isSettingsPopoverOpen, setIsSettingsPopoverOpen] = useState(false);
   const [areControlsVisible, setAreControlsVisible] = useState(false);
-  const settingsHandler = (handler: () => void) => {
-    return function () {
-      if (isSettingsPopoverOpen) {
-        setIsSettingsPopoverOpen(false);
-      }
-      handler();
-    };
-  };
-  const onEdit = settingsHandler(() => {
-    setIsOpen(!isOpen);
-  });
   const close = () => setIsOpen(false);
   return (
     <Container className={className} gutterSize="none">
@@ -108,55 +88,14 @@ function ActionComponent({
             setAreControlsVisible(false);
           }}
           extraAction={
-            <EuiFlexGroup
-              alignItems="center"
-              gutterSize="xs"
-              justifyContent="spaceBetween"
-            >
-              <EuiFlexItem>
-                <HeadingText actionContext={step} />
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <ActionControlButton
-                  aria-label="Begin editing this action"
-                  isDisabled={recordingStatus !== RecordingStatus.NotRecording}
-                  iconType="pencil"
-                  isVisible={areControlsVisible}
-                  onClick={onEdit}
-                />
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <SettingsPopover
-                  isRecording={recordingStatus !== RecordingStatus.NotRecording}
-                  isVisible={areControlsVisible || isSettingsPopoverOpen}
-                  onAddAssertion={settingsHandler(() => {
-                    onInsertAction(
-                      {
-                        ...step,
-                        action: {
-                          ...step.action,
-                          name: "assert",
-                          selector: step.action.selector || "",
-                          command: "isVisible",
-                          value: step.action.value || null,
-                          signals: [],
-                          isAssert: true,
-                        },
-                        modified: false,
-                      },
-                      stepIndex,
-                      actionIndex + 1
-                    );
-                  })}
-                  onEdit={onEdit}
-                  onDelete={settingsHandler(() => {
-                    onDeleteAction(stepIndex, actionIndex);
-                  })}
-                  isOpen={isSettingsPopoverOpen}
-                  setIsOpen={setIsSettingsPopoverOpen}
-                />
-              </EuiFlexItem>
-            </EuiFlexGroup>
+            <ExtraActions
+              actionIndex={actionIndex}
+              areControlsVisible={areControlsVisible}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+              step={step}
+              stepIndex={stepIndex}
+            />
           }
         >
           {!step.action.isAssert && (
