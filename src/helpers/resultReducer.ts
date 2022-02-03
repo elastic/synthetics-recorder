@@ -22,18 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { JourneyType, TestEvent, Result } from "../common/types";
-
-const initJourney = (type = "inline") => ({
-  failed: 0,
-  skipped: 0,
-  succeeded: 0,
-  journey: {
-    status: "running",
-    type: type as JourneyType,
-    steps: [],
-  },
-});
+import type { TestEvent, Result, JourneyType } from "../common/types";
 
 /**
  * Use this function to incrementally build the result object for a test result
@@ -43,32 +32,45 @@ const initJourney = (type = "inline") => ({
  * @returns new state
  */
 export function resultReducer(
-  state: Result | undefined,
+  state: Result | undefined = {
+    failed: 0,
+    skipped: 0,
+    succeeded: 0,
+    journey: {
+      status: "running",
+      type: "inline",
+      steps: [],
+    },
+  },
   action: TestEvent
 ): Result | undefined {
-  if (action.event === "journey/start") {
-    return initJourney(action.data.name);
-  }
-  const nextResult = typeof state === "undefined" ? initJourney() : state;
   switch (action.event) {
     case "step/end": {
-      nextResult[action.data.status]++;
-      const steps = [...nextResult.journey.steps, { ...action.data }];
-      const journey = {
-        ...nextResult.journey,
-        steps,
+      const nextState: Result = {
+        ...state,
+        journey: {
+          ...state.journey,
+          steps: [...state.journey.steps, action.data],
+        },
       };
-      return {
-        ...nextResult,
-        journey,
-      };
+      nextState[action.data.status] += 1;
+      return nextState;
     }
     case "journey/end": {
       return {
-        ...nextResult,
+        ...state,
         journey: {
-          ...nextResult.journey,
+          ...state.journey,
           status: action.data.status,
+        },
+      };
+    }
+    case "journey/start": {
+      return {
+        ...state,
+        journey: {
+          ...state.journey,
+          type: action.data.name as JourneyType,
         },
       };
     }
