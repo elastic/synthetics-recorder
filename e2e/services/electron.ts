@@ -84,6 +84,11 @@ export class ElectronServiceFactory {
     return this.#recordingBrowserPage;
   }
 
+  async clickRunTest() {
+    const electronWindow = await this.getWindow();
+    await electronWindow.click("text=Replay steps");
+  }
+
   async waitForPageToBeIdle(timeout = 45000) {
     await this.#recordingBrowserPage.waitForLoadState("networkidle", {
       timeout,

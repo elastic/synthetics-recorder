@@ -152,8 +152,8 @@ export function TestResult() {
             return (
               <EuiFlexItem key={index} grow={false}>
                 <EuiText style={styles[key as ResultCategory]}>
-                  {symbols[keyAsCategory]} {result[keyAsCategory]}{" "}
-                  {text[keyAsCategory]}
+                  {symbols[keyAsCategory]}{" "}
+                  {`${result[keyAsCategory]} ${text[keyAsCategory]}`}
                 </EuiText>
               </EuiFlexItem>
             );
