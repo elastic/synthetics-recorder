@@ -52,7 +52,11 @@ export interface IStepsContext {
     actionIndex: number
   ) => void;
   /**
-   * Creates a new step, composed of the previous step's actions starting at the given index
+   * Merges two steps and replaces the first index with them.
+   */
+  onMergeSteps: (indexA: number, indexB: number) => void;
+  /**
+   * Creates a new step, composed of the previous step's actions starting at the given index.
    */
   onSplitStep: (stepIndex: number, actionIndex: number) => void;
   onUpdateAction: (
@@ -72,6 +76,7 @@ export const StepsContext = createContext<IStepsContext>({
   onDeleteAction: notImplemented,
   onDeleteStep: notImplemented,
   onInsertAction: notImplemented,
+  onMergeSteps: notImplemented,
   onSplitStep: notImplemented,
   onStepDetailChange: notImplemented,
   onUpdateAction: notImplemented,

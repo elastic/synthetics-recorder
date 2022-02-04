@@ -179,6 +179,87 @@ describe("useStepsContext", () => {
     });
   });
 
+  describe("onMergeSteps", () => {
+    const mergeSteps = [
+      [
+        {
+          action: {
+            name: "first-step-1",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+      ],
+      [
+        {
+          action: {
+            name: "second-step-1",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+      ],
+      [
+        {
+          action: {
+            name: "third-step-1",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+      ],
+    ];
+
+    it("merges two steps and inserts them at the first index", () => {
+      const { result } = renderHook(() => useStepsContext());
+      act(() => {
+        result.current.setSteps(mergeSteps);
+      });
+      act(() => {
+        result.current.onMergeSteps(0, 1);
+      });
+      const { steps } = result.current;
+      expect(steps).toHaveLength(2);
+      expect(steps[0]).toEqual([
+        {
+          action: {
+            name: "first-step-1",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+        {
+          action: {
+            name: "second-step-1",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+      ]);
+      expect(steps[1]).toEqual([
+        {
+          action: {
+            name: "third-step-1",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+      ]);
+    });
+  });
+
   describe("onSplitStep", () => {
     const splitSteps = [
       [
