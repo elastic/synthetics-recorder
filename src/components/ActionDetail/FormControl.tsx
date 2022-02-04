@@ -25,19 +25,21 @@ THE SOFTWARE.
 import { EuiFormRow, EuiFieldText } from "@elastic/eui";
 import React, { ChangeEventHandler } from "react";
 
+interface IFormControl {
+  label?: string;
+  name: string;
+  noPrepend?: boolean;
+  onChange: ChangeEventHandler<HTMLInputElement>;
+  value: string;
+}
+
 export function FormControl({
   label,
   name,
   noPrepend,
   onChange,
   value,
-}: {
-  label?: string;
-  name: string;
-  noPrepend?: boolean;
-  onChange: ChangeEventHandler<HTMLInputElement>;
-  value: string;
-}) {
+}: IFormControl) {
   return (
     <EuiFormRow label={label ?? "Command"}>
       <EuiFieldText
