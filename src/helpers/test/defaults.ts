@@ -28,10 +28,8 @@ import { IStepsContext } from "../../contexts/StepsContext";
 import { IUrlContext } from "../../contexts/UrlContext";
 
 export const RECORDING_CONTEXT_DEFAULTS: IRecordingContext = {
-  isStartOverModalVisible: false,
-  setIsStartOverModalVisible: jest.fn(),
+  abortSession: jest.fn(),
   recordingStatus: RecordingStatus.NotRecording,
-  startOver: jest.fn(),
   togglePause: jest.fn(),
   toggleRecording: jest.fn(),
 };
@@ -39,11 +37,7 @@ export const RECORDING_CONTEXT_DEFAULTS: IRecordingContext = {
 export const URL_CONTEXT_DEFAULTS: IUrlContext = {};
 
 export const STEPS_CONTEXT_DEFAULTS: IStepsContext = {
-  steps: [],
-  setSteps: jest.fn(),
+  actions: [],
+  setActions: jest.fn(),
   onDeleteAction: jest.fn(),
-  onInsertAction: jest.fn(),
-  onStepDetailChange: jest.fn(),
-  onDeleteStep: jest.fn(),
-  onUpdateAction: jest.fn(),
 };
