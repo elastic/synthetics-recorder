@@ -178,4 +178,281 @@ describe("useStepsContext", () => {
       expect(steps[1]).toEqual(defaultSteps[1]);
     });
   });
+
+  describe("onSplitStep", () => {
+    const splitSteps = [
+      [
+        {
+          action: {
+            name: "first-step-1",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+        {
+          action: {
+            name: "first-step-2",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+      ],
+      [
+        {
+          action: {
+            name: "second-step-1",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+        {
+          action: {
+            name: "second-step-2",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+        {
+          action: {
+            name: "second-step-3",
+            signals: [],
+          },
+          frameUrl: "Https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+        {
+          action: {
+            name: "second-step-4",
+            signals: [],
+          },
+          frameUrl: "Https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+      ],
+      [
+        {
+          action: {
+            name: "third-step-1",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+        {
+          action: {
+            name: "third-step-2",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+      ],
+    ];
+
+    it("throws error when `actionIndex` is 0", () => {
+      const result = renderHook(() => useStepsContext());
+      expect(() => result.result.current.onSplitStep(0, 0)).toThrowError(
+        "Split procedure received action index 0. Cannot remove all actions from a step"
+      );
+    });
+
+    it("throws error when step has only one action", () => {
+      const { result } = renderHook(() => useStepsContext());
+
+      act(() => {
+        result.current.setSteps([
+          [
+            {
+              action: {
+                name: "name",
+                signals: [],
+              },
+              frameUrl: "https://www.elastic.co",
+              isMainFrame: true,
+              pageAlias: "pageAlias",
+            },
+          ],
+        ]);
+      });
+
+      expect(() => result.current.onSplitStep(0, 1)).toThrowError(
+        "Cannot split step with only one action"
+      );
+    });
+
+    it("splits the target step at the head of the list", () => {
+      const result = renderHook(() => useStepsContext());
+
+      act(() => {
+        result.result.current.setSteps(splitSteps);
+      });
+      act(() => {
+        result.result.current.onSplitStep(0, 1);
+      });
+
+      const { steps } = result.result.current;
+      expect(steps).toHaveLength(4);
+      expect(steps[0]).toEqual([
+        {
+          action: {
+            name: "first-step-1",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+      ]);
+      expect(steps[1]).toEqual([
+        {
+          action: {
+            name: "first-step-2",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+      ]);
+    });
+    it("splits the target step at the tail of the list", () => {
+      const result = renderHook(() => useStepsContext());
+
+      act(() => {
+        result.result.current.setSteps(splitSteps);
+      });
+      act(() => {
+        result.result.current.onSplitStep(2, 1);
+      });
+
+      const { steps } = result.result.current;
+      expect(steps).toHaveLength(4);
+      expect(steps[2]).toEqual([
+        {
+          action: {
+            name: "third-step-1",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+      ]);
+      expect(steps[3]).toEqual([
+        {
+          action: {
+            name: "third-step-2",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+      ]);
+    });
+    it("splits the target step into two separate steps", () => {
+      const result = renderHook(() => useStepsContext());
+
+      act(() => {
+        result.result.current.setSteps(splitSteps);
+      });
+      act(() => {
+        result.result.current.onSplitStep(1, 2);
+      });
+      const { steps } = result.result.current;
+      expect(steps).toHaveLength(4);
+      expect(steps[0]).toEqual([
+        {
+          action: {
+            name: "first-step-1",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+        {
+          action: {
+            name: "first-step-2",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+      ]);
+      expect(steps[1]).toEqual([
+        {
+          action: {
+            name: "second-step-1",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+        {
+          action: {
+            name: "second-step-2",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+      ]);
+      expect(steps[2]).toEqual([
+        {
+          action: {
+            name: "second-step-3",
+            signals: [],
+          },
+          frameUrl: "Https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+        {
+          action: {
+            name: "second-step-4",
+            signals: [],
+          },
+          frameUrl: "Https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+      ]);
+      expect(steps[3]).toEqual([
+        {
+          action: {
+            name: "third-step-1",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+        {
+          action: {
+            name: "third-step-2",
+            signals: [],
+          },
+          frameUrl: "https://www.elastic.co",
+          isMainFrame: true,
+          pageAlias: "pageAlias",
+        },
+      ]);
+    });
+  });
 });

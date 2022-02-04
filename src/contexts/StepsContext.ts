@@ -51,6 +51,10 @@ export interface IStepsContext {
     stepIndex: number,
     actionIndex: number
   ) => void;
+  /**
+   * Creates a new step, composed of the previous step's actions starting at the given index
+   */
+  onSplitStep: (stepIndex: number, actionIndex: number) => void;
   onUpdateAction: (
     action: ActionContext,
     stepIndex: number,
@@ -68,6 +72,7 @@ export const StepsContext = createContext<IStepsContext>({
   onDeleteAction: notImplemented,
   onDeleteStep: notImplemented,
   onInsertAction: notImplemented,
+  onSplitStep: notImplemented,
   onStepDetailChange: notImplemented,
   onUpdateAction: notImplemented,
 });

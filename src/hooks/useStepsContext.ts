@@ -64,6 +64,29 @@ export function useStepsContext(): IStepsContext {
         })
       );
     },
+    onSplitStep: (stepIndex, actionIndex) => {
+      if (actionIndex === 0)
+        throw Error(
+          `Split procedure received action index ${actionIndex}. Cannot remove all actions from a step.`
+        );
+      const stepToSplit = steps[stepIndex];
+      if (stepToSplit.length <= 1) {
+        throw Error("Cannot split step with only one action.");
+      }
+      const reducedStep = stepToSplit.slice(0, actionIndex);
+      const insertedStep = stepToSplit.slice(actionIndex);
+
+      let tail: Steps = [];
+      if (steps.length > stepIndex + 1) {
+        tail = steps.slice(stepIndex + 1, steps.length);
+      }
+      setSteps([
+        ...steps.slice(0, stepIndex),
+        reducedStep,
+        insertedStep,
+        ...tail,
+      ]);
+    },
     onStepDetailChange,
     onUpdateAction: (
       action: ActionContext,
