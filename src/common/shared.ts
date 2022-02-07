@@ -139,13 +139,13 @@ export async function getCodeForFailedResult(
     ({ status }) => status === "failed"
   );
 
-  if (typeof failedJourneyStep === "undefined") return "";
+  if (!failedJourneyStep) return "";
 
   const failedStep = steps.find(
     step => step.length > 0 && step[0].title === failedJourneyStep.name
   );
 
-  if (typeof failedStep === "undefined") return "";
+  if (!failedStep) return "";
 
   return getCodeFromActions(ipc, [failedStep], journey.type);
 }
