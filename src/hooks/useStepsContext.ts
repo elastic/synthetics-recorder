@@ -74,6 +74,14 @@ export function useStepsContext(): IStepsContext {
         return oldSteps;
       });
     },
+    onRearrangeSteps: (indexA, indexB) => {
+      setSteps(oldSteps => {
+        const placeholder = [...steps[indexA]];
+        oldSteps[indexA] = oldSteps[indexB];
+        oldSteps[indexB] = placeholder;
+        return oldSteps;
+      });
+    },
     onSplitStep: (stepIndex, actionIndex) => {
       if (actionIndex === 0)
         throw Error(

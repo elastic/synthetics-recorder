@@ -260,6 +260,25 @@ describe("useStepsContext", () => {
     });
   });
 
+  describe("onRearrangeSteps", () => {
+    it("rearranges steps to correct indexes", () => {
+      act(() => {
+        defaultResult.result.current.onRearrangeSteps(0, 1);
+      });
+
+      const { steps } = defaultResult.result.current;
+
+      expect(steps).toHaveLength(2);
+      expect(steps[0]).toHaveLength(2);
+      expect(steps[0].map(({ action: { name } }) => name)).toEqual([
+        "first-step-2",
+        "second-step-2",
+      ]);
+      expect(steps[1]).toHaveLength(1);
+      expect(steps[1][0].action.name).toBe("first-step-1");
+    });
+  });
+
   describe("onSplitStep", () => {
     const splitSteps = [
       [
