@@ -52,9 +52,9 @@ export interface IStepsContext {
     actionIndex: number
   ) => void;
   /**
-   * Merges two steps and replaces the first index with them.
+   * Merges two steps and replaces the first index with the merged result.
    */
-  onMergeSteps: (indexA: number, indexB: number) => void;
+  onMergeSteps: (indexToInsert: number, indexToRemove: number) => void;
   /**
    * Creates a new step, composed of the previous step's actions starting at the given index.
    */

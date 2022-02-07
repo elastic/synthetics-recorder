@@ -64,18 +64,15 @@ export function useStepsContext(): IStepsContext {
         })
       );
     },
-    onMergeSteps: (indexA, indexB) => {
-      const stepA = steps[indexA];
-      const stepB = steps[indexB];
-      const insertionIndex = Math.min(indexA, indexB);
-      const skipIndex = Math.max(indexA, indexB);
-      const updated = steps.map((step, index) => {
-        if (index === insertionIndex) return [...stepA, ...stepB];
-        else if (index === skipIndex) return null;
-        return step;
+    onMergeSteps: (indexToInsert, indexToRemove) => {
+      setSteps(oldSteps => {
+        oldSteps[indexToInsert] = [
+          ...steps[indexToInsert],
+          ...steps[indexToRemove],
+        ];
+        oldSteps.splice(indexToRemove, 1);
+        return oldSteps;
       });
-      // @ts-expect-error filtering out all null values
-      setSteps(updated.filter(val => val !== null));
     },
     onSplitStep: (stepIndex, actionIndex) => {
       if (actionIndex === 0)
