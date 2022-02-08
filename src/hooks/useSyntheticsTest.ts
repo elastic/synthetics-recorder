@@ -34,7 +34,6 @@ import { getCodeFromActions, getCodeForFailedResult } from "../common/shared";
 import { Result, Steps, TestEvent } from "../common/types";
 import { ITestContext } from "../contexts/TestContext";
 import { CommunicationContext } from "../contexts/CommunicationContext";
-import logger from "electron-log";
 import { resultReducer } from "../helpers/resultReducer";
 
 export function useSyntheticsTest(steps: Steps): ITestContext {
@@ -65,7 +64,8 @@ export function useSyntheticsTest(steps: Steps): ITestContext {
           setIsResultFlyoutVisible(true);
           await promise;
         } catch (e: unknown) {
-          logger.error(e);
+          // eslint-disable-next-line no-console
+          console.error(e);
         } finally {
           ipc.removeListener("test-event", onTestEvent);
           setIsTestInProgress(false);
