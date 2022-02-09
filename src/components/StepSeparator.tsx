@@ -53,6 +53,10 @@ export const StepSeparatorAccordion = styled(EuiAccordion)`
     flex-shrink: 1;
   }
 
+  div[id^="step-separator-"] {
+    overflow: visible;
+  }
+
   margin: 16px;
 `;
 
@@ -72,6 +76,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
 
   return (
     <StepSeparatorAccordion
+      className="stepSeparator"
       extraAction={
         <EuiFlexGroup>
           <StepSeparatorHeading grow={false}>

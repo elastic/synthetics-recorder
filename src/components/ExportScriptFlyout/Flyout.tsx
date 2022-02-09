@@ -55,7 +55,9 @@ export function ExportScriptFlyout({ setVisible, steps }: IExportScriptFlyout) {
 
   useEffect(() => {
     (async function getCode() {
+      console.log("steps", steps);
       const codeFromActions = await getCodeFromActions(ipc, steps, type);
+      console.log("code", codeFromActions);
       setCode(codeFromActions);
     })();
   }, [ipc, steps, setCode, type]);

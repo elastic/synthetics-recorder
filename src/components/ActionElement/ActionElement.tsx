@@ -22,8 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem, EuiAccordion } from "@elastic/eui";
-import React, { useContext, useState } from "react";
+import {
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiAccordion,
+  EuiButtonIcon,
+} from "@elastic/eui";
+import React, { useCallback, useContext, useState } from "react";
 import styled from "styled-components";
 import { SMALL_SCREEN_BREAKPOINT } from "../../common/shared";
 import { ActionContext, ResultCategory } from "../../common/types";
@@ -33,6 +38,7 @@ import { ActionStatusIndicator } from "../ActionStatusIndicator";
 import { Assertion } from "../Assertion";
 import { ActionWrapper } from "./ActionWrapper";
 import { ExtraActions } from "./ExtraActions";
+import { NewStepDividerButton } from "./NewStepDividerButton";
 
 interface IActionElement {
   actionIndex: number;
@@ -51,7 +57,8 @@ const Container = styled(EuiFlexGroup)`
   display: flex;
   min-height: 50px;
   min-width: 800px;
-  margin-left: -39px;
+  margin-left: -63px;
+  overflow: visible;
 `;
 
 function ActionComponent({
@@ -62,12 +69,22 @@ function ActionComponent({
   stepIndex,
   testStatus,
 }: IActionElement) {
-  const { onDeleteAction } = useContext(StepsContext);
+  const { onDeleteAction, onSplitStep } = useContext(StepsContext);
   const [isOpen, setIsOpen] = useState(false);
   const [areControlsVisible, setAreControlsVisible] = useState(false);
   const close = () => setIsOpen(false);
+  const splitStepAtAction = useCallback(() => {
+    onSplitStep(stepIndex, actionIndex);
+  }, [actionIndex, onSplitStep, stepIndex]);
+
   return (
     <Container className={className} gutterSize="none">
+      <EuiFlexItem grow={false}>
+        <NewStepDividerButton
+          actionIndex={actionIndex}
+          onClick={splitStepAtAction}
+        />
+      </EuiFlexItem>
       <EuiFlexItem grow={false}>
         {!step.action.isAssert && <ActionStatusIndicator status={testStatus} />}
       </EuiFlexItem>

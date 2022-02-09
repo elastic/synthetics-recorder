@@ -91,7 +91,7 @@ export async function getCodeFromActions(
   type: JourneyType
 ): Promise<string> {
   return await ipc.callMain("actions-to-code", {
-    actions: actions.flat(),
+    actions,
     isSuite: type === "suite",
   });
 }

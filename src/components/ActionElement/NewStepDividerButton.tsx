@@ -22,34 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { RecordingStatus } from "../../common/types";
-import { IRecordingContext } from "../../contexts/RecordingContext";
-import { IStepsContext } from "../../contexts/StepsContext";
-import { IUrlContext } from "../../contexts/UrlContext";
+import { EuiButtonIcon } from "@elastic/eui";
+import React from "react";
 
-export const RECORDING_CONTEXT_DEFAULTS: IRecordingContext = {
-  isStartOverModalVisible: false,
-  setIsStartOverModalVisible: jest.fn(),
-  recordingStatus: RecordingStatus.NotRecording,
-  startOver: jest.fn(),
-  togglePause: jest.fn(),
-  toggleRecording: jest.fn(),
-};
+interface Props {
+  actionIndex: number;
+  onClick: () => void;
+}
 
-export const URL_CONTEXT_DEFAULTS: IUrlContext = {
-  url: "",
-  setUrl: jest.fn(),
-};
-
-export const STEPS_CONTEXT_DEFAULTS: IStepsContext = {
-  steps: [],
-  setSteps: jest.fn(),
-  onInsertAction: jest.fn(),
-  onDeleteAction: jest.fn(),
-  onDeleteStep: jest.fn(),
-  onMergeSteps: jest.fn(),
-  onRearrangeSteps: jest.fn(),
-  onSplitStep: jest.fn(),
-  onStepDetailChange: jest.fn(),
-  onUpdateAction: jest.fn(),
-};
+export function NewStepDividerButton({ actionIndex, onClick }: Props) {
+  return (
+    <EuiButtonIcon
+      color="text"
+      iconType="plusInCircle"
+      onClick={onClick}
+      style={{
+        visibility: actionIndex > 0 ? "visible" : "hidden",
+        position: "relative",
+        left: 30,
+        top: 0,
+      }}
+    />
+  );
+}
