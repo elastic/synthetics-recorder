@@ -22,17 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-const { join } = require("path");
-const { app, BrowserWindow, Menu } = require("electron");
-const isDev = require("electron-is-dev");
-const unhandled = require("electron-unhandled");
-const debug = require("electron-debug");
-const logger = require("electron-log");
-const setupListeners = require("./execution");
-const buildMenu = require("./menu");
+import { join } from "path";
+import { app, BrowserWindow, Menu } from "electron";
+import isDev from "electron-is-dev";
+import unhandled from "electron-unhandled";
+import debug from "electron-debug";
+import logger from "electron-log";
+import setupListeners from "./execution";
+import { buildMenu } from "./menu";
 // For dev
 unhandled({ logger: err => logger.error(err) });
-debug({ enabled: true, showDevTools: false });
+debug({ isEnabled: true, showDevTools: false });
 
 const BUILD_DIR = join(__dirname, "..", "build");
 

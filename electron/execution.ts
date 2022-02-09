@@ -22,28 +22,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-const { chromium } = require("playwright");
-const { join, resolve } = require("path");
-const { existsSync } = require("fs");
-const { writeFile, rm, mkdir } = require("fs/promises");
-const { ipcMain: ipc } = require("electron-better-ipc");
-const { EventEmitter, once } = require("events");
-const { dialog, shell, BrowserWindow } = require("electron");
-const { fork } = require("child_process");
-const logger = require("electron-log");
-const isDev = require("electron-is-dev");
-const {
+import { chromium } from "playwright";
+import { join, resolve } from "path";
+import { existsSync } from "fs";
+import { writeFile, rm, mkdir } from "fs/promises";
+import { ipcMain as ipc } from "electron-better-ipc";
+import { EventEmitter, once } from "events";
+import { dialog, shell, BrowserWindow } from "electron";
+import { fork } from "child_process";
+import logger from "electron-log";
+import isDev from "electron-is-dev";
+import {
   SyntheticsGenerator,
-} = require("@elastic/synthetics/dist/formatter/javascript");
+} from "@elastic/synthetics/dist/formatter/javascript";
 const SYNTHETICS_CLI = require.resolve("@elastic/synthetics/dist/cli");
-const {
+import {
   JOURNEY_DIR,
   PLAYWRIGHT_BROWSERS_PATH,
   EXECUTABLE_PATH,
-} = require("./config");
-
+} from "./config";
+import { Result } from '../src/common/types';
+import { BrowserContext } from 'playwright';
 const IS_TEST_ENV = process.env.NODE_ENV === "test";
-const CDP_TEST_PORT = parseInt(process.env.TEST_PORT ?? 61337) + 1;
+const CDP_TEST_PORT = parseInt(process.env.TEST_PORT ?? '61337') + 1;
 
 async function launchContext() {
   const browser = await chromium.launch({
@@ -74,7 +75,7 @@ async function launchContext() {
   return { browser, context };
 }
 
-async function openPage(context, url) {
+async function openPage(context: BrowserContext, url: string) {
   const page = await context.newPage();
   if (url) {
     if (existsSync(url)) url = "file://" + resolve(url);
@@ -89,7 +90,7 @@ async function openPage(context, url) {
   return page;
 }
 
-let browserContext = null;
+let browserContext: BrowserContext | null = null;
 let actionListener = new EventEmitter();
 
 async function recordJourneys(data, browserWindow) {
@@ -103,7 +104,7 @@ async function recordJourneys(data, browserWindow) {
     };
     actionListener.on("actions", actionsHandler);
 
-    await context._enableRecorder({
+    await (context as any)._enableRecorder({
       launchOptions: {},
       contextOptions: {},
       startRecording: true,
@@ -115,7 +116,7 @@ async function recordJourneys(data, browserWindow) {
     const closeBrowser = async () => {
       browserContext = null;
       actionListener.removeListener("actions", actionsHandler);
-      await browser.close().catch({});
+      await browser.close().catch(_err => {});
     };
 
     ipc.on("stop", closeBrowser);
@@ -127,11 +128,15 @@ async function recordJourneys(data, browserWindow) {
 }
 
 async function onTest(data) {
-  const result = {
+  const result: Result = {
     succeeded: 0,
     failed: 0,
     skipped: 0,
-    journey: {},
+    journey: {
+      status: "succeeded",
+      steps: [],
+      type: "inline"
+    },
   };
 
   const parseOrSkip = chunk => {
@@ -248,7 +253,7 @@ async function onSetMode(mode) {
   if (!page) return;
   await page.mainFrame().evaluate(
     ([mode]) => {
-      window._playwrightSetMode(mode);
+      (window as any)._playwrightSetMode(mode);
     },
     [mode]
   );
@@ -265,7 +270,7 @@ async function onLinkExternal(url) {
   }
 }
 
-function setupListeners() {
+export default function setupListeners() {
   ipc.answerRenderer("record-journey", recordJourneys);
   ipc.answerRenderer("run-journey", onTest);
   ipc.answerRenderer("save-file", onFileSave);
@@ -273,5 +278,3 @@ function setupListeners() {
   ipc.answerRenderer("set-mode", onSetMode);
   ipc.answerRenderer("link-to-external", onLinkExternal);
 }
-
-module.exports = setupListeners;
