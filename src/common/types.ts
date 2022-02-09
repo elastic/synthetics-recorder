@@ -101,7 +101,7 @@ export interface JourneyEndEvent {
   event: "journey/end";
   data: {
     name: string;
-    status: "succeeded" | "failed"; // TBC
+    status: "succeeded" | "failed";
   };
 }
 export interface StepEndEvent {
