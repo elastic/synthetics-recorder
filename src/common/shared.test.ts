@@ -96,11 +96,11 @@ describe("shared", () => {
     let mockIpc: RendererProcessIpc;
 
     beforeEach(() => {
-      // @ts-expect-error partial implementation for testing
-      mockIpc = {
+      const mock = {
         answerMain: jest.fn(),
         callMain: jest.fn(),
       };
+      mockIpc = mock as unknown as RendererProcessIpc;
     });
 
     it("returns empty string for undefined journey", async () => {
