@@ -140,7 +140,7 @@ export const ActionElement = styled(ActionComponent)`
   }
 
   @media (max-width: ${SMALL_SCREEN_BREAKPOINT}px) {
-    .euiAccordion__triggerWrapper {
+    .euiAccordion {
       width: 650px;
     }
   }
