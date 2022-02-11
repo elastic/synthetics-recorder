@@ -39,11 +39,22 @@ const ActionItem = styled(EuiFlexItem)`
 
 interface IActionWrapper {
   isAssert?: boolean;
+  omitBorder?: boolean;
 }
 
-export const Behavior: React.FC<IActionWrapper> = ({ children, isAssert }) =>
-  isAssert ? (
-    <AssertItem>{children}</AssertItem>
-  ) : (
-    <ActionItem>{children}</ActionItem>
-  );
+export const Behavior: React.FC<IActionWrapper> = ({
+  children,
+  isAssert,
+  omitBorder,
+}) => {
+  if (isAssert) return <AssertItem>{children}</AssertItem>;
+  if (omitBorder) {
+    return (
+      <ActionItem style={{ borderLeft: "none", marginLeft: 2 }}>
+        {children}
+      </ActionItem>
+    );
+  }
+
+  return <ActionItem>{children}</ActionItem>;
+};

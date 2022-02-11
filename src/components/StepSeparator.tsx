@@ -86,6 +86,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
           actionIndex={actionIndex}
           stepIndex={index}
           testStatus={testStatus}
+          isLast={actionIndex === step.length - 1}
         />
       ))}
     </StepSeparatorAccordion>

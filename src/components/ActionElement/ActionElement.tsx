@@ -38,6 +38,7 @@ interface IActionElement {
   actionIndex: number;
   className?: string;
   initialIsOpen?: boolean;
+  isLast?: boolean;
   step: ActionContext;
   stepIndex: number;
   testStatus?: ResultCategory;
@@ -58,6 +59,7 @@ function ActionComponent({
   actionIndex,
   className,
   initialIsOpen,
+  isLast,
   step,
   stepIndex,
   testStatus,
@@ -88,9 +90,11 @@ function ActionComponent({
   return (
     <Container className={className} gutterSize="none">
       <EuiFlexItem grow={false}>
-        {!step.action.isAssert && <ActionStatusIndicator status={testStatus} />}
+        {!step.action.isAssert && (
+          <ActionStatusIndicator showRect={isLast} status={testStatus} />
+        )}
       </EuiFlexItem>
-      <Behavior isAssert={step.action.isAssert}>
+      <Behavior isAssert={step.action.isAssert} omitBorder={isLast}>
         <ActionAccordion
           arrowDisplay="none"
           buttonProps={{ style: { display: "none" } }}
