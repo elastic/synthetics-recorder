@@ -30,43 +30,30 @@ import type { ActionContext, Step, Steps } from "../common/types";
 import { IStepsContext } from "../contexts/StepsContext";
 import { useStepsContext } from "./useStepsContext";
 
+function createAction(
+  name: string,
+  overrides?: Partial<ActionContext>
+): ActionContext {
+  return {
+    action: {
+      name,
+      signals: [],
+    },
+    frameUrl: "https://www.elastic.co",
+    isMainFrame: true,
+    pageAlias: "pageAlias",
+    ...(overrides ?? {}),
+  };
+}
+
 describe("useStepsContext", () => {
   let defaultResult: RenderHookResult<unknown, IStepsContext>;
   let defaultSteps: Steps;
 
   beforeEach(async () => {
     defaultSteps = [
-      [
-        {
-          action: {
-            name: "first-step-1",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-      ],
-      [
-        {
-          action: {
-            name: "first-step-2",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-        {
-          action: {
-            name: "second-step-2",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-      ],
+      [createAction("first-step-1")],
+      [createAction("first-step-2"), createAction("second-step-2")],
     ];
 
     defaultResult = renderHook(() => useStepsContext());
