@@ -31,6 +31,7 @@ export function useSyntheticsTest(steps: Steps) {
   const [result, setResult] = useState<Result | undefined>(undefined);
   const [isResultFlyoutVisible, setIsResultFlyoutVisible] = useState(false);
   const [codeBlocks, setCodeBlocks] = useState("");
+  const [isTestInProgress, setIsTestInProgress] = useState(false);
   const { ipc } = useContext(CommunicationContext);
 
   /**
@@ -57,16 +58,19 @@ export function useSyntheticsTest(steps: Steps) {
       setCodeBlocks(await getCodeForResult(ipc, steps, result?.journey));
       setResult(resultFromServer);
       setIsResultFlyoutVisible(true);
+      setIsTestInProgress(false);
     },
     [steps, ipc, result]
   );
   return {
     codeBlocks,
+    isTestInProgress,
     isResultFlyoutVisible,
     result,
     onTest,
     setCodeBlocks,
     setIsResultFlyoutVisible,
+    setIsTestInProgress,
     setResult,
   };
 }
