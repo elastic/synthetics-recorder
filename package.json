@@ -60,7 +60,14 @@
       "main": "build/electron.js"
     },
     "mac": {
-      "icon": "public/elastic.png"
+      "icon": "public/elastic.png",
+      "category": "public.app-category.developer-tools "
+    },
+    "protocols": {
+      "name": "elastic-synthetics-recorder",
+      "schemes": [
+        "elastic-synthetics-recorder"
+      ]
     },
     "win": {
       "target": "nsis",
