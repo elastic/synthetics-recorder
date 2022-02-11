@@ -41,10 +41,7 @@ interface IActionWrapper {
   isAssert?: boolean;
 }
 
-export const ActionWrapper: React.FC<IActionWrapper> = ({
-  children,
-  isAssert,
-}) =>
+export const Behavior: React.FC<IActionWrapper> = ({ children, isAssert }) =>
   isAssert ? (
     <AssertItem>{children}</AssertItem>
   ) : (

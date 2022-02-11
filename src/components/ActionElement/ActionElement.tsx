@@ -31,7 +31,7 @@ import { StepsContext } from "../../contexts/StepsContext";
 import { ActionDetail } from "../ActionDetail";
 import { ActionStatusIndicator } from "../ActionStatusIndicator";
 import { Assertion } from "../Assertion";
-import { ActionWrapper } from "./ActionWrapper";
+import { Behavior } from "./Behavior";
 import { ExtraActions } from "./ExtraActions";
 
 interface IActionElement {
@@ -90,7 +90,7 @@ function ActionComponent({
       <EuiFlexItem grow={false}>
         {!step.action.isAssert && <ActionStatusIndicator status={testStatus} />}
       </EuiFlexItem>
-      <ActionWrapper isAssert={step.action.isAssert}>
+      <Behavior isAssert={step.action.isAssert}>
         <ActionAccordion
           arrowDisplay="none"
           buttonProps={{ style: { display: "none" } }}
@@ -119,7 +119,7 @@ function ActionComponent({
         >
           {actionUI}
         </ActionAccordion>
-      </ActionWrapper>
+      </Behavior>
     </Container>
   );
 }
