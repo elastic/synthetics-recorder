@@ -70,7 +70,7 @@ export function TestResult() {
     [stepCodeToDisplay]
   );
 
-  // flyout shold not show without result data
+  // flyout should not show without result data
   if (!isResultFlyoutVisible || !result) return null;
 
   // flyout should not show if there are no results
