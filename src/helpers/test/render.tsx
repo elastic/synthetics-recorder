@@ -35,9 +35,9 @@ import {
 import { IStepsContext, StepsContext } from "../../contexts/StepsContext";
 import { IUrlContext, UrlContext } from "../../contexts/UrlContext";
 import {
-  RECORDING_CONTEXT_DEFAULTS,
-  URL_CONTEXT_DEFAULTS,
-  STEPS_CONTEXT_DEFAULTS,
+  getRecordingContextDefaults,
+  getUrlContextDefaults,
+  getStepsContextDefaults,
 } from "./defaults";
 import { RenderContexts } from "./RenderContexts";
 
@@ -54,17 +54,17 @@ export function render<ComponentType>(
 ): RenderResult {
   const contexts = [
     {
-      defaults: RECORDING_CONTEXT_DEFAULTS,
+      defaults: getRecordingContextDefaults(),
       Context: RecordingContext,
       overrides: options?.contextOverrides?.recording,
     },
     {
-      defaults: URL_CONTEXT_DEFAULTS,
+      defaults: getUrlContextDefaults(),
       Context: UrlContext,
       overrides: options?.contextOverrides?.url,
     },
     {
-      defaults: STEPS_CONTEXT_DEFAULTS,
+      defaults: getStepsContextDefaults(),
       Context: StepsContext,
       overrides: options?.contextOverrides?.steps,
     },

@@ -27,17 +27,17 @@ import { IRecordingContext } from "../../contexts/RecordingContext";
 import { IStepsContext } from "../../contexts/StepsContext";
 import { IUrlContext } from "../../contexts/UrlContext";
 
-export const RECORDING_CONTEXT_DEFAULTS: IRecordingContext = {
+export const getRecordingContextDefaults = (): IRecordingContext => ({
   abortSession: jest.fn(),
   recordingStatus: RecordingStatus.NotRecording,
   togglePause: jest.fn(),
   toggleRecording: jest.fn(),
-};
+});
 
-export const URL_CONTEXT_DEFAULTS: IUrlContext = {};
+export const getUrlContextDefaults = (): IUrlContext => ({});
 
-export const STEPS_CONTEXT_DEFAULTS: IStepsContext = {
+export const getStepsContextDefaults = (): IStepsContext => ({
   actions: [],
   setActions: jest.fn(),
   onDeleteAction: jest.fn(),
-};
+});
