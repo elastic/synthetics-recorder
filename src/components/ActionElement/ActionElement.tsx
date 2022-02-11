@@ -66,6 +66,25 @@ function ActionComponent({
   const [isOpen, setIsOpen] = useState(false);
   const [areControlsVisible, setAreControlsVisible] = useState(false);
   const close = () => setIsOpen(false);
+
+  const actionUI = step.action.isAssert ? (
+    <Assertion
+      action={step.action}
+      actionContext={step}
+      actionIndex={actionIndex}
+      close={close}
+      onDeleteAction={onDeleteAction}
+      stepIndex={stepIndex}
+    />
+  ) : (
+    <ActionDetail
+      actionContext={step}
+      actionIndex={actionIndex}
+      close={close}
+      stepIndex={stepIndex}
+    />
+  );
+
   return (
     <Container className={className} gutterSize="none">
       <EuiFlexItem grow={false}>
@@ -98,24 +117,7 @@ function ActionComponent({
             />
           }
         >
-          {!step.action.isAssert && (
-            <ActionDetail
-              actionContext={step}
-              actionIndex={actionIndex}
-              close={close}
-              stepIndex={stepIndex}
-            />
-          )}
-          {step.action.isAssert && (
-            <Assertion
-              action={step.action}
-              actionContext={step}
-              actionIndex={actionIndex}
-              close={close}
-              onDeleteAction={onDeleteAction}
-              stepIndex={stepIndex}
-            />
-          )}
+          {actionUI}
         </ActionAccordion>
       </ActionWrapper>
     </Container>
