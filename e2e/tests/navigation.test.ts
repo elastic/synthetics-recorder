@@ -56,10 +56,11 @@ describe("Navigation", () => {
     await electronService.waitForPageToBeIdle();
     await electronService.navigateRecordingBrowser(url);
 
-    expect(await electronWindow.$("text=2 Recorded Steps")).toBeTruthy();
+    expect(await electronWindow.$("text=Step 1")).toBeTruthy();
+    expect(await electronWindow.$("text=Step 2")).toBeTruthy();
     expect(
-      await electronWindow.$(`text=Go to ${env.DEMO_APP_URL}`)
+      await electronWindow.$(`text=navigate ${env.DEMO_APP_URL}`)
     ).toBeTruthy();
-    expect(await electronWindow.$(`text=Go to ${url}`)).toBeTruthy();
+    expect(await electronWindow.$(`text=navigate ${url}`)).toBeTruthy();
   });
 });
