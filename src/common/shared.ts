@@ -23,7 +23,6 @@ THE SOFTWARE.
 */
 
 import { RendererProcessIpc } from "electron-better-ipc";
-import type { ActionInContext } from "@elastic/synthetics";
 import React from "react";
 import type { Journey, JourneyType, Setter, Steps } from "./types";
 
@@ -125,7 +124,7 @@ export function updateAction(
  */
 export async function getCodeForFailedResult(
   ipc: RendererProcessIpc,
-  steps: ActionInContext[][],
+  steps: Steps,
   journey?: Journey
 ): Promise<string> {
   if (!journey) return "";
