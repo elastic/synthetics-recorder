@@ -22,44 +22,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Server } from "http";
 import { ElectronServiceFactory, env } from "../services";
-import { createTestHttpServer } from "./testServer";
 
 const electronService = new ElectronServiceFactory();
 
-let server: Server;
-let hostname: string;
-let port: number;
-let url: string;
-
-beforeEach(() => {
-  const { server: s, hostname: h, port: p } = createTestHttpServer();
-  server = s;
-  hostname = h;
-  port = p;
-  url = `http://${hostname}:${port}`;
+afterEach(() => {
+  electronService.terminate();
 });
 
-afterEach(async () => {
-  await electronService.terminate();
-  server.close();
-});
-
-describe("Navigation", () => {
-  it("records chromium's opened pages", async () => {
+describe("Steps", () => {
+  it("has the right number of step results", async () => {
     const electronWindow = await electronService.getWindow();
 
     await electronService.enterTestUrl(env.DEMO_APP_URL);
 
     await electronService.clickStartRecording();
     await electronService.waitForPageToBeIdle();
-    await electronService.navigateRecordingBrowser(url);
+    await electronService.clickRunTest();
 
-    expect(await electronWindow.$("text=2 Recorded Steps")).toBeTruthy();
-    expect(
-      await electronWindow.$(`text=Go to ${env.DEMO_APP_URL}`)
-    ).toBeTruthy();
-    expect(await electronWindow.$(`text=Go to ${url}`)).toBeTruthy();
+    expect(await electronWindow.$("text=1 success"));
   });
 });
