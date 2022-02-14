@@ -39,7 +39,7 @@ describe("Test Button", () => {
     await electronService.waitForPageToBeIdle();
 
     const testButton = await electronWindow.$(
-      `[aria-label="You cannot test your recorded tests until you have finished a recording session"]`
+      `[aria-label="You cannot execute your recorded tests until you have finished a recording session"]`
     );
     expect(testButton).toBeTruthy();
     expect(await testButton.isEnabled());
