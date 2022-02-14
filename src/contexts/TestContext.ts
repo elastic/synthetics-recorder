@@ -34,15 +34,23 @@ async function notImplementedAsync() {
 
 interface ITestContext {
   codeBlocks: string;
+  isResultFlyoutVisible: boolean;
+  isTestInProgress: boolean;
   onTest: () => Promise<void>;
   result?: Result;
+  setIsTestInProgress: Setter<boolean>;
   setCodeBlocks: Setter<string>;
   setResult: Setter<Result | undefined>;
+  setIsResultFlyoutVisible: Setter<boolean>;
 }
 
 export const TestContext = createContext<ITestContext>({
   codeBlocks: "",
+  isResultFlyoutVisible: false,
+  isTestInProgress: false,
   onTest: notImplementedAsync,
   setCodeBlocks: notImplemented,
   setResult: notImplemented,
+  setIsTestInProgress: notImplemented,
+  setIsResultFlyoutVisible: notImplemented,
 });

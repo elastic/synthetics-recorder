@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+export type Step = ActionContext[];
+export type Steps = ActionContext[][];
+
 export interface ActionContext {
   action: Action;
   frameUrl: string;

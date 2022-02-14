@@ -33,6 +33,7 @@ import {
   RecordingContext,
 } from "../../contexts/RecordingContext";
 import { IStepsContext, StepsContext } from "../../contexts/StepsContext";
+import { StyledComponentsEuiProvider } from "../../contexts/StyledComponentsEuiProvider";
 import { IUrlContext, UrlContext } from "../../contexts/UrlContext";
 import {
   getRecordingContextDefaults,
@@ -71,7 +72,9 @@ export function render<ComponentType>(
   ];
 
   return rtlRender(
-    <RenderContexts contexts={contexts}>{component}</RenderContexts>,
+    <StyledComponentsEuiProvider>
+      <RenderContexts contexts={contexts}>{component}</RenderContexts>
+    </StyledComponentsEuiProvider>,
     rtlRenderOptions
   );
 }

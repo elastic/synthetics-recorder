@@ -24,9 +24,16 @@ THE SOFTWARE.
 
 import { createContext } from "react";
 import { RecordingStatus } from "../common/types";
+import type { Setter } from "../common/types";
+
+const UNINITIALIZED_MSG = "Recording context not initialized";
+
+async function notImplementedAsync() {
+  throw Error(UNINITIALIZED_MSG);
+}
 
 function notImplemented() {
-  throw Error("Recording context not initialized");
+  throw Error(UNINITIALIZED_MSG);
 }
 
 /**
@@ -35,10 +42,19 @@ function notImplemented() {
  */
 export interface IRecordingContext {
   /**
-   * Messages the main process to stop the recording, discards
-   * the actions the user has recorded.
+   * If not recording, will initiate a new recording session.
    */
-  abortSession: () => Promise<void>;
+  startOver: () => Promise<void>;
+  /**
+   * When `true` the UI displays a modal warning users that they are about
+   * to delete previously-recorded steps.
+   */
+  isStartOverModalVisible: boolean;
+  /**
+   * Controls visibility of a modal warning users when they are about
+   * to take an action that will erase previously-recorded steps.
+   */
+  setIsStartOverModalVisible: Setter<boolean>;
   /**
    * Contains info about the current state of the recorder session.
    */
@@ -55,8 +71,10 @@ export interface IRecordingContext {
 }
 
 export const RecordingContext = createContext<IRecordingContext>({
-  abortSession: async function () {
-    throw Error("RecordingContext abort session not implemented");
+  startOver: notImplementedAsync,
+  isStartOverModalVisible: false,
+  setIsStartOverModalVisible: () => {
+    throw Error("not implemented");
   },
   recordingStatus: RecordingStatus.NotRecording,
   togglePause: notImplemented,

@@ -22,22 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiButton } from "@elastic/eui";
-import React, { useContext } from "react";
-import { getCodeFromActions } from "../common/shared";
-import { CommunicationContext } from "../contexts/CommunicationContext";
-import { StepsContext } from "../contexts/StepsContext";
+import { EuiPageBody } from "@elastic/eui";
+import React from "react";
+import styled from "styled-components";
 
-export function SaveCodeButton() {
-  const { actions } = useContext(StepsContext);
-  const { ipc } = useContext(CommunicationContext);
-  const onSave = async () => {
-    const codeFromActions = await getCodeFromActions(ipc, actions, "inline");
-    await ipc.callMain("save-file", codeFromActions);
-  };
-  return (
-    <EuiButton fill color="primary" iconType="exportAction" onClick={onSave}>
-      Export script
-    </EuiButton>
-  );
-}
+const PageBody = styled(EuiPageBody)`
+  background-color: ${props => props.theme.colors.emptyShade};
+  padding: 0px 0px 0px 40px;
+`;
+
+export const AppPageBody: React.FC = ({ children }) => {
+  return <PageBody>{children}</PageBody>;
+};

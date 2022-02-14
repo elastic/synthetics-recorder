@@ -23,20 +23,51 @@ THE SOFTWARE.
 */
 
 import { createContext } from "react";
-import type { ActionContext, Setter } from "../common/types";
+import type { ActionContext, Setter, Step, Steps } from "../common/types";
 
 function notImplemented() {
   throw Error("Step context not initialized");
 }
 
 export interface IStepsContext {
-  actions: ActionContext[][];
+  /**
+   * Represents the actions and assertions that the user has recorded.
+   */
+  steps: Steps;
+  /**
+   * Updates the steps.
+   */
+  setSteps: Setter<Steps>;
+  /**
+   * Deletes the action at the `actionIndex` in the given step.
+   */
   onDeleteAction: (stepIndex: number, actionIndex: number) => void;
-  setActions: Setter<ActionContext[][]>;
+  onDeleteStep: (stepIndex: number) => void;
+  /**
+   * Inserts the `action` to the given step at `actionIndex`.
+   */
+  onInsertAction: (
+    action: ActionContext,
+    stepIndex: number,
+    actionIndex: number
+  ) => void;
+  onUpdateAction: (
+    action: ActionContext,
+    stepIndex: number,
+    actionIndex: number
+  ) => void;
+  /**
+   * Overwrites the step at `stepIndex` with `step`.
+   */
+  onStepDetailChange: (step: Step, stepIndex: number) => void;
 }
 
 export const StepsContext = createContext<IStepsContext>({
-  actions: [],
+  steps: [],
+  setSteps: notImplemented,
   onDeleteAction: notImplemented,
-  setActions: notImplemented,
+  onDeleteStep: notImplemented,
+  onInsertAction: notImplemented,
+  onStepDetailChange: notImplemented,
+  onUpdateAction: notImplemented,
 });

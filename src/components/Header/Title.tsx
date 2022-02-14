@@ -29,7 +29,7 @@ import {
   EuiFlexItem,
   EuiIcon,
   EuiPageHeader,
-  useEuiTheme,
+  EuiThemeContext,
 } from "@elastic/eui";
 import React, { useContext } from "react";
 import {
@@ -40,7 +40,8 @@ import { CommunicationContext } from "../../contexts/CommunicationContext";
 
 export function Title() {
   const { ipc } = useContext(CommunicationContext);
-  const { euiTheme } = useEuiTheme();
+  const euiTheme = useContext(EuiThemeContext);
+
   return (
     <EuiPageHeader
       style={{

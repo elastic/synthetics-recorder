@@ -22,33 +22,33 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiButton, EuiToolTip } from "@elastic/eui";
+import { EuiToolTip } from "@elastic/eui";
 import React from "react";
+import { ControlButton } from "./ControlButton";
 
-export function TestButton({
-  disabled,
-  onTest,
-}: {
-  disabled: boolean;
+interface Props {
+  isDisabled: boolean;
   onTest: React.MouseEventHandler<HTMLButtonElement>;
-}) {
+}
+
+export function TestButton({ isDisabled, onTest }: Props) {
   const button = (
-    <EuiButton
+    <ControlButton
       aria-label={
-        disabled
+        isDisabled
           ? "Record a step in order to run a test"
           : "Perform a test run for the journey you have recorded"
       }
       color="primary"
       iconType="beaker"
-      isDisabled={disabled}
+      isDisabled={isDisabled}
       onClick={onTest}
     >
-      Replay steps
-    </EuiButton>
+      Test
+    </ControlButton>
   );
 
-  if (disabled) {
+  if (isDisabled) {
     return (
       <EuiToolTip content="Record a step in order to run a test" delay="long">
         {button}

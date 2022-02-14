@@ -38,6 +38,7 @@ describe("Steps", () => {
 
     await electronService.clickStartRecording();
     await electronService.waitForPageToBeIdle();
+    await electronService.clickStopRecording();
     await electronService.clickRunTest();
 
     expect(await electronWindow.$("text=1 success"));

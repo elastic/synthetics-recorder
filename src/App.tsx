@@ -23,145 +23,111 @@ THE SOFTWARE.
 */
 
 import React, { useContext } from "react";
-import { useEffect, useRef, useState } from "react";
-import { EuiFlexGroup, EuiFlexItem, EuiPageBody } from "@elastic/eui";
+import { useEffect, useState } from "react";
+import {
+  EuiCode,
+  EuiEmptyPrompt,
+  EuiThemeProvider,
+  EuiThemeAmsterdam,
+} from "@elastic/eui";
 import "./App.css";
 import "@elastic/eui/dist/eui_legacy_light.css";
-import { Header } from "./components/Header";
-import { StepsMonitor } from "./components/StepsMonitor";
-import { TestResult } from "./components/TestResult";
-import { AssertionDrawer } from "./components/AssertionDrawer";
 import { Title } from "./components/Header/Title";
 import { HeaderControls } from "./components/Header/HeaderControls";
-import { AssertionContext } from "./contexts/AssertionContext";
 import { CommunicationContext } from "./contexts/CommunicationContext";
 import { RecordingContext } from "./contexts/RecordingContext";
+import { UrlContext } from "./contexts/UrlContext";
 import { StepsContext } from "./contexts/StepsContext";
 import { TestContext } from "./contexts/TestContext";
-import type { ActionContext } from "./common/types";
-import { RecordingStatus } from "./common/types";
-import { useAssertionDrawer } from "./hooks/useAssertionDrawer";
+import type { Step } from "./common/types";
 import { useSyntheticsTest } from "./hooks/useSyntheticsTest";
 import { generateIR, generateMergedIR } from "./helpers/generator";
-import { UrlContext } from "./contexts/UrlContext";
+import { StepSeparator } from "./components/StepSeparator";
 
-const MAIN_CONTROLS_MIN_WIDTH = 600;
+import "@elastic/eui/dist/eui_theme_light.json";
+import "./App.css";
+import { useStepsContext } from "./hooks/useStepsContext";
+import { TestResult } from "./components/TestResult";
+import { AppPageBody } from "./components/AppPageBody";
+import { StyledComponentsEuiProvider } from "./contexts/StyledComponentsEuiProvider";
+import { ExportScriptFlyout } from "./components/ExportScriptFlyout";
+import { useRecordingContext } from "./hooks/useRecordingContext";
+import { StartOverWarningModal } from "./components/StartOverWarningModal";
 
 export default function App() {
   const [url, setUrl] = useState("");
-  const [stepActions, setStepActions] = useState<ActionContext[][]>([]);
-  const [recordingStatus, setRecordingStatus] = useState(
-    RecordingStatus.NotRecording
-  );
   const [isCodeFlyoutVisible, setIsCodeFlyoutVisible] = useState(false);
 
   const { ipc } = useContext(CommunicationContext);
-  const assertionDrawerUtils = useAssertionDrawer();
-  const syntheticsTestUtils = useSyntheticsTest(stepActions);
-
-  const onUrlChange = (value: string) => {
-    setUrl(value);
-  };
-
-  const urlRef = useRef(null);
+  const stepsContextUtils = useStepsContext();
+  const { steps, setSteps } = stepsContextUtils;
+  const recordingContextUtils = useRecordingContext(ipc, url, steps.length);
+  const { isStartOverModalVisible, setIsStartOverModalVisible, startOver } =
+    recordingContextUtils;
+  const syntheticsTestUtils = useSyntheticsTest(steps);
 
   useEffect(() => {
-    ipc.answerMain("change", ({ actions }: { actions: ActionContext[] }) => {
-      setStepActions(prevActionContexts => {
-        const currActionsContexts = generateIR(actions);
-        return generateMergedIR(prevActionContexts, currActionsContexts);
+    // `actions` here is a set of `ActionContext`s that make up a `Step`
+    ipc.answerMain("change", ({ actions: step }: { actions: Step }) => {
+      setSteps(prevSteps => {
+        const nextSteps = generateIR(step);
+        return generateMergedIR(prevSteps, nextSteps);
       });
     });
-  }, [setStepActions, ipc]);
+  }, [ipc, setSteps]);
 
   return (
-    <div>
-      <StepsContext.Provider
-        value={{
-          actions: stepActions,
-          onDeleteAction: (sIdx: number, aIdx: number) => {
-            setStepActions(value =>
-              value.map((s: ActionContext[], idx: number) => {
-                if (idx !== sIdx) return s;
-                s.splice(aIdx, 1);
-                return [...s];
-              })
-            );
-          },
-          setActions: setStepActions,
-        }}
-      >
-        <AssertionContext.Provider value={assertionDrawerUtils}>
-          <RecordingContext.Provider
-            value={{
-              abortSession: async () => {
-                if (recordingStatus !== RecordingStatus.Recording) return;
-                await ipc.send("stop");
-                setRecordingStatus(RecordingStatus.NotRecording);
-                setStepActions([]);
-              },
-              recordingStatus,
-              toggleRecording: async () => {
-                if (recordingStatus === RecordingStatus.Recording) {
-                  setRecordingStatus(RecordingStatus.NotRecording);
-                  // Stop browser process
-                  ipc.send("stop");
-                } else {
-                  setRecordingStatus(RecordingStatus.Recording);
-                  await ipc.callMain("record-journey", { url });
-                  setRecordingStatus(RecordingStatus.NotRecording);
-                }
-              },
-              togglePause: async () => {
-                if (recordingStatus === RecordingStatus.NotRecording) return;
-                if (recordingStatus !== RecordingStatus.Paused) {
-                  setRecordingStatus(RecordingStatus.Paused);
-                  await ipc.callMain("set-mode", "none");
-                } else {
-                  await ipc.callMain("set-mode", "recording");
-                  setRecordingStatus(RecordingStatus.Recording);
-                }
-              },
-            }}
-          >
+    <EuiThemeProvider theme={EuiThemeAmsterdam}>
+      <StyledComponentsEuiProvider>
+        <StepsContext.Provider value={stepsContextUtils}>
+          <RecordingContext.Provider value={recordingContextUtils}>
             <TestContext.Provider value={syntheticsTestUtils}>
-              <UrlContext.Provider value={{ urlRef }}>
+              <UrlContext.Provider value={{ url, setUrl }}>
                 <Title />
                 <HeaderControls
                   setIsCodeFlyoutVisible={setIsCodeFlyoutVisible}
                 />
-                <EuiPageBody>
-                  <EuiFlexGroup>
-                    <EuiFlexItem>
-                      <EuiFlexGroup direction="column">
-                        <EuiFlexItem grow={false}>
-                          <Header
-                            url={url}
-                            onUrlChange={onUrlChange}
-                            stepCount={stepActions.length}
-                          />
-                        </EuiFlexItem>
-                        <EuiFlexItem
-                          style={{ minWidth: MAIN_CONTROLS_MIN_WIDTH }}
-                        >
-                          <StepsMonitor
-                            isFlyoutVisible={isCodeFlyoutVisible}
-                            setIsFlyoutVisible={setIsCodeFlyoutVisible}
-                          />
-                        </EuiFlexItem>
-                      </EuiFlexGroup>
-                    </EuiFlexItem>
-                    <EuiFlexItem style={{ minWidth: 300 }}>
-                      <TestResult />
-                    </EuiFlexItem>
-                  </EuiFlexGroup>
-                  <AssertionDrawer />
-                </EuiPageBody>
+                <AppPageBody>
+                  {steps.length === 0 && (
+                    <EuiEmptyPrompt
+                      aria-label="This empty prompt indicates that you have not recorded any journey steps yet."
+                      hasBorder={false}
+                      title={<h3>No steps recorded yet</h3>}
+                      body={
+                        <p>
+                          Click on <EuiCode>Start recording</EuiCode> to get
+                          started with your script.
+                        </p>
+                      }
+                    />
+                  )}
+                  {steps.map((step, index) => (
+                    <StepSeparator
+                      index={index}
+                      key={`step-separator-${index + 1}`}
+                      step={step}
+                    />
+                  ))}
+                  <TestResult />
+                  {isCodeFlyoutVisible && (
+                    <ExportScriptFlyout
+                      setVisible={setIsCodeFlyoutVisible}
+                      steps={steps}
+                    />
+                  )}
+                  {isStartOverModalVisible && (
+                    <StartOverWarningModal
+                      startOver={startOver}
+                      setVisibility={setIsStartOverModalVisible}
+                      stepCount={steps.length}
+                    />
+                  )}
+                </AppPageBody>
               </UrlContext.Provider>
             </TestContext.Provider>
           </RecordingContext.Provider>
-        </AssertionContext.Provider>
-      </StepsContext.Provider>
-    </div>
+        </StepsContext.Provider>
+      </StyledComponentsEuiProvider>
+    </EuiThemeProvider>
   );
 }

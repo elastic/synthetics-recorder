@@ -22,37 +22,55 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { getCodeForResult, getCodeFromActions } from "../common/shared";
-import { ActionContext, Result } from "../common/types";
 import { CommunicationContext } from "../contexts/CommunicationContext";
+import { Result, Steps } from "../common/types";
 
-export function useSyntheticsTest(actions: ActionContext[][]) {
+export function useSyntheticsTest(steps: Steps) {
   const [result, setResult] = useState<Result | undefined>(undefined);
+  const [isResultFlyoutVisible, setIsResultFlyoutVisible] = useState(false);
   const [codeBlocks, setCodeBlocks] = useState("");
+  const [isTestInProgress, setIsTestInProgress] = useState(false);
   const { ipc } = useContext(CommunicationContext);
+
+  /**
+   * The absence of steps with a truthy result indicates the result value
+   * is stale, and should be destroyed.
+   */
+  useEffect(() => {
+    if (steps.length === 0 && result) {
+      setResult(undefined);
+    }
+  }, [steps.length, result]);
 
   const onTest = useCallback(
     async function () {
       /**
        * For the time being we are only running tests as inline.
        */
-      const code = await getCodeFromActions(ipc, actions, "inline");
+      const code = await getCodeFromActions(ipc, steps, "inline");
       const resultFromServer: Result = await ipc.callMain("run-journey", {
         code,
         isSuite: false,
       });
 
-      setCodeBlocks(await getCodeForResult(ipc, actions, result?.journey));
+      setCodeBlocks(await getCodeForResult(ipc, steps, result?.journey));
       setResult(resultFromServer);
+      setIsResultFlyoutVisible(true);
+      setIsTestInProgress(false);
     },
-    [actions, ipc, result]
+    [steps, ipc, result]
   );
   return {
     codeBlocks,
+    isTestInProgress,
+    isResultFlyoutVisible,
     result,
     onTest,
     setCodeBlocks,
+    setIsResultFlyoutVisible,
+    setIsTestInProgress,
     setResult,
   };
 }

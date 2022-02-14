@@ -71,14 +71,14 @@ export class ElectronServiceFactory {
   async enterTestUrl(testUrl: string) {
     const electronWindow = await this.getWindow();
     return await electronWindow.type(
-      '[placeholder="Enter URL to test"]',
+      '[placeholder="Enter a starting URL"]',
       testUrl
     );
   }
 
   async clickStartRecording() {
     const electronWindow = await this.getWindow();
-    await electronWindow.click("text=Start recording");
+    await electronWindow.click("text=Start");
     this.#recordingBrowserPage =
       await TestBrowserService.getRemoteBrowserPage();
     return this.#recordingBrowserPage;
@@ -86,7 +86,12 @@ export class ElectronServiceFactory {
 
   async clickRunTest() {
     const electronWindow = await this.getWindow();
-    await electronWindow.click("text=Replay steps");
+    await electronWindow.click("text=Test");
+  }
+
+  async clickStopRecording() {
+    const electronWindow = await this.getWindow();
+    await electronWindow.click("text=Stop");
   }
 
   async waitForPageToBeIdle(timeout = 45000) {
