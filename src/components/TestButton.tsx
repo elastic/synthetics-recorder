@@ -36,7 +36,7 @@ export function TestButton({ isDisabled, onTest }: Props) {
     <ControlButton
       aria-label={
         isDisabled
-          ? "Record a step in order to run a test"
+          ? "You cannot test your recorded tests until you have finished a recording session"
           : "Perform a test run for the journey you have recorded"
       }
       color="primary"

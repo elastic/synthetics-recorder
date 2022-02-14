@@ -30,17 +30,18 @@ afterEach(async () => {
   await electronService.terminate();
 });
 
-describe("Steps", () => {
-  it("has the right number of step results", async () => {
+describe("Test Button", () => {
+  it("is disabled during a recording session", async () => {
     const electronWindow = await electronService.getWindow();
 
     await electronService.enterTestUrl(env.DEMO_APP_URL);
-
     await electronService.clickStartRecording();
     await electronService.waitForPageToBeIdle();
-    await electronService.clickStopRecording();
-    await electronService.clickRunTest();
 
-    expect(await electronWindow.$("text=1 success"));
+    const testButton = await electronWindow.$(
+      `[aria-label="You cannot test your recorded tests until you have finished a recording session"]`
+    );
+    expect(testButton).toBeTruthy();
+    expect(await testButton.isEnabled());
   });
 });
