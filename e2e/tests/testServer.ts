@@ -22,34 +22,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { RecordingStatus } from "../../common/types";
-import { IRecordingContext } from "../../contexts/RecordingContext";
-import { IStepsContext } from "../../contexts/StepsContext";
-import { IUrlContext } from "../../contexts/UrlContext";
+import http from "http";
 
-export const getRecordingContextDefaults = (): IRecordingContext => ({
-  startOver: jest.fn(),
-  isStartOverModalVisible: false,
-  setIsStartOverModalVisible: jest.fn(),
-  recordingStatus: RecordingStatus.NotRecording,
-  togglePause: jest.fn(),
-  toggleRecording: jest.fn(),
-});
+export function createTestHttpServer(hostname = "127.0.0.1", port = 8082) {
+  const server = http.createServer((_req, res) => {
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "text/plain");
+    res.end("Hello Elastic Synthetics Recorder");
+  });
 
-export const getUrlContextDefaults = (): IUrlContext => ({
-  setUrl: jest.fn(),
-  url: "https://www.elastic.co",
-});
+  server.listen(port, hostname);
 
-export const getStepsContextDefaults = (): IStepsContext => ({
-  steps: [],
-  setSteps: jest.fn(),
-  onDeleteAction: jest.fn(),
-  onDeleteStep: jest.fn(),
-  onInsertAction: jest.fn(),
-  onMergeSteps: jest.fn(),
-  onRearrangeSteps: jest.fn(),
-  onSplitStep: jest.fn(),
-  onStepDetailChange: jest.fn(),
-  onUpdateAction: jest.fn(),
-});
+  server.on("error", err => {
+    // eslint-disable-next-line no-console
+    console.error(err);
+  });
+
+  return { server, hostname, port };
+}

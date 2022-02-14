@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
-import React, { useContext } from "react";
+import React, { useCallback, useContext } from "react";
 import styled from "styled-components";
 import { RecordingStatus, Setter } from "../../common/types";
 import { RecordingContext } from "../../contexts/RecordingContext";
@@ -59,7 +59,16 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
 
   const { steps } = useContext(StepsContext);
 
-  const { onTest } = useContext(TestContext);
+  const {
+    isTestInProgress,
+    onTest: startTest,
+    setIsTestInProgress,
+  } = useContext(TestContext);
+
+  const onTest = useCallback(() => {
+    setIsTestInProgress(true);
+    startTest();
+  }, [setIsTestInProgress, startTest]);
 
   return (
     <Header alignItems="center" gutterSize="m">
@@ -113,6 +122,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
           <TestButtonDivider>
             <TestButton
               isDisabled={
+                isTestInProgress ||
                 steps.length === 0 ||
                 recordingStatus === RecordingStatus.Recording
               }

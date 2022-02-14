@@ -21,35 +21,40 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+import { EuiFlexItem } from "@elastic/eui";
+import React from "react";
+import styled from "styled-components";
 
-import { RecordingStatus } from "../../common/types";
-import { IRecordingContext } from "../../contexts/RecordingContext";
-import { IStepsContext } from "../../contexts/StepsContext";
-import { IUrlContext } from "../../contexts/UrlContext";
+const AssertItem = styled(EuiFlexItem)`
+  border-left: ${props => props.theme.border.thick};
+  padding-left: 20px;
+  margin-left: 50px;
+`;
 
-export const getRecordingContextDefaults = (): IRecordingContext => ({
-  startOver: jest.fn(),
-  isStartOverModalVisible: false,
-  setIsStartOverModalVisible: jest.fn(),
-  recordingStatus: RecordingStatus.NotRecording,
-  togglePause: jest.fn(),
-  toggleRecording: jest.fn(),
-});
+const ActionItem = styled(EuiFlexItem)`
+  border-left: ${props => props.theme.border.thick};
+  padding-left: 20px;
+  margin-left: 0px;
+`;
 
-export const getUrlContextDefaults = (): IUrlContext => ({
-  setUrl: jest.fn(),
-  url: "https://www.elastic.co",
-});
+interface IActionWrapper {
+  isAssert?: boolean;
+  omitBorder?: boolean;
+}
 
-export const getStepsContextDefaults = (): IStepsContext => ({
-  steps: [],
-  setSteps: jest.fn(),
-  onDeleteAction: jest.fn(),
-  onDeleteStep: jest.fn(),
-  onInsertAction: jest.fn(),
-  onMergeSteps: jest.fn(),
-  onRearrangeSteps: jest.fn(),
-  onSplitStep: jest.fn(),
-  onStepDetailChange: jest.fn(),
-  onUpdateAction: jest.fn(),
-});
+export const Behavior: React.FC<IActionWrapper> = ({
+  children,
+  isAssert,
+  omitBorder,
+}) => {
+  if (isAssert) return <AssertItem>{children}</AssertItem>;
+  if (omitBorder) {
+    return (
+      <ActionItem style={{ borderLeft: "none", marginLeft: 2 }}>
+        {children}
+      </ActionItem>
+    );
+  }
+
+  return <ActionItem>{children}</ActionItem>;
+};

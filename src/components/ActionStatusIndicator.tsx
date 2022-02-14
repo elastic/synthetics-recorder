@@ -27,22 +27,42 @@ import React, { useContext } from "react";
 import { ResultCategory } from "../common/types";
 
 interface IActionStatusIndicator {
+  /**
+   * If true, indicator will render a rect overtop of the normal position
+   * of the `ActionElement` border.
+   *
+   * We use this to replace the border of elements where we don't want a line
+   * running down the entire side.
+   */
+  showRect?: boolean;
   status?: ResultCategory;
 }
 
-export function ActionStatusIndicator({ status }: IActionStatusIndicator) {
+export function ActionStatusIndicator({
+  showRect,
+  status,
+}: IActionStatusIndicator) {
   const euiTheme = useContext(EuiThemeContext);
 
   return (
     <svg
       width="50"
-      height="50"
-      style={{ left: 26, top: 12, position: "relative" }}
+      height="62"
+      style={{ left: 26, top: 0, position: "relative" }}
     >
-      <circle cx="25" cy="25" r="12" fill={euiTheme.colors.lightestShade} />
+      {!!showRect && (
+        <rect
+          x="24"
+          width="2"
+          height="40"
+          y="0"
+          style={{ fill: euiTheme.colors.lightShade, stroke: "none" }}
+        />
+      )}
+      <circle cx="25" cy="37" r="12" fill={euiTheme.colors.lightestShade} />
       <circle
         cx="25"
-        cy="25"
+        cy="37"
         r="3"
         fill={getColorForStatus(euiTheme, status)}
       />

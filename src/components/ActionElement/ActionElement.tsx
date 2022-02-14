@@ -31,13 +31,14 @@ import { StepsContext } from "../../contexts/StepsContext";
 import { ActionDetail } from "../ActionDetail";
 import { ActionStatusIndicator } from "../ActionStatusIndicator";
 import { Assertion } from "../Assertion";
-import { ActionWrapper } from "./ActionWrapper";
+import { Behavior } from "./Behavior";
 import { ExtraActions } from "./ExtraActions";
 
 interface IActionElement {
   actionIndex: number;
   className?: string;
   initialIsOpen?: boolean;
+  isLast?: boolean;
   step: ActionContext;
   stepIndex: number;
   testStatus?: ResultCategory;
@@ -58,6 +59,7 @@ function ActionComponent({
   actionIndex,
   className,
   initialIsOpen,
+  isLast,
   step,
   stepIndex,
   testStatus,
@@ -66,12 +68,33 @@ function ActionComponent({
   const [isOpen, setIsOpen] = useState(false);
   const [areControlsVisible, setAreControlsVisible] = useState(false);
   const close = () => setIsOpen(false);
+
+  const actionUI = step.action.isAssert ? (
+    <Assertion
+      action={step.action}
+      actionContext={step}
+      actionIndex={actionIndex}
+      close={close}
+      onDeleteAction={onDeleteAction}
+      stepIndex={stepIndex}
+    />
+  ) : (
+    <ActionDetail
+      actionContext={step}
+      actionIndex={actionIndex}
+      close={close}
+      stepIndex={stepIndex}
+    />
+  );
+
   return (
     <Container className={className} gutterSize="none">
       <EuiFlexItem grow={false}>
-        {!step.action.isAssert && <ActionStatusIndicator status={testStatus} />}
+        {!step.action.isAssert && (
+          <ActionStatusIndicator showRect={isLast} status={testStatus} />
+        )}
       </EuiFlexItem>
-      <ActionWrapper isAssert={step.action.isAssert}>
+      <Behavior isAssert={step.action.isAssert} omitBorder={isLast}>
         <ActionAccordion
           arrowDisplay="none"
           buttonProps={{ style: { display: "none" } }}
@@ -98,26 +121,9 @@ function ActionComponent({
             />
           }
         >
-          {!step.action.isAssert && (
-            <ActionDetail
-              actionContext={step}
-              actionIndex={actionIndex}
-              close={close}
-              stepIndex={stepIndex}
-            />
-          )}
-          {step.action.isAssert && (
-            <Assertion
-              action={step.action}
-              actionContext={step}
-              actionIndex={actionIndex}
-              close={close}
-              onDeleteAction={onDeleteAction}
-              stepIndex={stepIndex}
-            />
-          )}
+          {actionUI}
         </ActionAccordion>
-      </ActionWrapper>
+      </Behavior>
     </Container>
   );
 }
@@ -138,7 +144,7 @@ export const ActionElement = styled(ActionComponent)`
   }
 
   @media (max-width: ${SMALL_SCREEN_BREAKPOINT}px) {
-    .euiAccordion__triggerWrapper {
+    .euiAccordion {
       width: 650px;
     }
   }

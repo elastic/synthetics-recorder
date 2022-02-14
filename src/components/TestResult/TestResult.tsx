@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { EuiFlyout, EuiFlyoutBody } from "@elastic/eui";
 import { StepsContext } from "../../contexts/StepsContext";
 import type { JourneyStep, Result } from "../../common/types";
@@ -62,7 +62,15 @@ export function TestResult() {
     }
   }, [ipc, result, setResult, steps]);
 
-  // flyout shold not show without result data
+  const maxLineLength = useMemo(
+    () =>
+      stepCodeToDisplay
+        .split("\n")
+        .reduce((prev, cur) => Math.max(prev, cur.length), 0),
+    [stepCodeToDisplay]
+  );
+
+  // flyout should not show without result data
   if (!isResultFlyoutVisible || !result) return null;
 
   // flyout should not show if there are no results
@@ -74,7 +82,7 @@ export function TestResult() {
     <EuiFlyout
       aria-labelledby={FLYOUT_TITLE}
       onClose={() => setIsResultFlyoutVisible(false)}
-      size={result.failed === 0 ? "s" : "l"}
+      size={result.failed === 0 ? "s" : maxLineLength > 60 ? "l" : "m"}
     >
       <TestResultFlyoutHeader id={FLYOUT_TITLE} title="Journey Test Result" />
       <EuiFlyoutBody>

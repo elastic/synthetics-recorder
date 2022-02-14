@@ -22,34 +22,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { RecordingStatus } from "../../common/types";
-import { IRecordingContext } from "../../contexts/RecordingContext";
-import { IStepsContext } from "../../contexts/StepsContext";
-import { IUrlContext } from "../../contexts/UrlContext";
+import { ElectronServiceFactory, env } from "../services";
 
-export const getRecordingContextDefaults = (): IRecordingContext => ({
-  startOver: jest.fn(),
-  isStartOverModalVisible: false,
-  setIsStartOverModalVisible: jest.fn(),
-  recordingStatus: RecordingStatus.NotRecording,
-  togglePause: jest.fn(),
-  toggleRecording: jest.fn(),
+const electronService = new ElectronServiceFactory();
+
+afterEach(async () => {
+  await electronService.terminate();
 });
 
-export const getUrlContextDefaults = (): IUrlContext => ({
-  setUrl: jest.fn(),
-  url: "https://www.elastic.co",
-});
+describe("Steps", () => {
+  it("has the right number of step results", async () => {
+    const electronWindow = await electronService.getWindow();
 
-export const getStepsContextDefaults = (): IStepsContext => ({
-  steps: [],
-  setSteps: jest.fn(),
-  onDeleteAction: jest.fn(),
-  onDeleteStep: jest.fn(),
-  onInsertAction: jest.fn(),
-  onMergeSteps: jest.fn(),
-  onRearrangeSteps: jest.fn(),
-  onSplitStep: jest.fn(),
-  onStepDetailChange: jest.fn(),
-  onUpdateAction: jest.fn(),
+    await electronService.enterTestUrl(env.DEMO_APP_URL);
+
+    await electronService.clickStartRecording();
+    await electronService.waitForPageToBeIdle();
+    await electronService.clickStopRecording();
+    await electronService.clickRunTest();
+
+    expect(await electronWindow.$("text=1 success"));
+  });
 });

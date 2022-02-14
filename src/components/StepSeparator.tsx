@@ -43,11 +43,6 @@ export const StepSeparatorTopBorder = styled(EuiFlexItem)`
 `;
 
 export const StepSeparatorAccordion = styled(EuiAccordion)`
-  .euiAccordion__button {
-    width: auto;
-    flex-grow: 0;
-  }
-
   .euiAccordion__optionalAction {
     flex-grow: 1;
     flex-shrink: 1;
@@ -72,6 +67,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
 
   return (
     <StepSeparatorAccordion
+      buttonProps={{ style: { width: "auto", flexGrow: 0 } }}
       extraAction={
         <EuiFlexGroup>
           <StepSeparatorHeading grow={false}>
@@ -90,6 +86,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
           actionIndex={actionIndex}
           stepIndex={index}
           testStatus={testStatus}
+          isLast={actionIndex === step.length - 1}
         />
       ))}
     </StepSeparatorAccordion>
