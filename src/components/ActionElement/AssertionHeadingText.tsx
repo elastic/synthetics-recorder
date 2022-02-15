@@ -23,13 +23,13 @@ THE SOFTWARE.
 */
 
 import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
+import { ActionInContext } from "@elastic/synthetics";
 import React from "react";
 import { COMMAND_SELECTOR_OPTIONS } from "../../common/shared";
-import { ActionContext } from "../../common/types";
 import { Bold } from "./styles";
 
 interface IAssertionHeadingText {
-  actionContext: ActionContext;
+  actionContext: ActionInContext;
 }
 
 export function AssertionHeadingText({ actionContext }: IAssertionHeadingText) {

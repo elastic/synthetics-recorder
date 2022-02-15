@@ -74,6 +74,7 @@ function getColorForStatus(
   euiTheme: EuiThemeComputed,
   status?: ResultCategory
 ) {
+  if (!status) return euiTheme.colors.darkestShade;
   switch (status) {
     case "succeeded":
       return euiTheme.colors.success;
