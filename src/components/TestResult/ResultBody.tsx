@@ -24,13 +24,13 @@ THE SOFTWARE.
 
 import { EuiFlexItem, EuiText } from "@elastic/eui";
 import React from "react";
-import type { ResultCategory } from "../../common/types";
+import type { StepStatus } from "../../common/types";
 import { ResultContentWithoutAccordion, symbols } from "./styles";
 
 interface IResultBody {
   durationElement: JSX.Element;
   name: string;
-  resultCategory: ResultCategory;
+  resultCategory: StepStatus;
 }
 
 export function ResultBody({

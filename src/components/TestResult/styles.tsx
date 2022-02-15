@@ -31,7 +31,7 @@ import {
 } from "@elastic/eui";
 import React from "react";
 import styled from "styled-components";
-import type { ResultCategory } from "../../common/types";
+import type { StepStatus } from "../../common/types";
 
 export const ResultContainer = styled(EuiPanel)`
   && {
@@ -58,7 +58,7 @@ export const Bold = styled(EuiText)`
   font-weight: 500;
 `;
 
-export const symbols: Record<ResultCategory, JSX.Element> = {
+export const symbols: Record<StepStatus, JSX.Element> = {
   succeeded: <EuiIcon color="success" type="check" />,
   failed: <EuiIcon color="danger" type="cross" />,
   skipped: <EuiIcon color="warning" type="flag" />,
