@@ -23,14 +23,14 @@ THE SOFTWARE.
 */
 
 import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
+import { ActionInContext } from "@elastic/synthetics";
 import React from "react";
 import styled from "styled-components";
-import { ActionContext } from "../../common/types";
 import { AssertionHeadingText } from "./AssertionHeadingText";
 import { Bold } from "./styles";
 
 interface IHeadingText {
-  actionContext: ActionContext;
+  actionContext: ActionInContext;
 }
 
 const WrapText = styled(EuiFlexItem)`

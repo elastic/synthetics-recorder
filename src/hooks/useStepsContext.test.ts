@@ -21,19 +21,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+import { ActionInContext } from "@elastic/synthetics";
 import {
   act,
   renderHook,
   RenderHookResult,
 } from "@testing-library/react-hooks";
-import type { ActionContext, Step, Steps } from "../common/types";
+import type { Step, Steps } from "../common/types";
 import { IStepsContext } from "../contexts/StepsContext";
 import { useStepsContext } from "./useStepsContext";
 
 function createAction(
   name: string,
-  overrides?: Partial<ActionContext>
-): ActionContext {
+  overrides?: Partial<ActionInContext>
+): ActionInContext {
   return {
     action: {
       name,
@@ -116,10 +117,10 @@ describe("useStepsContext", () => {
 
   describe("onInsertAction", () => {
     it("adds the given action at the expected index", () => {
-      const insertedAction = {
+      const insertedAction: ActionInContext = {
         action: {
           name: "inserted-step",
-          signals: [{ "test-signal": true }],
+          signals: [{ name: "test-signal" }],
         },
         frameUrl: "https://www.elastic.co",
         isMainFrame: false,
@@ -141,7 +142,7 @@ describe("useStepsContext", () => {
 
   describe("onUpdateAction", () => {
     it("updates the targeted action", () => {
-      const updatedAction: ActionContext = {
+      const updatedAction: ActionInContext = {
         action: {
           isAssert: true,
           name: "updated-action",

@@ -22,37 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-export type Step = ActionContext[];
-export type Steps = ActionContext[][];
+import { ActionInContext } from "@elastic/synthetics";
 
-export interface ActionContext {
-  action: Action;
-  frameUrl: string;
-  isMainFrame: boolean;
-  pageAlias: string;
-  // optional
-  committed?: boolean;
-  modified?: boolean;
-  title?: string;
-}
-
-export interface Action {
-  name: string;
-  signals: Record<string, string | boolean>[];
-  // optional
-  button?: string;
-  command?: string;
-  clickCount?: number;
-  files?: string[];
-  isAssert?: boolean;
-  key?: string;
-  modifiers?: number;
-  options?: string[];
-  selector?: string;
-  text?: string;
-  url?: string;
-  value?: string | null;
-}
+export type Step = ActionInContext[];
+export type Steps = ActionInContext[][];
+export type Action = ActionInContext["action"];
 
 export interface Result {
   failed: number;

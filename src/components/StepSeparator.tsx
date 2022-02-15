@@ -28,7 +28,7 @@ import styled from "styled-components";
 import { SMALL_SCREEN_BREAKPOINT } from "../common/shared";
 import { Step } from "../common/types";
 import { useStepResultStatus } from "../hooks/useTestResult";
-import { ActionElement } from "./ActionElement/ActionElement";
+import { ActionElement } from "./ActionElement";
 
 export const StepSeparatorTopBorder = styled(EuiFlexItem)`
   border-top: ${props => props.theme.border.thin};
