@@ -88,6 +88,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
         <ControlButton
           aria-label="Toggle the script recorder between recording and paused"
           color="primary"
+          isDisabled={isTestInProgress}
           iconType={
             recordingStatus === RecordingStatus.Recording ? "pause" : "play"
           }
