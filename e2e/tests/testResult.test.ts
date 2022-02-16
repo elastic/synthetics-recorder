@@ -42,5 +42,6 @@ describe("Steps", () => {
     await electronService.clickRunTest();
 
     expect(await electronWindow.$("text=1 success"));
+    expect(await electronWindow.$(`text=Go to http://${env.DEMO_APP_URL}`));
   });
 });

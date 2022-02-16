@@ -126,6 +126,36 @@ async function recordJourneys(data, browserWindow) {
   }
 }
 
+/**
+ * Attempts to find the step associated with a `step/end` event.
+ *
+ * If the step is found, the sequential titles of each action are overlayed
+ * onto the object.
+ * @param {*} steps list of steps to search
+ * @param {*} event the result data from Playwright
+ * @returns the event data combined with action titles in a new object
+ */
+function addActionsToStepResult(steps, event) {
+  const step = steps.find(
+    s =>
+      s.length &&
+      s[0].title &&
+      s[0].title &&
+      event?.data?.name &&
+      event.data.name === s[0].title
+  );
+  if (!step) return { ...event, data: { ...event.data, actionTitles: [] } };
+  return {
+    ...event,
+    data: {
+      ...event.data,
+      actionTitles: step.map(
+        (action, index) => action?.title ?? `Action ${index + 1}`
+      ),
+    },
+  };
+}
+
 async function onTest(data, browserWindow) {
   const parseOrSkip = chunk => {
     // at times stdout ships multiple steps in one chunk, broken by newline,
@@ -184,7 +214,11 @@ async function onTest(data, browserWindow) {
     parseOrSkip(chunk).forEach(parsed => {
       const event = constructEvent(parsed);
       if (event) {
-        sendTestEvent(event);
+        sendTestEvent(
+          event.event === "step/end"
+            ? addActionsToStepResult(data.steps, event)
+            : event
+        );
       }
     });
   };

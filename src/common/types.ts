@@ -48,6 +48,7 @@ export type ResultCategory = StepStatus | "running";
 export interface JourneyStep {
   duration: number;
   error?: Error;
+  actionTitles?: string[];
   name: string;
   status: StepStatus;
 }
