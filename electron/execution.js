@@ -140,7 +140,6 @@ function addActionsToStepResult(steps, event) {
     s =>
       s.length &&
       s[0].title &&
-      s[0].title &&
       event?.data?.name &&
       event.data.name === s[0].title
   );
