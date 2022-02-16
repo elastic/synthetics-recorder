@@ -33,7 +33,7 @@ import {
   EuiFormRow,
   EuiIcon,
   EuiSpacer,
-  EuiText,
+  EuiToolTip,
 } from "@elastic/eui";
 import type { Action } from "../../common/types";
 import { StepsContext } from "../../contexts/StepsContext";
@@ -87,12 +87,19 @@ export function Assertion({
     <>
       <EuiFlexGroup alignItems="center" gutterSize="s">
         <EuiFlexItem grow={false}>
-          <EuiText>
-            <h4>Add assertion</h4>
-          </EuiText>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiIcon type="iInCircle" />
+          <EuiFlexGroup alignItems="center" gutterSize="s">
+            <EuiFlexItem grow={false}>
+              <h4>Add assertion</h4>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiToolTip
+                title="Add assertion"
+                content="You can add assertions to validate your page's content matches your expectations."
+              >
+                <EuiIcon type="iInCircle" />
+              </EuiToolTip>
+            </EuiFlexItem>
+          </EuiFlexGroup>
         </EuiFlexItem>
       </EuiFlexGroup>
       <EuiSpacer />
