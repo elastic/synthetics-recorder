@@ -41,47 +41,6 @@
   "license": "MIT",
   "main": "build/electron.js",
   "homepage": "./",
-  "build": {
-    "productName": "Elastic Synthetics Recorder",
-    "appId": "co.elastic.synthetics-recorder",
-    "files": [
-      "build/**/*",
-      "scripts/**/*",
-      "node_modules/**/*"
-    ],
-    "extraResources": [
-      "local-browsers/**/*"
-    ],
-    "extends": null,
-    "publish": {
-      "provider": "github"
-    },
-    "extraMetadata": {
-      "main": "build/electron.js"
-    },
-    "mac": {
-      "icon": "public/elastic.png",
-      "category": "public.app-category.developer-tools "
-    },
-    "protocols": {
-      "name": "elastic-synthetics-recorder",
-      "schemes": [
-        "elastic-synthetics-recorder"
-      ]
-    },
-    "win": {
-      "target": "nsis",
-      "icon": "public/elastic.png"
-    },
-    "linux": {
-      "target": [
-        "AppImage",
-        "deb"
-      ],
-      "icon": "public/elastic.png",
-      "category": "Utility"
-    }
-  },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "npm run lint:fix",

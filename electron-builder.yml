@@ -1,0 +1,28 @@
+productName: "Elastic Synthetics Recorder"
+appId: co.elastic.synthetics-recorder
+files:
+  - build/**/*
+  - scripts/**/*
+  - node_modules/**/*
+extraResources:
+  - local-browsers/**/*
+publish:
+  - provider: github
+extraMetadata:
+    main: build/electron.js
+protocols:
+  - name: elastic-synthetics-recorder
+    schemes:
+      - elastic-synthetics-recorder
+mac:
+  icon: public/elastic.png
+  category: public.app-category.developer-tools
+win:
+  target: nsis
+  icon: public/elastic.png
+linux:
+  target:
+    - AppImage
+    - deb
+  icon: public/elastic.png
+  category: Utility
