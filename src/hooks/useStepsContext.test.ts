@@ -212,7 +212,7 @@ describe("useStepsContext", () => {
     it("throws error when `actionIndex` is 0", () => {
       const result = renderHook(() => useStepsContext());
       expect(() => result.result.current.onSplitStep(0, 0)).toThrowError(
-        "Split procedure received action index 0. Cannot remove all actions from a step"
+        "Cannot remove all actions from a step."
       );
     });
 

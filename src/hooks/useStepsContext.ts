@@ -85,9 +85,7 @@ export function useStepsContext(): IStepsContext {
     },
     onSplitStep: (stepIndex, actionIndex) => {
       if (actionIndex === 0) {
-        throw Error(
-          `Split procedure received action index ${actionIndex}. Cannot remove all actions from a step.`
-        );
+        throw Error(`Cannot remove all actions from a step.`);
       }
       if (steps.length <= stepIndex) {
         throw Error("Step index cannot exceed steps length.");
