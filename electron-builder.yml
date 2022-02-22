@@ -4,8 +4,8 @@ files:
   - build/**/*
   - scripts/**/*
   - node_modules/**/*
-extraResources:
-  - local-browsers/**/*
+# extraResources:
+#  - local-browsers/**/*
 publish:
   - provider: github
 extraMetadata:
@@ -20,6 +20,8 @@ mac:
 win:
   target: nsis
   icon: public/elastic.png
+  extraResources:
+    - local-browsers/*/chrome-win/**/*
 linux:
   target:
     - AppImage
