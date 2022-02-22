@@ -77,7 +77,7 @@ export function useStepsContext(): IStepsContext {
     },
     onRearrangeSteps: (indexA, indexB) => {
       setSteps(oldSteps => {
-        const placeholder = [...steps[indexA]];
+        const placeholder = steps[indexA];
         oldSteps[indexA] = oldSteps[indexB];
         oldSteps[indexB] = placeholder;
         return oldSteps;
