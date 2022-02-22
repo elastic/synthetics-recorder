@@ -31,13 +31,12 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiFormRow,
-  EuiIcon,
   EuiSpacer,
-  EuiToolTip,
 } from "@elastic/eui";
 import type { Action } from "../../common/types";
 import { StepsContext } from "../../contexts/StepsContext";
 import { AssertionSelect } from "./Select";
+import { AssertionInfo } from "./AssertionInfo";
 
 interface IAssertion {
   action: Action;
@@ -92,12 +91,7 @@ export function Assertion({
               <h4>Add assertion</h4>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiToolTip
-                title="Add assertion"
-                content="You can add assertions to validate your page's content matches your expectations."
-              >
-                <EuiIcon type="iInCircle" />
-              </EuiToolTip>
+              <AssertionInfo />
             </EuiFlexItem>
           </EuiFlexGroup>
         </EuiFlexItem>
