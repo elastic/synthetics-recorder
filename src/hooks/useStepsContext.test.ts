@@ -258,6 +258,20 @@ describe("useStepsContext", () => {
       expect(steps[2]).toEqual([createAction("third-step-1")]);
       expect(steps[3]).toEqual([createAction("third-step-2")]);
     });
+
+    it("throws an error if the step index is greater than the steps list length", () => {
+      const result = renderHook(() => useStepsContext());
+
+      act(() => {
+        result.result.current.setSteps(splitSteps);
+      });
+      act(() => {
+        expect(() => result.result.current.onSplitStep(23, 1)).toThrowError(
+          "Step index cannot exceed steps length."
+        );
+      });
+    });
+
     it("splits the target step into two separate steps", () => {
       const result = renderHook(() => useStepsContext());
 
