@@ -33,7 +33,10 @@ import {
 } from "@elastic/eui";
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
-import { createExternalLinkHandler } from "../../common/shared";
+import {
+  createExternalLinkHandler,
+  PLAYWRIGHT_ASSERTION_DOCS_LINK,
+} from "../../common/shared";
 import { CommunicationContext } from "../../contexts/CommunicationContext";
 
 const InfoPopoverTitle = styled(EuiTitle)`
@@ -44,9 +47,6 @@ const InfoPopoverTitle = styled(EuiTitle)`
 const InfoPopoverTextWrapper = styled(EuiText)`
   padding: 8px;
 `;
-
-const PLAYWRIGHT_ASSERTION_DOCS_LINK =
-  "https://playwright.dev/docs/assertions/";
 
 export function AssertionInfo() {
   const [isInfoPopoverOpen, setIsInfoPopoverOpen] = useState(false);

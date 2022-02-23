@@ -64,6 +64,9 @@ export const COMMAND_SELECTOR_OPTIONS = [
 export const SYNTHETICS_DISCUSS_FORUM_URL =
   "https://forms.gle/PzVtYoExfqQ9UMkY6";
 
+export const PLAYWRIGHT_ASSERTION_DOCS_LINK =
+  "https://playwright.dev/docs/assertions/";
+
 export const SMALL_SCREEN_BREAKPOINT = 850;
 
 export function performSelectorLookup(
