@@ -4,8 +4,6 @@ files:
   - build/**/*
   - scripts/**/*
   - node_modules/**/*
-# extraResources:
-#  - local-browsers/**/*
 publish:
   - provider: github
 extraMetadata:
@@ -16,15 +14,22 @@ protocols:
       - elastic-synthetics-recorder
 mac:
   icon: public/elastic.png
-  category: public.app-category.developer-tools
+  category: pblic.app-category.developer-tools
+  extraResources:
+    - from: local-browsers/_releases/chromium-${env.BROWSER_REVISION}-mac/chrome-mac
+      to: local-browsers/chromium-${env.BROWSER_REVISION}/chrome-mac
 win:
   target: nsis
   icon: public/elastic.png
   extraResources:
-    - local-browsers/*/chrome-win/**/*
+    - from: local-browsers/_releases/chromium-${env.BROWSER_REVISION}-win/chrome-win
+      to: local-browsers/chromium-${env.BROWSER_REVISION}/chrome-win
 linux:
   target:
     - AppImage
     - deb
   icon: public/elastic.png
   category: Utility
+  extraResources:
+    - from: local-browsers/_releases/chromium-${env.BROWSER_REVISION}-linux/chrome-linux
+      to: local-browsers/chromium-${env.BROWSER_REVISION}/chrome-linux
