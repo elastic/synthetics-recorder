@@ -14,7 +14,7 @@ protocols:
       - elastic-synthetics-recorder
 mac:
   icon: public/elastic.png
-  category: pblic.app-category.developer-tools
+  category: public.app-category.developer-tools
   extraResources:
     - from: local-browsers/_releases/chromium-${env.BROWSER_REVISION}-mac/chrome-mac
       to: local-browsers/chromium-${env.BROWSER_REVISION}/chrome-mac
@@ -33,3 +33,7 @@ linux:
   extraResources:
     - from: local-browsers/_releases/chromium-${env.BROWSER_REVISION}-linux/chrome-linux
       to: local-browsers/chromium-${env.BROWSER_REVISION}/chrome-linux
+  # electron-builder issue:
+  # https://github.com/electron-userland/electron-builder/issues/6200#issuecomment-907830847
+  asarUnpack:
+    - "**/node_modules/sharp/**"
