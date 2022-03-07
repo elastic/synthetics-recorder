@@ -38,7 +38,8 @@ import { IRecordingContext } from "../contexts/RecordingContext";
 export function useRecordingContext(
   ipc: RendererProcessIpc,
   url: string,
-  stepCount: number
+  stepCount: number,
+  setResult: (data: undefined) => void
 ): IRecordingContext {
   const [isStartOverModalVisible, setIsStartOverModalVisible] = useState(false);
   const [recordingStatus, setRecordingStatus] = useState(
@@ -61,10 +62,13 @@ export function useRecordingContext(
   const startOver = useCallback(async () => {
     if (recordingStatus === RecordingStatus.NotRecording) {
       setRecordingStatus(RecordingStatus.Recording);
+      // Depends on the results context, because when we overwrite
+      // a previous journey we need to discard its result status
+      setResult(undefined);
       await ipc.callMain("record-journey", { url });
       setRecordingStatus(RecordingStatus.NotRecording);
     }
-  }, [ipc, recordingStatus, url]);
+  }, [ipc, recordingStatus, setResult, url]);
 
   const togglePause = async () => {
     if (recordingStatus === RecordingStatus.NotRecording) return;

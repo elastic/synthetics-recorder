@@ -61,10 +61,15 @@ export default function App() {
   const { ipc } = useContext(CommunicationContext);
   const stepsContextUtils = useStepsContext();
   const { steps, setSteps } = stepsContextUtils;
-  const recordingContextUtils = useRecordingContext(ipc, url, steps.length);
+  const syntheticsTestUtils = useSyntheticsTest(steps);
+  const recordingContextUtils = useRecordingContext(
+    ipc,
+    url,
+    steps.length,
+    syntheticsTestUtils.setResult
+  );
   const { isStartOverModalVisible, setIsStartOverModalVisible, startOver } =
     recordingContextUtils;
-  const syntheticsTestUtils = useSyntheticsTest(steps);
 
   useEffect(() => {
     // `actions` here is a set of `ActionInContext`s that make up a `Step`
