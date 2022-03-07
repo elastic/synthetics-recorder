@@ -237,17 +237,11 @@ async function onFileSave(code) {
 }
 
 async function onTransformCode(data) {
-  console.log("step data", data);
   const generator = new SyntheticsGenerator(false);
-  console.log("created generator");
-  console.log("data to transcribe", JSON.stringify(data[0]));
   const codeBlocks = [];
   data.actions.forEach(action => {
-    console.log("the generation", generator.generateStepStart("a step start"));
     codeBlocks.push(generator.generateText(action));
   });
-  console.log("code", codeBlocks);
-  // return code;
   return "";
 }
 
