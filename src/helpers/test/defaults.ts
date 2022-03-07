@@ -47,6 +47,9 @@ export const getStepsContextDefaults = (): IStepsContext => ({
   onDeleteAction: jest.fn(),
   onDeleteStep: jest.fn(),
   onInsertAction: jest.fn(),
+  onMergeSteps: jest.fn(),
+  onRearrangeSteps: jest.fn(),
+  onSplitStep: jest.fn(),
   onStepDetailChange: jest.fn(),
   onUpdateAction: jest.fn(),
 });

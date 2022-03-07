@@ -65,6 +65,45 @@ export function useStepsContext(): IStepsContext {
         })
       );
     },
+    onMergeSteps: (indexToInsert, indexToRemove) => {
+      setSteps(oldSteps => {
+        oldSteps[indexToInsert] = [
+          ...steps[indexToInsert],
+          ...steps[indexToRemove],
+        ];
+        oldSteps.splice(indexToRemove, 1);
+        return oldSteps;
+      });
+    },
+    onRearrangeSteps: (indexA, indexB) => {
+      setSteps(oldSteps => {
+        const placeholder = steps[indexA];
+        oldSteps[indexA] = oldSteps[indexB];
+        oldSteps[indexB] = placeholder;
+        return oldSteps;
+      });
+    },
+    onSplitStep: (stepIndex, actionIndex) => {
+      if (actionIndex === 0) {
+        throw Error(`Cannot remove all actions from a step.`);
+      }
+      if (steps.length <= stepIndex) {
+        throw Error("Step index cannot exceed steps length.");
+      }
+      const stepToSplit = steps[stepIndex];
+      if (stepToSplit.length <= 1) {
+        throw Error("Cannot split step with only one action.");
+      }
+      const reducedStep = stepToSplit.slice(0, actionIndex);
+      const insertedStep = stepToSplit.slice(actionIndex);
+
+      setSteps([
+        ...steps.slice(0, stepIndex),
+        reducedStep,
+        insertedStep,
+        ...steps.slice(stepIndex + 1, steps.length),
+      ]);
+    },
     onStepDetailChange,
     onUpdateAction: (
       action: ActionInContext,

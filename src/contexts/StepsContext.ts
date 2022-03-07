@@ -43,6 +43,9 @@ export interface IStepsContext {
    * Deletes the action at the `actionIndex` in the given step.
    */
   onDeleteAction: (stepIndex: number, actionIndex: number) => void;
+  /**
+   * Deletes the step at `stepIndex`.
+   */
   onDeleteStep: (stepIndex: number) => void;
   /**
    * Inserts the `action` to the given step at `actionIndex`.
@@ -52,6 +55,21 @@ export interface IStepsContext {
     stepIndex: number,
     actionIndex: number
   ) => void;
+  /**
+   * Merges two steps and replaces the first index with the merged result.
+   */
+  onMergeSteps: (indexToInsert: number, indexToRemove: number) => void;
+  /**
+   * Will rearrange the step list by moving one step to the other's location.
+   */
+  onRearrangeSteps: (indexA: number, indexB: number) => void;
+  /**
+   * Creates a new step, composed of the previous step's actions starting at the given index.
+   */
+  onSplitStep: (stepIndex: number, actionIndex: number) => void;
+  /**
+   * Overwrites the action at the given step -> action index.
+   */
   onUpdateAction: (
     action: ActionInContext,
     stepIndex: number,
@@ -69,6 +87,9 @@ export const StepsContext = createContext<IStepsContext>({
   onDeleteAction: notImplemented,
   onDeleteStep: notImplemented,
   onInsertAction: notImplemented,
+  onMergeSteps: notImplemented,
+  onRearrangeSteps: notImplemented,
+  onSplitStep: notImplemented,
   onStepDetailChange: notImplemented,
   onUpdateAction: notImplemented,
 });
