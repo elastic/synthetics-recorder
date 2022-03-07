@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+import { ActionInContext } from "@elastic/synthetics";
 import {
   act,
   renderHook,
@@ -29,6 +30,24 @@ import {
 import type { ActionContext, Step, Steps } from "../common/types";
 import { IStepsContext } from "../contexts/StepsContext";
 import { useStepsContext } from "./useStepsContext";
+
+// copied from upstream branch, do not merge this but delete and reference
+// original function after rebasing
+function createAction(
+  name: string,
+  overrides?: Partial<ActionInContext>
+): ActionInContext {
+  return {
+    action: {
+      name,
+      signals: [],
+    },
+    frameUrl: "https://www.elastic.co",
+    isMainFrame: true,
+    pageAlias: "pageAlias",
+    ...(overrides ?? {}),
+  };
+}
 
 describe("useStepsContext", () => {
   let defaultResult: RenderHookResult<unknown, IStepsContext>;
@@ -276,6 +295,125 @@ describe("useStepsContext", () => {
       ]);
       expect(steps[1]).toHaveLength(1);
       expect(steps[1][0].action.name).toBe("first-step-1");
+    });
+  });
+
+  describe("onDropStep", () => {
+    let dropSteps: Steps;
+
+    beforeEach(() => {
+      dropSteps = [
+        [
+          createAction("step-0-action-0"),
+          createAction("step-0-action-1"),
+          createAction("step-0-action-2"),
+        ],
+        [
+          createAction("step-1-action-0"),
+          createAction("step-1-action-1"),
+          createAction("step-1-action-2"),
+        ],
+        [
+          createAction("step-2-action-0"),
+          createAction("step-2-action-1"),
+          createAction("step-2-action-2"),
+        ],
+      ];
+    });
+
+    const mapActionName = (a: ActionContext, _: number) => a.action.name;
+
+    it("throws an error if target index is less than 0", () => {
+      expect(() =>
+        defaultResult.result.current.onDropStep(-1, 0, 1)
+      ).toThrowError();
+    });
+
+    it("throws an error if target index does not exist in the list", () => {
+      expect(() =>
+        defaultResult.result.current.onDropStep(50, 0, 1)
+      ).toThrowError();
+    });
+
+    it("throws an error if the initiator index is less than or equal to 0", () => {
+      expect(() =>
+        defaultResult.result.current.onDropStep(0, 0, 3)
+      ).toThrowError();
+    });
+
+    it("throws an error if the initiator index does not exist in the list", () => {
+      expect(() =>
+        defaultResult.result.current.onDropStep(0, 50, 2)
+      ).toThrowError();
+    });
+
+    it("performs merge with previous step data", () => {
+      act(() => {
+        defaultResult.result.current.setSteps(dropSteps);
+      });
+      act(() => {
+        defaultResult.result.current.onDropStep(0, 1, 1);
+      });
+      const { steps } = defaultResult.result.current;
+      expect(steps[0]).toHaveLength(2);
+      expect(steps[1]).toHaveLength(4);
+      expect(steps[2]).toHaveLength(3);
+      expect(steps[0].map(mapActionName)).toEqual([
+        "step-0-action-0",
+        "step-0-action-1",
+      ]);
+      expect(steps[1].map(mapActionName)).toEqual([
+        "step-0-action-2",
+        "step-1-action-0",
+        "step-1-action-1",
+        "step-1-action-2",
+      ]);
+    });
+
+    it("performs merge with next step data", () => {
+      act(() => {
+        defaultResult.result.current.setSteps(dropSteps);
+      });
+      act(() => {
+        defaultResult.result.current.onDropStep(2, 1, 0);
+      });
+      const { steps } = defaultResult.result.current;
+      expect(steps[0]).toHaveLength(3);
+      expect(steps[1]).toHaveLength(4);
+      expect(steps[2]).toHaveLength(2);
+      expect(steps[1].map(mapActionName)).toEqual([
+        "step-1-action-0",
+        "step-1-action-1",
+        "step-1-action-2",
+        "step-2-action-0",
+      ]);
+      expect(steps[2].map(mapActionName)).toEqual([
+        "step-2-action-1",
+        "step-2-action-2",
+      ]);
+    });
+
+    it("performs a split when dragging step over itself", () => {
+      act(() => {
+        defaultResult.result.current.setSteps(dropSteps);
+      });
+      act(() => {
+        defaultResult.result.current.onDropStep(1, 1, 0);
+      });
+      const { steps } = defaultResult.result.current;
+      expect(steps[0]).toHaveLength(4);
+      expect(steps[1]).toHaveLength(2);
+      expect(steps[2]).toHaveLength(3);
+      expect(steps[0].map(mapActionName)).toEqual([
+        "step-0-action-0",
+        "step-0-action-1",
+        "step-0-action-2",
+        "step-1-action-0",
+      ]);
+      expect(steps[1].map(mapActionName)).toEqual([
+        "step-1-action-1",
+        "step-1-action-2",
+      ]);
     });
   });
 

@@ -55,6 +55,14 @@ export interface IStepsContext {
     actionIndex: number
   ) => void;
   /**
+   * Handles the mutation on a drag/drop.
+   */
+  onDropStep: (
+    targetIndex: number,
+    initiatorIndex: number,
+    actionIndex: number
+  ) => void;
+  /**
    * Merges two steps and replaces the first index with the merged result.
    */
   onMergeSteps: (indexToInsert: number, indexToRemove: number) => void;
@@ -85,6 +93,7 @@ export const StepsContext = createContext<IStepsContext>({
   setSteps: notImplemented,
   onDeleteAction: notImplemented,
   onDeleteStep: notImplemented,
+  onDropStep: notImplemented,
   onInsertAction: notImplemented,
   onMergeSteps: notImplemented,
   onRearrangeSteps: notImplemented,

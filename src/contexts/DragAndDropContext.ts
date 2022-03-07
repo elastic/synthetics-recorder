@@ -22,35 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { RecordingStatus } from "../../common/types";
-import { IRecordingContext } from "../../contexts/RecordingContext";
-import { IStepsContext } from "../../contexts/StepsContext";
-import { IUrlContext } from "../../contexts/UrlContext";
+import { createContext } from "react";
+import { Setter } from "../common/types";
 
-export const RECORDING_CONTEXT_DEFAULTS: IRecordingContext = {
-  isStartOverModalVisible: false,
-  setIsStartOverModalVisible: jest.fn(),
-  recordingStatus: RecordingStatus.NotRecording,
-  startOver: jest.fn(),
-  togglePause: jest.fn(),
-  toggleRecording: jest.fn(),
-};
+export interface IDragAndDropContext {
+  isDragInProgress: boolean;
+  setIsDragInProgress: Setter<boolean>;
+}
 
-export const URL_CONTEXT_DEFAULTS: IUrlContext = {
-  url: "",
-  setUrl: jest.fn(),
-};
-
-export const STEPS_CONTEXT_DEFAULTS: IStepsContext = {
-  steps: [],
-  setSteps: jest.fn(),
-  onInsertAction: jest.fn(),
-  onDeleteAction: jest.fn(),
-  onDeleteStep: jest.fn(),
-  onDropStep: jest.fn(),
-  onMergeSteps: jest.fn(),
-  onRearrangeSteps: jest.fn(),
-  onSplitStep: jest.fn(),
-  onStepDetailChange: jest.fn(),
-  onUpdateAction: jest.fn(),
-};
+export const DragAndDropContext = createContext<IDragAndDropContext>({
+  isDragInProgress: false,
+  setIsDragInProgress: () => {
+    throw Error("Not implemented");
+  },
+});

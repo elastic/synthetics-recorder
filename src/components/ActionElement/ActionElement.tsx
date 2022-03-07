@@ -22,17 +22,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiAccordion,
-  EuiButtonIcon,
-} from "@elastic/eui";
+import { EuiFlexGroup, EuiFlexItem, EuiAccordion } from "@elastic/eui";
 import React, { useCallback, useContext, useState } from "react";
 import styled from "styled-components";
-import { SMALL_SCREEN_BREAKPOINT } from "../../common/shared";
-import { ActionContext, ResultCategory } from "../../common/types";
+import {
+  DRAG_AND_DROP_DATA_TRANSFER_TYPE,
+  SMALL_SCREEN_BREAKPOINT,
+} from "../../common/shared";
+import {
+  ActionContext,
+  ResultCategory,
+  StepSeparatorDragDropDataTransfer,
+} from "../../common/types";
+import { DragAndDropContext } from "../../contexts/DragAndDropContext";
 import { StepsContext } from "../../contexts/StepsContext";
+import { useDrop } from "../../hooks/useDrop";
 import { ActionDetail } from "../ActionDetail";
 import { ActionStatusIndicator } from "../ActionStatusIndicator";
 import { Assertion } from "../Assertion";
@@ -44,6 +48,7 @@ interface IActionElement {
   actionIndex: number;
   className?: string;
   initialIsOpen?: boolean;
+  isDragging?: boolean;
   step: ActionContext;
   stepIndex: number;
   testStatus?: ResultCategory;
@@ -61,6 +66,15 @@ const Container = styled(EuiFlexGroup)`
   overflow: visible;
 `;
 
+const DropZone = styled.div`
+  height: 8px;
+  background-color: green;
+  border-radius: 4px;
+  &:moz-drag-over {
+    background-color: orange;
+  }
+`;
+
 function ActionComponent({
   actionIndex,
   className,
@@ -69,13 +83,15 @@ function ActionComponent({
   stepIndex,
   testStatus,
 }: IActionElement) {
-  const { onDeleteAction, onSplitStep } = useContext(StepsContext);
+  const { onDeleteAction, onSplitStep, onDropStep } = useContext(StepsContext);
   const [isOpen, setIsOpen] = useState(false);
   const [areControlsVisible, setAreControlsVisible] = useState(false);
   const close = () => setIsOpen(false);
   const splitStepAtAction = useCallback(() => {
     onSplitStep(stepIndex, actionIndex);
   }, [actionIndex, onSplitStep, stepIndex]);
+  const { isDroppable } = useDrop(stepIndex, actionIndex);
+  const { isDragInProgress } = useContext(DragAndDropContext);
 
   return (
     <Container className={className} gutterSize="none">
@@ -134,6 +150,23 @@ function ActionComponent({
             />
           )}
         </ActionAccordion>
+        {isDragInProgress && isDroppable && (
+          <DropZone
+            onDragOver={e => {
+              e.preventDefault();
+            }}
+            onDragEnter={e => {
+              e.preventDefault();
+            }}
+            onDrop={e => {
+              const { initiatorIndex } = JSON.parse(
+                e.dataTransfer.getData(DRAG_AND_DROP_DATA_TRANSFER_TYPE)
+              ) as StepSeparatorDragDropDataTransfer;
+              onDropStep(stepIndex, initiatorIndex, actionIndex);
+              e.preventDefault();
+            }}
+          />
+        )}
       </ActionWrapper>
     </Container>
   );

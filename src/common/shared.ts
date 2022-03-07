@@ -70,6 +70,9 @@ export const COMMAND_SELECTOR_OPTIONS = [
 export const SYNTHETICS_DISCUSS_FORUM_URL =
   "https://forms.gle/PzVtYoExfqQ9UMkY6";
 
+export const DRAG_AND_DROP_DATA_TRANSFER_TYPE =
+  "application/co.elastic.synthetics-recorder.step-drag";
+
 export const SMALL_SCREEN_BREAKPOINT = 850;
 
 export function performSelectorLookup(

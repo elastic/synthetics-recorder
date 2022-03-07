@@ -23,10 +23,15 @@ THE SOFTWARE.
 */
 
 import { EuiAccordion, EuiFlexItem, EuiFlexGroup } from "@elastic/eui";
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
-import { SMALL_SCREEN_BREAKPOINT } from "../common/shared";
-import { Step } from "../common/types";
+import {
+  DRAG_AND_DROP_DATA_TRANSFER_TYPE,
+  SMALL_SCREEN_BREAKPOINT,
+} from "../common/shared";
+import { Step, StepSeparatorDragDropDataTransfer } from "../common/types";
+import { DragAndDropContext } from "../contexts/DragAndDropContext";
+import { useDragAndDrop } from "../hooks/useDragAndDrop";
 import { useStepResultStatus } from "../hooks/useTestResult";
 import { ActionElement } from "./ActionElement/ActionElement";
 
@@ -69,16 +74,45 @@ interface IStepSeparator {
   step: Step;
 }
 
+function createStepSeparatorDragDropData(
+  stepIndex: number
+): StepSeparatorDragDropDataTransfer {
+  return { initiatorIndex: stepIndex };
+}
+
 export function StepSeparator({ index, step }: IStepSeparator) {
   const testStatus = useStepResultStatus(
     step.length ? step[0].title : undefined
   );
+  const { setIsDragInProgress } = useContext(DragAndDropContext);
+  const { isDraggable } = useDragAndDrop(index);
+
+  const onDragStart:
+    | React.DragEventHandler<HTMLDivElement | HTMLSpanElement>
+    | undefined = isDraggable
+    ? e => {
+        setIsDragInProgress(true);
+        const dragDataString = JSON.stringify(
+          createStepSeparatorDragDropData(index)
+        );
+        e.dataTransfer.setData(
+          DRAG_AND_DROP_DATA_TRANSFER_TYPE,
+          dragDataString
+        );
+        e.dataTransfer.setData("text/plain", dragDataString);
+      }
+    : undefined;
+  const onDragEnd = isDraggable ? () => setIsDragInProgress(false) : undefined;
 
   return (
     <StepSeparatorAccordion
       className="stepSeparator"
       extraAction={
-        <EuiFlexGroup>
+        <EuiFlexGroup
+          draggable={isDraggable}
+          onDragStart={onDragStart}
+          onDragEnd={onDragEnd}
+        >
           <StepSeparatorHeading grow={false}>
             Step {index + 1}
           </StepSeparatorHeading>

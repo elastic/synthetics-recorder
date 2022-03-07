@@ -40,6 +40,21 @@ const stepString: Steps = [
       },
       title: "Go to https://www.google.com/?gws_rd=ssl",
     },
+    {
+      pageAlias: "page",
+      isMainFrame: true,
+      frameUrl: "https://www.google.com/?gws_rd=ssl",
+      action: {
+        name: "click",
+        selector: '[aria-label="Search"]',
+        signals: [],
+        button: "left",
+        modifiers: 0,
+        clickCount: 1,
+      },
+      committed: true,
+      title: 'Click [aria-label="Search"]',
+    },
   ],
   [
     {
@@ -351,6 +366,86 @@ export function useStepsContext(): IStepsContext {
         oldSteps[indexB] = placeholder;
         return oldSteps;
       });
+    },
+    /**
+     * @example
+     * The examples below depend on this array:
+     *
+     * [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+     *
+     *
+     * Example 1:
+     * Target index: 0
+     * Initiator index: 1
+     * Action index: 1th
+     * Output: [[1, 2], [3, 4, 5, 6], [7, 8, 9]]
+     *
+     * Slice step 0 at idx 1, results in [1, 2]
+     * Slice step 0, starting at idx 2...length, results in [3]
+     * Merge [3] with step idx 1, [4, 5, 6]
+     *
+     * Example 2:
+     * Target index: 1
+     * Initiator index: 1
+     * Action index: 0
+     * Output: [[1, 2, 3, 4], [5, 6], [7, 8, 9]]
+     *
+     * Example 3:
+     * Target index: 2
+     * Initiator index: 1
+     * Action index: 0th
+     * Output: [[1, 2, 3], [4, 5], [6, 7, 8, 9]]
+     */
+    onDropStep: (targetIndex, initiatorIndex, actionIndex) => {
+      if (targetIndex < 0 || targetIndex >= steps.length)
+        // TODO: improve error message
+        throw Error("Invalid index for drag and drop step merge procedure");
+      if (initiatorIndex <= 0 || initiatorIndex >= steps.length)
+        // TODO: improve error message
+        throw Error("Cannot drag/drop from specified index");
+
+      const targetStep = steps[targetIndex];
+      const initiatorStep = steps[initiatorIndex];
+
+      // corresponds to example 1 above
+      if (targetIndex < initiatorIndex) {
+        const newTargetStep = targetStep.slice(0, actionIndex + 1);
+        const toMerge = targetStep.slice(actionIndex + 1, targetStep.length);
+        const newInitiator = [...toMerge, ...initiatorStep];
+        setSteps(oldSteps => {
+          return [
+            ...oldSteps.slice(0, targetIndex),
+            newTargetStep,
+            newInitiator,
+            ...oldSteps.slice(initiatorIndex + 1, oldSteps.length),
+          ];
+        });
+      }
+      // corresponds to example 2 above
+      else if (targetIndex === initiatorIndex) {
+        setSteps(oldSteps => {
+          return [
+            ...oldSteps.slice(0, initiatorIndex - 1),
+            [
+              ...oldSteps[initiatorIndex - 1],
+              ...targetStep.slice(0, actionIndex + 1),
+            ],
+            targetStep.slice(actionIndex + 1, targetStep.length),
+            ...oldSteps.slice(initiatorIndex + 1, oldSteps.length),
+          ];
+        });
+      }
+      // corresponds to example 3 above
+      else {
+        setSteps(oldSteps => {
+          return [
+            ...oldSteps.slice(0, initiatorIndex),
+            [...initiatorStep, ...targetStep.slice(0, actionIndex + 1)],
+            targetStep.slice(actionIndex + 1, targetStep.length),
+            ...oldSteps.slice(targetIndex + 1, oldSteps.length),
+          ];
+        });
+      }
     },
     onSplitStep: (stepIndex, actionIndex) => {
       if (actionIndex === 0)
