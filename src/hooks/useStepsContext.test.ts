@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import { ActionInContext } from "@elastic/synthetics";
+
 import {
   act,
   renderHook,
@@ -35,8 +35,8 @@ import { useStepsContext } from "./useStepsContext";
 // original function after rebasing
 function createAction(
   name: string,
-  overrides?: Partial<ActionInContext>
-): ActionInContext {
+  overrides?: Partial<ActionContext>
+): ActionContext {
   return {
     action: {
       name,

@@ -312,7 +312,7 @@ const stepString: Steps = [
 ];
 
 export function useStepsContext(): IStepsContext {
-  const [steps, setSteps] = useState<Steps>(stepString);
+  const [steps, setSteps] = useState<Steps>([]);
   const onStepDetailChange = (updatedStep: Step, indexToUpdate: number) => {
     setSteps(
       steps.map((currentStep, iterIndex) =>

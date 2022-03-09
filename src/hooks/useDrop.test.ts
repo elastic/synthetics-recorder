@@ -22,15 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ActionInContext } from "@elastic/synthetics";
+import { ActionContext } from "../common/types";
 import { isDroppable } from "./useDrop";
 
 // copied from upstream branch, do not merge this but delete and reference
 // original function after rebasing
 function createAction(
   name: string,
-  overrides?: Partial<ActionInContext>
-): ActionInContext {
+  overrides?: Partial<ActionContext>
+): ActionContext {
   return {
     action: {
       name,

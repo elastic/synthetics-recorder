@@ -66,13 +66,27 @@ const Container = styled(EuiFlexGroup)`
   overflow: visible;
 `;
 
-const DropZone = styled.div`
+interface DropZoneStyleProps {
+  isDraggedOver: boolean;
+}
+
+const DropZone = styled.div<DropZoneStyleProps>`
   height: 8px;
-  background-color: green;
   border-radius: 4px;
-  &:moz-drag-over {
-    background-color: orange;
-  }
+  ${({ isDraggedOver, theme }) =>
+    isDraggedOver &&
+    `
+    background-color: ${theme.colors.accent};
+    opacity: 1;
+    transition: background-color 0.3s;
+  `}
+  ${({ isDraggedOver, theme }) =>
+    !isDraggedOver &&
+    `
+    background-color: ${theme.colors.success};
+    opacity: 0.75;
+    transition: background-color 0.3s;
+  `}
 `;
 
 function ActionComponent({
@@ -92,6 +106,8 @@ function ActionComponent({
   }, [actionIndex, onSplitStep, stepIndex]);
   const { isDroppable } = useDrop(stepIndex, actionIndex);
   const { isDragInProgress } = useContext(DragAndDropContext);
+  // TODO: move this drop zone component to dedicated file
+  const [dropzoneOver, setDropzeonOver] = useState(false);
 
   return (
     <Container className={className} gutterSize="none">
@@ -150,18 +166,24 @@ function ActionComponent({
             />
           )}
         </ActionAccordion>
-        {isDragInProgress && isDroppable && (
+        {isDroppable && isDragInProgress && (
           <DropZone
+            isDraggedOver={dropzoneOver}
             onDragOver={e => {
               e.preventDefault();
             }}
+            onDragLeave={_ => {
+              setDropzeonOver(false);
+            }}
             onDragEnter={e => {
+              setDropzeonOver(true);
               e.preventDefault();
             }}
             onDrop={e => {
               const { initiatorIndex } = JSON.parse(
                 e.dataTransfer.getData(DRAG_AND_DROP_DATA_TRANSFER_TYPE)
               ) as StepSeparatorDragDropDataTransfer;
+              setDropzeonOver(false);
               onDropStep(stepIndex, initiatorIndex, actionIndex);
               e.preventDefault();
             }}

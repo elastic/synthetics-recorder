@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import styled from "styled-components";
 import { EuiButtonIcon } from "@elastic/eui";
 import React from "react";
 
@@ -30,18 +31,26 @@ interface Props {
   onClick: () => void;
 }
 
+interface StyleProps {
+  computedvisibility: string;
+}
+
+const AddStepDivider = styled(EuiButtonIcon)<StyleProps>`
+  position: relative;
+  left: 63px;
+  top: -8px;
+  background-color: ${({ theme }) => theme.colors.body};
+  visibility: ${({ computedvisibility }) => computedvisibility};
+`;
+
 export function NewStepDividerButton({ actionIndex, onClick }: Props) {
   return (
-    <EuiButtonIcon
+    <AddStepDivider
+      aria-label="Clicking this button will insert a logical step between this action and the previous one. Use this feature to group actions differently from the recorder's default output."
+      computedvisibility={actionIndex > 0 ? "visible" : "hidden"}
       color="text"
       iconType="plusInCircle"
       onClick={onClick}
-      style={{
-        visibility: actionIndex > 0 ? "visible" : "hidden",
-        position: "relative",
-        left: 30,
-        top: 0,
-      }}
     />
   );
 }

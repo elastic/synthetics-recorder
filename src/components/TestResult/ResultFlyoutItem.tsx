@@ -31,17 +31,11 @@ import { ResultTitle } from "./ResultTitle";
 
 export interface IResultFlyoutItem {
   code: string;
-  key: string;
   step: JourneyStep;
   stepIndex: number;
 }
 
-export function ResultFlyoutItem({
-  code,
-  key,
-  step,
-  stepIndex,
-}: IResultFlyoutItem) {
+export function ResultFlyoutItem({ code, step, stepIndex }: IResultFlyoutItem) {
   const { name, status, error, duration } = step;
 
   const durationElement = (
@@ -49,7 +43,7 @@ export function ResultFlyoutItem({
   );
 
   return (
-    <ResultTitle key={key} titleText={`Step ${stepIndex + 1}`}>
+    <ResultTitle titleText={`Step ${stepIndex + 1}`}>
       {error ? (
         <ResultErrorBody
           code={code}

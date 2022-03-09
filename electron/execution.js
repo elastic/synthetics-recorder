@@ -237,12 +237,9 @@ async function onFileSave(code) {
 }
 
 async function onTransformCode(data) {
-  const generator = new SyntheticsGenerator(false);
-  const codeBlocks = [];
-  data.actions.forEach(action => {
-    codeBlocks.push(generator.generateText(action));
-  });
-  return "";
+  const generator = new SyntheticsGenerator(data.isSuite);
+  const code = generator.generateText(data.actions);
+  return code;
 }
 
 async function onSetMode(mode) {
