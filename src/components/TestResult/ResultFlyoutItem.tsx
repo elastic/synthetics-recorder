@@ -42,30 +42,29 @@ export function ResultFlyoutItem({
   step,
   stepIndex,
 }: IResultFlyoutItem) {
-  const { name, status, error, duration } = step;
+  const { actionTitles, status, error, duration } = step;
 
   const durationElement = (
     <EuiText size="s">{Math.round(duration / 1000)}s</EuiText>
   );
 
   return (
-    <ResultTitle key={key} titleText={`Step ${stepIndex + 1}`}>
+    <ResultTitle
+      durationElement={durationElement}
+      key={key}
+      titleText={`Step ${stepIndex + 1}`}
+    >
       {error ? (
         <ResultErrorBody
+          actionTitles={actionTitles ?? []}
           code={code}
-          durationElement={durationElement}
           errorMessage={error?.message}
-          name={name}
           resultCategory={status}
           stepIndex={stepIndex}
           stepName={step.name}
         />
       ) : (
-        <ResultBody
-          durationElement={durationElement}
-          name={name}
-          resultCategory={status}
-        />
+        <ResultBody actionTitles={actionTitles ?? []} resultCategory={status} />
       )}
     </ResultTitle>
   );

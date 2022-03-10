@@ -156,7 +156,13 @@ describe("shared", () => {
       await getCodeForFailedResult(mockIpc, [failedStep], {
         status: "failed",
         type: "inline",
-        steps: [{ duration: 10, name: "I failed", status: "failed" }],
+        steps: [
+          {
+            duration: 10,
+            name: "I failed",
+            status: "failed",
+          },
+        ],
       });
 
       expect(mockIpc.callMain).toHaveBeenCalledTimes(1);

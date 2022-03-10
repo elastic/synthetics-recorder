@@ -25,7 +25,7 @@ THE SOFTWARE.
 import { EuiFlexGroup, EuiFlexItem, EuiText, EuiCodeBlock } from "@elastic/eui";
 import React from "react";
 import type { StepStatus } from "../../common/types";
-import { ResultErrorAccordion, symbols } from "./styles";
+import { ResultContentWrapper, ResultErrorAccordion, symbols } from "./styles";
 
 function removeColorCodes(str = "") {
   // eslint-disable-next-line no-control-regex
@@ -34,50 +34,56 @@ function removeColorCodes(str = "") {
 
 export interface IResultErrorBody {
   code: string;
-  durationElement: JSX.Element;
   errorMessage?: string;
-  name: string;
+  actionTitles: string[];
   resultCategory: StepStatus;
   stepIndex: number;
   stepName: string;
 }
 
 export function ResultErrorBody({
+  actionTitles,
   code,
-  durationElement,
   errorMessage,
-  name,
   resultCategory,
   stepIndex,
   stepName,
 }: IResultErrorBody) {
   return (
-    <ResultErrorAccordion
-      id={stepName}
-      initialIsOpen
-      buttonContent={
-        <EuiFlexGroup alignItems="center" gutterSize="xs">
-          <EuiFlexItem grow={false}>{symbols[resultCategory]}</EuiFlexItem>
-          <EuiFlexItem>
-            <EuiText size="s">{name}</EuiText>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      }
-      extraAction={durationElement}
-      key={stepIndex}
-      paddingSize="s"
-      buttonClassName="euiAccordionForm__button"
-    >
-      {errorMessage && (
-        <>
-          <EuiCodeBlock language="js" paddingSize="m" whiteSpace="pre">
-            {code}
-          </EuiCodeBlock>
-          <EuiCodeBlock paddingSize="m">
-            {removeColorCodes(errorMessage)}
-          </EuiCodeBlock>
-        </>
-      )}
-    </ResultErrorAccordion>
+    <>
+      <EuiFlexGroup direction="column" gutterSize="none">
+        {actionTitles.map((name, index) => (
+          <ResultContentWrapper
+            alignItems="center"
+            gutterSize="xs"
+            key={name + index}
+          >
+            <EuiFlexItem grow={false}>{symbols[resultCategory]}</EuiFlexItem>
+            <EuiFlexItem>
+              <EuiText size="s">{name}</EuiText>
+            </EuiFlexItem>
+          </ResultContentWrapper>
+        ))}
+      </EuiFlexGroup>
+      <ResultErrorAccordion
+        id={stepName}
+        initialIsOpen
+        buttonContent="Step code"
+        key={stepIndex}
+        paddingSize="s"
+        buttonClassName="euiAccordionForm__button"
+      >
+        {errorMessage && (
+          <>
+            <EuiCodeBlock language="js" paddingSize="m" whiteSpace="pre">
+              {code}
+            </EuiCodeBlock>
+            <EuiCodeBlock paddingSize="m">
+              {removeColorCodes(errorMessage)}
+            </EuiCodeBlock>
+          </>
+        )}
+      </ResultErrorAccordion>
+    </>
   );
 }

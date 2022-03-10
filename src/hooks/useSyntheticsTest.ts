@@ -57,6 +57,7 @@ export function useSyntheticsTest(steps: Steps): ITestContext {
 
         try {
           const promise = ipc.callMain("run-journey", {
+            steps,
             code,
             isSuite: false,
           });

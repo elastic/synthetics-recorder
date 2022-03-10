@@ -41,17 +41,17 @@ export const ResultContainer = styled(EuiPanel)`
   margin: 0px 0px 24px 0px;
 `;
 
-export const ResultHeader = styled.div`
+export const ResultHeader = styled.h3`
   border-bottom: ${props => props.theme.border.thin};
   padding: 8px;
 `;
 
 export const ResultErrorAccordion = styled(EuiAccordion)`
-  margin-right: 8px;
+  margin: 0px 10px 0px 4px;
 `;
 
-export const ResultContentWithoutAccordion = styled(EuiFlexGroup)`
-  padding: 8px;
+export const ResultContentWrapper = styled(EuiFlexGroup)`
+  margin: 8px 8px 4px 8px;
 `;
 
 export const Bold = styled(EuiText)`

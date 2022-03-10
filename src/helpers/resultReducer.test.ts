@@ -48,6 +48,9 @@ describe("result reducer", () => {
       resultReducer(undefined, {
         event: "step/end",
         data: {
+          actionTitles: [
+            "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
+          ],
           name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
           status: "succeeded",
           duration: 491,
@@ -62,6 +65,9 @@ describe("result reducer", () => {
         type: "inline",
         steps: [
           {
+            actionTitles: [
+              "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
+            ],
             duration: 491,
             name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
             status: "succeeded",
@@ -76,6 +82,9 @@ describe("result reducer", () => {
       resultReducer(undefined, {
         event: "step/end",
         data: {
+          actionTitles: [
+            "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
+          ],
           name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
           status: "failed",
           duration: 9000,
@@ -90,6 +99,9 @@ describe("result reducer", () => {
         type: "inline",
         steps: [
           {
+            actionTitles: [
+              "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
+            ],
             duration: 9000,
             name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
             status: "failed",
@@ -104,6 +116,9 @@ describe("result reducer", () => {
       resultReducer(undefined, {
         event: "step/end",
         data: {
+          actionTitles: [
+            "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
+          ],
           name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
           status: "skipped",
           duration: 0,
@@ -118,6 +133,9 @@ describe("result reducer", () => {
         type: "inline",
         steps: [
           {
+            actionTitles: [
+              "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
+            ],
             duration: 0,
             name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
             status: "skipped",
@@ -139,6 +157,7 @@ describe("result reducer", () => {
             type: "inline",
             steps: [
               {
+                actionTitles: ["Go to https://www.elastic.co"],
                 duration: 100,
                 name: "Go to https://www.elastic.co",
                 status: "succeeded",
@@ -159,6 +178,7 @@ describe("result reducer", () => {
         status: "succeeded",
         steps: [
           {
+            actionTitles: ["Go to https://www.elastic.co"],
             duration: 100,
             name: "Go to https://www.elastic.co",
             status: "succeeded",
@@ -177,6 +197,9 @@ describe("result reducer", () => {
     const b = resultReducer(a, {
       event: "step/end",
       data: {
+        actionTitles: [
+          "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
+        ],
         name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
         status: "succeeded",
         duration: 491,
@@ -185,6 +208,9 @@ describe("result reducer", () => {
     const c = resultReducer(b, {
       event: "step/end",
       data: {
+        actionTitles: [
+          "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
+        ],
         name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
         status: "failed",
         duration: 9000,
@@ -193,6 +219,10 @@ describe("result reducer", () => {
     const d = resultReducer(c, {
       event: "step/end",
       data: {
+        actionTitles: [
+          "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
+          "A second action",
+        ],
         name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
         status: "skipped",
         duration: 0,
@@ -211,16 +241,26 @@ describe("result reducer", () => {
         type: "inline",
         steps: [
           {
+            actionTitles: [
+              "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
+            ],
             name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
             status: "succeeded",
             duration: 491,
           },
           {
+            actionTitles: [
+              "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
+            ],
             name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
             status: "failed",
             duration: 9000,
           },
           {
+            actionTitles: [
+              "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
+              "A second action",
+            ],
             duration: 0,
             name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
             status: "skipped",
