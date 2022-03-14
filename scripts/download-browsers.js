@@ -77,6 +77,7 @@ function findExecutablePath(dir, platform) {
 }
 
 exports.downloadForPlatform = async function downloadForPlatform(platform) {
+  platform = translatePlatform(platform);
   const [, revision] = getChromeVersion().split("-");
   const directory = path.join(
     process.cwd(),
@@ -90,3 +91,14 @@ exports.downloadForPlatform = async function downloadForPlatform(platform) {
     throw Error("Failed to download browser for platform " + platform);
   }
 };
+
+function translatePlatform(platform) {
+  switch (platform) {
+    case "win32":
+      return "win";
+    case "darwin":
+      return "mac";
+    default:
+      return platform;
+  }
+}

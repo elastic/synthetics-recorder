@@ -37,4 +37,4 @@ linux:
   # https://github.com/electron-userland/electron-builder/issues/6200#issuecomment-907830847
   asarUnpack:
     - "**\\*.{node,dll}"
-    - "node_modules/sharp/**"
+    - "**/node_modules/sharp/**"
