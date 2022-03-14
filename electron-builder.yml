@@ -1,13 +1,13 @@
 productName: "Elastic Synthetics Recorder"
 appId: co.elastic.synthetics-recorder
+beforePack: "./scripts/beforePackHook.js"
 files:
   - build/**/*
   - scripts/**/*
-  - node_modules/**/*
 publish:
   - provider: github
 extraMetadata:
-    main: build/electron.js
+  main: build/electron.js
 protocols:
   - name: elastic-synthetics-recorder
     schemes:
@@ -36,4 +36,5 @@ linux:
   # electron-builder issue:
   # https://github.com/electron-userland/electron-builder/issues/6200#issuecomment-907830847
   asarUnpack:
-    - "**/node_modules/sharp/**"
+    - "**\\*.{node,dll}"
+    - "node_modules/sharp/**"

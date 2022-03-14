@@ -31,7 +31,6 @@ const {
 } = require("playwright/lib/utils/browserFetcher");
 const { getChromeVersion } = require("./install-pw");
 
-const SUPPORTED_PLATFORMS = ["linux", "mac", "win"];
 const EXECUTABLE_PATHS = {
   linux: ["chrome-linux", "chrome"],
   mac: ["chrome-mac", "Chromium.app", "Contents", "MacOS", "Chromium"],
@@ -77,21 +76,17 @@ function findExecutablePath(dir, platform) {
   return tokens ? path.join(dir, ...tokens) : undefined;
 }
 
-async function downloadAll() {
+exports.downloadForPlatform = async function downloadForPlatform(platform) {
   const [, revision] = getChromeVersion().split("-");
-  for (const platform of SUPPORTED_PLATFORMS) {
-    const directory = path.join(
-      process.cwd(),
-      "local-browsers",
-      "_releases",
-      `${getChromeVersion()}-${platform}`
-    );
-    try {
-      await download(platform, revision, directory);
-    } catch (e) {
-      throw Error("Failed to download browser for platform " + platform);
-    }
+  const directory = path.join(
+    process.cwd(),
+    "local-browsers",
+    "_releases",
+    `${getChromeVersion()}-${platform}`
+  );
+  try {
+    await download(platform, revision, directory);
+  } catch (e) {
+    throw Error("Failed to download browser for platform " + platform);
   }
-}
-// eslint-disable-next-line no-console
-downloadAll().then(() => console.log("Download succeeded"));
+};
