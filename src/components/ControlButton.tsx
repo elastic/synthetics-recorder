@@ -28,11 +28,13 @@ import {
   EuiButtonIcon,
   EuiButtonIconProps,
   EuiThemeContext,
+  EuiToolTip,
 } from "@elastic/eui";
 import React, { useContext, useEffect, useState } from "react";
 
 interface IControlButton {
   onClick: React.MouseEventHandler<HTMLButtonElement>;
+  "aria-description"?: string;
 }
 
 type Props = IControlButton & EuiButtonIconProps & EuiButtonProps;
@@ -58,8 +60,15 @@ export const ControlButton: React.FC<Props> = props => {
   if (showIconOnly) {
     const { children, fill, ...rest } = props;
     return (
-      <EuiButtonIcon display={fill ? "fill" : "base"} size="m" {...rest} />
+      <EuiToolTip content={props["aria-label"]}>
+        <EuiButtonIcon display={fill ? "fill" : "base"} size="m" {...rest} />
+      </EuiToolTip>
     );
   }
-  return <EuiButton {...props} />;
+
+  return (
+    <EuiToolTip content={props["aria-description"]} delay="long">
+      <EuiButton {...props} />
+    </EuiToolTip>
+  );
 };

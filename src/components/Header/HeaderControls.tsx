@@ -86,7 +86,8 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
       )}
       <EuiFlexItem grow={false}>
         <ControlButton
-          aria-label="Toggle the script recorder between recording and paused"
+          aria-label={getPlayControlCopy(recordingStatus, steps.length)}
+          aria-description="Toggle the script recorder between recording and paused"
           color="primary"
           isDisabled={isTestInProgress}
           iconType={
@@ -105,7 +106,8 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
       {recordingStatus !== RecordingStatus.NotRecording && (
         <EuiFlexItem grow={false}>
           <ControlButton
-            aria-label="Stop recording and clear all recorded actions"
+            aria-label="Stop"
+            aria-description="Stop recording and clear all recorded actions"
             isDisabled={recordingStatus !== RecordingStatus.Recording}
             color="primary"
             iconType="stop"
@@ -134,7 +136,8 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
           </TestButtonDivider>
           <EuiFlexItem>
             <ControlButton
-              aria-label="Export recorded steps to a location you specify"
+              aria-label="Export"
+              aria-description="Export recorded steps to a location you specify"
               isDisabled={steps.length === 0}
               iconType="exportAction"
               fill
