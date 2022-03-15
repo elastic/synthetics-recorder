@@ -24,9 +24,9 @@ THE SOFTWARE.
 
 import { Action, ActionContext, Step, Steps } from "../common/types";
 
-export function generateIR(actionContexts: Step) {
-  const result = [];
-  let steps = [];
+export function generateIR(actionContexts: ActionContext[]): Steps {
+  const result: Steps = [];
+  let actions = [];
   let previousContext = null;
   let newStep = false;
   for (const actionContext of actionContexts) {
@@ -38,19 +38,19 @@ export function generateIR(actionContexts: Step) {
     }
 
     newStep = isNewStep(actionContext, previousContext);
-    if (newStep && steps.length > 0) {
-      result.push(steps);
-      steps = [];
+    if (newStep && actions.length > 0) {
+      result.push({ actions });
+      actions = [];
     }
     // Add title to all actionContexts
     const enhancedContext = title
       ? actionContext
       : { ...actionContext, title: actionTitle(action) };
-    steps.push(enhancedContext);
+    actions.push(enhancedContext);
     previousContext = actionContext;
   }
-  if (steps.length > 0) {
-    result.push(steps);
+  if (actions.length > 0) {
+    result.push({ actions });
   }
   return result;
 }

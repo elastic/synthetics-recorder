@@ -22,8 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { useState } from "react";
-import type { ActionContext, Step, Steps } from "../common/types";
+import { useCallback, useState } from "react";
+import type {
+  ActionContext,
+  Step,
+  Steps,
+  SyntheticStep,
+} from "../common/types";
 import type { IStepsContext } from "../contexts/StepsContext";
 
 const stepString: Steps = [
@@ -313,7 +318,19 @@ const stepString: Steps = [
 
 export function useStepsContext(): IStepsContext {
   const [steps, setSteps] = useState<Steps>([]);
-  const onStepDetailChange = (updatedStep: Step, indexToUpdate: number) => {
+  const setStepName = useCallback((idx: number, name: string) => {
+    setSteps(oldSteps => {
+      return oldSteps.map((step, i) => {
+        if (idx !== i) return step;
+        step.name = name;
+        return step;
+      });
+    });
+  }, []);
+  const onStepDetailChange = (
+    updatedStep: SyntheticStep,
+    indexToUpdate: number
+  ) => {
     setSteps(
       steps.map((currentStep, iterIndex) =>
         // if the `currentStep` is at the `indexToUpdate`, return `updatedStep` instead of stale object
@@ -324,6 +341,7 @@ export function useStepsContext(): IStepsContext {
   return {
     steps,
     setSteps,
+    setStepName,
     onDeleteAction: (targetStepIdx, indexToDelete) => {
       setSteps(steps =>
         steps.map((step, currentStepIndex) => {
@@ -368,6 +386,10 @@ export function useStepsContext(): IStepsContext {
       });
     },
     /**
+     * Used in conjunction with the drag/drop functionality for
+     * moving a step separator in the UI to reorganize the bucketing
+     * of actions.
+     *
      * @example
      * The examples below depend on this array:
      *
@@ -409,7 +431,10 @@ export function useStepsContext(): IStepsContext {
 
       // corresponds to example 1 above
       if (targetIndex < initiatorIndex) {
+        console.log("target step", targetStep);
         const newTargetStep = targetStep.slice(0, actionIndex + 1);
+        console.log("new target step", newTargetStep);
+        console.log("initiator", initiatorStep);
         const toMerge = targetStep.slice(actionIndex + 1, targetStep.length);
         const newInitiator = [...toMerge, ...initiatorStep];
         setSteps(oldSteps => {

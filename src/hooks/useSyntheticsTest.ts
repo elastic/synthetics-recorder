@@ -49,6 +49,7 @@ export function useSyntheticsTest(steps: Steps) {
        * For the time being we are only running tests as inline.
        */
       const code = await getCodeFromActions(ipc, steps, "inline");
+      console.log("test code", code);
       const resultFromServer: Result = await ipc.callMain("run-journey", {
         code,
         isSuite: false,

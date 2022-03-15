@@ -30,6 +30,7 @@ import type {
   JourneyType,
   Setter,
   Steps,
+  SyntheticStep,
 } from "./types";
 
 export const COMMAND_SELECTOR_OPTIONS = [
@@ -93,8 +94,23 @@ export async function getCodeFromActions(
   actions: Steps,
   type: JourneyType
 ): Promise<string> {
+  console.log(JSON.stringify(actions, null, 2));
   return await ipc.callMain("actions-to-code", {
+    actions,
+    extraFields: actions.map(generateExtraStepFields),
+    isFlat: false,
+    isSuite: type === "suite",
+  });
+}
+
+export async function getCodeFromFlatActions(
+  ipc: RendererProcessIpc,
+  actions: Steps,
+  type: JourneyType
+): Promise<string> {
+  return ipc.callMain("actions-to-code", {
     actions: actions.flat(),
+    isFlat: true,
     isSuite: type === "suite",
   });
 }
@@ -144,4 +160,11 @@ export async function getCodeForResult(
     ),
     journey.type
   );
+}
+
+export function generateExtraStepFields(
+  { name }: SyntheticStep,
+  _index?: number
+) {
+  return { name };
 }

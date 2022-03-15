@@ -47,9 +47,14 @@ export function ExportScriptFlyout({ setVisible, steps }: IExportScriptFlyout) {
 
   const type: JourneyType = exportAsSuite ? "suite" : "inline";
 
+  console.log("code", code);
   const maxLineSize = useMemo(
     // get max line size in code string
-    () => code.split("\n").reduce((prev, cur) => Math.max(prev, cur.length), 0),
+    () => {
+      return code
+        .split("\n")
+        .reduce((prev, cur) => Math.max(prev, cur.length), 0);
+    },
     [code]
   );
 

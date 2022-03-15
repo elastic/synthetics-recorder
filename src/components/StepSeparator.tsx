@@ -22,14 +22,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiAccordion, EuiFlexItem, EuiFlexGroup } from "@elastic/eui";
-import React, { useContext } from "react";
+import {
+  EuiAccordion,
+  EuiFlexItem,
+  EuiFlexGroup,
+  EuiButtonIcon,
+  EuiFieldText,
+  EuiToolTip,
+} from "@elastic/eui";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import {
   DRAG_AND_DROP_DATA_TRANSFER_TYPE,
   SMALL_SCREEN_BREAKPOINT,
 } from "../common/shared";
-import { Step, StepSeparatorDragDropDataTransfer } from "../common/types";
+import {
+  Step,
+  StepSeparatorDragDropDataTransfer,
+  SyntheticStep,
+} from "../common/types";
 import { DragAndDropContext } from "../contexts/DragAndDropContext";
 import { useDragAndDrop } from "../hooks/useDragAndDrop";
 import { useStepResultStatus } from "../hooks/useTestResult";
@@ -38,12 +49,8 @@ import { ActionElement } from "./ActionElement/ActionElement";
 export const StepSeparatorTopBorder = styled(EuiFlexItem)`
   border-top: ${props => props.theme.border.thin};
 
-  && {
-    margin-top: 20px;
-  }
-
   @media (max-width: ${SMALL_SCREEN_BREAKPOINT}px) {
-    max-width: 586px;
+    max-width: 566px;
   }
 `;
 
@@ -69,28 +76,92 @@ export const StepSeparatorHeading = styled(EuiFlexItem)`
   font-weight: bold;
 `;
 
-interface IStepSeparator {
-  index: number;
-  step: Step;
-}
-
 function createStepSeparatorDragDropData(
   stepIndex: number
 ): StepSeparatorDragDropDataTransfer {
   return { initiatorIndex: stepIndex };
 }
 
-export function StepSeparator({ index, step }: IStepSeparator) {
+interface IEditStepNameInput {
+  defaultValue?: string;
+  onComplete: (value: string | null) => void;
+  placeholder: string;
+}
+
+function EditStepNameInput({
+  defaultValue,
+  onComplete,
+  placeholder,
+}: IEditStepNameInput) {
+  const [editValue, setEditValue] = useState(defaultValue ?? "");
+  return (
+    <EuiFlexGroup
+      alignItems="center"
+      gutterSize="xs"
+      style={{ padding: 4, marginLeft: 4 }}
+    >
+      <EuiFlexItem>
+        <EuiFieldText
+          aria-label="Enter a new name for this step"
+          onChange={e => setEditValue(e.target.value)}
+          onKeyUp={e => {
+            console.log("key up event", e);
+            switch (e.key) {
+              case "Enter":
+                onComplete(editValue ?? null);
+                break;
+              case "Escape":
+                onComplete(null);
+                break;
+            }
+          }}
+          autoFocus
+          placeholder={placeholder}
+          value={editValue}
+        />
+      </EuiFlexItem>
+      <EuiFlexItem grow={false}>
+        <EuiToolTip content="Save">
+          <EuiButtonIcon
+            aria-label="Click this button to save the step name"
+            iconType="check"
+            onClick={() => onComplete(editValue ? editValue : null)}
+          />
+        </EuiToolTip>
+      </EuiFlexItem>
+      <EuiFlexItem grow={false}>
+        <EuiToolTip content="Cancel">
+          <EuiButtonIcon
+            aria-label="Cancel edit for this step name"
+            iconType="cross"
+            onClick={() => onComplete(null)}
+          />
+        </EuiToolTip>
+      </EuiFlexItem>
+    </EuiFlexGroup>
+  );
+}
+
+interface IStepSeparator {
+  index: number;
+  step: SyntheticStep;
+  setStepName: (index: number, name: string) => void;
+}
+
+export function StepSeparator({ index, setStepName, step }: IStepSeparator) {
   const testStatus = useStepResultStatus(
     step.length ? step[0].title : undefined
   );
   const { setIsDragInProgress } = useContext(DragAndDropContext);
+  const [showEditButton, setShowEditButton] = useState(true);
+  const [isEditingName, setIsEditingName] = useState(false);
   const { isDraggable } = useDragAndDrop(index);
 
   const onDragStart:
     | React.DragEventHandler<HTMLDivElement | HTMLSpanElement>
     | undefined = isDraggable
     ? e => {
+        setShowEditButton(false);
         setIsDragInProgress(true);
         const dragDataString = JSON.stringify(
           createStepSeparatorDragDropData(index)
@@ -102,21 +173,57 @@ export function StepSeparator({ index, step }: IStepSeparator) {
         e.dataTransfer.setData("text/plain", dragDataString);
       }
     : undefined;
-  const onDragEnd = isDraggable ? () => setIsDragInProgress(false) : undefined;
+  const onDragEnd = isDraggable
+    ? () => {
+        setShowEditButton(true);
+        setIsDragInProgress(false);
+      }
+    : undefined;
+
+  const stepHeadingText = step.name ?? `Step ${index + 1}`;
 
   return (
     <StepSeparatorAccordion
       className="stepSeparator"
       extraAction={
         <EuiFlexGroup
+          alignItems="center"
+          gutterSize="s"
           draggable={isDraggable}
           onDragStart={onDragStart}
           onDragEnd={onDragEnd}
         >
-          <StepSeparatorHeading grow={false}>
-            Step {index + 1}
-          </StepSeparatorHeading>
-          <StepSeparatorTopBorder />
+          {!isEditingName && (
+            <StepSeparatorHeading grow={false}>
+              {stepHeadingText}
+            </StepSeparatorHeading>
+          )}
+          {isEditingName && (
+            <EditStepNameInput
+              placeholder={stepHeadingText}
+              defaultValue={step.name}
+              onComplete={value => {
+                setIsEditingName(false);
+                setShowEditButton(true);
+                if (value !== null) {
+                  setStepName(index, value);
+                }
+              }}
+            />
+          )}
+          {showEditButton && (
+            <EuiFlexItem grow={false}>
+              <EuiButtonIcon
+                aria-label="Click this to edit the step name"
+                iconType="pencil"
+                onClick={() => {
+                  setIsEditingName(true);
+                  setShowEditButton(false);
+                }}
+              />
+            </EuiFlexItem>
+          )}
+          {!isEditingName && <StepSeparatorTopBorder />}
         </EuiFlexGroup>
       }
       id={`step-separator-${index}`}

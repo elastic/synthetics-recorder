@@ -237,9 +237,13 @@ async function onFileSave(code) {
 }
 
 async function onTransformCode(data) {
+  console.log("received data", JSON.stringify(data, null, 2));
   const generator = new SyntheticsGenerator(data.isSuite);
-  const code = generator.generateText(data.actions);
-  return code;
+  if (data.isFlat) {
+    return generator.generateText(data.actions);
+  }
+  const code = generator.generateFromSteps(data.actions);
+  return code.join("\n");
 }
 
 async function onSetMode(mode) {

@@ -39,7 +39,7 @@ import { RecordingContext } from "./contexts/RecordingContext";
 import { UrlContext } from "./contexts/UrlContext";
 import { StepsContext } from "./contexts/StepsContext";
 import { TestContext } from "./contexts/TestContext";
-import type { Step } from "./common/types";
+import type { ActionContext, Step, Steps, SyntheticStep } from "./common/types";
 import { useSyntheticsTest } from "./hooks/useSyntheticsTest";
 import { generateIR, generateMergedIR } from "./helpers/generator";
 import { StepSeparator } from "./components/StepSeparator";
@@ -62,7 +62,7 @@ export default function App() {
 
   const { ipc } = useContext(CommunicationContext);
   const stepsContextUtils = useStepsContext();
-  const { steps, setSteps } = stepsContextUtils;
+  const { steps, setSteps, setStepName } = stepsContextUtils;
   const recordingContextUtils = useRecordingContext(ipc, url, steps.length);
   const { isStartOverModalVisible, setIsStartOverModalVisible, startOver } =
     recordingContextUtils;
@@ -70,13 +70,16 @@ export default function App() {
   const dragAndDropContext = useDragAndDropContext();
 
   useEffect(() => {
-    // `actions` here is a set of `ActionContext`s that make up a `Step`
-    ipc.answerMain("change", ({ actions: step }: { actions: Step }) => {
-      setSteps(prevSteps => {
-        const nextSteps = generateIR(step);
-        return generateMergedIR(prevSteps, nextSteps);
-      });
-    });
+    // `actions` here is an `Array<ActionContext>`, so alias it as "step"
+    ipc.answerMain(
+      "change",
+      ({ actions: step }: { actions: SyntheticStep }) => {
+        setSteps(prevSteps => {
+          const nextSteps = generateIR(step);
+          return generateMergedIR(prevSteps, nextSteps);
+        });
+      }
+    );
   }, [ipc, setSteps]);
 
   return (
@@ -109,6 +112,7 @@ export default function App() {
                       <StepSeparator
                         index={index}
                         key={`step-separator-${index + 1}`}
+                        setStepName={setStepName}
                         step={step}
                       />
                     ))}

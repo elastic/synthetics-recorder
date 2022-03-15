@@ -44,6 +44,7 @@ export const URL_CONTEXT_DEFAULTS: IUrlContext = {
 export const STEPS_CONTEXT_DEFAULTS: IStepsContext = {
   steps: [],
   setSteps: jest.fn(),
+  setStepName: jest.fn(),
   onInsertAction: jest.fn(),
   onDeleteAction: jest.fn(),
   onDeleteStep: jest.fn(),

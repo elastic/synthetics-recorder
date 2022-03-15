@@ -27,7 +27,12 @@ import {
   renderHook,
   RenderHookResult,
 } from "@testing-library/react-hooks";
-import type { ActionContext, Step, Steps } from "../common/types";
+import type {
+  ActionContext,
+  Step,
+  Steps,
+  SyntheticStep,
+} from "../common/types";
 import { IStepsContext } from "../contexts/StepsContext";
 import { useStepsContext } from "./useStepsContext";
 
@@ -97,7 +102,7 @@ describe("useStepsContext", () => {
 
   describe("onStepDetailChange", () => {
     it("updates the targeted step", () => {
-      const testStep: Step = [
+      const testStep: SyntheticStep = [
         {
           action: { name: "new-action", signals: [] },
           frameUrl: "https://www.wikipedia.org",

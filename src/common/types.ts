@@ -22,8 +22,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-export type Step = ActionContext[];
-export type Steps = ActionContext[][];
+// export class Step<T> extends Array<T> {
+//   name?: string;
+//   constructor() {
+//     super();
+//   }
+// }
+export interface Step {
+  actions: ActionContext[];
+  name?: string;
+}
+// export type SyntheticStep = Step<ActionContext>;
+export type Steps = Step[];
 
 export interface ActionContext {
   action: Action;

@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { Step } from "../common/types";
+import { Step, SyntheticStep } from "../common/types";
 import { generateIR } from "./generator";
 
-const actions: Step = [
+const actions: SyntheticStep = [
   {
     pageAlias: "page",
     isMainFrame: true,
