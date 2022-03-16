@@ -16,14 +16,14 @@ mac:
   icon: public/elastic.png
   category: public.app-category.developer-tools
   extraResources:
-    - from: local-browsers/_releases/chromium-${env.BROWSER_REVISION}-mac/chrome-mac
-      to: local-browsers/chromium-${env.BROWSER_REVISION}/chrome-mac
+    - from: local-browsers/_releases/mac
+      to: local-browsers
 win:
   target: nsis
   icon: public/elastic.png
   extraResources:
-    - from: local-browsers/_releases/chromium-${env.BROWSER_REVISION}-win/chrome-win
-      to: local-browsers/chromium-${env.BROWSER_REVISION}/chrome-win
+    - from: local-browsers/_releases/win
+      to: local-browsers
 linux:
   target:
     - AppImage
@@ -31,8 +31,8 @@ linux:
   icon: public/elastic.png
   category: Utility
   extraResources:
-    - from: local-browsers/_releases/chromium-${env.BROWSER_REVISION}-linux/chrome-linux
-      to: local-browsers/chromium-${env.BROWSER_REVISION}/chrome-linux
+    - from: local-browsers/_releases/linux
+      to: local-browsers
   # electron-builder issue:
   # https://github.com/electron-userland/electron-builder/issues/6200#issuecomment-907830847
   asarUnpack:
