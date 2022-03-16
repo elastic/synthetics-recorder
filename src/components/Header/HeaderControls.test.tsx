@@ -28,14 +28,12 @@ import { HeaderControls } from "./HeaderControls";
 import { render } from "../../helpers/test";
 
 describe("<HeaderControls />", () => {
-  const START_ARIA = "Toggle the script recorder between recording and paused";
-
   it("displays start text when not recording", async () => {
     const { getByLabelText } = render(
       <HeaderControls setIsCodeFlyoutVisible={jest.fn()} />
     );
 
-    expect(getByLabelText(START_ARIA).textContent).toBe("Start");
+    expect(getByLabelText("Start")).toBeTruthy();
   });
 
   it("displays pause text when recording", () => {
@@ -49,7 +47,7 @@ describe("<HeaderControls />", () => {
       }
     );
 
-    expect(getByLabelText(START_ARIA).textContent).toBe("Pause");
+    expect(getByLabelText("Pause")).toBeTruthy();
   });
 
   it("displays resume text when paused", () => {
@@ -63,6 +61,6 @@ describe("<HeaderControls />", () => {
       }
     );
 
-    expect(getByLabelText(START_ARIA).textContent).toBe("Resume");
+    expect(getByLabelText("Resume")).toBeTruthy();
   });
 });
