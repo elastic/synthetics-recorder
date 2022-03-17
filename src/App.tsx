@@ -116,7 +116,7 @@ export default function App() {
                       }
                     />
                   )}
-                  {steps.map((step: Step, index: number) => (
+                  {steps.map((step, index) => (
                     <StepSeparator
                       index={index}
                       key={`step-separator-${index + 1}`}
