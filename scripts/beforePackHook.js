@@ -39,12 +39,15 @@ function fixSharp(arch, platform) {
   // we set the process.env.npm_config_* manually
   // as in when installing the sharp, it uses what electron-builder is targeting
   // so that we align the target arch and platform for both electron-builder and sharp
-  process.env.npm_config_arch = arch;
-  process.env.npm_config_platform = platform;
   return new Promise((resolve, reject) => {
     const npmInstall = spawn("npm", ["run", "fix-sharp"], {
       stdio: "inherit",
       shell: true,
+      env: {
+        ...process.env,
+        npm_config_arch: arch,
+        npm_config_platform: platform,
+      },
     });
     npmInstall.on("close", code => {
       if (code === 0) {

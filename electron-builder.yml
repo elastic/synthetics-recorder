@@ -38,3 +38,4 @@ linux:
   asarUnpack:
     - "**\\*.{node,dll}"
     - "**/node_modules/sharp/**"
+    - "**/node_modules/@elastic/synthetics/**"

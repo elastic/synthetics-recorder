@@ -30,12 +30,6 @@ const {
   downloadBrowserWithProgressBar,
 } = require("playwright/lib/utils/browserFetcher");
 const SYNTHETICS_BROWSER_REVISIONS = require("@elastic/synthetics/node_modules/playwright-chromium/browsers.json");
-const { getChromeVersion } = require("./install-pw");
-const getFfmpegVersion = () => {
-  const { browsers } = SYNTHETICS_BROWSER_REVISIONS;
-  const revision = browsers.find(browser => browser.name === "ffmpeg").revision;
-  return revision;
-};
 const EXECUTABLE_PATHS = {
   chromium: {
     linux: ["chrome-linux", "chrome"],
@@ -96,33 +90,11 @@ function findExecutablePath(dir, browser, platform) {
   return tokens ? path.join(dir, ...tokens) : undefined;
 }
 
-exports.downloadForPlatform = async function downloadForPlatform(platform) {
-  platform = translatePlatform(platform);
-  const [, chromeRevision] = getChromeVersion().split("-");
-  const ffmpegVersion = getFfmpegVersion();
-  const directory = path.join(
-    process.cwd(),
-    "local-browsers",
-    "_releases",
-    platform,
-    getChromeVersion()
-  );
-  const ffmpegDir = path.join(
-    process.cwd(),
-    "local-browsers",
-    "_releases",
-    platform,
-    `ffmpeg-${ffmpegVersion}`
-  );
-  try {
-    await download(platform, "chromium", chromeRevision, directory);
-    await download(platform, "ffmpeg", ffmpegVersion, ffmpegDir);
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error(e);
-    throw Error("Failed to download browser for platform " + platform);
-  }
-};
+function getBrowserVersion(browser) {
+  const { browsers } = SYNTHETICS_BROWSER_REVISIONS;
+  const { revision } = browsers.find(br => br.name === browser) || {};
+  return revision;
+}
 
 function translatePlatform(platform) {
   switch (platform) {
@@ -134,3 +106,30 @@ function translatePlatform(platform) {
       return platform;
   }
 }
+
+exports.downloadForPlatform = async function downloadForPlatform(platform) {
+  platform = translatePlatform(platform);
+  for (const browser of ["chromium", "ffmpeg"]) {
+    const revision = getBrowserVersion(browser);
+    if (revision == null) {
+      throw new Error("Failed to find valid revision for browser " + browser);
+    }
+    const directory = path.join(
+      process.cwd(),
+      "local-browsers",
+      "_releases",
+      platform,
+      `${browser}-${revision}`
+    );
+
+    try {
+      await download(platform, browser, revision, directory);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e);
+      throw Error(
+        `Failed to download browser ${browser} for platform ${platform}`
+      );
+    }
+  }
+};
