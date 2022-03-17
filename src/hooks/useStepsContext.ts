@@ -45,9 +45,9 @@ export function useStepsContext(): IStepsContext {
         steps.map((step, currentStepIndex) => {
           if (currentStepIndex !== targetStepIdx) return step;
 
-          step.splice(indexToDelete, 1);
+          step.actions.splice(indexToDelete, 1);
 
-          return [...step];
+          return { ...step, actions: [...step.actions] };
         })
       );
     },
@@ -59,18 +59,24 @@ export function useStepsContext(): IStepsContext {
         steps.map((step, currentStepIndex) => {
           if (currentStepIndex !== targetStepIdx) return step;
 
-          step.splice(indexToInsert, 0, action);
+          step.actions.splice(indexToInsert, 0, action);
 
-          return [...step];
+          return { name: step.name, actions: [...step.actions] };
         })
       );
     },
     onMergeSteps: (indexToInsert, indexToRemove) => {
       setSteps(oldSteps => {
-        oldSteps[indexToInsert] = [
-          ...steps[indexToInsert],
-          ...steps[indexToRemove],
-        ];
+        oldSteps[indexToInsert] = {
+          name:
+            oldSteps[indexToInsert].name ??
+            oldSteps[indexToRemove].name ??
+            undefined,
+          actions: [
+            ...steps[indexToInsert].actions,
+            ...steps[indexToRemove].actions,
+          ],
+        };
         oldSteps.splice(indexToRemove, 1);
         return oldSteps;
       });
@@ -91,16 +97,16 @@ export function useStepsContext(): IStepsContext {
         throw Error("Step index cannot exceed steps length.");
       }
       const stepToSplit = steps[stepIndex];
-      if (stepToSplit.length <= 1) {
+      if (stepToSplit.actions.length <= 1) {
         throw Error("Cannot split step with only one action.");
       }
-      const reducedStep = stepToSplit.slice(0, actionIndex);
-      const insertedStep = stepToSplit.slice(actionIndex);
+      const reducedStepActions = stepToSplit.actions.slice(0, actionIndex);
+      const insertedStepActions = stepToSplit.actions.slice(actionIndex);
 
       setSteps([
         ...steps.slice(0, stepIndex),
-        reducedStep,
-        insertedStep,
+        { name: stepToSplit.name, actions: reducedStepActions },
+        { actions: insertedStepActions },
         ...steps.slice(stepIndex + 1, steps.length),
       ]);
     },
@@ -112,11 +118,14 @@ export function useStepsContext(): IStepsContext {
     ) => {
       const step = steps[stepIndex];
       onStepDetailChange(
-        [
-          ...step.slice(0, actionIndex),
-          action,
-          ...step.slice(actionIndex + 1, step.length),
-        ],
+        {
+          actions: [
+            ...step.actions.slice(0, actionIndex),
+            action,
+            ...step.actions.slice(actionIndex + 1, step.actions.length),
+          ],
+          name: step.name,
+        },
         stepIndex
       );
     },

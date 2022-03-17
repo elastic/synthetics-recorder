@@ -46,7 +46,7 @@ interface IStepDetail {
 function StepDetail({ step, stepIndex }: IStepDetail) {
   return (
     <>
-      {step.map((actionContext, index) => (
+      {step.actions.map((actionContext, index) => (
         <ActionDetail
           key={index}
           actionContext={actionContext}
@@ -87,12 +87,15 @@ function StepAccordion({
   const [isEditing, setIsEditing] = useState(false);
   const onStepTitleChange = (updatedTitle: string) => {
     onStepDetailChange(
-      step.map((s, stepIdx) => {
-        if (stepIdx === 0) {
-          return { ...s, title: updatedTitle, modified: true };
-        }
-        return s;
-      }),
+      {
+        actions: step.actions.map((s, stepIdx) => {
+          if (stepIdx === 0) {
+            return { ...s, title: updatedTitle, modified: true };
+          }
+          return s;
+        }),
+        name: step.name,
+      },
       index
     );
   };
@@ -169,7 +172,7 @@ export function StepAccordions({
   return (
     <>
       {steps.map((step, index) => {
-        const { title } = step[0];
+        const { title } = step.actions[0];
         return (
           <StepAccordion
             index={index}

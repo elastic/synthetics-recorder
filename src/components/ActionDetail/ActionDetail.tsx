@@ -67,9 +67,12 @@ export function ActionDetail({
     updatedActionIndex: number
   ) => {
     onStepDetailChange(
-      steps[stepIndex].map((actionToUpdate, index) =>
-        index === updatedActionIndex ? updatedAction : actionToUpdate
-      ),
+      {
+        actions: steps[stepIndex].actions.map((actionToUpdate, index) =>
+          index === updatedActionIndex ? updatedAction : actionToUpdate
+        ),
+        name: steps[stepIndex].name,
+      },
       stepIndex
     );
   };

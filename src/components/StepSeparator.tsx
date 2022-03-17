@@ -61,8 +61,9 @@ interface IStepSeparator {
 }
 
 export function StepSeparator({ index, step }: IStepSeparator) {
+  console.log("step", step);
   const testStatus = useStepResultStatus(
-    step.length ? step[0].title : undefined
+    step.actions.length ? step.actions[0].title : undefined
   );
 
   return (
@@ -79,14 +80,14 @@ export function StepSeparator({ index, step }: IStepSeparator) {
       id={`step-separator-${index}`}
       initialIsOpen
     >
-      {step.map((s, actionIndex) => (
+      {step.actions.map((s, actionIndex) => (
         <ActionElement
           key={`action-${actionIndex}-for-step-${index}`}
           step={s}
           actionIndex={actionIndex}
           stepIndex={index}
           testStatus={testStatus}
-          isLast={actionIndex === step.length - 1}
+          isLast={actionIndex === step.actions.length - 1}
         />
       ))}
     </StepSeparatorAccordion>

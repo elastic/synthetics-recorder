@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 import { RendererProcessIpc } from "electron-better-ipc";
 import React from "react";
-import type { Journey, JourneyType, Setter, Steps } from "./types";
+import type { Journey, JourneyType, Setter, Step, Steps } from "./types";
 
 export const COMMAND_SELECTOR_OPTIONS = [
   {
@@ -111,11 +111,15 @@ export function updateAction(
 ): Steps {
   return steps.map((step, sidx) => {
     if (sidx !== stepIndex) return step;
-    return step.map((ac, aidx) => {
-      if (aidx !== actionIndex) return ac;
-      const { action, ...rest } = ac;
-      return { action: { ...action, value }, ...rest };
-    });
+    const nextStep: Step = {
+      actions: step.actions.map((ac, aidx) => {
+        if (aidx !== actionIndex) return ac;
+        const { action, ...rest } = ac;
+        return { action: { ...action, value }, ...rest };
+      }),
+    };
+    if (step.name) nextStep.name = step.name;
+    return nextStep;
   });
 }
 
@@ -139,7 +143,9 @@ export async function getCodeForFailedResult(
   if (!failedJourneyStep) return "";
 
   const failedStep = steps.find(
-    step => step.length > 0 && step[0].title === failedJourneyStep.name
+    step =>
+      step.actions.length > 0 &&
+      step.actions[0].title === failedJourneyStep.name
   );
 
   if (!failedStep) return "";

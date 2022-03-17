@@ -24,8 +24,11 @@ THE SOFTWARE.
 
 import { ActionInContext } from "@elastic/synthetics";
 
-export type Step = ActionInContext[];
-export type Steps = ActionInContext[][];
+export interface Step {
+  actions: ActionInContext[];
+  name?: string;
+}
+export type Steps = Step[];
 export type Action = ActionInContext["action"];
 
 export interface Result {

@@ -34,7 +34,7 @@ import { RecordingContext } from "./contexts/RecordingContext";
 import { UrlContext } from "./contexts/UrlContext";
 import { StepsContext } from "./contexts/StepsContext";
 import { TestContext } from "./contexts/TestContext";
-import type { Step } from "./common/types";
+import type { Step, Steps } from "./common/types";
 import { useSyntheticsTest } from "./hooks/useSyntheticsTest";
 import { generateIR, generateMergedIR } from "./helpers/generator";
 import { StepSeparator } from "./components/StepSeparator";
@@ -47,6 +47,7 @@ import { StyledComponentsEuiProvider } from "./contexts/StyledComponentsEuiProvi
 import { ExportScriptFlyout } from "./components/ExportScriptFlyout";
 import { useRecordingContext } from "./hooks/useRecordingContext";
 import { StartOverWarningModal } from "./components/StartOverWarningModal";
+import { ActionInContext } from "@elastic/synthetics";
 
 /**
  * This is the prescribed workaround to some internal EUI issues that occur
@@ -79,12 +80,16 @@ export default function App() {
 
   useEffect(() => {
     // `actions` here is a set of `ActionInContext`s that make up a `Step`
-    ipc.answerMain("change", ({ actions: step }: { actions: Step }) => {
+    const listener = ({ actions }: { actions: ActionInContext[] }) => {
       setSteps(prevSteps => {
-        const nextSteps = generateIR(step);
+        const nextSteps: Steps = generateIR([{ actions }]);
         return generateMergedIR(prevSteps, nextSteps);
       });
-    });
+    };
+    ipc.answerMain("change", listener);
+    return () => {
+      ipc.removeListener("change", listener);
+    };
   }, [ipc, setSteps]);
 
   return (
