@@ -22,15 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ActionInContext } from "@elastic/synthetics";
-
-export interface Step {
-  actions: ActionInContext[];
-  name?: string;
-}
-export type Steps = Step[];
-export type Action = ActionInContext["action"];
-
 export interface Result {
   failed: number;
   skipped: number;

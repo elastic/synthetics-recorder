@@ -25,6 +25,7 @@ import React, { useContext } from "react";
 import { useEffect, useState } from "react";
 import { EuiCode, EuiEmptyPrompt, EuiProvider } from "@elastic/eui";
 import createCache from "@emotion/cache";
+import type { ActionInContext, Step, Steps } from "@elastic/synthetics";
 import "./App.css";
 import "@elastic/eui/dist/eui_theme_light.css";
 import { Title } from "./components/Header/Title";
@@ -34,7 +35,6 @@ import { RecordingContext } from "./contexts/RecordingContext";
 import { UrlContext } from "./contexts/UrlContext";
 import { StepsContext } from "./contexts/StepsContext";
 import { TestContext } from "./contexts/TestContext";
-import type { Step, Steps } from "./common/types";
 import { useSyntheticsTest } from "./hooks/useSyntheticsTest";
 import { generateIR, generateMergedIR } from "./helpers/generator";
 import { StepSeparator } from "./components/StepSeparator";
@@ -47,7 +47,6 @@ import { StyledComponentsEuiProvider } from "./contexts/StyledComponentsEuiProvi
 import { ExportScriptFlyout } from "./components/ExportScriptFlyout";
 import { useRecordingContext } from "./hooks/useRecordingContext";
 import { StartOverWarningModal } from "./components/StartOverWarningModal";
-import { ActionInContext } from "@elastic/synthetics";
 
 /**
  * This is the prescribed workaround to some internal EUI issues that occur
@@ -81,7 +80,7 @@ export default function App() {
   useEffect(() => {
     // `actions` here is a set of `ActionInContext`s that make up a `Step`
     const listener = ({ actions }: { actions: ActionInContext[] }) => {
-      setSteps(prevSteps => {
+      setSteps((prevSteps: Steps) => {
         const nextSteps: Steps = generateIR([{ actions }]);
         return generateMergedIR(prevSteps, nextSteps);
       });
@@ -117,7 +116,7 @@ export default function App() {
                       }
                     />
                   )}
-                  {steps.map((step, index) => (
+                  {steps.map((step: Step, index: number) => (
                     <StepSeparator
                       index={index}
                       key={`step-separator-${index + 1}`}

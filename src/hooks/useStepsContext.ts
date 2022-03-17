@@ -22,9 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ActionInContext } from "@elastic/synthetics";
+import type { ActionInContext, Step, Steps } from "@elastic/synthetics";
 import { useState } from "react";
-import type { Step, Steps } from "../common/types";
 import type { IStepsContext } from "../contexts/StepsContext";
 
 export function useStepsContext(): IStepsContext {

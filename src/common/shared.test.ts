@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import type { Step, Steps } from "@elastic/synthetics";
 import { RendererProcessIpc } from "electron-better-ipc";
 import { getCodeForFailedResult, updateAction } from "./shared";
-import type { Step, Steps } from "./types";
 
 describe("shared", () => {
   describe("updateAction", () => {

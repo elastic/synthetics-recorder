@@ -22,9 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import type { Step, Steps } from "@elastic/synthetics";
 import { RendererProcessIpc } from "electron-better-ipc";
 import React from "react";
-import type { Journey, JourneyType, Setter, Step, Steps } from "./types";
+import type { Journey, JourneyType, Setter } from "./types";
 
 export const COMMAND_SELECTOR_OPTIONS = [
   {

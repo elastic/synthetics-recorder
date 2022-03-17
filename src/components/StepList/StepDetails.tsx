@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import type { Step, Steps } from "@elastic/synthetics";
 import React from "react";
 import { useContext, useState } from "react";
 import {
@@ -36,7 +37,6 @@ import { StepAccordionTitle } from "./StepAccordionTitle";
 import "./StepDetails.css";
 import { RecordingContext } from "../../contexts/RecordingContext";
 import { RecordingStatus } from "../../common/types";
-import type { Step, Steps } from "../../common/types";
 
 interface IStepDetail {
   step: Step;

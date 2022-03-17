@@ -22,11 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import type { Step } from "@elastic/synthetics";
 import { EuiAccordion, EuiFlexItem, EuiFlexGroup } from "@elastic/eui";
 import React from "react";
 import styled from "styled-components";
 import { SMALL_SCREEN_BREAKPOINT } from "../common/shared";
-import { Step } from "../common/types";
 import { useStepResultStatus } from "../hooks/useTestResult";
 import { ActionElement } from "./ActionElement";
 
@@ -61,7 +61,6 @@ interface IStepSeparator {
 }
 
 export function StepSeparator({ index, step }: IStepSeparator) {
-  console.log("step", step);
   const testStatus = useStepResultStatus(
     step.actions.length ? step.actions[0].title : undefined
   );
