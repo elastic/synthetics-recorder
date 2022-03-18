@@ -33,12 +33,6 @@ exports.default = function beforePack(ctx) {
 const { Arch } = require("electron-builder");
 
 function fixSharp(arch, platform) {
-  // electron-builder gets the arch and platform information with its own option parameter and logic.
-  // native dependency sharp needs to get arch and platform information via `npm_config_arch` and `npm_config_platform` when installing
-  // as this function is called by electron-builder and they should run in the same context and run it for the same target platform and arch,
-  // we set the process.env.npm_config_* manually
-  // as in when installing the sharp, it uses what electron-builder is targeting
-  // so that we align the target arch and platform for both electron-builder and sharp
   return new Promise((resolve, reject) => {
     const npmInstall = spawn("npm", ["run", "fix-sharp"], {
       stdio: "inherit",

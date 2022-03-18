@@ -13,7 +13,7 @@
     "electron:copy": "cp -r ./electron/. ./build",
     "dev": "concurrently -k \"BROWSER=none npm run react:start\" \"wait-on tcp:3000 && nodemon --exec electron electron/electron.js\"",
     "build": "run-s clean react:build electron:copy",
-    "release": "npm run pack -- -mw --publish=always",
+    "release": "npm run pack -- -mwl --publish=always",
     "pack": "npm run build && electron-builder",
     "fix-sharp": "node node_modules/sharp/install/libvips && node node_modules/sharp/install/dll-copy",
     "clean": "rm -rf ./build && rm -rf ./dist",
