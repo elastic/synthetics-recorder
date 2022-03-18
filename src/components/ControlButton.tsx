@@ -34,7 +34,7 @@ import React, { useContext, useEffect, useState } from "react";
 
 interface IControlButton {
   onClick: React.MouseEventHandler<HTMLButtonElement>;
-  "aria-description"?: string;
+  tooltipContent?: string;
 }
 
 type Props = IControlButton & EuiButtonIconProps & EuiButtonProps;
@@ -58,16 +58,16 @@ export const ControlButton: React.FC<Props> = props => {
   }, [l, showIconOnly]);
 
   if (showIconOnly) {
-    const { children, fill, ...rest } = props;
+    const { children, fill, tooltipContent, ...rest } = props;
     return (
-      <EuiToolTip content={props["aria-label"]}>
+      <EuiToolTip content={tooltipContent || props["aria-label"]}>
         <EuiButtonIcon display={fill ? "fill" : "base"} size="m" {...rest} />
       </EuiToolTip>
     );
   }
 
   return (
-    <EuiToolTip content={props["aria-description"]} delay="long">
+    <EuiToolTip content={props.tooltipContent} delay="long">
       <EuiButton {...props} />
     </EuiToolTip>
   );

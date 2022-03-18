@@ -34,11 +34,7 @@ export function TestButton({ isDisabled, onTest }: Props) {
   return (
     <ControlButton
       aria-label="Test"
-      aria-description={
-        isDisabled
-          ? "Record a step in order to run a test"
-          : "Perform a test run for the journey you have recorded"
-      }
+      tooltipContent={isDisabled ? "Record a step in order to run a test" : ""}
       color="primary"
       iconType="beaker"
       isDisabled={isDisabled}
