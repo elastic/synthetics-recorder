@@ -69,7 +69,6 @@ export function useSyntheticsTest(steps: Steps): ITestContext {
   const onTest = useCallback(
     async function () {
       const code = await getCodeFromActions(ipc, steps, "inline");
-      console.log("test code", code);
       if (!isTestInProgress) {
         // destroy stale state
         dispatch({ data: undefined, event: "override" });
