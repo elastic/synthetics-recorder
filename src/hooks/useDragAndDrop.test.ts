@@ -22,15 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ActionContext } from "../common/types";
+import type { ActionInContext } from "@elastic/synthetics";
 import { canDrag } from "./useDragAndDrop";
 
 // copied from upstream branch, do not merge this but delete and reference
 // original function after rebasing
 function createAction(
   name: string,
-  overrides?: Partial<ActionContext>
-): ActionContext {
+  overrides?: Partial<ActionInContext>
+): ActionInContext {
   return {
     action: {
       name,
@@ -52,9 +52,9 @@ describe("useDragAndDrop", () => {
     it("returns `false` if preceding, current, and following steps have only one element", () => {
       expect(
         canDrag(1, [
-          [createAction("action-1")],
-          [createAction("action-2")],
-          [createAction("action-3")],
+          { actions: [createAction("action-1")] },
+          { actions: [createAction("action-2")] },
+          { actions: [createAction("action-3")] },
         ])
       ).toBe(false);
     });
@@ -62,9 +62,9 @@ describe("useDragAndDrop", () => {
     it("returns `true` if step heading can be dragged", () => {
       expect(
         canDrag(2, [
-          [createAction("action-1")],
-          [createAction("action-2")],
-          [createAction("action-3"), createAction("action-4")],
+          { actions: [createAction("action-1")] },
+          { actions: [createAction("action-2")] },
+          { actions: [createAction("action-3"), createAction("action-4")] },
         ])
       ).toBe(true);
     });

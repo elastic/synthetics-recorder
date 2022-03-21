@@ -94,7 +94,7 @@ export function ExtraActions({
                   name: "assert",
                   selector: step.action.selector || "",
                   command: "isVisible",
-                  value: step.action.value || null,
+                  value: step.action.value || undefined,
                   signals: [],
                   isAssert: true,
                 },

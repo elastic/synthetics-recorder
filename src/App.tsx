@@ -40,7 +40,6 @@ import { RecordingContext } from "./contexts/RecordingContext";
 import { UrlContext } from "./contexts/UrlContext";
 import { StepsContext } from "./contexts/StepsContext";
 import { TestContext } from "./contexts/TestContext";
-import type { Steps, SyntheticStep } from "./common/types";
 import { useSyntheticsTest } from "./hooks/useSyntheticsTest";
 import { generateIR, generateMergedIR } from "./helpers/generator";
 import { StepSeparator } from "./components/StepSeparator";

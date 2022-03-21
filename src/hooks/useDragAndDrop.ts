@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import type { Steps } from "@elastic/synthetics";
 import { useContext } from "react";
-import { Steps } from "../common/types";
 import { StepsContext } from "../contexts/StepsContext";
 
 export function canDrag(stepIndex: number, steps: Steps) {
@@ -42,10 +42,10 @@ export function canDrag(stepIndex: number, steps: Steps) {
    * The first step is never draggable, because the list must start with a step heading.
    */
   return (
-    (steps[stepIndex - 1].length <= 1 &&
-      steps[stepIndex].length <= 1 &&
-      steps[stepIndex + 1] &&
-      steps[stepIndex + 1].length <= 1) === false
+    (steps[stepIndex - 1].actions.length <= 1 &&
+      steps[stepIndex].actions.length <= 1 &&
+      steps[stepIndex + 1].actions &&
+      steps[stepIndex + 1].actions.length <= 1) === false
   );
 }
 

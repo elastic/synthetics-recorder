@@ -199,12 +199,12 @@ describe("useStepsContext", () => {
 
       expect(steps).toHaveLength(2);
       expect(steps[0]).toHaveLength(2);
-      expect(steps[0].map(({ action: { name } }) => name)).toEqual([
+      expect(steps[0].actions.map(({ action: { name } }) => name)).toEqual([
         "first-step-2",
         "second-step-2",
       ]);
       expect(steps[1]).toHaveLength(1);
-      expect(steps[1][0].action.name).toBe("first-step-1");
+      expect(steps[1].actions[0].action.name).toBe("first-step-1");
     });
   });
 
@@ -213,21 +213,27 @@ describe("useStepsContext", () => {
 
     beforeEach(() => {
       dropSteps = [
-        [
-          createAction("step-0-action-0"),
-          createAction("step-0-action-1"),
-          createAction("step-0-action-2"),
-        ],
-        [
-          createAction("step-1-action-0"),
-          createAction("step-1-action-1"),
-          createAction("step-1-action-2"),
-        ],
-        [
-          createAction("step-2-action-0"),
-          createAction("step-2-action-1"),
-          createAction("step-2-action-2"),
-        ],
+        {
+          actions: [
+            createAction("step-0-action-0"),
+            createAction("step-0-action-1"),
+            createAction("step-0-action-2"),
+          ],
+        },
+        {
+          actions: [
+            createAction("step-1-action-0"),
+            createAction("step-1-action-1"),
+            createAction("step-1-action-2"),
+          ],
+        },
+        {
+          actions: [
+            createAction("step-2-action-0"),
+            createAction("step-2-action-1"),
+            createAction("step-2-action-2"),
+          ],
+        },
       ];
     });
 
@@ -268,11 +274,11 @@ describe("useStepsContext", () => {
       expect(steps[0]).toHaveLength(2);
       expect(steps[1]).toHaveLength(4);
       expect(steps[2]).toHaveLength(3);
-      expect(steps[0].map(mapActionName)).toEqual([
+      expect(steps[0].actions.map(mapActionName)).toEqual([
         "step-0-action-0",
         "step-0-action-1",
       ]);
-      expect(steps[1].map(mapActionName)).toEqual([
+      expect(steps[1].actions.map(mapActionName)).toEqual([
         "step-0-action-2",
         "step-1-action-0",
         "step-1-action-1",
@@ -291,13 +297,13 @@ describe("useStepsContext", () => {
       expect(steps[0]).toHaveLength(3);
       expect(steps[1]).toHaveLength(4);
       expect(steps[2]).toHaveLength(2);
-      expect(steps[1].map(mapActionName)).toEqual([
+      expect(steps[1].actions.map(mapActionName)).toEqual([
         "step-1-action-0",
         "step-1-action-1",
         "step-1-action-2",
         "step-2-action-0",
       ]);
-      expect(steps[2].map(mapActionName)).toEqual([
+      expect(steps[2].actions.map(mapActionName)).toEqual([
         "step-2-action-1",
         "step-2-action-2",
       ]);
@@ -314,13 +320,13 @@ describe("useStepsContext", () => {
       expect(steps[0]).toHaveLength(4);
       expect(steps[1]).toHaveLength(2);
       expect(steps[2]).toHaveLength(3);
-      expect(steps[0].map(mapActionName)).toEqual([
+      expect(steps[0].actions.map(mapActionName)).toEqual([
         "step-0-action-0",
         "step-0-action-1",
         "step-0-action-2",
         "step-1-action-0",
       ]);
-      expect(steps[1].map(mapActionName)).toEqual([
+      expect(steps[1].actions.map(mapActionName)).toEqual([
         "step-1-action-1",
         "step-1-action-2",
       ]);

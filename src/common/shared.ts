@@ -157,9 +157,6 @@ export async function getCodeForFailedResult(
   return getCodeFromActions(ipc, [failedStep], journey.type);
 }
 
-export function generateExtraStepFields(
-  { name }: SyntheticStep,
-  _index?: number
-) {
+export function generateExtraStepFields({ name }: Step, _index?: number) {
   return { name };
 }

@@ -22,15 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ActionContext } from "../common/types";
+import { ActionInContext } from "@elastic/synthetics";
 import { isDroppable } from "./useDrop";
 
 // copied from upstream branch, do not merge this but delete and reference
 // original function after rebasing
 function createAction(
   name: string,
-  overrides?: Partial<ActionContext>
-): ActionContext {
+  overrides?: Partial<ActionInContext>
+): ActionInContext {
   return {
     action: {
       name,
@@ -48,8 +48,8 @@ describe("useDrop", () => {
     it(`is not droppable if there is no action in front or behind`, () => {
       expect(
         isDroppable(0, 0, [
-          [createAction("action-1")],
-          [createAction("action-2")],
+          { actions: [createAction("action-1")] },
+          { actions: [createAction("action-2")] },
         ])
       ).toBe(false);
     });
@@ -57,12 +57,14 @@ describe("useDrop", () => {
     it(`is not droppable if the targeted action is the final item in the step`, () => {
       expect(
         isDroppable(0, 3, [
-          [
-            createAction("action-1"),
-            createAction("action-2"),
-            createAction("action-3"),
-            createAction("action-4"),
-          ],
+          {
+            actions: [
+              createAction("action-1"),
+              createAction("action-2"),
+              createAction("action-3"),
+              createAction("action-4"),
+            ],
+          },
         ])
       ).toBe(false);
     });
@@ -70,12 +72,14 @@ describe("useDrop", () => {
     it("is droppable if there is an action behind", () => {
       expect(
         isDroppable(0, 2, [
-          [
-            createAction("action-1"),
-            createAction("action-2"),
-            createAction("action-3"),
-            createAction("action-4"),
-          ],
+          {
+            actions: [
+              createAction("action-1"),
+              createAction("action-2"),
+              createAction("action-3"),
+              createAction("action-4"),
+            ],
+          },
         ])
       ).toBe(true);
     });

@@ -31,9 +31,9 @@ import {
   useReducer,
   useState,
 } from "react";
-import { getCodeFromActions } from "../common/shared";
+import { getCodeForFailedResult, getCodeFromActions } from "../common/shared";
 import { CommunicationContext } from "../contexts/CommunicationContext";
-import { Result, Steps, TestEvent } from "../common/types";
+import type { Result, TestEvent } from "../common/types";
 import { ITestContext } from "../contexts/TestContext";
 import { resultReducer } from "../helpers/resultReducer";
 

@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import { Steps } from "@elastic/synthetics";
 import { useContext } from "react";
-import { Steps } from "../common/types";
 import { StepsContext } from "../contexts/StepsContext";
 
 export function isDroppable(
@@ -32,7 +32,8 @@ export function isDroppable(
   steps: Steps
 ) {
   return (
-    steps[stepIndex].length !== 1 && steps[stepIndex].length !== actionIndex + 1
+    steps[stepIndex].actions.length !== 1 &&
+    steps[stepIndex].actions.length !== actionIndex + 1
   );
 }
 

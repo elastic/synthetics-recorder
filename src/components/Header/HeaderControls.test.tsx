@@ -41,6 +41,7 @@ describe("<HeaderControls />", () => {
   it("displays pause text when recording", () => {
     const { getByLabelText } = render(
       <HeaderControls setIsCodeFlyoutVisible={jest.fn()} />,
+      undefined,
       {
         contextOverrides: {
           recording: { recordingStatus: RecordingStatus.Recording },
@@ -54,6 +55,7 @@ describe("<HeaderControls />", () => {
   it("displays resume text when paused", () => {
     const { getByLabelText } = render(
       <HeaderControls setIsCodeFlyoutVisible={jest.fn()} />,
+      undefined,
       {
         contextOverrides: {
           recording: { recordingStatus: RecordingStatus.Paused },

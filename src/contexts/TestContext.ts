@@ -40,7 +40,7 @@ export interface ITestContext {
   result?: Result;
   setIsTestInProgress: Setter<boolean>;
   setCodeBlocks: Setter<string>;
-  setResult: Setter<Result | undefined>;
+  setResult: (data: Result | undefined) => void;
   setIsResultFlyoutVisible: Setter<boolean>;
 }
 
