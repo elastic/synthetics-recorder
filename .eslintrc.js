@@ -48,7 +48,6 @@ module.exports = {
       rules: {
         "@typescript-eslint/explicit-module-boundary-types": 0,
         "@typescript-eslint/no-non-null-assertion": 0,
-        "jsx-a11y/aria-props": 0, // aria-description bug https://github.com/facebook/react/issues/21035
       },
     },
   ],
