@@ -91,7 +91,6 @@ export async function getCodeFromActions(
   console.log(JSON.stringify(actions, null, 2));
   return await ipc.callMain("actions-to-code", {
     actions,
-    extraFields: actions.map(generateExtraStepFields),
     isFlat: false,
     isSuite: type === "suite",
   });
