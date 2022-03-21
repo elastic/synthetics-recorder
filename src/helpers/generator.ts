@@ -24,6 +24,13 @@ THE SOFTWARE.
 
 import type { Action, ActionInContext, Step, Steps } from "@elastic/synthetics";
 
+/**
+ * Creates an intermediate representation of the steps Playwright has recorded from
+ * user interaction. Each step contains a list of actions to nest in the corresponding
+ * test function, and a set of metadata such as `name`.
+ * @param steps The steps to format into the custom IR
+ * @returns Formatted steps
+ */
 export function generateIR(steps: Steps): Steps {
   const result: Steps = [];
   const actions: ActionInContext[] = [];
