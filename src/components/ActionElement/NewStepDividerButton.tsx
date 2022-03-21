@@ -41,6 +41,7 @@ const AddStepDivider = styled(EuiButtonIcon)<StyleProps>`
   top: -8px;
   background-color: ${({ theme }) => theme.colors.body};
   visibility: ${({ computedvisibility }) => computedvisibility};
+  z-index: 1;
 `;
 
 export function NewStepDividerButton({ actionIndex, onClick }: Props) {

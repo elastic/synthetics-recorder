@@ -121,7 +121,9 @@ function ActionComponent({
         />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
-        {!step.action.isAssert && <ActionStatusIndicator status={testStatus} />}
+        {!step.action.isAssert && (
+          <ActionStatusIndicator showRect={isLast} status={testStatus} />
+        )}
       </EuiFlexItem>
       <Behavior isAssert={step.action.isAssert} omitBorder={isLast}>
         <ActionAccordion
