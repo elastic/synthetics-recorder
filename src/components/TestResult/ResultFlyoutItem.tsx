@@ -42,6 +42,7 @@ export function ResultFlyoutItem({ code, step, stepIndex }: IResultFlyoutItem) {
   const durationElement = (
     <EuiText size="s">{Math.round(duration / 1000)}s</EuiText>
   );
+  console.log("the result step", step);
 
   return (
     <ResultTitle

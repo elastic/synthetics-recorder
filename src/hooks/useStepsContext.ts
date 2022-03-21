@@ -338,7 +338,7 @@ const stepString: Steps = [
 ];
 
 export function useStepsContext(): IStepsContext {
-  const [steps, setSteps] = useState<Steps>([]);
+  const [steps, setSteps] = useState<Steps>(stepString);
   const setStepName = useCallback((idx: number, name: string) => {
     setSteps(oldSteps => {
       return oldSteps.map((step, i) => {

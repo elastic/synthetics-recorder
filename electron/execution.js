@@ -138,17 +138,17 @@ async function recordJourneys(data, browserWindow) {
 function addActionsToStepResult(steps, event) {
   const step = steps.find(
     s =>
-      s.length &&
-      s[0].title &&
+      s.actions.length &&
+      s.actions[0].title &&
       event?.data?.name &&
-      event.data.name === s[0].title
+      event.data.name === s.actions[0].title
   );
   if (!step) return { ...event, data: { ...event.data, actionTitles: [] } };
   return {
     ...event,
     data: {
       ...event.data,
-      actionTitles: step.map(
+      actionTitles: step.actions.map(
         (action, index) => action?.title ?? `Action ${index + 1}`
       ),
     },

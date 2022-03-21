@@ -33,6 +33,7 @@ interface IResultBody {
 }
 
 export function ResultBody({ actionTitles, resultCategory }: IResultBody) {
+  console.log(actionTitles, resultCategory);
   return (
     <EuiFlexGroup direction="column" gutterSize="none">
       {actionTitles.map((name, index) => (

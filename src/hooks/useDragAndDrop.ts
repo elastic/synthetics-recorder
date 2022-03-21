@@ -44,7 +44,7 @@ export function canDrag(stepIndex: number, steps: Steps) {
   return (
     (steps[stepIndex - 1].actions.length <= 1 &&
       steps[stepIndex].actions.length <= 1 &&
-      steps[stepIndex + 1].actions &&
+      steps[stepIndex + 1]?.actions &&
       steps[stepIndex + 1].actions.length <= 1) === false
   );
 }
