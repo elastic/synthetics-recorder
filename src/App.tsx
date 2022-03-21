@@ -30,6 +30,7 @@ import {
   EuiThemeProvider,
   EuiThemeAmsterdam,
 } from "@elastic/eui";
+import type { ActionInContext, Steps } from "@elastic/synthetics";
 import "./App.css";
 import "@elastic/eui/dist/eui_legacy_light.css";
 import { Title } from "./components/Header/Title";
@@ -39,7 +40,7 @@ import { RecordingContext } from "./contexts/RecordingContext";
 import { UrlContext } from "./contexts/UrlContext";
 import { StepsContext } from "./contexts/StepsContext";
 import { TestContext } from "./contexts/TestContext";
-import type { ActionContext, Step, Steps, SyntheticStep } from "./common/types";
+import type { Steps, SyntheticStep } from "./common/types";
 import { useSyntheticsTest } from "./hooks/useSyntheticsTest";
 import { generateIR, generateMergedIR } from "./helpers/generator";
 import { StepSeparator } from "./components/StepSeparator";
@@ -63,23 +64,29 @@ export default function App() {
   const { ipc } = useContext(CommunicationContext);
   const stepsContextUtils = useStepsContext();
   const { steps, setSteps, setStepName } = stepsContextUtils;
-  const recordingContextUtils = useRecordingContext(ipc, url, steps.length);
+  const syntheticsTestUtils = useSyntheticsTest(steps);
+  const recordingContextUtils = useRecordingContext(
+    ipc,
+    url,
+    steps.length,
+    syntheticsTestUtils.setResult
+  );
   const { isStartOverModalVisible, setIsStartOverModalVisible, startOver } =
     recordingContextUtils;
-  const syntheticsTestUtils = useSyntheticsTest(steps);
   const dragAndDropContext = useDragAndDropContext();
 
   useEffect(() => {
-    // `actions` here is an `Array<ActionContext>`, so alias it as "step"
-    ipc.answerMain(
-      "change",
-      ({ actions: step }: { actions: SyntheticStep }) => {
-        setSteps(prevSteps => {
-          const nextSteps = generateIR(step);
-          return generateMergedIR(prevSteps, nextSteps);
-        });
-      }
-    );
+    // `actions` here is a set of `ActionInContext`s that make up a `Step`
+    const listener = ({ actions }: { actions: ActionInContext[] }) => {
+      setSteps((prevSteps: Steps) => {
+        const nextSteps: Steps = generateIR([{ actions }]);
+        return generateMergedIR(prevSteps, nextSteps);
+      });
+    };
+    ipc.answerMain("change", listener);
+    return () => {
+      ipc.removeListener("change", listener);
+    };
   }, [ipc, setSteps]);
 
   return (

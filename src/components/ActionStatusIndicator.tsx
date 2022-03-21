@@ -22,27 +22,55 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiThemeComputed, EuiThemeContext } from "@elastic/eui";
+import {
+  EuiButtonEmpty,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiFlyoutFooter,
+  EuiThemeComputed,
+  EuiThemeContext,
+} from "@elastic/eui";
 import React, { useContext } from "react";
-import { ResultCategory } from "../common/types";
+import { JourneyType, ResultCategory, Setter } from "../common/types";
+import { SaveCodeButton } from "./SaveCodeButton";
 
 interface IActionStatusIndicator {
+  /**
+   * If true, indicator will render a rect overtop of the normal position
+   * of the `ActionElement` border.
+   *
+   * We use this to replace the border of elements where we don't want a line
+   * running down the entire side.
+   */
+  showRect?: boolean;
   status?: ResultCategory;
 }
 
-export function ActionStatusIndicator({ status }: IActionStatusIndicator) {
+export function ActionStatusIndicator({
+  showRect,
+  status,
+}: IActionStatusIndicator) {
   const euiTheme = useContext(EuiThemeContext);
 
   return (
     <svg
       width="50"
-      height="50"
-      style={{ left: 26, top: 12, position: "relative" }}
+      height="62"
+      style={{ left: 26, top: 0, position: "relative" }}
     >
-      <circle cx="25" cy="25" r="12" fill={euiTheme.colors.lightestShade} />
+      {!!showRect && (
+        <rect
+          x="24"
+          width="2"
+          height="40"
+          y="0"
+          style={{ fill: euiTheme.colors.lightShade, stroke: "none" }}
+        />
+      )}
+      <circle cx="25" cy="37" r="12" fill={euiTheme.colors.lightestShade} />
       <circle
         cx="25"
-        cy="25"
+        cy="37"
         r="3"
         fill={getColorForStatus(euiTheme, status)}
       />
@@ -50,10 +78,33 @@ export function ActionStatusIndicator({ status }: IActionStatusIndicator) {
   );
 }
 
+interface IFlyoutFooter {
+  setVisible: Setter<boolean>;
+  type: JourneyType;
+}
+
+export function Footer({ setVisible, type }: IFlyoutFooter) {
+  return (
+    <EuiFlyoutFooter>
+      <EuiFlexGroup justifyContent="spaceBetween">
+        <EuiFlexItem grow={false}>
+          <EuiButtonEmpty onClick={() => setVisible(false)}>
+            Close
+          </EuiButtonEmpty>
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          <SaveCodeButton type={type} />
+        </EuiFlexItem>
+      </EuiFlexGroup>
+    </EuiFlyoutFooter>
+  );
+}
+
 function getColorForStatus(
   euiTheme: EuiThemeComputed,
   status?: ResultCategory
 ) {
+  if (!status) return euiTheme.colors.darkestShade;
   switch (status) {
     case "succeeded":
       return euiTheme.colors.success;

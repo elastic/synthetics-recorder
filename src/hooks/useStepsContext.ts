@@ -22,13 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import type { ActionInContext, Step, Steps } from "@elastic/synthetics";
 import { useCallback, useState } from "react";
-import type {
-  ActionContext,
-  Step,
-  Steps,
-  SyntheticStep,
-} from "../common/types";
 import type { IStepsContext } from "../contexts/StepsContext";
 
 const stepString: Steps = [
@@ -327,10 +322,7 @@ export function useStepsContext(): IStepsContext {
       });
     });
   }, []);
-  const onStepDetailChange = (
-    updatedStep: SyntheticStep,
-    indexToUpdate: number
-  ) => {
+  const onStepDetailChange = (updatedStep: Step, indexToUpdate: number) => {
     setSteps(
       steps.map((currentStep, iterIndex) =>
         // if the `currentStep` is at the `indexToUpdate`, return `updatedStep` instead of stale object
@@ -347,9 +339,9 @@ export function useStepsContext(): IStepsContext {
         steps.map((step, currentStepIndex) => {
           if (currentStepIndex !== targetStepIdx) return step;
 
-          step.splice(indexToDelete, 1);
+          step.actions.splice(indexToDelete, 1);
 
-          return [...step];
+          return { ...step, actions: [...step.actions] };
         })
       );
     },
@@ -361,25 +353,31 @@ export function useStepsContext(): IStepsContext {
         steps.map((step, currentStepIndex) => {
           if (currentStepIndex !== targetStepIdx) return step;
 
-          step.splice(indexToInsert, 0, action);
+          step.actions.splice(indexToInsert, 0, action);
 
-          return [...step];
+          return { name: step.name, actions: [...step.actions] };
         })
       );
     },
     onMergeSteps: (indexToInsert, indexToRemove) => {
       setSteps(oldSteps => {
-        oldSteps[indexToInsert] = [
-          ...steps[indexToInsert],
-          ...steps[indexToRemove],
-        ];
+        oldSteps[indexToInsert] = {
+          name:
+            oldSteps[indexToInsert].name ??
+            oldSteps[indexToRemove].name ??
+            undefined,
+          actions: [
+            ...steps[indexToInsert].actions,
+            ...steps[indexToRemove].actions,
+          ],
+        };
         oldSteps.splice(indexToRemove, 1);
         return oldSteps;
       });
     },
     onRearrangeSteps: (indexA, indexB) => {
       setSteps(oldSteps => {
-        const placeholder = [...steps[indexA]];
+        const placeholder = steps[indexA];
         oldSteps[indexA] = oldSteps[indexB];
         oldSteps[indexB] = placeholder;
         return oldSteps;
@@ -473,41 +471,42 @@ export function useStepsContext(): IStepsContext {
       }
     },
     onSplitStep: (stepIndex, actionIndex) => {
-      if (actionIndex === 0)
-        throw Error(
-          `Split procedure received action index ${actionIndex}. Cannot remove all actions from a step.`
-        );
+      if (actionIndex === 0) {
+        throw Error(`Cannot remove all actions from a step.`);
+      }
+      if (steps.length <= stepIndex) {
+        throw Error("Step index cannot exceed steps length.");
+      }
       const stepToSplit = steps[stepIndex];
-      if (stepToSplit.length <= 1) {
+      if (stepToSplit.actions.length <= 1) {
         throw Error("Cannot split step with only one action.");
       }
-      const reducedStep = stepToSplit.slice(0, actionIndex);
-      const insertedStep = stepToSplit.slice(actionIndex);
+      const reducedStepActions = stepToSplit.actions.slice(0, actionIndex);
+      const insertedStepActions = stepToSplit.actions.slice(actionIndex);
 
-      let tail: Steps = [];
-      if (steps.length > stepIndex + 1) {
-        tail = steps.slice(stepIndex + 1, steps.length);
-      }
       setSteps([
         ...steps.slice(0, stepIndex),
-        reducedStep,
-        insertedStep,
-        ...tail,
+        { name: stepToSplit.name, actions: reducedStepActions },
+        { actions: insertedStepActions },
+        ...steps.slice(stepIndex + 1, steps.length),
       ]);
     },
     onStepDetailChange,
     onUpdateAction: (
-      action: ActionContext,
+      action: ActionInContext,
       stepIndex: number,
       actionIndex: number
     ) => {
       const step = steps[stepIndex];
       onStepDetailChange(
-        [
-          ...step.slice(0, actionIndex),
-          action,
-          ...step.slice(actionIndex + 1, step.length),
-        ],
+        {
+          actions: [
+            ...step.actions.slice(0, actionIndex),
+            action,
+            ...step.actions.slice(actionIndex + 1, step.actions.length),
+          ],
+          name: step.name,
+        },
         stepIndex
       );
     },

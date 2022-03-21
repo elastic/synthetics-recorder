@@ -22,17 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import type { ActionInContext, Step, Steps } from "@elastic/synthetics";
 import {
   act,
   renderHook,
   RenderHookResult,
 } from "@testing-library/react-hooks";
-import type {
-  ActionContext,
-  Step,
-  Steps,
-  SyntheticStep,
-} from "../common/types";
 import { IStepsContext } from "../contexts/StepsContext";
 import { useStepsContext } from "./useStepsContext";
 
@@ -40,8 +35,8 @@ import { useStepsContext } from "./useStepsContext";
 // original function after rebasing
 function createAction(
   name: string,
-  overrides?: Partial<ActionContext>
-): ActionContext {
+  overrides?: Partial<ActionInContext>
+): ActionInContext {
   return {
     action: {
       name,
@@ -60,37 +55,10 @@ describe("useStepsContext", () => {
 
   beforeEach(async () => {
     defaultSteps = [
-      [
-        {
-          action: {
-            name: "first-step-1",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-      ],
-      [
-        {
-          action: {
-            name: "first-step-2",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-        {
-          action: {
-            name: "second-step-2",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-      ],
+      { actions: [createAction("first-step-1")] },
+      {
+        actions: [createAction("first-step-2"), createAction("second-step-2")],
+      },
     ];
 
     defaultResult = renderHook(() => useStepsContext());
@@ -102,14 +70,7 @@ describe("useStepsContext", () => {
 
   describe("onStepDetailChange", () => {
     it("updates the targeted step", () => {
-      const testStep: SyntheticStep = [
-        {
-          action: { name: "new-action", signals: [] },
-          frameUrl: "https://www.wikipedia.org",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-      ];
+      const testStep: Step = { actions: [createAction("new-action")] };
 
       act(() => {
         defaultResult.result.current.onStepDetailChange(testStep, 1);
@@ -117,7 +78,7 @@ describe("useStepsContext", () => {
 
       const { steps } = defaultResult.result.current;
 
-      expect(steps[0]).toEqual(defaultSteps[0]);
+      expect(steps[0].actions).toEqual(defaultSteps[0].actions);
       expect(steps[1]).toEqual(testStep);
       expect(steps).toHaveLength(2);
     });
@@ -133,8 +94,8 @@ describe("useStepsContext", () => {
 
       expect(steps).toHaveLength(2);
       expect(steps[0]).toEqual(defaultSteps[0]);
-      expect(steps[1]).toHaveLength(1);
-      expect(steps[1][0]).toEqual(defaultSteps[1][0]);
+      expect(steps[1].actions).toHaveLength(1);
+      expect(steps[1].actions[0]).toEqual(defaultSteps[1].actions[0]);
     });
   });
 
@@ -153,15 +114,7 @@ describe("useStepsContext", () => {
 
   describe("onInsertAction", () => {
     it("adds the given action at the expected index", () => {
-      const insertedAction = {
-        action: {
-          name: "inserted-step",
-          signals: [{ "test-signal": true }],
-        },
-        frameUrl: "https://www.elastic.co",
-        isMainFrame: false,
-        pageAlias: "page-alias-string",
-      };
+      const insertedAction = createAction("inserted-step");
 
       act(() => {
         defaultResult.result.current.onInsertAction(insertedAction, 1, 2);
@@ -171,23 +124,14 @@ describe("useStepsContext", () => {
 
       expect(steps).toHaveLength(2);
       expect(steps[0]).toEqual(defaultSteps[0]);
-      expect(steps[1]).toHaveLength(3);
-      expect(steps[1][2]).toEqual(insertedAction);
+      expect(steps[1].actions).toHaveLength(3);
+      expect(steps[1].actions[2]).toEqual(insertedAction);
     });
   });
 
   describe("onUpdateAction", () => {
     it("updates the targeted action", () => {
-      const updatedAction: ActionContext = {
-        action: {
-          isAssert: true,
-          name: "updated-action",
-          signals: [],
-        },
-        frameUrl: "https://www.elastic.co",
-        isMainFrame: true,
-        pageAlias: "pageAlias",
-      };
+      const updatedAction: ActionInContext = createAction("updated-action");
 
       act(() => {
         defaultResult.result.current.onUpdateAction(updatedAction, 0, 0);
@@ -196,48 +140,24 @@ describe("useStepsContext", () => {
       const { steps } = defaultResult.result.current;
 
       expect(steps).toHaveLength(2);
-      expect(steps[0]).toHaveLength(1);
-      expect(steps[1]).toHaveLength(2);
-      expect(steps[0][0]).toEqual(updatedAction);
+      expect(steps[0].actions).toHaveLength(1);
+      expect(steps[1].actions).toHaveLength(2);
+      expect(steps[0].actions[0]).toEqual(updatedAction);
       expect(steps[1]).toEqual(defaultSteps[1]);
     });
   });
 
   describe("onMergeSteps", () => {
-    const mergeSteps = [
-      [
-        {
-          action: {
-            name: "first-step-1",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-      ],
-      [
-        {
-          action: {
-            name: "second-step-1",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-      ],
-      [
-        {
-          action: {
-            name: "third-step-1",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-      ],
+    const mergeSteps: Steps = [
+      {
+        actions: [createAction("first-step-1")],
+      },
+      {
+        actions: [createAction("second-step-1")],
+      },
+      {
+        actions: [createAction("third-step-1")],
+      },
     ];
 
     it("merges two steps and inserts them at the first index", () => {
@@ -250,37 +170,22 @@ describe("useStepsContext", () => {
       });
       const { steps } = result.current;
       expect(steps).toHaveLength(2);
-      expect(steps[0]).toEqual([
-        {
-          action: {
-            name: "first-step-1",
-            signals: [],
+      expect(steps[0]).toEqual({
+        actions: [createAction("first-step-1"), createAction("second-step-1")],
+      });
+      expect(steps[1]).toEqual({
+        actions: [
+          {
+            action: {
+              name: "third-step-1",
+              signals: [],
+            },
+            frameUrl: "https://www.elastic.co",
+            isMainFrame: true,
+            pageAlias: "pageAlias",
           },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-        {
-          action: {
-            name: "second-step-1",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-      ]);
-      expect(steps[1]).toEqual([
-        {
-          action: {
-            name: "third-step-1",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-      ]);
+        ],
+      });
     });
   });
 
@@ -326,7 +231,7 @@ describe("useStepsContext", () => {
       ];
     });
 
-    const mapActionName = (a: ActionContext, _: number) => a.action.name;
+    const mapActionName = (a: ActionInContext, _: number) => a.action.name;
 
     it("throws an error if target index is less than 0", () => {
       expect(() =>
@@ -419,95 +324,34 @@ describe("useStepsContext", () => {
         "step-1-action-1",
         "step-1-action-2",
       ]);
+      expect(steps[0].actions).toHaveLength(2);
+      expect(steps[0].actions.map(({ action: { name } }) => name)).toEqual([
+        "first-step-2",
+        "second-step-2",
+      ]);
+      expect(steps[1].actions).toHaveLength(1);
+      expect(steps[1].actions[0].action.name).toBe("first-step-1");
     });
   });
 
   describe("onSplitStep", () => {
-    const splitSteps = [
-      [
-        {
-          action: {
-            name: "first-step-1",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-        {
-          action: {
-            name: "first-step-2",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-      ],
-      [
-        {
-          action: {
-            name: "second-step-1",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-        {
-          action: {
-            name: "second-step-2",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-        {
-          action: {
-            name: "second-step-3",
-            signals: [],
-          },
-          frameUrl: "Https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-        {
-          action: {
-            name: "second-step-4",
-            signals: [],
-          },
-          frameUrl: "Https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-      ],
-      [
-        {
-          action: {
-            name: "third-step-1",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-        {
-          action: {
-            name: "third-step-2",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-      ],
+    const splitSteps: Steps = [
+      { actions: [createAction("first-step-1"), createAction("first-step-2")] },
+      {
+        actions: [
+          createAction("second-step-1"),
+          createAction("second-step-2"),
+          createAction("second-step-3"),
+          createAction("second-step-4"),
+        ],
+      },
+      { actions: [createAction("third-step-1"), createAction("third-step-2")] },
     ];
 
     it("throws error when `actionIndex` is 0", () => {
       const result = renderHook(() => useStepsContext());
       expect(() => result.result.current.onSplitStep(0, 0)).toThrowError(
-        "Split procedure received action index 0. Cannot remove all actions from a step"
+        "Cannot remove all actions from a step."
       );
     });
 
@@ -515,19 +359,7 @@ describe("useStepsContext", () => {
       const { result } = renderHook(() => useStepsContext());
 
       act(() => {
-        result.current.setSteps([
-          [
-            {
-              action: {
-                name: "name",
-                signals: [],
-              },
-              frameUrl: "https://www.elastic.co",
-              isMainFrame: true,
-              pageAlias: "pageAlias",
-            },
-          ],
-        ]);
+        result.current.setSteps([{ actions: [createAction("name")] }]);
       });
 
       expect(() => result.current.onSplitStep(0, 1)).toThrowError(
@@ -547,28 +379,8 @@ describe("useStepsContext", () => {
 
       const { steps } = result.result.current;
       expect(steps).toHaveLength(4);
-      expect(steps[0]).toEqual([
-        {
-          action: {
-            name: "first-step-1",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-      ]);
-      expect(steps[1]).toEqual([
-        {
-          action: {
-            name: "first-step-2",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-      ]);
+      expect(steps[0].actions).toEqual([createAction("first-step-1")]);
+      expect(steps[1].actions).toEqual([createAction("first-step-2")]);
     });
     it("splits the target step at the tail of the list", () => {
       const result = renderHook(() => useStepsContext());
@@ -582,29 +394,23 @@ describe("useStepsContext", () => {
 
       const { steps } = result.result.current;
       expect(steps).toHaveLength(4);
-      expect(steps[2]).toEqual([
-        {
-          action: {
-            name: "third-step-1",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-      ]);
-      expect(steps[3]).toEqual([
-        {
-          action: {
-            name: "third-step-2",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-      ]);
+      expect(steps[2].actions).toEqual([createAction("third-step-1")]);
+      expect(steps[3].actions).toEqual([createAction("third-step-2")]);
     });
+
+    it("throws an error if the step index is greater than the steps list length", () => {
+      const result = renderHook(() => useStepsContext());
+
+      act(() => {
+        result.result.current.setSteps(splitSteps);
+      });
+      act(() => {
+        expect(() => result.result.current.onSplitStep(23, 1)).toThrowError(
+          "Step index cannot exceed steps length."
+        );
+      });
+    });
+
     it("splits the target step into two separate steps", () => {
       const result = renderHook(() => useStepsContext());
 
@@ -616,85 +422,21 @@ describe("useStepsContext", () => {
       });
       const { steps } = result.result.current;
       expect(steps).toHaveLength(4);
-      expect(steps[0]).toEqual([
-        {
-          action: {
-            name: "first-step-1",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-        {
-          action: {
-            name: "first-step-2",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
+      expect(steps[0].actions).toEqual([
+        createAction("first-step-1"),
+        createAction("first-step-2"),
       ]);
-      expect(steps[1]).toEqual([
-        {
-          action: {
-            name: "second-step-1",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-        {
-          action: {
-            name: "second-step-2",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
+      expect(steps[1].actions).toEqual([
+        createAction("second-step-1"),
+        createAction("second-step-2"),
       ]);
-      expect(steps[2]).toEqual([
-        {
-          action: {
-            name: "second-step-3",
-            signals: [],
-          },
-          frameUrl: "Https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-        {
-          action: {
-            name: "second-step-4",
-            signals: [],
-          },
-          frameUrl: "Https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
+      expect(steps[2].actions).toEqual([
+        createAction("second-step-3"),
+        createAction("second-step-4"),
       ]);
-      expect(steps[3]).toEqual([
-        {
-          action: {
-            name: "third-step-1",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
-        {
-          action: {
-            name: "third-step-2",
-            signals: [],
-          },
-          frameUrl: "https://www.elastic.co",
-          isMainFrame: true,
-          pageAlias: "pageAlias",
-        },
+      expect(steps[3].actions).toEqual([
+        createAction("third-step-1"),
+        createAction("third-step-2"),
       ]);
     });
   });

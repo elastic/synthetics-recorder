@@ -23,6 +23,7 @@ THE SOFTWARE.
 */
 
 import { EuiFlexGroup, EuiFlexItem, EuiAccordion } from "@elastic/eui";
+import { ActionInContext } from "@elastic/synthetics";
 import React, { useCallback, useContext, useState } from "react";
 import styled from "styled-components";
 import {
@@ -30,7 +31,6 @@ import {
   SMALL_SCREEN_BREAKPOINT,
 } from "../../common/shared";
 import {
-  ActionContext,
   ResultCategory,
   StepSeparatorDragDropDataTransfer,
 } from "../../common/types";
@@ -41,6 +41,7 @@ import { ActionDetail } from "../ActionDetail";
 import { ActionStatusIndicator } from "../ActionStatusIndicator";
 import { Assertion } from "../Assertion";
 import { ActionWrapper } from "./ActionWrapper";
+import { Behavior } from "./Behavior";
 import { ExtraActions } from "./ExtraActions";
 import { NewStepDividerButton } from "./NewStepDividerButton";
 
@@ -49,7 +50,8 @@ interface IActionElement {
   className?: string;
   initialIsOpen?: boolean;
   isDragging?: boolean;
-  step: ActionContext;
+  step: ActionInContext;
+  isLast?: boolean;
   stepIndex: number;
   testStatus?: ResultCategory;
 }
@@ -93,6 +95,7 @@ function ActionComponent({
   actionIndex,
   className,
   initialIsOpen,
+  isLast,
   step,
   stepIndex,
   testStatus,
@@ -120,7 +123,7 @@ function ActionComponent({
       <EuiFlexItem grow={false}>
         {!step.action.isAssert && <ActionStatusIndicator status={testStatus} />}
       </EuiFlexItem>
-      <ActionWrapper isAssert={step.action.isAssert}>
+      <Behavior isAssert={step.action.isAssert} omitBorder={isLast}>
         <ActionAccordion
           arrowDisplay="none"
           buttonProps={{ style: { display: "none" } }}
@@ -189,7 +192,7 @@ function ActionComponent({
             }}
           />
         )}
-      </ActionWrapper>
+      </Behavior>
     </Container>
   );
 }

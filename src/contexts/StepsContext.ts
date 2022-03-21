@@ -22,14 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import type { ActionInContext, Step, Steps } from "@elastic/synthetics";
 import { createContext } from "react";
-import type {
-  ActionContext,
-  Setter,
-  Step,
-  Steps,
-  SyntheticStep,
-} from "../common/types";
+import type { Setter } from "../common/types";
 
 function notImplemented() {
   throw Error("Step context not initialized");
@@ -60,7 +55,7 @@ export interface IStepsContext {
    * Inserts the `action` to the given step at `actionIndex`.
    */
   onInsertAction: (
-    action: ActionContext,
+    action: ActionInContext,
     stepIndex: number,
     actionIndex: number
   ) => void;
@@ -88,14 +83,14 @@ export interface IStepsContext {
    * Overwrites the action at the given step -> action index.
    */
   onUpdateAction: (
-    action: ActionContext,
+    action: ActionInContext,
     stepIndex: number,
     actionIndex: number
   ) => void;
   /**
    * Overwrites the step at `stepIndex` with `step`.
    */
-  onStepDetailChange: (step: SyntheticStep, stepIndex: number) => void;
+  onStepDetailChange: (step: Step, stepIndex: number) => void;
 }
 
 export const StepsContext = createContext<IStepsContext>({

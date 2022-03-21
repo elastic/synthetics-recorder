@@ -22,44 +22,4 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import {
-  EuiAccordion,
-  EuiFlexGroup,
-  EuiIcon,
-  EuiPanel,
-  EuiText,
-} from "@elastic/eui";
-import React from "react";
-import styled from "styled-components";
-import type { StepStatus } from "../../common/types";
-
-export const ResultContainer = styled(EuiPanel)`
-  && {
-    border-radius: ${props => props.theme.border.radius.medium};
-  }
-  padding: 0px;
-  margin: 0px 0px 24px 0px;
-`;
-
-export const ResultHeader = styled.h3`
-  border-bottom: ${props => props.theme.border.thin};
-  padding: 8px;
-`;
-
-export const ResultErrorAccordion = styled(EuiAccordion)`
-  margin: 0px 10px 0px 4px;
-`;
-
-export const ResultContentWrapper = styled(EuiFlexGroup)`
-  margin: 8px 8px 4px 8px;
-`;
-
-export const Bold = styled(EuiText)`
-  font-weight: 500;
-`;
-
-export const symbols: Record<StepStatus, JSX.Element> = {
-  succeeded: <EuiIcon color="success" type="check" />,
-  failed: <EuiIcon color="danger" type="cross" />,
-  skipped: <EuiIcon color="warning" type="flag" />,
-};
+export { ActionElement } from "./ActionElement";

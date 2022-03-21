@@ -22,8 +22,8 @@
     "prepare": "husky install",
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "jest --config ./jest.unit.config.js ./src",
-    "test:unit:watch": "jest --config ./jest.unit.config.js ./src --watch --coverage",
-    "test:e2e": "jest --config ./jest.e2e.config.js ./e2e/tests",
+    "test:unit:watch": "npm run test:unit -- --coverage --watch",
+    "test:e2e": "jest --runInBand --config ./jest.e2e.config.js ./e2e/tests",
     "test:e2e:server": "BROWSER=NONE PORT=61337 react-scripts start",
     "test:e2e:runner": "IS_RUNNER=true TEST_PORT=61337 jest --config ./jest.e2e.config.js ./e2e/tests",
     "update-demo-app": "git subtree pull --prefix demo-app git@github.com:vigneshshanmugam/synthetics-ecommerce-demo.git main --squash"
@@ -60,7 +60,14 @@
       "main": "build/electron.js"
     },
     "mac": {
-      "icon": "public/elastic.png"
+      "icon": "public/elastic.png",
+      "category": "public.app-category.developer-tools "
+    },
+    "protocols": {
+      "name": "elastic-synthetics-recorder",
+      "schemes": [
+        "elastic-synthetics-recorder"
+      ]
     },
     "win": {
       "target": "nsis",
@@ -81,7 +88,7 @@
     "@types/jest": "^27.0.2",
     "@types/react-dom": "^17.0.10",
     "@types/styled-components": "^5.1.17",
-    "concurrently": "^6.2.0",
+    "concurrently": "^7.0.0",
     "electron": "^14.0.1",
     "electron-builder": "^22.11.7",
     "eslint": "^7.32.0",
@@ -92,16 +99,16 @@
     "husky": "^7.0.4",
     "jest": "^26.6.0",
     "nodemon": "^2.0.15",
-    "prettier": "2.5.0",
+    "prettier": "2.5.1",
     "react-scripts": "5.0.0",
     "react-test-renderer": "^17.0.2",
     "ts-jest": "^26.5.6",
-    "wait-on": "^6.0.0"
+    "wait-on": "^6.0.1"
   },
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
-    "@elastic/eui": "^43.1.1",
-    "@elastic/synthetics": "file:../synthetics/elastic-synthetics-1.0.0-beta.19.tgz",
+    "@elastic/eui": "^48.0.0",
+    "@elastic/synthetics": "file:../synthetics/elastic-synthetics-1.0.0-beta.22.tgz",
     "@emotion/react": "^11.7.1",
     "dotenv": "^10.0.0",
     "electron-better-ipc": "^2.0.1",

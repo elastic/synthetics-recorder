@@ -22,44 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import {
-  EuiAccordion,
-  EuiFlexGroup,
-  EuiIcon,
-  EuiPanel,
-  EuiText,
-} from "@elastic/eui";
-import React from "react";
-import styled from "styled-components";
-import type { StepStatus } from "../../common/types";
+import { ElectronServiceFactory, env } from "../services";
 
-export const ResultContainer = styled(EuiPanel)`
-  && {
-    border-radius: ${props => props.theme.border.radius.medium};
-  }
-  padding: 0px;
-  margin: 0px 0px 24px 0px;
-`;
+const electronService = new ElectronServiceFactory();
 
-export const ResultHeader = styled.h3`
-  border-bottom: ${props => props.theme.border.thin};
-  padding: 8px;
-`;
+afterEach(async () => {
+  await electronService.terminate();
+});
 
-export const ResultErrorAccordion = styled(EuiAccordion)`
-  margin: 0px 10px 0px 4px;
-`;
+describe("Steps", () => {
+  it("has the right number of step results", async () => {
+    const electronWindow = await electronService.getWindow();
 
-export const ResultContentWrapper = styled(EuiFlexGroup)`
-  margin: 8px 8px 4px 8px;
-`;
+    await electronService.enterTestUrl(env.DEMO_APP_URL);
 
-export const Bold = styled(EuiText)`
-  font-weight: 500;
-`;
+    await electronService.clickStartRecording();
+    await electronService.waitForPageToBeIdle();
+    await electronService.clickStopRecording();
+    await electronService.clickRunTest();
 
-export const symbols: Record<StepStatus, JSX.Element> = {
-  succeeded: <EuiIcon color="success" type="check" />,
-  failed: <EuiIcon color="danger" type="cross" />,
-  skipped: <EuiIcon color="warning" type="flag" />,
-};
+    expect(await electronWindow.$("text=1 success"));
+    expect(await electronWindow.$(`text=Go to http://${env.DEMO_APP_URL}`));
+  });
+});

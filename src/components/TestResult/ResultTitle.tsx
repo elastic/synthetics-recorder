@@ -22,23 +22,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
 import React from "react";
 import { Bold, ResultContainer, ResultHeader } from "./styles";
 
 export interface IResultHeader {
+  durationElement: JSX.Element;
   key?: string;
   titleText: string;
 }
 
 export const ResultTitle: React.FC<IResultHeader> = ({
   children,
+  durationElement,
   key,
   titleText,
 }) => {
   return (
     <ResultContainer key={key} hasShadow={false}>
       <ResultHeader>
-        <Bold>{titleText}</Bold>
+        <EuiFlexGroup>
+          <EuiFlexItem>
+            <Bold>{titleText}</Bold>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>{durationElement}</EuiFlexItem>
+        </EuiFlexGroup>
       </ResultHeader>
       {children}
     </ResultContainer>

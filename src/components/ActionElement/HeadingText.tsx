@@ -22,15 +22,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React from "react";
 import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
-import { ActionContext } from "../../common/types";
+import { ActionInContext } from "@elastic/synthetics";
+import React from "react";
+import styled from "styled-components";
 import { AssertionHeadingText } from "./AssertionHeadingText";
 import { Bold } from "./styles";
 
 interface IHeadingText {
-  actionContext: ActionContext;
+  actionContext: ActionInContext;
 }
+
+const WrapText = styled(EuiFlexItem)`
+  overflow-wrap: anywhere;
+`;
 
 export function HeadingText({ actionContext }: IHeadingText) {
   if (actionContext.action.isAssert) {
@@ -39,14 +44,14 @@ export function HeadingText({ actionContext }: IHeadingText) {
   return (
     <EuiFlexGroup gutterSize="xs">
       <Bold grow={false}>{actionContext.action.name}</Bold>
-      <EuiFlexItem>
+      <WrapText>
         &nbsp;
         {actionContext.action.name !== "navigate" &&
           actionContext.action.selector}
         {actionContext.action.name === "navigate"
           ? actionContext.frameUrl
           : null}
-      </EuiFlexItem>
+      </WrapText>
     </EuiFlexGroup>
   );
 }

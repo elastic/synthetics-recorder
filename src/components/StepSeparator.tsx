@@ -30,17 +30,14 @@ import {
   EuiFieldText,
   EuiToolTip,
 } from "@elastic/eui";
+import type { Step } from "@elastic/synthetics";
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import {
   DRAG_AND_DROP_DATA_TRANSFER_TYPE,
   SMALL_SCREEN_BREAKPOINT,
 } from "../common/shared";
-import {
-  Step,
-  StepSeparatorDragDropDataTransfer,
-  SyntheticStep,
-} from "../common/types";
+import { StepSeparatorDragDropDataTransfer } from "../common/types";
 import { DragAndDropContext } from "../contexts/DragAndDropContext";
 import { useDragAndDrop } from "../hooks/useDragAndDrop";
 import { useStepResultStatus } from "../hooks/useTestResult";
@@ -144,13 +141,13 @@ function EditStepNameInput({
 
 interface IStepSeparator {
   index: number;
-  step: SyntheticStep;
+  step: Step;
   setStepName: (index: number, name: string) => void;
 }
 
 export function StepSeparator({ index, setStepName, step }: IStepSeparator) {
   const testStatus = useStepResultStatus(
-    step.length ? step[0].title : undefined
+    step.actions.length ? step.actions[0].title : undefined
   );
   const { setIsDragInProgress } = useContext(DragAndDropContext);
   const [showEditButton, setShowEditButton] = useState(true);
@@ -229,13 +226,14 @@ export function StepSeparator({ index, setStepName, step }: IStepSeparator) {
       id={`step-separator-${index}`}
       initialIsOpen
     >
-      {step.map((s, actionIndex) => (
+      {step.actions.map((s, actionIndex) => (
         <ActionElement
           key={`action-${actionIndex}-for-step-${index}`}
           step={s}
           actionIndex={actionIndex}
           stepIndex={index}
           testStatus={testStatus}
+          isLast={actionIndex === step.actions.length - 1}
         />
       ))}
     </StepSeparatorAccordion>

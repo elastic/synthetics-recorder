@@ -22,44 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import {
-  EuiAccordion,
-  EuiFlexGroup,
-  EuiIcon,
-  EuiPanel,
-  EuiText,
-} from "@elastic/eui";
-import React from "react";
-import styled from "styled-components";
-import type { StepStatus } from "../../common/types";
+import { ElectronServiceFactory, env } from "../services";
 
-export const ResultContainer = styled(EuiPanel)`
-  && {
-    border-radius: ${props => props.theme.border.radius.medium};
-  }
-  padding: 0px;
-  margin: 0px 0px 24px 0px;
-`;
+const electronService = new ElectronServiceFactory();
 
-export const ResultHeader = styled.h3`
-  border-bottom: ${props => props.theme.border.thin};
-  padding: 8px;
-`;
+afterEach(async () => {
+  await electronService.terminate();
+});
 
-export const ResultErrorAccordion = styled(EuiAccordion)`
-  margin: 0px 10px 0px 4px;
-`;
+describe("Test Button", () => {
+  it("is disabled during a recording session", async () => {
+    const electronWindow = await electronService.getWindow();
 
-export const ResultContentWrapper = styled(EuiFlexGroup)`
-  margin: 8px 8px 4px 8px;
-`;
+    await electronService.enterTestUrl(env.DEMO_APP_URL);
+    await electronService.clickStartRecording();
+    await electronService.waitForPageToBeIdle();
 
-export const Bold = styled(EuiText)`
-  font-weight: 500;
-`;
-
-export const symbols: Record<StepStatus, JSX.Element> = {
-  succeeded: <EuiIcon color="success" type="check" />,
-  failed: <EuiIcon color="danger" type="cross" />,
-  skipped: <EuiIcon color="warning" type="flag" />,
-};
+    const testButton = await electronWindow.$(
+      `[aria-label="You cannot execute your recorded tests until you have finished a recording session"]`
+    );
+    expect(testButton).toBeTruthy();
+    expect(await testButton.isEnabled());
+  });
+});

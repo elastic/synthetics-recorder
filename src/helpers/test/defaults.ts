@@ -27,31 +27,31 @@ import { IRecordingContext } from "../../contexts/RecordingContext";
 import { IStepsContext } from "../../contexts/StepsContext";
 import { IUrlContext } from "../../contexts/UrlContext";
 
-export const RECORDING_CONTEXT_DEFAULTS: IRecordingContext = {
+export const getRecordingContextDefaults = (): IRecordingContext => ({
+  startOver: jest.fn(),
   isStartOverModalVisible: false,
   setIsStartOverModalVisible: jest.fn(),
   recordingStatus: RecordingStatus.NotRecording,
-  startOver: jest.fn(),
   togglePause: jest.fn(),
   toggleRecording: jest.fn(),
-};
+});
 
-export const URL_CONTEXT_DEFAULTS: IUrlContext = {
-  url: "",
+export const getUrlContextDefaults = (): IUrlContext => ({
   setUrl: jest.fn(),
-};
+  url: "https://www.elastic.co",
+});
 
-export const STEPS_CONTEXT_DEFAULTS: IStepsContext = {
+export const getStepsContextDefaults = (): IStepsContext => ({
   steps: [],
   setSteps: jest.fn(),
   setStepName: jest.fn(),
-  onInsertAction: jest.fn(),
   onDeleteAction: jest.fn(),
   onDeleteStep: jest.fn(),
+  onInsertAction: jest.fn(),
   onDropStep: jest.fn(),
   onMergeSteps: jest.fn(),
   onRearrangeSteps: jest.fn(),
   onSplitStep: jest.fn(),
   onStepDetailChange: jest.fn(),
   onUpdateAction: jest.fn(),
-};
+});

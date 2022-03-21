@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import type { ActionInContext } from "@elastic/synthetics";
 import React, { useContext, useState } from "react";
 import {
   EuiButton,
@@ -33,13 +34,12 @@ import {
   EuiText,
 } from "@elastic/eui";
 import { StepsContext } from "../../contexts/StepsContext";
-import type { ActionContext } from "../../common/types";
 import { FormControl } from "./FormControl";
 
 function createUpdatedAction(
   field: string,
   value: string,
-  context: ActionContext
+  context: ActionInContext
 ) {
   return {
     ...context,
@@ -49,7 +49,7 @@ function createUpdatedAction(
 }
 
 interface IActionDetail {
-  actionContext: ActionContext;
+  actionContext: ActionInContext;
   actionIndex: number;
   stepIndex: number;
   close?: () => void;
@@ -63,13 +63,16 @@ export function ActionDetail({
 }: IActionDetail) {
   const { steps, onStepDetailChange } = useContext(StepsContext);
   const onActionContextChange = (
-    updatedAction: ActionContext,
+    updatedAction: ActionInContext,
     updatedActionIndex: number
   ) => {
     onStepDetailChange(
-      steps[stepIndex].map((actionToUpdate, index) =>
-        index === updatedActionIndex ? updatedAction : actionToUpdate
-      ),
+      {
+        actions: steps[stepIndex].actions.map((actionToUpdate, index) =>
+          index === updatedActionIndex ? updatedAction : actionToUpdate
+        ),
+        name: steps[stepIndex].name,
+      },
       stepIndex
     );
   };

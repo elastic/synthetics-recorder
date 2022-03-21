@@ -23,7 +23,11 @@ THE SOFTWARE.
 */
 
 import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
+<<<<<<< HEAD
 import React, { useContext } from "react";
+=======
+import React, { useCallback, useContext } from "react";
+>>>>>>> 169/switch-from-nested-array-to-map
 import styled from "styled-components";
 import { RecordingStatus, Setter } from "../../common/types";
 import { RecordingContext } from "../../contexts/RecordingContext";
@@ -56,11 +60,30 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
     useContext(RecordingContext);
 
   const { url, setUrl } = useContext(UrlContext);
+<<<<<<< HEAD
+
+  const { steps } = useContext(StepsContext);
+=======
+>>>>>>> 169/switch-from-nested-array-to-map
 
   const { steps } = useContext(StepsContext);
 
-  const { onTest } = useContext(TestContext);
+<<<<<<< HEAD
+=======
+  const {
+    isTestInProgress,
+    onTest: startTest,
+    setIsTestInProgress,
+    setResult,
+  } = useContext(TestContext);
 
+  const onTest = useCallback(() => {
+    setResult(undefined);
+    setIsTestInProgress(true);
+    startTest();
+  }, [setIsTestInProgress, setResult, startTest]);
+
+>>>>>>> 169/switch-from-nested-array-to-map
   return (
     <Header alignItems="center" gutterSize="m">
       {recordingStatus === RecordingStatus.NotRecording && (
@@ -77,6 +100,10 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
         <ControlButton
           aria-label="Toggle the script recorder between recording and paused"
           color="primary"
+<<<<<<< HEAD
+=======
+          isDisabled={isTestInProgress}
+>>>>>>> 169/switch-from-nested-array-to-map
           iconType={
             recordingStatus === RecordingStatus.Recording ? "pause" : "play"
           }
@@ -113,6 +140,10 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
           <TestButtonDivider>
             <TestButton
               isDisabled={
+<<<<<<< HEAD
+=======
+                isTestInProgress ||
+>>>>>>> 169/switch-from-nested-array-to-map
                 steps.length === 0 ||
                 recordingStatus === RecordingStatus.Recording
               }

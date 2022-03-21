@@ -22,29 +22,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexItem, EuiText } from "@elastic/eui";
+import { EuiFlexGroup, EuiFlexItem, EuiText } from "@elastic/eui";
 import React from "react";
-import type { ResultCategory } from "../../common/types";
-import { ResultContentWithoutAccordion, symbols } from "./styles";
+import type { ResultCategory, StepStatus } from "../../common/types";
+import { ResultContentWrapper, symbols } from "./styles";
 
 interface IResultBody {
-  durationElement: JSX.Element;
-  name: string;
-  resultCategory: ResultCategory;
+  actionTitles: string[];
+  resultCategory: StepStatus;
 }
 
-export function ResultBody({
-  durationElement,
-  name,
-  resultCategory,
-}: IResultBody) {
+export function ResultBody({ actionTitles, resultCategory }: IResultBody) {
   return (
-    <ResultContentWithoutAccordion alignItems="center" gutterSize="xs">
-      <EuiFlexItem grow={false}>{symbols[resultCategory]}</EuiFlexItem>
-      <EuiFlexItem>
-        <EuiText size="s">{name}</EuiText>
-      </EuiFlexItem>
-      <EuiFlexItem grow={false}>{durationElement}</EuiFlexItem>
-    </ResultContentWithoutAccordion>
+    <EuiFlexGroup direction="column" gutterSize="none">
+      {actionTitles.map((name, index) => (
+        <ResultContentWrapper
+          alignItems="center"
+          key={name + index}
+          gutterSize="xs"
+        >
+          <EuiFlexItem grow={false}>{symbols[resultCategory]}</EuiFlexItem>
+          <EuiFlexItem>
+            <EuiText size="s">{name}</EuiText>
+          </EuiFlexItem>
+        </ResultContentWrapper>
+      ))}
+    </EuiFlexGroup>
   );
 }

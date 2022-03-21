@@ -22,7 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { render as rtlRender, RenderResult } from "@testing-library/react";
+import {
+  render as rtlRender,
+  RenderResult,
+  RenderOptions,
+} from "@testing-library/react";
 import React from "react";
 import {
   IRecordingContext,
@@ -32,14 +36,15 @@ import { IStepsContext, StepsContext } from "../../contexts/StepsContext";
 import { StyledComponentsEuiProvider } from "../../contexts/StyledComponentsEuiProvider";
 import { IUrlContext, UrlContext } from "../../contexts/UrlContext";
 import {
-  RECORDING_CONTEXT_DEFAULTS,
-  URL_CONTEXT_DEFAULTS,
-  STEPS_CONTEXT_DEFAULTS,
+  getRecordingContextDefaults,
+  getUrlContextDefaults,
+  getStepsContextDefaults,
 } from "./defaults";
 import { RenderContexts } from "./RenderContexts";
 
 export function render<ComponentType>(
   component: React.ReactElement<ComponentType>,
+  rtlRenderOptions?: Omit<RenderOptions, "queries">,
   options?: {
     contextOverrides?: {
       recording?: Partial<IRecordingContext>;
@@ -50,17 +55,17 @@ export function render<ComponentType>(
 ): RenderResult {
   const contexts = [
     {
-      defaults: RECORDING_CONTEXT_DEFAULTS,
+      defaults: getRecordingContextDefaults(),
       Context: RecordingContext,
       overrides: options?.contextOverrides?.recording,
     },
     {
-      defaults: URL_CONTEXT_DEFAULTS,
+      defaults: getUrlContextDefaults(),
       Context: UrlContext,
       overrides: options?.contextOverrides?.url,
     },
     {
-      defaults: STEPS_CONTEXT_DEFAULTS,
+      defaults: getStepsContextDefaults(),
       Context: StepsContext,
       overrides: options?.contextOverrides?.steps,
     },
@@ -69,6 +74,7 @@ export function render<ComponentType>(
   return rtlRender(
     <StyledComponentsEuiProvider>
       <RenderContexts contexts={contexts}>{component}</RenderContexts>
-    </StyledComponentsEuiProvider>
+    </StyledComponentsEuiProvider>,
+    rtlRenderOptions
   );
 }

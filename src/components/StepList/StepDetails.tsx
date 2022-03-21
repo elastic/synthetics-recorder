@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import type { Step, Steps } from "@elastic/synthetics";
 import React from "react";
 import { useContext, useState } from "react";
 import {
@@ -35,18 +36,17 @@ import { ActionDetail } from "../ActionDetail";
 import { StepAccordionTitle } from "./StepAccordionTitle";
 import "./StepDetails.css";
 import { RecordingContext } from "../../contexts/RecordingContext";
-import { RecordingStatus, SyntheticStep } from "../../common/types";
-import type { Step, Steps } from "../../common/types";
+import { RecordingStatus } from "../../common/types";
 
 interface IStepDetail {
-  step: SyntheticStep;
+  step: Step;
   stepIndex: number;
 }
 
 function StepDetail({ step, stepIndex }: IStepDetail) {
   return (
     <>
-      {step.map((actionContext, index) => (
+      {step.actions.map((actionContext, index) => (
         <ActionDetail
           key={index}
           actionContext={actionContext}
@@ -59,14 +59,14 @@ function StepDetail({ step, stepIndex }: IStepDetail) {
 }
 
 type StepDeleteHandler = (stepIndex: number) => void;
-type StepChangeHandler = (step: SyntheticStep, stepIndex: number) => void;
+type StepChangeHandler = (step: Step, stepIndex: number) => void;
 
 interface IStepAccordion {
   title: string;
   index: number;
   onStepDetailChange: StepChangeHandler;
   onStepDelete: StepDeleteHandler;
-  step: SyntheticStep;
+  step: Step;
 }
 
 function StepAccordion({
@@ -87,12 +87,15 @@ function StepAccordion({
   const [isEditing, setIsEditing] = useState(false);
   const onStepTitleChange = (updatedTitle: string) => {
     onStepDetailChange(
-      step.map((s, stepIdx) => {
-        if (stepIdx === 0) {
-          return { ...s, title: updatedTitle, modified: true };
-        }
-        return s;
-      }),
+      {
+        actions: step.actions.map((s, stepIdx) => {
+          if (stepIdx === 0) {
+            return { ...s, title: updatedTitle, modified: true };
+          }
+          return s;
+        }),
+        name: step.name,
+      },
       index
     );
   };
@@ -169,7 +172,7 @@ export function StepAccordions({
   return (
     <>
       {steps.map((step, index) => {
-        const { title } = step[0];
+        const { title } = step.actions[0];
         return (
           <StepAccordion
             index={index}

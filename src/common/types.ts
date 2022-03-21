@@ -22,48 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-// export class Step<T> extends Array<T> {
-//   name?: string;
-//   constructor() {
-//     super();
-//   }
-// }
-export interface Step {
-  actions: ActionContext[];
-  name?: string;
-}
-// export type SyntheticStep = Step<ActionContext>;
-export type Steps = Step[];
-
-export interface ActionContext {
-  action: Action;
-  frameUrl: string;
-  isMainFrame: boolean;
-  pageAlias: string;
-  // optional
-  committed?: boolean;
-  modified?: boolean;
-  title?: string;
-}
-
-export interface Action {
-  name: string;
-  signals: Record<string, string | boolean>[];
-  // optional
-  button?: string;
-  command?: string;
-  clickCount?: number;
-  files?: string[];
-  isAssert?: boolean;
-  key?: string;
-  modifiers?: number;
-  options?: string[];
-  selector?: string;
-  text?: string;
-  url?: string;
-  value?: string | null;
-}
-
 export interface Result {
   failed: number;
   skipped: number;
@@ -77,13 +35,16 @@ export interface Journey {
   type: JourneyType;
 }
 
-export type ResultCategory = "succeeded" | "failed" | "skipped";
+export type StepStatus = "succeeded" | "failed" | "skipped";
+
+export type ResultCategory = StepStatus | "running";
 
 export interface JourneyStep {
   duration: number;
   error?: Error;
+  actionTitles?: string[];
   name: string;
-  status: ResultCategory;
+  status: StepStatus;
 }
 
 export type JourneyType = "suite" | "inline";
@@ -101,3 +62,33 @@ export enum RecordingStatus {
   Recording = "RECORDING",
   Paused = "PAUSED",
 }
+
+export interface JourneyStartEvent {
+  event: "journey/start";
+  data: {
+    name: string;
+  };
+}
+
+export interface JourneyEndEvent {
+  event: "journey/end";
+  data: {
+    name: string;
+    status: "succeeded" | "failed";
+  };
+}
+export interface StepEndEvent {
+  event: "step/end";
+  data: JourneyStep;
+}
+
+export interface ResultOverride {
+  event: "override";
+  data: Result | undefined;
+}
+
+export type TestEvent =
+  | JourneyStartEvent
+  | JourneyEndEvent
+  | StepEndEvent
+  | ResultOverride;
