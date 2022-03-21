@@ -102,7 +102,6 @@ function EditStepNameInput({
           aria-label="Enter a new name for this step"
           onChange={e => setEditValue(e.target.value)}
           onKeyUp={e => {
-            console.log("key up event", e);
             switch (e.key) {
               case "Enter":
                 onComplete(editValue ?? null);

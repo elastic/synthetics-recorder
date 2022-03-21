@@ -455,10 +455,7 @@ export function useStepsContext(): IStepsContext {
 
       // corresponds to example 1 above
       if (targetIndex < initiatorIndex) {
-        console.log("target step", targetStep);
         const newTargetStep = targetStep.actions.slice(0, actionIndex + 1);
-        console.log("new target step", newTargetStep);
-        console.log("initiator", initiatorStep);
         const toMerge = targetStep.actions.slice(
           actionIndex + 1,
           targetStep.actions.length

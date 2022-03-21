@@ -88,7 +88,6 @@ export async function getCodeFromActions(
   actions: Steps,
   type: JourneyType
 ): Promise<string> {
-  console.log(JSON.stringify(actions, null, 2));
   return await ipc.callMain("actions-to-code", {
     actions,
     isFlat: false,

@@ -40,7 +40,6 @@ import { useDrop } from "../../hooks/useDrop";
 import { ActionDetail } from "../ActionDetail";
 import { ActionStatusIndicator } from "../ActionStatusIndicator";
 import { Assertion } from "../Assertion";
-import { ActionWrapper } from "./ActionWrapper";
 import { Behavior } from "./Behavior";
 import { ExtraActions } from "./ExtraActions";
 import { NewStepDividerButton } from "./NewStepDividerButton";

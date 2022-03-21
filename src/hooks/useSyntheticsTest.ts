@@ -45,6 +45,18 @@ export function useSyntheticsTest(steps: Steps): ITestContext {
   const { ipc } = useContext(CommunicationContext);
 
   /**
+   * This is needed to satisfy some tech debt where we reference a function by this
+   * name elsewhere in the application. This functionality is removed by a downstream branch,
+   * when it's merged we can delete this handler.
+   */
+  const setResult = useCallback((data: Result | undefined) => {
+    dispatch({
+      event: "override",
+      data,
+    });
+  }, []);
+
+  /**
    * The absence of steps with a truthy result indicates the result value
    * is stale, and should be destroyed.
    */
@@ -52,7 +64,7 @@ export function useSyntheticsTest(steps: Steps): ITestContext {
     if (steps.length === 0 && result) {
       setResult(undefined);
     }
-  }, [steps.length, result]);
+  }, [steps.length, result, setResult]);
 
   const onTest = useCallback(
     async function () {
@@ -95,18 +107,6 @@ export function useSyntheticsTest(steps: Steps): ITestContext {
       );
     }
   }, [ipc, result?.journey, steps]);
-
-  /**
-   * This is needed to satisfy some tech debt where we reference a function by this
-   * name elsewhere in the application. This functionality is removed by a downstream branch,
-   * when it's merged we can delete this handler.
-   */
-  const setResult = useCallback((data: Result | undefined) => {
-    dispatch({
-      event: "override",
-      data,
-    });
-  }, []);
 
   return {
     codeBlocks,

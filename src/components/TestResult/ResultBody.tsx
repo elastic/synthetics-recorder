@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 import { EuiFlexGroup, EuiFlexItem, EuiText } from "@elastic/eui";
 import React from "react";
-import type { ResultCategory, StepStatus } from "../../common/types";
+import type { StepStatus } from "../../common/types";
 import { ResultContentWrapper, symbols } from "./styles";
 
 interface IResultBody {
