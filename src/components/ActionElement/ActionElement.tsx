@@ -26,20 +26,13 @@ import { EuiFlexGroup, EuiFlexItem, EuiAccordion } from "@elastic/eui";
 import { ActionInContext } from "@elastic/synthetics";
 import React, { useCallback, useContext, useState } from "react";
 import styled from "styled-components";
-import {
-  DRAG_AND_DROP_DATA_TRANSFER_TYPE,
-  SMALL_SCREEN_BREAKPOINT,
-} from "../../common/shared";
-import {
-  ResultCategory,
-  StepSeparatorDragDropDataTransfer,
-} from "../../common/types";
-import { DragAndDropContext } from "../../contexts/DragAndDropContext";
+import { SMALL_SCREEN_BREAKPOINT } from "../../common/shared";
+import { ResultCategory } from "../../common/types";
 import { StepsContext } from "../../contexts/StepsContext";
-import { useDrop } from "../../hooks/useDrop";
 import { ActionDetail } from "../ActionDetail";
 import { ActionStatusIndicator } from "../ActionStatusIndicator";
 import { Assertion } from "../Assertion";
+import { DropZone } from "./ActionDropZone";
 import { Behavior } from "./Behavior";
 import { ExtraActions } from "./ExtraActions";
 import { NewStepDividerButton } from "./NewStepDividerButton";
@@ -67,29 +60,6 @@ const Container = styled(EuiFlexGroup)`
   overflow: visible;
 `;
 
-interface DropZoneStyleProps {
-  isDraggedOver: boolean;
-}
-
-const DropZone = styled.div<DropZoneStyleProps>`
-  height: 8px;
-  border-radius: 4px;
-  ${({ isDraggedOver, theme }) =>
-    isDraggedOver &&
-    `
-    background-color: ${theme.colors.accent};
-    opacity: 1;
-    transition: background-color 0.3s;
-  `}
-  ${({ isDraggedOver, theme }) =>
-    !isDraggedOver &&
-    `
-    background-color: ${theme.colors.success};
-    opacity: 0.75;
-    transition: background-color 0.3s;
-  `}
-`;
-
 function ActionComponent({
   actionIndex,
   className,
@@ -99,17 +69,13 @@ function ActionComponent({
   stepIndex,
   testStatus,
 }: IActionElement) {
-  const { onDeleteAction, onSplitStep, onDropStep } = useContext(StepsContext);
+  const { onDeleteAction, onSplitStep } = useContext(StepsContext);
   const [isOpen, setIsOpen] = useState(false);
   const [areControlsVisible, setAreControlsVisible] = useState(false);
   const close = () => setIsOpen(false);
   const splitStepAtAction = useCallback(() => {
     onSplitStep(stepIndex, actionIndex);
   }, [actionIndex, onSplitStep, stepIndex]);
-  const { dragIndex } = useContext(DragAndDropContext);
-  const { isDroppable } = useDrop(stepIndex, actionIndex, dragIndex);
-  // TODO: move this drop zone component to dedicated file
-  const [dropzoneOver, setDropzeonOver] = useState(false);
 
   return (
     <Container className={className} gutterSize="none">
@@ -170,29 +136,7 @@ function ActionComponent({
             />
           )}
         </ActionAccordion>
-        {isDroppable && dragIndex !== undefined && (
-          <DropZone
-            isDraggedOver={dropzoneOver}
-            onDragOver={e => {
-              e.preventDefault();
-            }}
-            onDragLeave={_ => {
-              setDropzeonOver(false);
-            }}
-            onDragEnter={e => {
-              setDropzeonOver(true);
-              e.preventDefault();
-            }}
-            onDrop={e => {
-              const { initiatorIndex } = JSON.parse(
-                e.dataTransfer.getData(DRAG_AND_DROP_DATA_TRANSFER_TYPE)
-              ) as StepSeparatorDragDropDataTransfer;
-              setDropzeonOver(false);
-              onDropStep(stepIndex, initiatorIndex, actionIndex);
-              e.preventDefault();
-            }}
-          />
-        )}
+        <DropZone actionIndex={actionIndex} stepIndex={stepIndex} />
       </Behavior>
     </Container>
   );
