@@ -23,9 +23,10 @@ THE SOFTWARE.
 */
 
 import { useState } from "react";
+import { IDragAndDropContext } from "../contexts/DragAndDropContext";
 
-export function useDragAndDropContext() {
-  const [isDragInProgress, setIsDragInProgress] = useState(false);
+export function useDragAndDropContext(): IDragAndDropContext {
+  const [dragIndex, setDragIndex] = useState<number | undefined>(undefined);
 
-  return { isDragInProgress, setIsDragInProgress };
+  return { dragIndex, setDragIndex };
 }

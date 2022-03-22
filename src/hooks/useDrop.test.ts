@@ -83,5 +83,34 @@ describe("useDrop", () => {
         ])
       ).toBe(true);
     });
+
+    it("is not droppable if the dragged step is more than one step away", () => {
+      expect(
+        isDroppable(
+          0,
+          0,
+          [
+            {
+              actions: [
+                createAction("a0"),
+                createAction("a1"),
+                createAction("a2"),
+              ],
+            },
+            {
+              actions: [
+                createAction("a3"),
+                createAction("a4"),
+                createAction("a5"),
+              ],
+            },
+            {
+              actions: [createAction("a6"), createAction("a7")],
+            },
+          ],
+          2
+        )
+      ).toBe(false);
+    });
   });
 });

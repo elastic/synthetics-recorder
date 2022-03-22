@@ -106,8 +106,8 @@ function ActionComponent({
   const splitStepAtAction = useCallback(() => {
     onSplitStep(stepIndex, actionIndex);
   }, [actionIndex, onSplitStep, stepIndex]);
-  const { isDroppable } = useDrop(stepIndex, actionIndex);
-  const { isDragInProgress } = useContext(DragAndDropContext);
+  const { dragIndex } = useContext(DragAndDropContext);
+  const { isDroppable } = useDrop(stepIndex, actionIndex, dragIndex);
   // TODO: move this drop zone component to dedicated file
   const [dropzoneOver, setDropzeonOver] = useState(false);
 
@@ -170,7 +170,7 @@ function ActionComponent({
             />
           )}
         </ActionAccordion>
-        {isDroppable && isDragInProgress && (
+        {isDroppable && dragIndex !== undefined && (
           <DropZone
             isDraggedOver={dropzoneOver}
             onDragOver={e => {

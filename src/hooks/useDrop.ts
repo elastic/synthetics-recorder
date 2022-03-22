@@ -26,18 +26,28 @@ import { Steps } from "@elastic/synthetics";
 import { useContext } from "react";
 import { StepsContext } from "../contexts/StepsContext";
 
-export function isDroppable(
+export const isDroppable = (
   stepIndex: number,
   actionIndex: number,
-  steps: Steps
-) {
-  return (
-    steps[stepIndex].actions.length !== 1 &&
-    steps[stepIndex].actions.length !== actionIndex + 1
-  );
-}
+  steps: Steps,
+  dragStepIndex?: number
+) =>
+  /**
+   * An action element is droppable when its parent step has > 1 item,
+   * it is not the final item in the step, and the step being dragged is
+   * a neighboring step.
+   */
+  steps[stepIndex].actions.length !== 1 &&
+  steps[stepIndex].actions.length !== actionIndex + 1 &&
+  (dragStepIndex === undefined || Math.abs(dragStepIndex - stepIndex) <= 1);
 
-export function useDrop(stepIndex: number, actionIndex: number) {
+export function useDrop(
+  stepIndex: number,
+  actionIndex: number,
+  isDragInProgress?: number
+) {
   const { steps } = useContext(StepsContext);
-  return { isDroppable: isDroppable(stepIndex, actionIndex, steps) };
+  return {
+    isDroppable: isDroppable(stepIndex, actionIndex, steps, isDragInProgress),
+  };
 }

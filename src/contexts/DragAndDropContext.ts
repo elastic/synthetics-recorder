@@ -26,13 +26,15 @@ import { createContext } from "react";
 import { Setter } from "../common/types";
 
 export interface IDragAndDropContext {
-  isDragInProgress: boolean;
-  setIsDragInProgress: Setter<boolean>;
+  dragIndex?: number;
+  setDragIndex: Setter<number | undefined>;
+}
+
+function notImplemented() {
+  throw Error("Not implemented");
 }
 
 export const DragAndDropContext = createContext<IDragAndDropContext>({
-  isDragInProgress: false,
-  setIsDragInProgress: () => {
-    throw Error("Not implemented");
-  },
+  dragIndex: undefined,
+  setDragIndex: notImplemented,
 });

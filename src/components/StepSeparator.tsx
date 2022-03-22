@@ -148,7 +148,7 @@ export function StepSeparator({ index, setStepName, step }: IStepSeparator) {
   const testStatus = useStepResultStatus(
     step.actions.length ? step.actions[0].title : undefined
   );
-  const { setIsDragInProgress } = useContext(DragAndDropContext);
+  const { setDragIndex } = useContext(DragAndDropContext);
   const [showEditButton, setShowEditButton] = useState(true);
   const [isEditingName, setIsEditingName] = useState(false);
   const { isDraggable } = useDragAndDrop(index);
@@ -157,8 +157,8 @@ export function StepSeparator({ index, setStepName, step }: IStepSeparator) {
     | React.DragEventHandler<HTMLDivElement | HTMLSpanElement>
     | undefined = isDraggable
     ? e => {
+        setDragIndex(index);
         setShowEditButton(false);
-        setIsDragInProgress(true);
         const dragDataString = JSON.stringify(
           createStepSeparatorDragDropData(index)
         );
@@ -172,7 +172,7 @@ export function StepSeparator({ index, setStepName, step }: IStepSeparator) {
   const onDragEnd = isDraggable
     ? () => {
         setShowEditButton(true);
-        setIsDragInProgress(false);
+        setDragIndex(undefined);
       }
     : undefined;
 
