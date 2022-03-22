@@ -24,16 +24,21 @@ THE SOFTWARE.
 
 import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
 import React from "react";
-import { Bold, ResultContainer, ResultHeader } from "./styles";
+import { ResultContainer, ResultHeader } from "./styles";
+import { TruncatedTitle } from "./TruncatedTitle";
 
 export interface IResultHeader {
-  durationElement: JSX.Element;
+  durationElement?: JSX.Element;
+  maxTitleLength: number;
   titleText: string;
+  stepIndex: number;
 }
 
 export const ResultTitle: React.FC<IResultHeader> = ({
   children,
   durationElement,
+  maxTitleLength,
+  stepIndex,
   titleText,
 }) => {
   return (
@@ -41,7 +46,11 @@ export const ResultTitle: React.FC<IResultHeader> = ({
       <ResultHeader>
         <EuiFlexGroup>
           <EuiFlexItem>
-            <Bold>{titleText}</Bold>
+            <TruncatedTitle
+              maxLength={maxTitleLength}
+              stepIndex={stepIndex}
+              text={titleText}
+            />
           </EuiFlexItem>
           <EuiFlexItem grow={false}>{durationElement}</EuiFlexItem>
         </EuiFlexGroup>

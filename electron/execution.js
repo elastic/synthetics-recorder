@@ -141,7 +141,7 @@ function addActionsToStepResult(steps, event) {
       s.actions.length &&
       s.actions[0].title &&
       event?.data?.name &&
-      event.data.name === s.actions[0].title
+      (event.data.name === s.actions[0].title || event.data.name === s.name)
   );
   if (!step) return { ...event, data: { ...event.data, actionTitles: [] } };
   return {

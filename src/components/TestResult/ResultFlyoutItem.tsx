@@ -29,6 +29,8 @@ import { ResultBody } from "./ResultBody";
 import { ResultErrorBody } from "./ResultErrorBody";
 import { ResultTitle } from "./ResultTitle";
 
+const MAX_RESULT_TITLE_LENGTH = 80;
+
 export interface IResultFlyoutItem {
   code: string;
   key: string;
@@ -42,12 +44,13 @@ export function ResultFlyoutItem({ code, step, stepIndex }: IResultFlyoutItem) {
   const durationElement = (
     <EuiText size="s">{Math.round(duration / 1000)}s</EuiText>
   );
-  console.log("the result step", step);
 
   return (
     <ResultTitle
       durationElement={durationElement}
-      titleText={`Step ${stepIndex + 1}`}
+      maxTitleLength={MAX_RESULT_TITLE_LENGTH}
+      titleText={step.name}
+      stepIndex={stepIndex}
     >
       {error ? (
         <ResultErrorBody
