@@ -478,7 +478,6 @@ export function useStepsContext(): IStepsContext {
                 ...oldSteps[initiatorIndex - 1].actions,
                 ...targetStep.actions.slice(0, actionIndex + 1),
               ],
-              name: initiatorStep.name,
             },
             {
               actions: targetStep.actions.slice(
