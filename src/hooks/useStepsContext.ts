@@ -338,7 +338,7 @@ const stepString: Steps = [
 ];
 
 export function useStepsContext(): IStepsContext {
-  const [steps, setSteps] = useState<Steps>([]);
+  const [steps, setSteps] = useState<Steps>(stepString);
   const setStepName = useCallback((idx: number, name?: string) => {
     setSteps(oldSteps => {
       return oldSteps.map((step, i) => {
@@ -385,22 +385,18 @@ export function useStepsContext(): IStepsContext {
         })
       );
     },
-    onMergeSteps: (indexToInsert, indexToRemove) => {
-      setSteps(oldSteps => {
-        oldSteps[indexToInsert] = {
-          name:
-            oldSteps[indexToInsert].name ??
-            oldSteps[indexToRemove].name ??
-            undefined,
+    onMergeSteps: (indexToInsert, indexToRemove) =>
+      setSteps(oldSteps => [
+        ...oldSteps.slice(0, indexToInsert),
+        {
+          name: oldSteps[indexToInsert].name ?? undefined,
           actions: [
             ...steps[indexToInsert].actions,
             ...steps[indexToRemove].actions,
           ],
-        };
-        oldSteps.splice(indexToRemove, 1);
-        return oldSteps;
-      });
-    },
+        },
+        ...oldSteps.slice(indexToRemove + 1, oldSteps.length),
+      ]),
     onRearrangeSteps: (indexA, indexB) => {
       setSteps(oldSteps => {
         const placeholder = steps[indexA];
