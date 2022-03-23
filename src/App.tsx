@@ -24,14 +24,9 @@ THE SOFTWARE.
 
 import React, { useContext } from "react";
 import { useEffect, useState } from "react";
-import {
-  EuiCode,
-  EuiEmptyPrompt,
-  EuiThemeProvider,
-  EuiThemeAmsterdam,
-} from "@elastic/eui";
+import { EuiCode, EuiEmptyPrompt, EuiProvider } from "@elastic/eui";
 import "./App.css";
-import "@elastic/eui/dist/eui_legacy_light.css";
+import "@elastic/eui/dist/eui_theme_light.css";
 import { Title } from "./components/Header/Title";
 import { HeaderControls } from "./components/Header/HeaderControls";
 import { CommunicationContext } from "./contexts/CommunicationContext";
@@ -82,7 +77,7 @@ export default function App() {
   }, [ipc, setSteps]);
 
   return (
-    <EuiThemeProvider theme={EuiThemeAmsterdam}>
+    <EuiProvider colorMode="light">
       <StyledComponentsEuiProvider>
         <StepsContext.Provider value={stepsContextUtils}>
           <RecordingContext.Provider value={recordingContextUtils}>
@@ -133,6 +128,6 @@ export default function App() {
           </RecordingContext.Provider>
         </StepsContext.Provider>
       </StyledComponentsEuiProvider>
-    </EuiThemeProvider>
+    </EuiProvider>
   );
 }
