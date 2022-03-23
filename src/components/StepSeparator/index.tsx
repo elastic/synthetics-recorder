@@ -149,6 +149,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
       {index > 0 && (
         <DeleteButton
           aria-label="Click to delete this step"
+          color="text"
           iconType="trash"
           isVisible={showControls}
           onClick={() => onMergeSteps(index - 1, index)}
@@ -191,6 +192,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
               >
                 <EuiButtonIcon
                   aria-label="Click this to edit the step name"
+                  color="text"
                   iconType="pencil"
                   onClick={() => {
                     setIsEditingName(true);
