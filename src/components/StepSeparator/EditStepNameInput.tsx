@@ -33,7 +33,13 @@ import React, { useState } from "react";
 
 interface IEditStepNameInput {
   defaultValue?: string;
-  onComplete: (value: string | null) => void;
+  /**
+   * Function to call when editing concludes.
+   *
+   * If `value` is null, the value should not change.
+   * Otherwise, `value` will overwrite the previous value.
+   */
+  onComplete: (value?: string | null) => void;
   placeholder: string;
 }
 export function EditStepNameInput({
@@ -55,7 +61,7 @@ export function EditStepNameInput({
           onKeyUp={e => {
             switch (e.key) {
               case "Enter":
-                onComplete(editValue ?? null);
+                onComplete(editValue || undefined);
                 break;
               case "Escape":
                 onComplete(null);
@@ -72,7 +78,7 @@ export function EditStepNameInput({
           <EuiButtonIcon
             aria-label="Click this button to save the step name"
             iconType="check"
-            onClick={() => onComplete(editValue ? editValue : null)}
+            onClick={() => onComplete(editValue || undefined)}
           />
         </EuiToolTip>
       </EuiFlexItem>

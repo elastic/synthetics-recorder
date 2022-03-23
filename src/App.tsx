@@ -62,7 +62,7 @@ export default function App() {
 
   const { ipc } = useContext(CommunicationContext);
   const stepsContextUtils = useStepsContext();
-  const { steps, setSteps, setStepName } = stepsContextUtils;
+  const { steps, setSteps } = stepsContextUtils;
   const syntheticsTestUtils = useSyntheticsTest(steps);
   const recordingContextUtils = useRecordingContext(
     ipc,
@@ -118,7 +118,6 @@ export default function App() {
                       <StepSeparator
                         index={index}
                         key={`step-separator-${index + 1}`}
-                        setStepName={setStepName}
                         step={step}
                       />
                     ))}

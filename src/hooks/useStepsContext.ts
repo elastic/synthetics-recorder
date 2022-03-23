@@ -339,7 +339,7 @@ const stepString: Steps = [
 
 export function useStepsContext(): IStepsContext {
   const [steps, setSteps] = useState<Steps>([]);
-  const setStepName = useCallback((idx: number, name: string) => {
+  const setStepName = useCallback((idx: number, name?: string) => {
     setSteps(oldSteps => {
       return oldSteps.map((step, i) => {
         if (idx !== i) return step;

@@ -37,6 +37,7 @@ import {
 } from "../../common/shared";
 import { StepSeparatorDragDropDataTransfer } from "../../common/types";
 import { DragAndDropContext } from "../../contexts/DragAndDropContext";
+import { StepsContext } from "../../contexts/StepsContext";
 import { useDragAndDrop } from "../../hooks/useDragAndDrop";
 import { useStepResultStatus } from "../../hooks/useTestResult";
 import { ActionElement } from "../ActionElement/ActionElement";
@@ -81,14 +82,14 @@ function createStepSeparatorDragDropData(
 interface IStepSeparator {
   index: number;
   step: Step;
-  setStepName: (index: number, name: string) => void;
 }
 
-export function StepSeparator({ index, setStepName, step }: IStepSeparator) {
+export function StepSeparator({ index, step }: IStepSeparator) {
   const testStatus = useStepResultStatus(
     step.actions.length ? step.actions[0].title : undefined
   );
   const { setDragIndex } = useContext(DragAndDropContext);
+  const { setStepName } = useContext(StepsContext);
   const [showEditButton, setShowEditButton] = useState(true);
   const [isEditingName, setIsEditingName] = useState(false);
   const { isDraggable } = useDragAndDrop(index);
@@ -138,7 +139,7 @@ export function StepSeparator({ index, setStepName, step }: IStepSeparator) {
             <EditStepNameInput
               placeholder={stepHeadingText}
               defaultValue={step.name}
-              onComplete={value => {
+              onComplete={(value?: string | null) => {
                 setIsEditingName(false);
                 setShowEditButton(true);
                 if (value !== null) {

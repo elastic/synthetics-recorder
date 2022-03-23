@@ -42,7 +42,7 @@ export interface IStepsContext {
   /**
    * Sets the name of the step at the given index.
    */
-  setStepName: (stepIndex: number, name: string) => void;
+  setStepName: (stepIndex: number, name?: string) => void;
   /**
    * Deletes the action at the `actionIndex` in the given step.
    */
