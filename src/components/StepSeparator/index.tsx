@@ -27,8 +27,6 @@ import {
   EuiFlexItem,
   EuiFlexGroup,
   EuiButtonIcon,
-  EuiFieldText,
-  EuiToolTip,
 } from "@elastic/eui";
 import type { Step } from "@elastic/synthetics";
 import React, { useContext, useState } from "react";
@@ -36,12 +34,13 @@ import styled from "styled-components";
 import {
   DRAG_AND_DROP_DATA_TRANSFER_TYPE,
   SMALL_SCREEN_BREAKPOINT,
-} from "../common/shared";
-import { StepSeparatorDragDropDataTransfer } from "../common/types";
-import { DragAndDropContext } from "../contexts/DragAndDropContext";
-import { useDragAndDrop } from "../hooks/useDragAndDrop";
-import { useStepResultStatus } from "../hooks/useTestResult";
-import { ActionElement } from "./ActionElement/ActionElement";
+} from "../../common/shared";
+import { StepSeparatorDragDropDataTransfer } from "../../common/types";
+import { DragAndDropContext } from "../../contexts/DragAndDropContext";
+import { useDragAndDrop } from "../../hooks/useDragAndDrop";
+import { useStepResultStatus } from "../../hooks/useTestResult";
+import { ActionElement } from "../ActionElement/ActionElement";
+import { EditStepNameInput } from "./EditStepNameInput";
 
 export const StepSeparatorTopBorder = styled(EuiFlexItem)`
   border-top: ${props => props.theme.border.thin};
@@ -77,65 +76,6 @@ function createStepSeparatorDragDropData(
   stepIndex: number
 ): StepSeparatorDragDropDataTransfer {
   return { initiatorIndex: stepIndex };
-}
-
-interface IEditStepNameInput {
-  defaultValue?: string;
-  onComplete: (value: string | null) => void;
-  placeholder: string;
-}
-
-function EditStepNameInput({
-  defaultValue,
-  onComplete,
-  placeholder,
-}: IEditStepNameInput) {
-  const [editValue, setEditValue] = useState(defaultValue ?? "");
-  return (
-    <EuiFlexGroup
-      alignItems="center"
-      gutterSize="xs"
-      style={{ padding: 4, marginLeft: 4 }}
-    >
-      <EuiFlexItem>
-        <EuiFieldText
-          aria-label="Enter a new name for this step"
-          onChange={e => setEditValue(e.target.value)}
-          onKeyUp={e => {
-            switch (e.key) {
-              case "Enter":
-                onComplete(editValue ?? null);
-                break;
-              case "Escape":
-                onComplete(null);
-                break;
-            }
-          }}
-          autoFocus
-          placeholder={placeholder}
-          value={editValue}
-        />
-      </EuiFlexItem>
-      <EuiFlexItem grow={false}>
-        <EuiToolTip content="Save">
-          <EuiButtonIcon
-            aria-label="Click this button to save the step name"
-            iconType="check"
-            onClick={() => onComplete(editValue ? editValue : null)}
-          />
-        </EuiToolTip>
-      </EuiFlexItem>
-      <EuiFlexItem grow={false}>
-        <EuiToolTip content="Cancel">
-          <EuiButtonIcon
-            aria-label="Cancel edit for this step name"
-            iconType="cross"
-            onClick={() => onComplete(null)}
-          />
-        </EuiToolTip>
-      </EuiFlexItem>
-    </EuiFlexGroup>
-  );
 }
 
 interface IStepSeparator {
