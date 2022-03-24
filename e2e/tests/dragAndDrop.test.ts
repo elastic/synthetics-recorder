@@ -60,7 +60,7 @@ function getCoordinates({
 }
 
 describe("Drag and Drop", () => {
-  it("allows the creation of a step", async () => {
+  it("creates a step and drags to a new position", async () => {
     const electronWindow = await electronService.getWindow();
 
     await electronService.enterTestUrl(env.DEMO_APP_URL);
