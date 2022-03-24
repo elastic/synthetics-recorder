@@ -25,6 +25,7 @@ THE SOFTWARE.
 import React, { useContext } from "react";
 import { useEffect, useState } from "react";
 import { EuiCode, EuiEmptyPrompt, EuiProvider } from "@elastic/eui";
+import createCache from "@emotion/cache";
 import "./App.css";
 import "@elastic/eui/dist/eui_theme_light.css";
 import { Title } from "./components/Header/Title";
@@ -39,7 +40,6 @@ import { useSyntheticsTest } from "./hooks/useSyntheticsTest";
 import { generateIR, generateMergedIR } from "./helpers/generator";
 import { StepSeparator } from "./components/StepSeparator";
 
-import "@elastic/eui/dist/eui_theme_light.json";
 import "./App.css";
 import { useStepsContext } from "./hooks/useStepsContext";
 import { TestResult } from "./components/TestResult";
@@ -48,6 +48,13 @@ import { StyledComponentsEuiProvider } from "./contexts/StyledComponentsEuiProvi
 import { ExportScriptFlyout } from "./components/ExportScriptFlyout";
 import { useRecordingContext } from "./hooks/useRecordingContext";
 import { StartOverWarningModal } from "./components/StartOverWarningModal";
+
+const cache = createCache({
+  key: "elastic-synthetics-recorder",
+  container:
+    document.querySelector<HTMLElement>('meta[name="global-style-insert"]') ??
+    undefined,
+});
 
 export default function App() {
   const [url, setUrl] = useState("");
@@ -77,7 +84,7 @@ export default function App() {
   }, [ipc, setSteps]);
 
   return (
-    <EuiProvider colorMode="light">
+    <EuiProvider cache={cache} colorMode="light">
       <StyledComponentsEuiProvider>
         <StepsContext.Provider value={stepsContextUtils}>
           <RecordingContext.Provider value={recordingContextUtils}>
