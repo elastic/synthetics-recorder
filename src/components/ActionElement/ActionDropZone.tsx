@@ -66,6 +66,7 @@ export function DropZone({ actionIndex, stepIndex }: IDropZone) {
   if (isDroppable && dragIndex !== undefined) {
     return (
       <DropZoneStyle
+        id={`drop-zone-${stepIndex}-${actionIndex}`}
         isDraggedOver={dropzoneOver}
         onDragOver={e => {
           e.preventDefault();

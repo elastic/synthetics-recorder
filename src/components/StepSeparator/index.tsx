@@ -160,15 +160,15 @@ export function StepSeparator({ index, step }: IStepSeparator) {
         extraAction={
           <ControlsWrapper
             alignItems="center"
-            gutterSize="s"
             draggable={isDraggable}
+            gutterSize="s"
             isGrabbing={isGrabbing}
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}
             onMouseDown={() => setIsGrabbing(true)}
           >
             {!isEditingName && (
-              <StepSeparatorHeading grow={false}>
+              <StepSeparatorHeading id={`step-${index}`} grow={false}>
                 {stepHeadingText}
               </StepSeparatorHeading>
             )}

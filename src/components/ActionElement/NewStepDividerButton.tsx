@@ -28,6 +28,7 @@ import React from "react";
 
 interface Props {
   actionIndex: number;
+  stepIndex: number;
   onClick: () => void;
 }
 
@@ -44,13 +45,18 @@ const AddStepDivider = styled(EuiButtonIcon)<StyleProps>`
   z-index: 1;
 `;
 
-export function NewStepDividerButton({ actionIndex, onClick }: Props) {
+export function NewStepDividerButton({
+  actionIndex,
+  stepIndex,
+  onClick,
+}: Props) {
   return (
     <AddStepDivider
       aria-label="Clicking this button will insert a logical step between this action and the previous one. Use this feature to group actions differently from the recorder's default output."
       computedvisibility={actionIndex > 0 ? "visible" : "hidden"}
       color="text"
       iconType="plusInCircle"
+      id={`insert-divider-${stepIndex}-${actionIndex}`}
       onClick={onClick}
     />
   );

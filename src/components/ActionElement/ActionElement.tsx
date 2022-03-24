@@ -82,6 +82,7 @@ function ActionComponent({
       <EuiFlexItem grow={false}>
         <NewStepDividerButton
           actionIndex={actionIndex}
+          stepIndex={stepIndex}
           onClick={splitStepAtAction}
         />
       </EuiFlexItem>
