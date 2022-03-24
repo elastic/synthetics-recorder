@@ -16,7 +16,7 @@
     "pack": "npm run build && electron-builder",
     "release": "npm run build && electron-builder -mwl --publish=always",
     "clean": "rm -rf ./build && rm -rf ./dist",
-    "lint": "eslint . --format eslint-formatter-multiple",
+    "lint": "eslint .",
     "format": "prettier --write .",
     "lint:fix": "npm run lint -- --fix",
     "prepare": "husky install",
@@ -85,19 +85,19 @@
   "devDependencies": {
     "@testing-library/react": "^12.1.2",
     "@testing-library/react-hooks": "^7.0.2",
-    "@types/jest": "^27.0.2",
+    "@types/jest": "^27.4.1",
     "@types/react-dom": "^17.0.10",
     "@types/styled-components": "^5.1.17",
+    "ajv": "^8.11.0",
     "concurrently": "^7.0.0",
     "electron": "^14.0.1",
-    "electron-builder": "^22.11.7",
-    "eslint": "^7.32.0",
+    "electron-builder": "^23.0.2",
+    "eslint": "^8.1.0",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-formatter-multiple": "^1.0.0",
     "eslint-plugin-header": "^3.1.1",
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^7.0.4",
-    "jest": "^26.6.0",
+    "jest": "^26.6.3",
     "nodemon": "^2.0.15",
     "prettier": "2.5.1",
     "react-scripts": "5.0.0",
@@ -129,19 +129,6 @@
   "browserslist": [
     "last 1 version"
   ],
-  "eslint-formatter-multiple": {
-    "formatters": [
-      {
-        "name": "stylish",
-        "output": "console"
-      },
-      {
-        "name": "junit",
-        "output": "file",
-        "path": "eslint-junit.xml"
-      }
-    ]
-  },
   "engines": {
     "node": ">14.14.0",
     "npm": "6"
