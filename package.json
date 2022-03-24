@@ -108,7 +108,7 @@
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "^48.0.0",
-    "@elastic/synthetics": "file:../synthetics/elastic-synthetics-1.0.0-beta.22.tgz",
+    "@elastic/synthetics": "=1.0.0-beta.23",
     "@emotion/react": "^11.7.1",
     "dotenv": "^10.0.0",
     "electron-better-ipc": "^2.0.1",
