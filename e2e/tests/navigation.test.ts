@@ -57,7 +57,6 @@ describe("Navigation", () => {
     await electronService.navigateRecordingBrowser(url);
 
     expect(await electronWindow.$("text=Step 1")).toBeTruthy();
-    expect(await electronWindow.$("text=Step 2")).toBeTruthy();
     expect(
       await electronWindow.$(`text=navigate ${env.DEMO_APP_URL}`)
     ).toBeTruthy();
