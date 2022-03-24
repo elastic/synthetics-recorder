@@ -48,6 +48,11 @@ const InfoPopoverTextWrapper = styled(EuiText)`
   padding: 8px;
 `;
 
+const AssertionInfoText = styled(EuiText)`
+  padding-left: 8px;
+  max-width: 280px;
+`;
+
 export function AssertionInfo() {
   const [isInfoPopoverOpen, setIsInfoPopoverOpen] = useState(false);
   const { ipc } = useContext(CommunicationContext);
@@ -68,10 +73,16 @@ export function AssertionInfo() {
         <h4>Add assertion</h4>
       </InfoPopoverTitle>
       <InfoPopoverTextWrapper>
-        <EuiFlexGroup alignItems="baseline" gutterSize="none">
+        <EuiFlexGroup
+          alignItems="flexStart"
+          direction="column"
+          gutterSize="none"
+        >
           <EuiFlexItem grow={false}>
-            You can add assertions to validate your page&apos;s content matches
-            your expectations.
+            <AssertionInfoText>
+              You can add assertions to validate your page&apos;s content
+              matches your expectations.
+            </AssertionInfoText>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <EuiButtonEmpty
