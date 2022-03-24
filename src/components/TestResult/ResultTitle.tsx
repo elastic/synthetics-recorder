@@ -28,18 +28,16 @@ import { Bold, ResultContainer, ResultHeader } from "./styles";
 
 export interface IResultHeader {
   durationElement: JSX.Element;
-  key?: string;
   titleText: string;
 }
 
 export const ResultTitle: React.FC<IResultHeader> = ({
   children,
   durationElement,
-  key,
   titleText,
 }) => {
   return (
-    <ResultContainer key={key} hasShadow={false}>
+    <ResultContainer hasShadow={false}>
       <ResultHeader>
         <EuiFlexGroup>
           <EuiFlexItem>
