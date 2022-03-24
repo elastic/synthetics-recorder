@@ -27,7 +27,6 @@ win:
       to: local-browsers
 linux:
   target:
-    - AppImage
     - deb
   icon: public/elastic.png
   category: Utility
