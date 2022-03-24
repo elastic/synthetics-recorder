@@ -88,11 +88,6 @@
       "prettier --write"
     ]
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "devDependencies": {
     "@testing-library/react": "^12.1.4",
     "@testing-library/react-hooks": "^7.0.2",
