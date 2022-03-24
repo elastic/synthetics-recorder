@@ -49,6 +49,11 @@ import { ExportScriptFlyout } from "./components/ExportScriptFlyout";
 import { useRecordingContext } from "./hooks/useRecordingContext";
 import { StartOverWarningModal } from "./components/StartOverWarningModal";
 
+/**
+ * This is the prescribed workaround to some internal EUI issues that occur
+ * when EUI component styles load before the global styles. For more information, see
+ * https://elastic.github.io/eui/#/utilities/provider#global-styles.
+ */
 const cache = createCache({
   key: "elastic-synthetics-recorder",
   container:
