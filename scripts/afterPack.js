@@ -34,21 +34,19 @@ exports.default = function afterPack(ctx) {
 
 function changePermission(resourcesPath) {
   return new Promise((resolve, reject) => {
-    const npmInstall = spawn("chmod", ["777", resourcesPath], {
+    const ps = spawn("chmod", ["777", resourcesPath], {
       shell: true,
       env: {
         ...process.env,
       },
     });
-    npmInstall.on("close", code => {
+    ps.on("close", code => {
       if (code === 0) {
         resolve();
       } else {
         reject(new Error("process finished with error code " + code));
       }
     });
-    npmInstall.on("error", error => {
-      reject(error);
-    });
+    ps.on("error", reject);
   });
 }

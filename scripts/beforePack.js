@@ -50,8 +50,6 @@ function fixSharp(arch, platform) {
         reject(new Error("process finished with error code " + code));
       }
     });
-    npmInstall.on("error", error => {
-      reject(error);
-    });
+    npmInstall.on("error", reject);
   });
 }

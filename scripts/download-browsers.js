@@ -90,9 +90,9 @@ function findExecutablePath(dir, browser, platform) {
   return tokens ? path.join(dir, ...tokens) : undefined;
 }
 
-function getBrowserVersion(browser) {
+function getRevision(name) {
   const { browsers } = SYNTHETICS_BROWSER_REVISIONS;
-  const { revision } = browsers.find(br => br.name === browser) || {};
+  const { revision } = browsers.find(br => br.name === name) || {};
   return revision;
 }
 
@@ -109,27 +109,25 @@ function translatePlatform(platform) {
 
 exports.downloadForPlatform = async function downloadForPlatform(platform) {
   platform = translatePlatform(platform);
-  for (const browser of ["chromium", "ffmpeg"]) {
-    const revision = getBrowserVersion(browser);
+  for (const software of ["chromium", "ffmpeg"]) {
+    const revision = getRevision(software);
     if (revision == null) {
-      throw new Error("Failed to find valid revision for browser " + browser);
+      throw new Error("Failed to find valid revision for " + software);
     }
     const directory = path.join(
       process.cwd(),
       "local-browsers",
       "_releases",
       platform,
-      `${browser}-${revision}`
+      `${software}-${revision}`
     );
 
     try {
-      await download(platform, browser, revision, directory);
+      await download(platform, software, revision, directory);
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error(e);
-      throw Error(
-        `Failed to download browser ${browser} for platform ${platform}`
-      );
+      throw Error(`Failed to download ${software} for platform ${platform}`);
     }
   }
 };
