@@ -25,7 +25,7 @@ import React, { useContext } from "react";
 import { useEffect, useState } from "react";
 import { EuiCode, EuiEmptyPrompt, EuiProvider } from "@elastic/eui";
 import createCache from "@emotion/cache";
-import type { ActionInContext, Step, Steps } from "@elastic/synthetics";
+import type { ActionInContext, Steps } from "@elastic/synthetics";
 import "./App.css";
 import "@elastic/eui/dist/eui_theme_light.css";
 import { Title } from "./components/Header/Title";
