@@ -39,6 +39,7 @@ export const ResultContainer = styled(EuiPanel)`
   }
   padding: 0px;
   margin: 0px 0px 24px 0px;
+  border: ${props => props.theme.border.thin};
 `;
 
 export const ResultHeader = styled.h3`

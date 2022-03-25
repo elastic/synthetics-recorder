@@ -24,14 +24,10 @@ THE SOFTWARE.
 
 import React, { useContext } from "react";
 import { useEffect, useState } from "react";
-import {
-  EuiCode,
-  EuiEmptyPrompt,
-  EuiThemeProvider,
-  EuiThemeAmsterdam,
-} from "@elastic/eui";
+import { EuiCode, EuiEmptyPrompt, EuiProvider } from "@elastic/eui";
+import createCache from "@emotion/cache";
 import "./App.css";
-import "@elastic/eui/dist/eui_legacy_light.css";
+import "@elastic/eui/dist/eui_theme_light.css";
 import { Title } from "./components/Header/Title";
 import { HeaderControls } from "./components/Header/HeaderControls";
 import { CommunicationContext } from "./contexts/CommunicationContext";
@@ -44,7 +40,6 @@ import { useSyntheticsTest } from "./hooks/useSyntheticsTest";
 import { generateIR, generateMergedIR } from "./helpers/generator";
 import { StepSeparator } from "./components/StepSeparator";
 
-import "@elastic/eui/dist/eui_theme_light.json";
 import "./App.css";
 import { useStepsContext } from "./hooks/useStepsContext";
 import { TestResult } from "./components/TestResult";
@@ -53,6 +48,18 @@ import { StyledComponentsEuiProvider } from "./contexts/StyledComponentsEuiProvi
 import { ExportScriptFlyout } from "./components/ExportScriptFlyout";
 import { useRecordingContext } from "./hooks/useRecordingContext";
 import { StartOverWarningModal } from "./components/StartOverWarningModal";
+
+/**
+ * This is the prescribed workaround to some internal EUI issues that occur
+ * when EUI component styles load before the global styles. For more information, see
+ * https://elastic.github.io/eui/#/utilities/provider#global-styles.
+ */
+const cache = createCache({
+  key: "elastic-synthetics-recorder",
+  container:
+    document.querySelector<HTMLElement>('meta[name="global-style-insert"]') ??
+    undefined,
+});
 
 export default function App() {
   const [url, setUrl] = useState("");
@@ -82,7 +89,7 @@ export default function App() {
   }, [ipc, setSteps]);
 
   return (
-    <EuiThemeProvider theme={EuiThemeAmsterdam}>
+    <EuiProvider cache={cache} colorMode="light">
       <StyledComponentsEuiProvider>
         <StepsContext.Provider value={stepsContextUtils}>
           <RecordingContext.Provider value={recordingContextUtils}>
@@ -133,6 +140,6 @@ export default function App() {
           </RecordingContext.Provider>
         </StepsContext.Provider>
       </StyledComponentsEuiProvider>
-    </EuiThemeProvider>
+    </EuiProvider>
   );
 }

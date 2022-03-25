@@ -22,11 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiThemeContext } from "@elastic/eui";
-import React, { useContext } from "react";
+import { useEuiTheme } from "@elastic/eui";
+import React from "react";
 import { ThemeProvider } from "styled-components";
 
 export const StyledComponentsEuiProvider: React.FC = ({ children }) => {
-  const euiTheme = useContext(EuiThemeContext);
+  const { euiTheme } = useEuiTheme();
   return <ThemeProvider theme={euiTheme}>{children}</ThemeProvider>;
 };
