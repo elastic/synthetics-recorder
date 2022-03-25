@@ -78,28 +78,6 @@ export function ActionStatusIndicator({
   );
 }
 
-interface IFlyoutFooter {
-  setVisible: Setter<boolean>;
-  type: JourneyType;
-}
-
-export function Footer({ setVisible, type }: IFlyoutFooter) {
-  return (
-    <EuiFlyoutFooter>
-      <EuiFlexGroup justifyContent="spaceBetween">
-        <EuiFlexItem grow={false}>
-          <EuiButtonEmpty onClick={() => setVisible(false)}>
-            Close
-          </EuiButtonEmpty>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <SaveCodeButton type={type} />
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    </EuiFlyoutFooter>
-  );
-}
-
 function getColorForStatus(
   euiTheme: EuiThemeComputed,
   status?: ResultCategory
