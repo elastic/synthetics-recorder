@@ -85,11 +85,12 @@ const DeleteButton = styled(EuiButtonIcon)<IDeleteButtonProps>`
 `;
 
 interface IControlsWrapper {
-  isGrabbing: boolean;
+  isGrabbing: boolean | null;
 }
 
 const ControlsWrapper = styled(EuiFlexGroup)<IControlsWrapper>`
-  cursor: ${props => (props.isGrabbing ? "grabbing" : "grab")};
+  cursor: ${({ isGrabbing }) =>
+    isGrabbing === null ? "default" : isGrabbing ? "grabbing" : "grab"};
 `;
 
 function createStepSeparatorDragDropData(
@@ -112,8 +113,10 @@ export function StepSeparator({ index, step }: IStepSeparator) {
   const [showEditButton, setShowEditButton] = useState(true);
   const [isEditingName, setIsEditingName] = useState(false);
   const [showControls, setShowControls] = useState(false);
-  const [isGrabbing, setIsGrabbing] = useState(false);
   const { isDraggable } = useDragAndDrop(index);
+  const [isGrabbing, setIsGrabbing] = useState<boolean | null>(
+    isDraggable === null ? isDraggable : false
+  );
 
   const onDragStart:
     | React.DragEventHandler<HTMLDivElement | HTMLSpanElement>
@@ -160,7 +163,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
         extraAction={
           <ControlsWrapper
             alignItems="center"
-            draggable={isDraggable}
+            draggable={!!isDraggable}
             gutterSize="s"
             isGrabbing={isGrabbing}
             onDragStart={onDragStart}

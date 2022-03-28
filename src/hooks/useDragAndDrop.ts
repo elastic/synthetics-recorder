@@ -26,8 +26,8 @@ import type { Steps } from "@elastic/synthetics";
 import { useContext } from "react";
 import { StepsContext } from "../contexts/StepsContext";
 
-export function canDrag(stepIndex: number, steps: Steps) {
-  if (stepIndex === 0) return false;
+export function canDrag(stepIndex: number, steps: Steps): boolean | null {
+  if (stepIndex === 0) return null;
   /**
    * Explanation of this bundle of logic:
    *
@@ -49,7 +49,11 @@ export function canDrag(stepIndex: number, steps: Steps) {
   );
 }
 
-export function useDragAndDrop(stepIndex: number) {
+interface UseDragAndDropResult {
+  isDraggable: boolean | null;
+}
+
+export function useDragAndDrop(stepIndex: number): UseDragAndDropResult {
   const { steps } = useContext(StepsContext);
 
   return { isDraggable: canDrag(stepIndex, steps) };
