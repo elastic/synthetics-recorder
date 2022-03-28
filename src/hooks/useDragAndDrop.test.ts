@@ -44,9 +44,9 @@ function createAction(
 }
 
 describe("useDragAndDrop", () => {
-  describe(`${canDrag.name}`, () => {
+  describe(canDrag.name, () => {
     it("returns `false` for first step", () => {
-      expect(canDrag(0, [])).toBe(false);
+      expect(canDrag(0, [])).toBeNull();
     });
 
     it("returns `false` if preceding, current, and following steps have only one element", () => {

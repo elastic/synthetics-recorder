@@ -44,7 +44,7 @@ function createAction(
 }
 
 describe("useDrop", () => {
-  describe(`${isDroppable.name}`, () => {
+  describe(isDroppable.name, () => {
     it(`is not droppable if there is no action in front or behind`, () => {
       expect(
         isDroppable(0, 0, [
