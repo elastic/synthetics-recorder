@@ -57,7 +57,7 @@ export const ControlButton: React.FC<Props> = props => {
     return () => window.removeEventListener("resize", evaluateSize);
   }, [l, showIconOnly]);
 
-  const { children, fill, tooltipContent, ...rest } = props;
+  const { fill, tooltipContent, ...rest } = props;
   if (showIconOnly) {
     return (
       <EuiToolTip content={tooltipContent || props["aria-label"]}>
@@ -68,7 +68,7 @@ export const ControlButton: React.FC<Props> = props => {
 
   return (
     <EuiToolTip content={tooltipContent} delay="long">
-      <EuiButton {...rest} />
+      <EuiButton fill {...rest} />
     </EuiToolTip>
   );
 };
