@@ -77,6 +77,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
       {recordingStatus === RecordingStatus.NotRecording && (
         <EuiFlexItem>
           <UrlField
+            fullWidth={url.length > 60}
             recordingStatus={recordingStatus}
             setUrl={setUrl}
             toggleRecording={toggleRecording}
@@ -105,10 +106,11 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
       {recordingStatus !== RecordingStatus.NotRecording && (
         <EuiFlexItem grow={false}>
           <ControlButton
-            aria-label="Stop"
+            aria-label="Stop recording and clear all recorded actions"
             isDisabled={recordingStatus !== RecordingStatus.Recording}
             color="primary"
             iconType="stop"
+            isDisabled={recordingStatus !== RecordingStatus.Recording}
             onClick={() => {
               toggleRecording();
             }}
@@ -117,7 +119,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
           </ControlButton>
         </EuiFlexItem>
       )}
-      <EuiFlexItem>
+      <EuiFlexItem grow={url.length < 60}>
         <RecordingStatusIndicator status={recordingStatus} />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
