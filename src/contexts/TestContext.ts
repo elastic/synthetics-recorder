@@ -40,17 +40,17 @@ export interface ITestContext {
   result?: Result;
   setIsTestInProgress: Setter<boolean>;
   setCodeBlocks: Setter<string>;
-  setResult: (data: Result | undefined) => void;
   setIsResultFlyoutVisible: Setter<boolean>;
+  setResult: (data: Result | undefined) => void;
 }
 
 export const TestContext = createContext<ITestContext>({
   codeBlocks: "",
   isResultFlyoutVisible: false,
+  isTestInProgress: false,
   onTest: notImplementedAsync,
   setCodeBlocks: notImplemented,
   setResult: notImplemented,
-  isTestInProgress: false,
   setIsTestInProgress: notImplemented,
   setIsResultFlyoutVisible: notImplemented,
 });

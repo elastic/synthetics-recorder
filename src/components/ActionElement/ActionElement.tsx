@@ -78,7 +78,11 @@ function ActionComponent({
   }, [actionIndex, onSplitStep, stepIndex]);
 
   return (
-    <Container className={className} gutterSize="none">
+    <Container
+      className={className}
+      id={`action-element-${stepIndex}-${actionIndex}`}
+      gutterSize="none"
+    >
       <EuiFlexItem grow={false}>
         <NewStepDividerButton
           actionIndex={actionIndex}

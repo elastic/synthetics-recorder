@@ -24,8 +24,8 @@ THE SOFTWARE.
 
 import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
 import { ActionInContext } from "@elastic/synthetics";
-import { RecordingStatus, Setter } from "../../common/types";
 import React, { useContext, useState } from "react";
+import { RecordingStatus, Setter } from "../../common/types";
 import { RecordingContext } from "../../contexts/RecordingContext";
 import { StepsContext } from "../../contexts/StepsContext";
 import { ActionControlButton } from "./ControlButton";

@@ -43,9 +43,7 @@ export function generateIR(steps: Steps): Steps {
   return result;
 }
 
-export function actionTitle(
-  action: Action & { files?: string[]; options?: string[] }
-) {
+export function actionTitle(action: Action) {
   switch (action.name) {
     case "openPage":
       return `Open new page`;
@@ -90,7 +88,7 @@ export function generateMergedIR(prevSteps: Steps, nextSteps: Steps): Steps {
   const prevLength = prevSteps.reduce(getActionCount, 0);
   const nextLength = nextSteps.reduce(getActionCount, 0);
   /**
-   * when recorder is started/resetted
+   * when recorder is started/reset
    */
   if (prevLength === 0 || nextLength === 0) {
     return nextSteps;

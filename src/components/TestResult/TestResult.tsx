@@ -36,7 +36,7 @@ const FLYOUT_TITLE = "result-flyout-title";
 
 export function TestResult() {
   const { steps } = useContext(StepsContext);
-  const { isResultFlyoutVisible, result, setIsResultFlyoutVisible } =
+  const { isResultFlyoutVisible, result, setResult, setIsResultFlyoutVisible } =
     useContext(TestContext);
   const { ipc } = useContext(CommunicationContext);
   const [stepCodeToDisplay, setStepCodeToDisplay] = useState("");
@@ -60,7 +60,7 @@ export function TestResult() {
     if (steps.length && result?.failed) {
       fetchCodeForFailure(result);
     }
-  }, [ipc, result, steps]);
+  }, [ipc, result, setResult, steps]);
 
   const maxLineLength = useMemo(
     () =>

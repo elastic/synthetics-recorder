@@ -31,12 +31,11 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiFormRow,
-  EuiIcon,
   EuiSpacer,
-  EuiText,
 } from "@elastic/eui";
 import { StepsContext } from "../../contexts/StepsContext";
 import { AssertionSelect } from "./Select";
+import { AssertionInfo } from "./AssertionInfo";
 
 interface IAssertion {
   action: Action;
@@ -86,12 +85,14 @@ export function Assertion({
     <>
       <EuiFlexGroup alignItems="center" gutterSize="s">
         <EuiFlexItem grow={false}>
-          <EuiText>
-            <h4>Add assertion</h4>
-          </EuiText>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiIcon type="iInCircle" />
+          <EuiFlexGroup alignItems="center" gutterSize="s">
+            <EuiFlexItem grow={false}>
+              <h4>Add assertion</h4>
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <AssertionInfo />
+            </EuiFlexItem>
+          </EuiFlexGroup>
         </EuiFlexItem>
       </EuiFlexGroup>
       <EuiSpacer />

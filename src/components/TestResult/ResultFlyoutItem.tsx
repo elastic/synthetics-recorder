@@ -33,7 +33,6 @@ const MAX_RESULT_TITLE_LENGTH = 80;
 
 export interface IResultFlyoutItem {
   code: string;
-  key: string;
   step: JourneyStep;
   stepIndex: number;
 }

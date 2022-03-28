@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 import { EuiFlexGroup, EuiFlexItem, EuiText, EuiCodeBlock } from "@elastic/eui";
 import React from "react";
-import { StepStatus } from "../../common/types";
+import type { StepStatus } from "../../common/types";
 import { ResultContentWrapper, ResultErrorAccordion, symbols } from "./styles";
 
 function removeColorCodes(str = "") {
@@ -42,8 +42,8 @@ export interface IResultErrorBody {
 }
 
 export function ResultErrorBody({
-  code,
   actionTitles,
+  code,
   errorMessage,
   resultCategory,
   stepIndex,

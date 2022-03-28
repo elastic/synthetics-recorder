@@ -22,17 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import {
-  EuiButtonEmpty,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiFlyoutFooter,
-  EuiThemeComputed,
-  EuiThemeContext,
-} from "@elastic/eui";
+import { EuiThemeComputed, EuiThemeContext } from "@elastic/eui";
 import React, { useContext } from "react";
-import { JourneyType, ResultCategory, Setter } from "../common/types";
-import { SaveCodeButton } from "./SaveCodeButton";
+import { ResultCategory } from "../common/types";
 
 interface IActionStatusIndicator {
   /**

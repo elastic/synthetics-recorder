@@ -50,11 +50,7 @@ export function ExportScriptFlyout({ setVisible, steps }: IExportScriptFlyout) {
 
   const maxLineSize = useMemo(
     // get max line size in code string
-    () => {
-      return code
-        .split("\n")
-        .reduce((prev, cur) => Math.max(prev, cur.length), 0);
-    },
+    () => code.split("\n").reduce((prev, cur) => Math.max(prev, cur.length), 0),
     [code]
   );
 
