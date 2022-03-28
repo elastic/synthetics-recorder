@@ -94,6 +94,18 @@ export class ElectronServiceFactory {
     await electronWindow.click("text=Stop");
   }
 
+  async clickActionElementSettingsButton(
+    elementSelector: string,
+    buttonSelector: string
+  ) {
+    const electronWindow = await this.getWindow();
+    await electronWindow.hover(elementSelector);
+    await electronWindow.click(
+      `[aria-label="Expand the settings menu for this action"]`
+    );
+    return electronWindow.click(buttonSelector);
+  }
+
   async waitForPageToBeIdle(timeout = 45000) {
     await this.#recordingBrowserPage.waitForLoadState("networkidle", {
       timeout,
