@@ -65,12 +65,13 @@ function ActionComponent({
   stepIndex,
   testStatus,
 }: IActionElement) {
+  const isAssertion = step.action.isAssert;
   const { onDeleteAction } = useContext(StepsContext);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(isAssertion ?? false);
   const [areControlsVisible, setAreControlsVisible] = useState(false);
   const close = () => setIsOpen(false);
 
-  const actionUI = step.action.isAssert ? (
+  const actionUI = isAssertion ? (
     <Assertion
       action={step.action}
       actionContext={step}
