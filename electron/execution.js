@@ -298,8 +298,7 @@ async function onFileSave(code) {
 
 async function onTransformCode(data) {
   const generator = new SyntheticsGenerator(data.isSuite);
-  const code = generator.generateFromSteps(data.actions);
-  return code.join("\n");
+  return generator.generateFromSteps(data.actions);
 }
 
 async function onSetMode(mode) {
