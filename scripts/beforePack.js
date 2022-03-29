@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 const { spawn } = require("child_process");
+const { Arch } = require("electron-builder");
 const { downloadForPlatform } = require("./download-browsers");
 
 exports.default = function beforePack(ctx) {
@@ -29,8 +30,6 @@ exports.default = function beforePack(ctx) {
   const platform = ctx.electronPlatformName;
   return Promise.all([downloadForPlatform(platform), fixSharp(arch, platform)]);
 };
-
-const { Arch } = require("electron-builder");
 
 function fixSharp(arch, platform) {
   return new Promise((resolve, reject) => {
