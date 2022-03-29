@@ -72,15 +72,12 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
     startTest();
   }, [setIsTestInProgress, setResult, startTest]);
 
-  const SHOULD_USE_FULL_WIDTH = url.length > 60;
-  const SHOULD_RECORDING_CONTROLS_GROW = !SHOULD_USE_FULL_WIDTH;
-
   return (
     <Header alignItems="center" gutterSize="m">
       {recordingStatus === RecordingStatus.NotRecording && (
         <EuiFlexItem>
           <UrlField
-            fullWidth={SHOULD_USE_FULL_WIDTH}
+            fullWidth
             recordingStatus={recordingStatus}
             setUrl={setUrl}
             toggleRecording={toggleRecording}
@@ -113,7 +110,6 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
             isDisabled={recordingStatus !== RecordingStatus.Recording}
             color="primary"
             iconType="stop"
-            isDisabled={recordingStatus !== RecordingStatus.Recording}
             onClick={() => {
               toggleRecording();
             }}
@@ -122,7 +118,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
           </ControlButton>
         </EuiFlexItem>
       )}
-      <EuiFlexItem grow={SHOULD_RECORDING_CONTROLS_GROW}>
+      <EuiFlexItem grow={false}>
         <RecordingStatusIndicator status={recordingStatus} />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
