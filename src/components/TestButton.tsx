@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiToolTip } from "@elastic/eui";
 import React from "react";
 import { ControlButton } from "./ControlButton";
 
@@ -32,13 +31,10 @@ interface Props {
 }
 
 export function TestButton({ isDisabled, onTest }: Props) {
-  const button = (
+  return (
     <ControlButton
-      aria-label={
-        isDisabled
-          ? "You cannot execute your recorded tests until you have finished a recording session"
-          : "Perform a test run for the journey you have recorded"
-      }
+      aria-label="Test"
+      tooltipContent={isDisabled ? "Record a step in order to run a test" : ""}
       color="primary"
       iconType="beaker"
       isDisabled={isDisabled}
@@ -47,14 +43,4 @@ export function TestButton({ isDisabled, onTest }: Props) {
       Test
     </ControlButton>
   );
-
-  if (isDisabled) {
-    return (
-      <EuiToolTip content="Record a step in order to run a test" delay="long">
-        {button}
-      </EuiToolTip>
-    );
-  }
-
-  return button;
 }

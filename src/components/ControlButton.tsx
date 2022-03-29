@@ -28,11 +28,13 @@ import {
   EuiButtonIcon,
   EuiButtonIconProps,
   EuiThemeContext,
+  EuiToolTip,
 } from "@elastic/eui";
 import React, { useContext, useEffect, useState } from "react";
 
 interface IControlButton {
   onClick: React.MouseEventHandler<HTMLButtonElement>;
+  tooltipContent?: string;
 }
 
 type Props = IControlButton & EuiButtonIconProps & EuiButtonProps;
@@ -55,11 +57,18 @@ export const ControlButton: React.FC<Props> = props => {
     return () => window.removeEventListener("resize", evaluateSize);
   }, [l, showIconOnly]);
 
+  const { fill, tooltipContent, ...rest } = props;
   if (showIconOnly) {
-    const { children, fill, ...rest } = props;
     return (
-      <EuiButtonIcon display={fill ? "fill" : "base"} size="m" {...rest} />
+      <EuiToolTip content={tooltipContent || props["aria-label"]}>
+        <EuiButtonIcon display={fill ? "fill" : "base"} size="m" {...rest} />
+      </EuiToolTip>
     );
   }
-  return <EuiButton {...props} />;
+
+  return (
+    <EuiToolTip content={tooltipContent} delay="long">
+      <EuiButton fill {...rest} />
+    </EuiToolTip>
+  );
 };
