@@ -68,7 +68,7 @@ export const ControlButton: React.FC<Props> = props => {
 
   return (
     <EuiToolTip content={tooltipContent} delay="long">
-      <EuiButton fill {...rest} />
+      <EuiButton fill={fill} {...rest} />
     </EuiToolTip>
   );
 };
