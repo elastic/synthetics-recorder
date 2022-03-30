@@ -42,7 +42,7 @@ interface IActionElement {
   className?: string;
   initialIsOpen?: boolean;
   isDragging?: boolean;
-  step: ActionInContext;
+  actionContext: ActionInContext;
   isLast?: boolean;
   stepIndex: number;
   testStatus?: ResultCategory;
@@ -65,12 +65,12 @@ function ActionComponent({
   className,
   initialIsOpen,
   isLast,
-  step,
+  actionContext,
   stepIndex,
   testStatus,
 }: IActionElement) {
   const { onDeleteAction, onSplitStep } = useContext(StepsContext);
-  const isAssertion = step.action.isAssert;
+  const isAssertion = actionContext.action.isAssert;
   const [isOpen, setIsOpen] = useState(isAssertion ?? false);
   const [areControlsVisible, setAreControlsVisible] = useState(false);
   const close = () => setIsOpen(false);
@@ -92,16 +92,16 @@ function ActionComponent({
         />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
-        {!step.action.isAssert && (
+        {!isAssertion && (
           <ActionStatusIndicator showRect={isLast} status={testStatus} />
         )}
       </EuiFlexItem>
-      <Behavior isAssert={step.action.isAssert} omitBorder={isLast}>
+      <Behavior isAssert={isAssertion} omitBorder={isLast}>
         <ActionAccordion
           arrowDisplay="none"
           buttonProps={{ style: { display: "none" } }}
           paddingSize="m"
-          id={`step-accordion-${step.title}`}
+          id={`step-accordion-${actionContext.title}`}
           initialIsOpen={initialIsOpen}
           forceState={isOpen ? "open" : "closed"}
           onMouseOver={() => {
@@ -118,23 +118,22 @@ function ActionComponent({
               areControlsVisible={areControlsVisible}
               isOpen={isOpen}
               setIsOpen={setIsOpen}
-              step={step}
+              step={actionContext}
               stepIndex={stepIndex}
             />
           }
         >
-          {!step.action.isAssert && (
+          {!actionContext.action.isAssert && (
             <ActionDetail
-              actionContext={step}
+              actionContext={actionContext}
               actionIndex={actionIndex}
               close={close}
               stepIndex={stepIndex}
             />
           )}
-          {step.action.isAssert && (
+          {actionContext.action.isAssert && (
             <Assertion
-              action={step.action}
-              actionContext={step}
+              actionContext={actionContext}
               actionIndex={actionIndex}
               close={close}
               onDeleteAction={onDeleteAction}

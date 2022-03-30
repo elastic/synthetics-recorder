@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Action, ActionInContext } from "@elastic/synthetics";
+import type { ActionInContext } from "@elastic/synthetics";
 import React, { useContext, useState } from "react";
 import {
   EuiButton,
@@ -38,7 +38,6 @@ import { AssertionSelect } from "./Select";
 import { AssertionInfo } from "./AssertionInfo";
 
 interface IAssertion {
-  action: Action;
   actionContext: ActionInContext;
   actionIndex: number;
   close?: () => void;
@@ -60,12 +59,12 @@ function updateAction(
 }
 
 export function Assertion({
-  action,
   actionContext,
   actionIndex,
   close,
   stepIndex,
 }: IAssertion) {
+  const { action } = actionContext;
   const { onUpdateAction } = useContext(StepsContext);
 
   const [command, setCommand] = useState(action.command || "");

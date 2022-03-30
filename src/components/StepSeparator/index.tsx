@@ -211,10 +211,10 @@ export function StepSeparator({ index, step }: IStepSeparator) {
         id={`step-separator-${index}`}
         initialIsOpen
       >
-        {step.actions.map((s, actionIndex) => (
+        {step.actions.map((actionContext, actionIndex) => (
           <ActionElement
             key={`action-${actionIndex}-for-step-${index}`}
-            step={s}
+            actionContext={actionContext}
             actionIndex={actionIndex}
             stepIndex={index}
             testStatus={testStatus}

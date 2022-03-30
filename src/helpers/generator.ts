@@ -79,12 +79,22 @@ export function actionTitle(action: Action) {
 
 const getActionCount = (prev: number, cur: Step) => prev + cur.actions.length;
 
+function isOpenOrCloseAction(name: string, pageAlias: string) {
+  return (name === "closePage" && pageAlias === "page") || name === "openPage";
+}
+
 /**
  * Works by taking the actions from the PW recorder and
  * the actions generated/modified by the UI and merges them
  * to display the correct modified actions on the UI
  */
-export function generateMergedIR(prevSteps: Steps, nextSteps: Steps): Steps {
+export function generateMergedIR(prevSteps: Steps, pwInput: Steps): Steps {
+  const nextSteps: Steps = pwInput.map(step => ({
+    ...step,
+    actions: step.actions.filter(
+      ({ action: { name }, pageAlias }) => !isOpenOrCloseAction(name, pageAlias)
+    ),
+  }));
   const prevLength = prevSteps.reduce(getActionCount, 0);
   const nextLength = nextSteps.reduce(getActionCount, 0);
   /**
