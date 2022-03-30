@@ -142,7 +142,8 @@ export function StepSeparator({ index, step }: IStepSeparator) {
       }
     : undefined;
 
-  const stepHeadingText = step.name ?? `Step ${index + 1}`;
+  const defaultStepName = `Step ${index + 1}`;
+  const stepHeadingText = step.name ?? defaultStepName;
 
   return (
     <div
@@ -177,7 +178,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
             )}
             {isEditingName && (
               <EditStepNameInput
-                placeholder={stepHeadingText}
+                placeholder={defaultStepName}
                 defaultValue={step.name}
                 onComplete={(value?: string | null) => {
                   setIsEditingName(false);
