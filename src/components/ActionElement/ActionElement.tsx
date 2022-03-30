@@ -70,7 +70,8 @@ function ActionComponent({
   testStatus,
 }: IActionElement) {
   const { onDeleteAction, onSplitStep } = useContext(StepsContext);
-  const [isOpen, setIsOpen] = useState(false);
+  const isAssertion = step.action.isAssert;
+  const [isOpen, setIsOpen] = useState(isAssertion ?? false);
   const [areControlsVisible, setAreControlsVisible] = useState(false);
   const close = () => setIsOpen(false);
   const splitStepAtAction = useCallback(() => {
