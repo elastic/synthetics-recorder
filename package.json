@@ -42,7 +42,7 @@
   "main": "build/electron.js",
   "homepage": "./",
   "build": {
-    "productName": "Elastic Synthetics Recorder",
+    "productName": "Elastic-Synthetics-Recorder",
     "appId": "co.elastic.synthetics-recorder",
     "files": [
       "build/**/*",

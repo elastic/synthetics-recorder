@@ -115,17 +115,10 @@ pipeline {
         stage('Dist') {
           steps {
             withNodeJSEnv() {
-              dir("${BASE_DIR}"){
-                sh(label: 'npm pack', script: 'npm run pack')
-              }
-            }
-          }
-        }
-        stage('Release Notes') {
-          steps {
-            withGhEnv(forceInstallation: true, version: '2.4.0') {
-              dir("${BASE_DIR}"){
-                cmd(label: 'make release-notes', script: 'make -C .ci release-notes')
+              withCredentials([string(credentialsId: "2a9602aa-ab9f-4e52-baf3-b71ca88469c7", variable: 'GITHUB_TOKEN')]) {
+                dir("${BASE_DIR}"){
+                  sh(label: 'npm release', script: 'npm run release')
+                }
               }
             }
           }
