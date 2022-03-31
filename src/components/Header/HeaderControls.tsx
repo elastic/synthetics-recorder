@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
+import { EuiFlexGroup, EuiFlexItem, useEuiTheme } from "@elastic/eui";
 import React, { useCallback, useContext } from "react";
 import styled from "styled-components";
 import { RecordingStatus, Setter } from "../../common/types";
@@ -72,8 +72,14 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
     startTest();
   }, [setIsTestInProgress, setResult, startTest]);
 
+  const theme = useEuiTheme();
+
   return (
-    <Header alignItems="center" gutterSize="m">
+    <Header
+      style={{ backgroundColor: theme.euiTheme.colors.emptyShade }}
+      alignItems="center"
+      gutterSize="m"
+    >
       {recordingStatus === RecordingStatus.NotRecording && (
         <EuiFlexItem>
           <UrlField
