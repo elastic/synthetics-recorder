@@ -93,6 +93,10 @@ const ControlsWrapper = styled(EuiFlexGroup)<IControlsWrapper>`
     isGrabbing === null ? "default" : isGrabbing ? "grabbing" : "grab"};
 `;
 
+const DragWrapper = styled.div`
+  margin-bottom: -32px;
+`;
+
 function createStepSeparatorDragDropData(
   stepIndex: number
 ): StepSeparatorDragDropDataTransfer {
@@ -146,7 +150,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
   const stepHeadingText = step.name ?? defaultStepName;
 
   return (
-    <div
+    <DragWrapper
       onMouseEnter={() => setShowControls(true)}
       onMouseLeave={() => setShowControls(false)}
     >
@@ -222,6 +226,6 @@ export function StepSeparator({ index, step }: IStepSeparator) {
           />
         ))}
       </StepSeparatorAccordion>
-    </div>
+    </DragWrapper>
   );
 }
