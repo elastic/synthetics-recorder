@@ -106,10 +106,11 @@ pipeline {
     }
     stage('Release') {
       options { skipDefaultCheckout() }
-      when {
+      //TODO
+      /*when {
         beforeAgent true
         tag pattern: 'v\\d+\\.\\d+.*', comparator: 'REGEXP'
-      }
+      }*/
       stages {
         stage('Dist') {
           steps {
