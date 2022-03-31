@@ -113,7 +113,11 @@ pipeline {
       stages {
         stage('Dist') {
           steps {
-            echo 'TBD'
+            withNodeJSEnv() {
+              dir("${BASE_DIR}"){
+                sh(label: 'npm pack', script: 'npm run pack')
+              }
+            }
           }
         }
         stage('Release Notes') {
