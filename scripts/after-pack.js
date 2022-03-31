@@ -28,7 +28,7 @@ exports.default = function afterPack(ctx) {
   const platform = ctx.electronPlatformName;
   if (platform === "linux") {
     const resourcesPath = path.join(ctx.appOutDir, "resources");
-    changePermission(resourcesPath);
+    return changePermission(resourcesPath);
   }
 };
 
@@ -36,9 +36,6 @@ function changePermission(resourcesPath) {
   return new Promise((resolve, reject) => {
     const ps = spawn("chmod", ["777", resourcesPath], {
       shell: true,
-      env: {
-        ...process.env,
-      },
     });
     ps.on("close", code => {
       if (code === 0) {

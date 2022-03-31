@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 const { spawn } = require("child_process");
 const { Arch } = require("electron-builder");
-const { downloadForPlatform } = require("./download-browsers");
+const { downloadForPlatform } = require("./download-chromium");
 
 exports.default = function beforePack(ctx) {
   const arch = Arch[ctx.arch];

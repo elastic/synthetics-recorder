@@ -1,7 +1,7 @@
 productName: "Elastic Synthetics Recorder"
 appId: co.elastic.synthetics-recorder
-beforePack: "./scripts/beforePack.js"
-afterPack: "./scripts/afterPack.js"
+beforePack: "./scripts/before-pack.js"
+afterPack: "./scripts/after-pack.js"
 files:
   - build/**/*
   - scripts/**/*

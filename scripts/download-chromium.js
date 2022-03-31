@@ -29,47 +29,33 @@ const path = require("path");
 const {
   downloadBrowserWithProgressBar,
 } = require("playwright/lib/utils/browserFetcher");
-const SYNTHETICS_BROWSER_REVISIONS = require("@elastic/synthetics/node_modules/playwright-chromium/browsers.json");
+const { getChromeVersion } = require("./install-pw");
+
 const EXECUTABLE_PATHS = {
-  chromium: {
-    linux: ["chrome-linux", "chrome"],
-    mac: ["chrome-mac", "Chromium.app", "Contents", "MacOS", "Chromium"],
-    win: ["chrome-win", "chrome.exe"],
-  },
-  ffmpeg: {
-    linux: ["ffmpeg-linux"],
-    mac: ["ffmpeg-mac"],
-    win: ["ffmpeg-win64.exe"],
-  },
+  linux: ["chrome-linux", "chrome"],
+  mac: ["chrome-mac", "Chromium.app", "Contents", "MacOS", "Chromium"],
+  win: ["chrome-win", "chrome.exe"],
 };
 
 const DOWNLOAD_URLS = {
-  chromium: {
-    linux: "%s/builds/chromium/%s/chromium-linux.zip",
-    mac: "%s/builds/chromium/%s/chromium-mac.zip",
-    win: "%s/builds/chromium/%s/chromium-win64.zip",
-    // 'mac-arm64': '%s/builds/chromium/%s/chromium-mac-arm64.zip',
-  },
-  ffmpeg: {
-    linux: "%s/builds/ffmpeg/%s/ffmpeg-linux.zip",
-    mac: "%s/builds/ffmpeg/%s/ffmpeg-mac.zip",
-    win: "%s/builds/ffmpeg/%s/ffmpeg-win64.zip",
-    // 'mac-arm64': '%s/builds/ffmpeg/%s/ffmpeg-mac.zip',
-  },
+  linux: "%s/builds/chromium/%s/chromium-linux.zip",
+  mac: "%s/builds/chromium/%s/chromium-mac.zip",
+  win: "%s/builds/chromium/%s/chromium-win64.zip",
+  // 'mac-arm64': '%s/builds/chromium/%s/chromium-mac-arm64.zip',
 };
 
-async function download(platform, browser, revision, directory) {
-  const executablePath = findExecutablePath(directory, browser, platform);
+async function download(platform, revision, directory) {
+  const executablePath = findExecutablePath(directory, platform);
   const downloadHost =
     process.env["PLAYWRIGHT_DOWNLOAD_HOST"] ||
     "https://playwright.azureedge.net";
   const downloadURL = util.format(
-    DOWNLOAD_URLS[browser][platform],
+    DOWNLOAD_URLS[platform],
     downloadHost,
     revision
   );
-  const title = `${browser} v${revision} for ${platform}`;
-  const downloadFileName = `playwright-download-${browser}-${platform}-${revision}.zip`;
+  const title = `chromium v${revision} for ${platform}`;
+  const downloadFileName = `playwright-download-chromium-${platform}-${revision}.zip`;
   try {
     // eslint-disable-next-line no-console
     console.info("Downloading browser ", title);
@@ -85,15 +71,9 @@ async function download(platform, browser, revision, directory) {
   }
 }
 
-function findExecutablePath(dir, browser, platform) {
-  const tokens = EXECUTABLE_PATHS[browser][platform];
+function findExecutablePath(dir, platform) {
+  const tokens = EXECUTABLE_PATHS[platform];
   return tokens ? path.join(dir, ...tokens) : undefined;
-}
-
-function getRevision(name) {
-  const { browsers } = SYNTHETICS_BROWSER_REVISIONS;
-  const { revision } = browsers.find(br => br.name === name) || {};
-  return revision;
 }
 
 function translatePlatform(platform) {
@@ -109,25 +89,12 @@ function translatePlatform(platform) {
 
 exports.downloadForPlatform = async function downloadForPlatform(platform) {
   platform = translatePlatform(platform);
-  for (const software of ["chromium", "ffmpeg"]) {
-    const revision = getRevision(software);
-    if (revision == null) {
-      throw new Error("Failed to find valid revision for " + software);
-    }
-    const directory = path.join(
-      process.cwd(),
-      "local-browsers",
-      "_releases",
-      platform,
-      `${software}-${revision}`
-    );
-
-    try {
-      await download(platform, software, revision, directory);
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e);
-      throw Error(`Failed to download ${software} for platform ${platform}`);
-    }
-  }
+  const [, revision] = getChromeVersion().split("-");
+  const directory = path.join(
+    process.cwd(),
+    "local-browsers",
+    "_releases",
+    `${getChromeVersion()}-${platform}`
+  );
+  await download(platform, revision, directory);
 };
