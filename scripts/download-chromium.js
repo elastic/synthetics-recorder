@@ -94,7 +94,8 @@ exports.downloadForPlatform = async function downloadForPlatform(platform) {
     process.cwd(),
     "local-browsers",
     "_releases",
-    `${getChromeVersion()}-${platform}`
+    platform,
+    getChromeVersion()
   );
   await download(platform, revision, directory);
 };
