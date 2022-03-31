@@ -37,6 +37,7 @@ interface StyleProps {
 }
 
 const AddStepDivider = styled(EuiButtonIcon)<StyleProps>`
+  background-color: ${({ theme }) => theme.colors.body};
   position: relative;
   left: 63px;
   top: -8px;
