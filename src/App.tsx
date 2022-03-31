@@ -25,7 +25,6 @@ import React, { useContext } from "react";
 import { useEffect, useState } from "react";
 import { EuiCode, EuiEmptyPrompt, EuiProvider } from "@elastic/eui";
 import type { ActionInContext, Steps } from "@elastic/synthetics";
-import "./App.css";
 import createCache from "@emotion/cache";
 import "@elastic/eui/dist/eui_theme_light.css";
 import { Title } from "./components/Header/Title";
@@ -39,7 +38,6 @@ import { useSyntheticsTest } from "./hooks/useSyntheticsTest";
 import { generateIR, generateMergedIR } from "./helpers/generator";
 import { StepSeparator } from "./components/StepSeparator";
 
-import "./App.css";
 import { useStepsContext } from "./hooks/useStepsContext";
 import { TestResult } from "./components/TestResult";
 import { AppPageBody } from "./components/AppPageBody";
