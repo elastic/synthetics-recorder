@@ -78,9 +78,6 @@ interface IDeleteButtonProps {
 }
 
 const DeleteButton = styled(EuiButtonIcon)<IDeleteButtonProps>`
-  left: -4px;
-  position: relative;
-  top: 39px;
   visibility: ${props => (props.isVisible ? "visible" : "hidden")};
 `;
 
@@ -117,6 +114,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
   const [showEditButton, setShowEditButton] = useState(true);
   const [isEditingName, setIsEditingName] = useState(false);
   const [showControls, setShowControls] = useState(false);
+  const [canDelete, setCanDelete] = useState(true);
   const { isDraggable } = useDragAndDrop(index);
   const [isGrabbing, setIsGrabbing] = useState<boolean | null>(
     isDraggable === null ? isDraggable : false
@@ -154,15 +152,6 @@ export function StepSeparator({ index, step }: IStepSeparator) {
       onMouseEnter={() => setShowControls(true)}
       onMouseLeave={() => setShowControls(false)}
     >
-      {index > 0 && (
-        <DeleteButton
-          aria-label="Click to delete this step"
-          color="text"
-          iconType="trash"
-          isVisible={showControls}
-          onClick={() => onMergeSteps(index - 1, index)}
-        />
-      )}
       <StepSeparatorAccordion
         className="stepSeparator"
         extraAction={
@@ -209,11 +198,24 @@ export function StepSeparator({ index, step }: IStepSeparator) {
                 />
               </EuiFlexItem>
             )}
+            {index > 0 && canDelete && (
+              <EuiFlexItem grow={false}>
+                <DeleteButton
+                  aria-label="Click to delete this step"
+                  color="text"
+                  disabled={!canDelete}
+                  iconType="trash"
+                  isVisible={showControls}
+                  onClick={() => onMergeSteps(index - 1, index)}
+                />
+              </EuiFlexItem>
+            )}
             {!isEditingName && <StepSeparatorTopBorder />}
           </ControlsWrapper>
         }
         id={`step-separator-${index}`}
         initialIsOpen
+        onToggle={isOpen => setCanDelete(isOpen)}
       >
         {step.actions.map((actionContext, actionIndex) => (
           <ActionElement
