@@ -111,6 +111,7 @@ pipeline {
         beforeAgent true
         tag pattern: 'v\\d+\\.\\d+.*', comparator: 'REGEXP'
       }*/
+      agent { label 'macosx' }
       stages {
         stage('Dist') {
           steps {
