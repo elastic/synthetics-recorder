@@ -84,6 +84,11 @@ export class ElectronServiceFactory {
     return this.#recordingBrowserPage;
   }
 
+  async recordClick(selector: string) {
+    await this.#recordingBrowserPage.click(selector);
+    return this.#recordingBrowserPage;
+  }
+
   async clickRunTest() {
     const electronWindow = await this.getWindow();
     await electronWindow.click("text=Test");

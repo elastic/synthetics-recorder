@@ -62,18 +62,18 @@ function getCoordinates({
 describe("Drag and Drop", () => {
   it("creates a step and drags to a new position", async () => {
     const electronWindow = await electronService.getWindow();
-
     await electronService.enterTestUrl(env.DEMO_APP_URL);
     await electronService.clickStartRecording();
     await electronService.waitForPageToBeIdle();
     await electronService.navigateRecordingBrowser(url);
+    await electronService.recordClick("text=Hello Elastic Synthetics Recorder");
 
     await (await electronWindow.$("id=insert-divider-0-1")).click();
     await (await electronWindow.$("id=step-1")).hover();
     await electronWindow.mouse.down();
     await electronWindow.mouse.move(100, 100, { steps: 5 });
     const dropZone = await (
-      await electronWindow.$("id=drop-zone-1-0")
+      await electronWindow.$("id=action-element-1-0")
     ).boundingBox();
     const [dzx, dzy] = getCoordinates(dropZone);
     await electronWindow.mouse.move(dzx, dzy, { steps: 5 });
