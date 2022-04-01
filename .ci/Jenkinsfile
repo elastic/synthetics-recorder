@@ -80,7 +80,10 @@ pipeline {
       options { skipDefaultCheckout() }
       //TODO
       //when { expression { return !isTag() } }
-      when { expression { return false } }
+      when {
+        beforeAgent true
+        expression { return false }
+      }
       agent {
         dockerfile {
           reuseNode true
