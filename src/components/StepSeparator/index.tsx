@@ -27,6 +27,7 @@ import {
   EuiFlexItem,
   EuiFlexGroup,
   EuiButtonIcon,
+  EuiToolTip,
 } from "@elastic/eui";
 import type { Step } from "@elastic/synthetics";
 import React, { useContext, useState } from "react";
@@ -186,27 +187,31 @@ export function StepSeparator({ index, step }: IStepSeparator) {
                 grow={false}
                 style={{ visibility: showControls ? "visible" : "hidden" }}
               >
-                <EuiButtonIcon
-                  aria-label="Click this to edit the step name"
-                  color="text"
-                  iconType="pencil"
-                  onClick={() => {
-                    setIsEditingName(true);
-                    setShowEditButton(false);
-                  }}
-                />
+                <EuiToolTip content="Edit step name">
+                  <EuiButtonIcon
+                    aria-label="Click this to edit the step name"
+                    color="text"
+                    iconType="pencil"
+                    onClick={() => {
+                      setIsEditingName(true);
+                      setShowEditButton(false);
+                    }}
+                  />
+                </EuiToolTip>
               </EuiFlexItem>
             )}
             {index > 0 && canDelete && showDeleteButton && (
               <EuiFlexItem grow={false}>
-                <DeleteButton
-                  aria-label="Click to delete this step"
-                  color="text"
-                  disabled={!canDelete}
-                  iconType="trash"
-                  isVisible={showControls}
-                  onClick={() => onMergeSteps(index - 1, index)}
-                />
+                <EuiToolTip content="Delete this step divider">
+                  <DeleteButton
+                    aria-label="Click to delete this step"
+                    color="text"
+                    disabled={!canDelete}
+                    iconType="trash"
+                    isVisible={showControls}
+                    onClick={() => onMergeSteps(index - 1, index)}
+                  />
+                </EuiToolTip>
               </EuiFlexItem>
             )}
             {!isEditingName && <StepSeparatorTopBorder />}
