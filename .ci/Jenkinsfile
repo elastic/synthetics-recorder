@@ -3,9 +3,7 @@
 @Library('apm@current') _
 
 pipeline {
-  //TODO
-  //agent { label 'ubuntu-20 && immutable' }
-  agent { label 'macosx' }
+  agent { label 'ubuntu-20 && immutable' }
   environment {
     REPO = "synthetics-recorder"
     BASE_DIR = "src/github.com/elastic/${env.REPO}"
@@ -42,9 +40,7 @@ pipeline {
     }
     stage('Install'){
       options { skipDefaultCheckout() }
-      //TODO
-      //when { expression { return !isTag() } }
-      when { expression { return false } }
+      when { expression { return !isTag() } }
       steps {
         withGithubNotify(context: "Install") {
           withNodeJSEnv() {
@@ -57,9 +53,7 @@ pipeline {
     }
     stage('Lint'){
       options { skipDefaultCheckout() }
-      //TODO
-      //when { expression { return !isTag() } }
-      when { expression { return false } }
+      when { expression { return !isTag() } }
       steps {
         withGithubNotify(context: "Lint") {
           withNodeJSEnv() {
@@ -78,11 +72,9 @@ pipeline {
     }
     stage('Docker test setup') {
       options { skipDefaultCheckout() }
-      //TODO
-      //when { expression { return !isTag() } }
       when {
         beforeAgent true
-        expression { return false }
+        expression { return !isTag() }
       }
       agent {
         dockerfile {
@@ -105,9 +97,7 @@ pipeline {
     }
     stage('Build'){
       options { skipDefaultCheckout() }
-      //TODO
-      //when { expression { return !isTag() } }
-      when { expression { return false } }
+      when { expression { return !isTag() } }
       steps {
         withGithubNotify(context: "Build") {
           withNodeJSEnv() {
@@ -120,13 +110,11 @@ pipeline {
     }
     stage('Release') {
       options { skipDefaultCheckout() }
-      //TODO
-      /*when {
+      when {
         beforeAgent true
         tag pattern: 'v\\d+\\.\\d+.*', comparator: 'REGEXP'
-      }*/
-      //TODO
-      //agent { label 'macosx' }
+      }
+      agent { label 'macosx' }
       stages {
         stage('Dist') {
           steps {
