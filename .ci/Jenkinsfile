@@ -3,7 +3,9 @@
 @Library('apm@current') _
 
 pipeline {
-  agent { label 'ubuntu-20 && immutable' }
+  //TODO
+  //agent { label 'ubuntu-20 && immutable' }
+  agent { label 'macosx' }
   environment {
     REPO = "synthetics-recorder"
     BASE_DIR = "src/github.com/elastic/${env.REPO}"
@@ -40,7 +42,9 @@ pipeline {
     }
     stage('Install'){
       options { skipDefaultCheckout() }
-      when { expression { return !isTag() } }
+      //TODO
+      //when { expression { return !isTag() } }
+      when { expression { return false } }
       steps {
         withGithubNotify(context: "Install") {
           withNodeJSEnv() {
@@ -53,7 +57,9 @@ pipeline {
     }
     stage('Lint'){
       options { skipDefaultCheckout() }
-      when { expression { return !isTag() } }
+      //TODO
+      //when { expression { return !isTag() } }
+      when { expression { return false } }
       steps {
         withGithubNotify(context: "Lint") {
           withNodeJSEnv() {
@@ -72,7 +78,9 @@ pipeline {
     }
     stage('Docker test setup') {
       options { skipDefaultCheckout() }
-      when { expression { return !isTag() } }
+      //TODO
+      //when { expression { return !isTag() } }
+      when { expression { return false } }
       agent {
         dockerfile {
           reuseNode true
@@ -94,6 +102,9 @@ pipeline {
     }
     stage('Build'){
       options { skipDefaultCheckout() }
+      //TODO
+      //when { expression { return !isTag() } }
+      when { expression { return false } }
       steps {
         withGithubNotify(context: "Build") {
           withNodeJSEnv() {
@@ -111,7 +122,8 @@ pipeline {
         beforeAgent true
         tag pattern: 'v\\d+\\.\\d+.*', comparator: 'REGEXP'
       }*/
-      agent { label 'macosx' }
+      //TODO
+      //agent { label 'macosx' }
       stages {
         stage('Dist') {
           steps {
