@@ -26,13 +26,20 @@ import { EuiFlexGroup, EuiFlexItem, EuiAccordion } from "@elastic/eui";
 import { ActionInContext } from "@elastic/synthetics";
 import React, { useCallback, useContext, useState } from "react";
 import styled from "styled-components";
-import { SMALL_SCREEN_BREAKPOINT } from "../../common/shared";
-import { ResultCategory } from "../../common/types";
+import {
+  DRAG_AND_DROP_DATA_TRANSFER_TYPE,
+  SMALL_SCREEN_BREAKPOINT,
+} from "../../common/shared";
+import {
+  ResultCategory,
+  StepSeparatorDragDropDataTransfer,
+} from "../../common/types";
+import { DragAndDropContext } from "../../contexts/DragAndDropContext";
 import { StepsContext } from "../../contexts/StepsContext";
+import { useDrop } from "../../hooks/useDrop";
 import { ActionDetail } from "../ActionDetail";
 import { ActionStatusIndicator } from "../ActionStatusIndicator";
 import { Assertion } from "../Assertion";
-import { DropZone } from "./ActionDropZone";
 import { Behavior } from "./Behavior";
 import { ExtraActions } from "./ExtraActions";
 import { NewStepDividerButton } from "./NewStepDividerButton";
@@ -48,17 +55,44 @@ interface IActionElement {
   testStatus?: ResultCategory;
 }
 
-const ActionAccordion = styled(EuiAccordion)`
+const ActionAccordion = styled(EuiAccordion)<{ isDragOver: boolean }>`
   padding: 8px 0px;
+  .euiAccordion__triggerWrapper {
+    border-top-left-radius: ${props => props.theme.border.radius.medium};
+    border-top-right-radius: ${props => props.theme.border.radius.medium};
+    border: ${props => props.theme.border.thin};
+    padding: 12px;
+  }
+
+  border-bottom: ${({ isDragOver, theme }) =>
+    isDragOver
+      ? `${theme.border.width.thick} solid ${theme.colors.success}`
+      : "inherit"};
+
+  .euiAccordion-isOpen > .euiAccordion__childWrapper {
+    border-right: ${props => props.theme.border.thin};
+    border-bottom: ${props => props.theme.border.thin};
+    border-left: ${props => props.theme.border.thin};
+    background-color: ${props => props.theme.colors.emptyShade};
+  }
 `;
 
-const Container = styled(EuiFlexGroup)`
+const Container = styled(EuiFlexGroup)<{ isDragOver: boolean }>`
   display: flex;
   min-height: 50px;
   min-width: 800px;
   margin-left: -63px;
   overflow: visible;
 `;
+
+type DragEvent = React.DragEventHandler<HTMLDivElement | HTMLSpanElement>;
+
+interface DropProps {
+  onDrop: DragEvent;
+  onDragEnter: DragEvent;
+  onDragLeave: DragEvent;
+  onDragOver: DragEvent;
+}
 
 function ActionComponent({
   actionIndex,
@@ -77,12 +111,44 @@ function ActionComponent({
   const splitStepAtAction = useCallback(() => {
     onSplitStep(stepIndex, actionIndex);
   }, [actionIndex, onSplitStep, stepIndex]);
+  const { dragIndex } = useContext(DragAndDropContext);
+  const { isDroppable } = useDrop(stepIndex, actionIndex, dragIndex);
+  const [dropzoneOver, setDropzeonOver] = useState(false);
+  const [enterTarget, setEnterTarget] = useState<EventTarget | undefined>(
+    undefined
+  );
+  const { onDropStep } = useContext(StepsContext);
 
+  const dropProps: DropProps | undefined = isDroppable
+    ? {
+        onDrop: e => {
+          const { initiatorIndex } = JSON.parse(
+            e.dataTransfer.getData(DRAG_AND_DROP_DATA_TRANSFER_TYPE)
+          ) as StepSeparatorDragDropDataTransfer;
+          setDropzeonOver(false);
+          onDropStep(stepIndex, initiatorIndex, actionIndex);
+          e.preventDefault();
+        },
+        onDragEnter: e => {
+          setEnterTarget(e.target);
+          setDropzeonOver(true);
+          e.preventDefault();
+        },
+        onDragOver: e => {
+          e.preventDefault();
+        },
+        onDragLeave: e => {
+          if (e.target === enterTarget) setDropzeonOver(false);
+        },
+      }
+    : undefined;
   return (
     <Container
       className={className}
+      isDragOver={isDroppable && dropzoneOver}
       id={`action-element-${stepIndex}-${actionIndex}`}
       gutterSize="none"
+      {...dropProps}
     >
       <EuiFlexItem grow={false}>
         <NewStepDividerButton
@@ -98,6 +164,7 @@ function ActionComponent({
       </EuiFlexItem>
       <Behavior isAssert={isAssertion} omitBorder={isLast}>
         <ActionAccordion
+          isDragOver={isDroppable && dropzoneOver}
           arrowDisplay="none"
           buttonProps={{ style: { display: "none" } }}
           paddingSize="m"
@@ -141,28 +208,12 @@ function ActionComponent({
             />
           )}
         </ActionAccordion>
-        <DropZone actionIndex={actionIndex} stepIndex={stepIndex} />
       </Behavior>
     </Container>
   );
 }
 
 export const ActionElement = styled(ActionComponent)`
-  .euiAccordion__triggerWrapper {
-    background-color: ${props => props.theme.colors.emptyShade};
-    border-top-left-radius: ${props => props.theme.border.radius.medium};
-    border-top-right-radius: ${props => props.theme.border.radius.medium};
-    border: ${props => props.theme.border.thin};
-    padding: 12px;
-  }
-
-  .euiAccordion-isOpen > .euiAccordion__childWrapper {
-    border-right: ${props => props.theme.border.thin};
-    border-bottom: ${props => props.theme.border.thin};
-    border-left: ${props => props.theme.border.thin};
-    background-color: ${props => props.theme.colors.emptyShade};
-  }
-
   @media (max-width: ${SMALL_SCREEN_BREAKPOINT}px) {
     .euiAccordion__triggerWrapper {
       width: 650px;

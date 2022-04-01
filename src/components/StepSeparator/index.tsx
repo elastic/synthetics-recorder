@@ -90,10 +90,6 @@ const ControlsWrapper = styled(EuiFlexGroup)<IControlsWrapper>`
     isGrabbing === null ? "default" : isGrabbing ? "grabbing" : "grab"};
 `;
 
-const DragWrapper = styled.div`
-  margin-bottom: -32px;
-`;
-
 function createStepSeparatorDragDropData(
   stepIndex: number
 ): StepSeparatorDragDropDataTransfer {
@@ -112,6 +108,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
   const { setDragIndex } = useContext(DragAndDropContext);
   const { onMergeSteps, setStepName } = useContext(StepsContext);
   const [showEditButton, setShowEditButton] = useState(true);
+  const [showDeleteButton, setShowDeleteButton] = useState(true);
   const [isEditingName, setIsEditingName] = useState(false);
   const [showControls, setShowControls] = useState(false);
   const [canDelete, setCanDelete] = useState(true);
@@ -125,6 +122,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
     | undefined = isDraggable
     ? e => {
         setDragIndex(index);
+        setShowDeleteButton(false);
         setShowEditButton(false);
         const dragDataString = JSON.stringify(
           createStepSeparatorDragDropData(index)
@@ -138,6 +136,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
     : undefined;
   const onDragEnd = isDraggable
     ? () => {
+        setShowDeleteButton(true);
         setShowEditButton(true);
         setDragIndex(undefined);
         setIsGrabbing(false);
@@ -148,7 +147,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
   const stepHeadingText = step.name ?? defaultStepName;
 
   return (
-    <DragWrapper
+    <div
       onMouseEnter={() => setShowControls(true)}
       onMouseLeave={() => setShowControls(false)}
     >
@@ -198,7 +197,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
                 />
               </EuiFlexItem>
             )}
-            {index > 0 && canDelete && (
+            {index > 0 && canDelete && showDeleteButton && (
               <EuiFlexItem grow={false}>
                 <DeleteButton
                   aria-label="Click to delete this step"
@@ -228,6 +227,6 @@ export function StepSeparator({ index, step }: IStepSeparator) {
           />
         ))}
       </StepSeparatorAccordion>
-    </DragWrapper>
+    </div>
   );
 }
