@@ -125,7 +125,7 @@
     "electron-log": "^4.4.6",
     "electron-unhandled": "^3.0.2",
     "moment": "^2.29.1",
-    "playwright": "git+https://github.com/vigneshshanmugam/playwright.git#separate-recorder",
+    "playwright": "git+https://github.com/elastic/playwright.git#separate-recorder",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "styled-components": "^5.3.5"
