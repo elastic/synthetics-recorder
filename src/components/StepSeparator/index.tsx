@@ -201,7 +201,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
                 </EuiToolTip>
               </EuiFlexItem>
             )}
-            {index > 0 && canDelete && showDeleteButton && (
+            {index > 0 && canDelete && showDeleteButton && !isEditingName && (
               <EuiFlexItem grow={false}>
                 <EuiToolTip content="Delete this step divider">
                   <DeleteButton
