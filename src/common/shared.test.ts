@@ -172,7 +172,6 @@ describe("shared", () => {
       expect(mockIpc.callMain).toHaveBeenCalledTimes(1);
       expect(mockIpc.callMain).toHaveBeenCalledWith("actions-to-code", {
         actions: [failedStep],
-        isFlat: false,
         isSuite: false,
       });
     });

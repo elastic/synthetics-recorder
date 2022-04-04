@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { IpcRendererEvent } from "electron";
 import type { Steps } from "@elastic/synthetics";
+import { IpcRendererEvent } from "electron";
 import {
   useCallback,
   useContext,
@@ -31,10 +31,10 @@ import {
   useReducer,
   useState,
 } from "react";
-import { getCodeForFailedResult, getCodeFromActions } from "../common/shared";
+import { getCodeFromActions, getCodeForFailedResult } from "../common/shared";
 import { CommunicationContext } from "../contexts/CommunicationContext";
 import type { Result, TestEvent } from "../common/types";
-import { ITestContext } from "../contexts/TestContext";
+import type { ITestContext } from "../contexts/TestContext";
 import { resultReducer } from "../helpers/resultReducer";
 
 export function useSyntheticsTest(steps: Steps): ITestContext {

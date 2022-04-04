@@ -93,7 +93,6 @@ export async function getCodeFromActions(
 ): Promise<string> {
   return await ipc.callMain("actions-to-code", {
     actions,
-    isFlat: false,
     isSuite: type === "suite",
   });
 }
