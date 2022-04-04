@@ -12,8 +12,7 @@ pipeline {
     PIPELINE_LOG_LEVEL = "INFO"
     DISPLAY= ":99"
     RELEASE_URL_MESSAGE = "(<https://github.com/elastic/${env.REPO}/releases/tag/${env.TAG_NAME}|${env.TAG_NAME}>)"
-    SLACK_CHANNEL = '#TBD'
-    NOTIFY_TO = 'TBD+release@elastic.co'
+    NOTIFY_TO = 'synthrum+synthetics-recorder@elastic.co'
   }
   options {
     timeout(time: 1, unit: 'HOURS')
@@ -72,7 +71,10 @@ pipeline {
     }
     stage('Docker test setup') {
       options { skipDefaultCheckout() }
-      when { expression { return !isTag() } }
+      when {
+        beforeAgent true
+        expression { return !isTag() }
+      }
       agent {
         dockerfile {
           reuseNode true
@@ -94,6 +96,7 @@ pipeline {
     }
     stage('Build'){
       options { skipDefaultCheckout() }
+      when { expression { return !isTag() } }
       steps {
         withGithubNotify(context: "Build") {
           withNodeJSEnv() {
@@ -110,17 +113,18 @@ pipeline {
         beforeAgent true
         tag pattern: 'v\\d+\\.\\d+.*', comparator: 'REGEXP'
       }
+      agent { label 'macosx' }
       stages {
         stage('Dist') {
           steps {
-            echo 'TBD'
-          }
-        }
-        stage('Release Notes') {
-          steps {
-            withGhEnv(forceInstallation: true, version: '2.4.0') {
-              dir("${BASE_DIR}"){
-                cmd(label: 'make release-notes', script: 'make -C .ci release-notes')
+            deleteDir()
+            unstash 'source'
+            withNodeJSEnv() {
+              withCredentials([string(credentialsId: "2a9602aa-ab9f-4e52-baf3-b71ca88469c7", variable: 'GITHUB_TOKEN')]) {
+                dir("${BASE_DIR}"){
+                  sh(label: 'npm ci', script: 'npm ci')
+                  sh(label: 'npm release', script: 'npm run release')
+                }
               }
             }
           }
@@ -131,7 +135,10 @@ pipeline {
           notifyStatus(slackStatus: 'good', subject: "[${env.REPO}] Release *${env.TAG_NAME}* published", body: "Build: (<${env.RUN_DISPLAY_URL}|here>)")
         }
         failure {
-          notifyStatus(slackStatus: 'warning', subject: "[${env.REPO}] Release *${env.TAG_NAME}* could not be published.", body: "Build: (<${env.RUN_DISPLAY_URL}|here>)")
+          notifyStatus(slackStatus: 'warning', subject: "[${env.REPO}] Release *${env.TAG_NAME}* could not be published", body: "Build: (<${env.RUN_DISPLAY_URL}|here>)")
+        }
+        cleanup {
+          deleteDir()
         }
       }
     }
