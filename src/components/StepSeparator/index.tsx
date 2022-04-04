@@ -163,6 +163,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}
             onMouseDown={() => setIsGrabbing(true)}
+            onMouseUp={() => setIsGrabbing(false)}
           >
             {!isEditingName && (
               <StepSeparatorHeading id={`step-${index}`} grow={false}>
