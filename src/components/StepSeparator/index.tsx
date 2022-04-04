@@ -190,7 +190,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
               >
                 <EuiToolTip content="Edit step name">
                   <EuiButtonIcon
-                    aria-label="Click this to edit the step name"
+                    aria-label="Rename step"
                     color="text"
                     iconType="pencil"
                     onClick={() => {
@@ -205,7 +205,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
               <EuiFlexItem grow={false}>
                 <EuiToolTip content="Delete this step divider">
                   <DeleteButton
-                    aria-label="Click to delete this step"
+                    aria-label="Delete step"
                     color="text"
                     disabled={!canDelete}
                     iconType="trash"

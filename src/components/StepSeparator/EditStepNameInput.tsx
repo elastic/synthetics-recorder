@@ -76,7 +76,7 @@ export function EditStepNameInput({
       <EuiFlexItem grow={false}>
         <EuiToolTip content="Save">
           <EuiButtonIcon
-            aria-label="Click this button to save the step name"
+            aria-label="Apply changes"
             iconType="check"
             onClick={() => onComplete(editValue || undefined)}
           />
@@ -85,7 +85,7 @@ export function EditStepNameInput({
       <EuiFlexItem grow={false}>
         <EuiToolTip content="Cancel">
           <EuiButtonIcon
-            aria-label="Cancel edit for this step name"
+            aria-label="Cancel edit"
             iconType="cross"
             onClick={() => onComplete(null)}
           />

@@ -107,7 +107,6 @@ export default function App() {
                   <AppPageBody>
                     {steps.length === 0 && (
                       <EuiEmptyPrompt
-                        aria-label="This empty prompt indicates that you have not recorded any journey steps yet."
                         hasBorder={false}
                         title={<h3>No steps recorded yet</h3>}
                         body={
