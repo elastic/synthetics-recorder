@@ -62,12 +62,20 @@ const ActionAccordion = styled(EuiAccordion)<{ isDragOver: boolean }>`
     border-top-right-radius: ${props => props.theme.border.radius.medium};
     border: ${props => props.theme.border.thin};
     padding: 12px;
+    background-color: ${props => props.theme.colors.emptyShade};
   }
 
   border-bottom: ${({ isDragOver, theme }) =>
     isDragOver
       ? `${theme.border.width.thick} solid ${theme.colors.success}`
       : "inherit"};
+
+  .euiAccordion__padding--m {
+    background-color: ${props => props.theme.colors.emptyShade};
+    border-right: ${props => props.theme.border.thin};
+    border-bottom: ${props => props.theme.border.thin};
+    border-left: ${props => props.theme.border.thin};
+  }
 
   .euiAccordion-isOpen > .euiAccordion__childWrapper {
     border-right: ${props => props.theme.border.thin};
