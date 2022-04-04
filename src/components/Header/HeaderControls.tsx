@@ -77,7 +77,6 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
       {recordingStatus === RecordingStatus.NotRecording && (
         <EuiFlexItem>
           <UrlField
-            fullWidth
             recordingStatus={recordingStatus}
             setUrl={setUrl}
             toggleRecording={toggleRecording}

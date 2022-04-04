@@ -28,7 +28,6 @@ import type { Setter } from "../../common/types";
 import { RecordingStatus } from "../../common/types";
 
 export interface IUrlField {
-  fullWidth?: boolean;
   recordingStatus: RecordingStatus;
   setUrl: Setter<string>;
   toggleRecording: () => void;
@@ -39,7 +38,6 @@ export const URL_FIELD_LABEL =
   "Set the starting point for your synthetic journey";
 
 export function UrlField({
-  fullWidth,
   recordingStatus,
   setUrl,
   toggleRecording,
@@ -48,7 +46,7 @@ export function UrlField({
   return (
     <EuiFieldText
       aria-label={URL_FIELD_LABEL}
-      fullWidth={fullWidth}
+      fullWidth
       onChange={e => {
         setUrl(e.target.value);
       }}
