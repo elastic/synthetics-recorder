@@ -12,8 +12,7 @@ pipeline {
     PIPELINE_LOG_LEVEL = "INFO"
     DISPLAY= ":99"
     RELEASE_URL_MESSAGE = "(<https://github.com/elastic/${env.REPO}/releases/tag/${env.TAG_NAME}|${env.TAG_NAME}>)"
-    SLACK_CHANNEL = '#observablt-bots'
-    NOTIFY_TO = 'victor.martinez+release@elastic.co'
+    NOTIFY_TO = 'synthrum+synthetics-recorder@elastic.co'
   }
   options {
     timeout(time: 1, unit: 'HOURS')
