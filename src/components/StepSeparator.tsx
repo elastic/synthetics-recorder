@@ -22,11 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import type { Step } from "@elastic/synthetics";
 import { EuiAccordion, EuiFlexItem, EuiFlexGroup } from "@elastic/eui";
 import React from "react";
 import styled from "styled-components";
 import { SMALL_SCREEN_BREAKPOINT } from "../common/shared";
-import { Step } from "../common/types";
 import { useStepResultStatus } from "../hooks/useTestResult";
 import { ActionElement } from "./ActionElement";
 
@@ -62,7 +62,7 @@ interface IStepSeparator {
 
 export function StepSeparator({ index, step }: IStepSeparator) {
   const testStatus = useStepResultStatus(
-    step.length ? step[0].title : undefined
+    step.actions.length ? step.actions[0].title : undefined
   );
 
   return (
@@ -79,14 +79,14 @@ export function StepSeparator({ index, step }: IStepSeparator) {
       id={`step-separator-${index}`}
       initialIsOpen
     >
-      {step.map((s, actionIndex) => (
+      {step.actions.map((s, actionIndex) => (
         <ActionElement
           key={`action-${actionIndex}-for-step-${index}`}
           step={s}
           actionIndex={actionIndex}
           stepIndex={index}
           testStatus={testStatus}
-          isLast={actionIndex === step.length - 1}
+          isLast={actionIndex === step.actions.length - 1}
         />
       ))}
     </StepSeparatorAccordion>

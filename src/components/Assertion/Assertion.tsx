@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ActionInContext } from "@elastic/synthetics";
+import type { Action, ActionInContext } from "@elastic/synthetics";
 import React, { useContext, useState } from "react";
 import {
   EuiButton,
@@ -33,7 +33,6 @@ import {
   EuiFormRow,
   EuiSpacer,
 } from "@elastic/eui";
-import type { Action } from "../../common/types";
 import { StepsContext } from "../../contexts/StepsContext";
 import { AssertionSelect } from "./Select";
 import { AssertionInfo } from "./AssertionInfo";
