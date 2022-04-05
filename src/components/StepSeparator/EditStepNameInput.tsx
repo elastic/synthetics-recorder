@@ -30,6 +30,12 @@ import {
   EuiToolTip,
 } from "@elastic/eui";
 import React, { useState } from "react";
+import styled from "styled-components";
+
+const InputWrapper = styled(EuiFlexGroup)`
+  marginleft: 4px;
+  padding: 4px;
+`;
 
 interface IEditStepNameInput {
   defaultValue?: string;
@@ -42,6 +48,7 @@ interface IEditStepNameInput {
   onComplete: (value?: string | null) => void;
   placeholder: string;
 }
+
 export function EditStepNameInput({
   defaultValue,
   onComplete,
@@ -49,11 +56,7 @@ export function EditStepNameInput({
 }: IEditStepNameInput) {
   const [editValue, setEditValue] = useState(defaultValue ?? "");
   return (
-    <EuiFlexGroup
-      alignItems="center"
-      gutterSize="xs"
-      style={{ padding: 4, marginLeft: 4 }}
-    >
+    <InputWrapper alignItems="center" gutterSize="xs">
       <EuiFlexItem>
         <EuiFieldText
           aria-label="Enter a new name for this step"
@@ -91,6 +94,6 @@ export function EditStepNameInput({
           />
         </EuiToolTip>
       </EuiFlexItem>
-    </EuiFlexGroup>
+    </InputWrapper>
   );
 }
