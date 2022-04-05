@@ -111,7 +111,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
       {recordingStatus !== RecordingStatus.NotRecording && (
         <EuiFlexItem grow={false}>
           <ControlButton
-            aria-label="Stop"
+            aria-label="Stop recording and clear all recorded actions"
             isDisabled={recordingStatus !== RecordingStatus.Recording}
             color="primary"
             iconType="stop"
@@ -123,7 +123,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
           </ControlButton>
         </EuiFlexItem>
       )}
-      <EuiFlexItem>
+      <EuiFlexItem grow={false}>
         <RecordingStatusIndicator status={recordingStatus} />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
@@ -135,6 +135,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
                 steps.length === 0 ||
                 recordingStatus === RecordingStatus.Recording
               }
+              showTooltip={steps.length === 0}
               onTest={onTest}
             />
           </TestButtonDivider>

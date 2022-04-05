@@ -27,14 +27,17 @@ import { ControlButton } from "./ControlButton";
 
 interface Props {
   isDisabled: boolean;
+  showTooltip: boolean;
   onTest: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-export function TestButton({ isDisabled, onTest }: Props) {
+export function TestButton({ isDisabled, showTooltip, onTest }: Props) {
   return (
     <ControlButton
       aria-label="Test"
-      tooltipContent={isDisabled ? "Record a step in order to run a test" : ""}
+      tooltipContent={
+        isDisabled && showTooltip ? "Record a step in order to run a test" : ""
+      }
       color="primary"
       iconType="beaker"
       isDisabled={isDisabled}
