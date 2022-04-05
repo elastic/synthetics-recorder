@@ -76,7 +76,7 @@
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "^52.1.0",
-    "@elastic/synthetics": "=1.0.0-beta.19",
+    "@elastic/synthetics": "=1.0.0-beta.23",
     "@emotion/cache": "^11.7.1",
     "@emotion/react": "^11.8.2",
     "dotenv": "^10.0.0",
@@ -86,7 +86,7 @@
     "electron-log": "^4.4.6",
     "electron-unhandled": "^3.0.2",
     "moment": "^2.29.1",
-    "playwright": "git+https://github.com/vigneshshanmugam/playwright.git#separate-recorder",
+    "playwright": "git+https://github.com/elastic/playwright.git#separate-recorder",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "styled-components": "^5.3.5"

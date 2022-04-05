@@ -22,71 +22,73 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import type { Step, Steps } from "@elastic/synthetics";
 import { RendererProcessIpc } from "electron-better-ipc";
 import { getCodeForFailedResult, updateAction } from "./shared";
-import type { Step, Steps } from "./types";
 
 describe("shared", () => {
   describe("updateAction", () => {
     const steps: Steps = [
-      [
-        {
-          pageAlias: "page",
-          isMainFrame: true,
-          frameUrl: "http://localhost:12349/html",
-          committed: true,
-          action: {
-            name: "navigate",
-            url: "http://localhost:12349/html",
-            signals: [],
+      {
+        actions: [
+          {
+            pageAlias: "page",
+            isMainFrame: true,
+            frameUrl: "http://localhost:12349/html",
+            committed: true,
+            action: {
+              name: "navigate",
+              url: "http://localhost:12349/html",
+              signals: [],
+            },
+            title: "Go to http://localhost:12349/html",
           },
-          title: "Go to http://localhost:12349/html",
-        },
-        {
-          pageAlias: "page",
-          isMainFrame: true,
-          frameUrl: "http://localhost:12349/html",
-          action: {
-            name: "click",
-            selector: "text=Hello world A link to google",
-            signals: [],
-            button: "left",
-            modifiers: 0,
-            clickCount: 1,
+          {
+            pageAlias: "page",
+            isMainFrame: true,
+            frameUrl: "http://localhost:12349/html",
+            action: {
+              name: "click",
+              selector: "text=Hello world A link to google",
+              signals: [],
+              button: "left",
+              modifiers: 0,
+              clickCount: 1,
+            },
+            title: "Click text=Hello world",
           },
-          title: "Click text=Hello world",
-        },
-        {
-          action: {
-            name: "assert",
-            isAssert: true,
-            selector: "text=Hello world",
-            command: "innerText",
-            value: undefined,
-            signals: [],
+          {
+            action: {
+              name: "assert",
+              isAssert: true,
+              selector: "text=Hello world",
+              command: "innerText",
+              value: undefined,
+              signals: [],
+            },
+            frameUrl: "http://localhost:12349/html",
+            modified: false,
+            isMainFrame: true,
+            pageAlias: "page",
           },
-          frameUrl: "http://localhost:12349/html",
-          modified: false,
-          isMainFrame: true,
-          pageAlias: "page",
-        },
-      ],
+        ],
+      },
     ];
 
     it("updates the action at the specified index", () => {
       const updatedSteps = updateAction(steps, "nextValue", 0, 2);
       expect(updatedSteps).toHaveLength(1);
-      expect(updatedSteps[0]).toHaveLength(3);
-      expect(JSON.stringify(updatedSteps[0][0])).toEqual(
-        JSON.stringify(steps[0][0])
+      expect(updatedSteps[0].actions).toHaveLength(3);
+      expect(JSON.stringify(updatedSteps[0].actions[0])).toEqual(
+        JSON.stringify(steps[0].actions[0])
       );
-      expect(JSON.stringify(updatedSteps[0][1])).toEqual(
-        JSON.stringify(steps[0][1])
+      expect(JSON.stringify(updatedSteps[0].actions[1])).toEqual(
+        JSON.stringify(steps[0].actions[1])
       );
-      expect(JSON.stringify(updatedSteps[0][2])).toEqual(
+      expect(JSON.stringify(updatedSteps[0].actions[2])).toEqual(
         JSON.stringify({
-          ...steps[0][2],
-          action: { ...steps[0][2].action, value: "nextValue" },
+          ...steps[0].actions[2],
+          action: { ...steps[0].actions[2].action, value: "nextValue" },
         })
       );
     });
@@ -140,18 +142,20 @@ describe("shared", () => {
     });
 
     it("calls `getCodeFromActions` when a matching step for the failed journey step is found", async () => {
-      const failedStep: Step = [
-        {
-          title: "I failed",
-          action: {
-            name: "click",
-            signals: [],
+      const failedStep: Step = {
+        actions: [
+          {
+            title: "I failed",
+            action: {
+              name: "click",
+              signals: [],
+            },
+            isMainFrame: true,
+            frameUrl: "https://www.elastic.co",
+            pageAlias: "page alias",
           },
-          isMainFrame: true,
-          frameUrl: "https://www.elastic.co",
-          pageAlias: "page alias",
-        },
-      ];
+        ],
+      };
 
       await getCodeForFailedResult(mockIpc, [failedStep], {
         status: "failed",
@@ -167,7 +171,7 @@ describe("shared", () => {
 
       expect(mockIpc.callMain).toHaveBeenCalledTimes(1);
       expect(mockIpc.callMain).toHaveBeenCalledWith("actions-to-code", {
-        actions: failedStep,
+        actions: [failedStep],
         isSuite: false,
       });
     });

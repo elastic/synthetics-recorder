@@ -25,6 +25,7 @@ import React, { useContext } from "react";
 import { useEffect, useState } from "react";
 import { EuiCode, EuiEmptyPrompt, EuiProvider } from "@elastic/eui";
 import createCache from "@emotion/cache";
+import type { ActionInContext, Steps } from "@elastic/synthetics";
 import "./App.css";
 import "@elastic/eui/dist/eui_theme_light.css";
 import { Title } from "./components/Header/Title";
@@ -34,7 +35,6 @@ import { RecordingContext } from "./contexts/RecordingContext";
 import { UrlContext } from "./contexts/UrlContext";
 import { StepsContext } from "./contexts/StepsContext";
 import { TestContext } from "./contexts/TestContext";
-import type { Step } from "./common/types";
 import { useSyntheticsTest } from "./hooks/useSyntheticsTest";
 import { generateIR, generateMergedIR } from "./helpers/generator";
 import { StepSeparator } from "./components/StepSeparator";
@@ -79,12 +79,16 @@ export default function App() {
 
   useEffect(() => {
     // `actions` here is a set of `ActionInContext`s that make up a `Step`
-    ipc.answerMain("change", ({ actions: step }: { actions: Step }) => {
-      setSteps(prevSteps => {
-        const nextSteps = generateIR(step);
+    const listener = ({ actions }: { actions: ActionInContext[] }) => {
+      setSteps((prevSteps: Steps) => {
+        const nextSteps: Steps = generateIR([{ actions }]);
         return generateMergedIR(prevSteps, nextSteps);
       });
-    });
+    };
+    ipc.answerMain("change", listener);
+    return () => {
+      ipc.removeListener("change", listener);
+    };
   }, [ipc, setSteps]);
 
   return (
