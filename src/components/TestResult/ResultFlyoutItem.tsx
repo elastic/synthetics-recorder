@@ -29,7 +29,7 @@ import { ResultBody } from "./ResultBody";
 import { ResultErrorBody } from "./ResultErrorBody";
 import { ResultTitle } from "./ResultTitle";
 
-export interface IResultFlyoutItem {
+interface IResultFlyoutItem {
   code: string;
   step: JourneyStep;
   stepIndex: number;

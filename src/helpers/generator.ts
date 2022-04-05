@@ -50,7 +50,7 @@ export function generateIR(steps: Steps): Steps {
   return result;
 }
 
-export function actionTitle(
+function actionTitle(
   action: Action & { files?: string[]; options?: string[] }
 ) {
   switch (action.name) {

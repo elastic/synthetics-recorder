@@ -26,7 +26,7 @@ import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
 import React from "react";
 import { Bold, ResultContainer, ResultHeader } from "./styles";
 
-export interface IResultHeader {
+interface IResultHeader {
   durationElement: JSX.Element;
   titleText: string;
 }
