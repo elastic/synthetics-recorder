@@ -123,7 +123,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
           </ControlButton>
         </EuiFlexItem>
       )}
-      <EuiFlexItem grow={false}>
+      <EuiFlexItem grow={recordingStatus === RecordingStatus.Recording}>
         <RecordingStatusIndicator status={recordingStatus} />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
