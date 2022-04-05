@@ -46,6 +46,7 @@ export function UrlField({
   return (
     <EuiFieldText
       aria-label={URL_FIELD_LABEL}
+      fullWidth
       onChange={e => {
         setUrl(e.target.value);
       }}

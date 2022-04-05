@@ -22,52 +22,32 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { ActionInContext } from "@elastic/synthetics";
-import type { Action, Step, Steps } from "../common/types";
+import type { Action, ActionInContext, Step, Steps } from "@elastic/synthetics";
 
-export function generateIR(actionContexts: Step) {
-  const result = [];
-  let steps = [];
-  let previousContext = null;
-  let newStep = false;
-  for (const actionContext of actionContexts) {
-    const { action, pageAlias, title } = actionContext;
-    if (action.name === "openPage") {
-      continue;
-    } else if (action.name === "closePage" && pageAlias === "page") {
-      continue;
+/**
+ * Creates an intermediate representation of the steps Playwright has recorded from
+ * user interaction. Each step contains a list of actions to nest in the corresponding
+ * test function, and a set of metadata such as `name`.
+ * @param steps The steps to format into the custom IR
+ * @returns Formatted steps
+ */
+export function generateIR(steps: Steps): Steps {
+  const result: Steps = [];
+  const actions: ActionInContext[] = [];
+  for (const step of steps) {
+    for (const actionContext of step.actions) {
+      const { action, title } = actionContext;
+      // Add title to all actionContexts
+      actions.push(
+        title ? actionContext : { ...actionContext, title: actionTitle(action) }
+      );
     }
+    if (actions.length > 0) {
+      result.push({ actions, name: step.name });
+    }
+  }
 
-    newStep = isNewStep(actionContext, previousContext);
-    if (newStep && steps.length > 0) {
-      result.push(steps);
-      steps = [];
-    }
-    // Add title to all actionContexts
-    const enhancedContext = title
-      ? actionContext
-      : { ...actionContext, title: actionTitle(action) };
-    steps.push(enhancedContext);
-    previousContext = actionContext;
-  }
-  if (steps.length > 0) {
-    result.push(steps);
-  }
   return result;
-}
-
-function isNewStep(
-  actionContext: ActionInContext,
-  previousContext: ActionInContext | null
-) {
-  const { action, frameUrl } = actionContext;
-
-  if (action.name === "navigate") {
-    return true;
-  } else if (action.name === "click") {
-    return previousContext?.frameUrl === frameUrl && action.signals.length > 0;
-  }
-  return false;
 }
 
 export function actionTitle(
@@ -106,48 +86,58 @@ export function actionTitle(
   }
 }
 
+const getActionCount = (prev: number, cur: Step) => prev + cur.actions.length;
+
 /**
  * Works by taking the actions from the PW recorder and
  * the actions generated/modified by the UI and merges them
  * to display the correct modified actions on the UI
  */
-export function generateMergedIR(prevSteps: Steps, currSteps: Steps): Steps {
-  const prevActionContexts = prevSteps.flat();
-  const currActionContexts = currSteps.flat();
-  const prevLength = prevActionContexts.length;
-  const currLength = currActionContexts.length;
+export function generateMergedIR(prevSteps: Steps, nextSteps: Steps): Steps {
+  const prevLength = prevSteps.reduce(getActionCount, 0);
+  const nextLength = nextSteps.reduce(getActionCount, 0);
   /**
    * when recorder is started/resetted
    */
-  if (currLength === 0 || prevLength === 0) {
-    return currSteps;
+  if (prevLength === 0 || nextLength === 0) {
+    return nextSteps;
   }
 
-  const mergedActions = [];
-  const maxLen = Math.max(prevLength, currLength);
-  for (let i = 0, j = 0; i < maxLen || j < maxLen; i++, j++) {
-    /**
-     * Keep adding all the assertions added by user as PW
-     * does not have any assertion built in
-     * We treat the UI as the source of truth
-     */
-    if (prevActionContexts[i]?.action.name === "assert") {
-      do {
-        mergedActions.push(prevActionContexts[i]);
-        i++;
-      } while (i < maxLen && prevActionContexts[i]?.action.name === "assert");
+  const mergedSteps: Steps = [];
+  let pwActionCount = 0;
+  for (const step of prevSteps) {
+    const actions: ActionInContext[] = [];
+    for (const action of step.actions) {
+      if (action.action.name === "assert") {
+        /**
+         * Keep adding all the assertions added by user as PW
+         * does not have any assertion built in
+         * We treat the UI as the source of truth
+         */
+        actions.push(action);
+      } else {
+        /**
+         * If actions are not assert commands, then we need to
+         * check if the actions are modified on the UI and add
+         * them to the final list
+         *
+         * Any modified state in the UI is the final state
+         */
+        const item = action?.modified
+          ? action
+          : nextSteps[0].actions[pwActionCount];
+        actions.push(item);
+        pwActionCount++;
+      }
     }
-    /**
-     * If actions are not assert commands, then we need to
-     * check if the actions are modified on the UI and add
-     * them to the final list
-     *
-     * Any modified state in the UI is the final state
-     */
-    const item = prevActionContexts[i]?.modified
-      ? prevActionContexts[i]
-      : currActionContexts[j];
-    item && mergedActions.push(item);
+    mergedSteps.push({ actions });
   }
-  return generateIR(mergedActions);
+  /**
+   * Append any new Playwright actions to the final step
+   */
+  const lastStep = mergedSteps[mergedSteps.length - 1];
+  nextSteps[0].actions
+    .filter((_, index) => index >= pwActionCount)
+    .map(action => lastStep.actions.push(action));
+  return mergedSteps;
 }
