@@ -88,18 +88,18 @@ export function Assertion({ action, actionContext, actionIndex, close, stepIndex
       <EuiSpacer />
       <EuiFlexGroup direction="column">
         <EuiFlexItem>
-          <AssertionSelect onChange={(e) => setCommand(e.target.value)} value={command} />
+          <AssertionSelect onChange={e => setCommand(e.target.value)} value={command} />
         </EuiFlexItem>
         <EuiFlexItem>
           <EuiFormRow label="Selector">
-            <EuiFieldText onChange={(e) => setSelector(e.target.value)} value={selector} />
+            <EuiFieldText onChange={e => setSelector(e.target.value)} value={selector} />
           </EuiFormRow>
         </EuiFlexItem>
         <EuiFlexItem>
           <EuiFormRow label="Value">
             <EuiFieldText
               disabled={['innerText', 'textContent'].indexOf(command) === -1}
-              onChange={(e) => setValue(e.target.value)}
+              onChange={e => setValue(e.target.value)}
               value={value}
             />
           </EuiFormRow>

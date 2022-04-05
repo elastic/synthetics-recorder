@@ -41,7 +41,7 @@ const startServer = async () => {
     handle(req, res, parsedUrl);
   });
 
-  httpServer.listen(env.DEMO_APP_PORT, (err) => {
+  httpServer.listen(env.DEMO_APP_PORT, err => {
     if (err) throw err;
 
     // eslint-disable-next-line no-console

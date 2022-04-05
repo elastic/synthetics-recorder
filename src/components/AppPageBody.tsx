@@ -27,7 +27,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const PageBody = styled(EuiPageBody)`
-  background-color: ${(props) => props.theme.colors.emptyShade};
+  background-color: ${props => props.theme.colors.emptyShade};
   padding: 0px 0px 0px 40px;
 `;
 

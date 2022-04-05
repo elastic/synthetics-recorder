@@ -31,7 +31,7 @@ const logger = require('electron-log');
 const setupListeners = require('./execution');
 const buildMenu = require('./menu');
 // For dev
-unhandled({ logger: (err) => logger.error(err) });
+unhandled({ logger: err => logger.error(err) });
 debug({ enabled: true, showDevTools: false });
 
 const BUILD_DIR = join(__dirname, '..', 'build');

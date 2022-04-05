@@ -55,7 +55,7 @@ export function StepTitleEditField({
   return (
     <EuiFieldText
       aria-label="Sets the title for the current step."
-      onKeyDown={(e) => {
+      onKeyDown={e => {
         if (e.key === 'Enter') {
           updateTitle();
         } else if (e.key === 'Escape') {
@@ -63,7 +63,7 @@ export function StepTitleEditField({
         }
       }}
       onBlur={updateTitle}
-      onChange={(e) => {
+      onChange={e => {
         setTempText(e.target.value);
       }}
       placeholder={title}

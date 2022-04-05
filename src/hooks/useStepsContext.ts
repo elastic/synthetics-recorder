@@ -40,7 +40,7 @@ export function useStepsContext(): IStepsContext {
     steps,
     setSteps,
     onDeleteAction: (targetStepIdx, indexToDelete) => {
-      setSteps((steps) =>
+      setSteps(steps =>
         steps.map((step, currentStepIndex) => {
           if (currentStepIndex !== targetStepIdx) return step;
 
@@ -50,7 +50,7 @@ export function useStepsContext(): IStepsContext {
         })
       );
     },
-    onDeleteStep: (stepIndex) => {
+    onDeleteStep: stepIndex => {
       setSteps([...steps.slice(0, stepIndex), ...steps.slice(stepIndex + 1)]);
     },
     onInsertAction: (action, targetStepIdx, indexToInsert) => {
@@ -65,7 +65,7 @@ export function useStepsContext(): IStepsContext {
       );
     },
     onMergeSteps: (indexToInsert, indexToRemove) => {
-      setSteps((oldSteps) => {
+      setSteps(oldSteps => {
         oldSteps[indexToInsert] = {
           name: oldSteps[indexToInsert].name ?? oldSteps[indexToRemove].name ?? undefined,
           actions: [...steps[indexToInsert].actions, ...steps[indexToRemove].actions],
@@ -75,7 +75,7 @@ export function useStepsContext(): IStepsContext {
       });
     },
     onRearrangeSteps: (indexA, indexB) => {
-      setSteps((oldSteps) => {
+      setSteps(oldSteps => {
         const placeholder = steps[indexA];
         oldSteps[indexA] = oldSteps[indexB];
         oldSteps[indexB] = placeholder;

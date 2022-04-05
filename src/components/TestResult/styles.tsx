@@ -29,15 +29,15 @@ import type { StepStatus } from '../../common/types';
 
 export const ResultContainer = styled(EuiPanel)`
   && {
-    border-radius: ${(props) => props.theme.border.radius.medium};
+    border-radius: ${props => props.theme.border.radius.medium};
   }
   padding: 0px;
   margin: 0px 0px 24px 0px;
-  border: ${(props) => props.theme.border.thin};
+  border: ${props => props.theme.border.thin};
 `;
 
 export const ResultHeader = styled.h3`
-  border-bottom: ${(props) => props.theme.border.thin};
+  border-bottom: ${props => props.theme.border.thin};
   padding: 8px;
 `;
 

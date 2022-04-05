@@ -37,7 +37,7 @@ import { createExternalLinkHandler, PLAYWRIGHT_ASSERTION_DOCS_LINK } from '../..
 import { CommunicationContext } from '../../contexts/CommunicationContext';
 
 const InfoPopoverTitle = styled(EuiTitle)`
-  border-bottom: ${(props) => props.theme.border.thin};
+  border-bottom: ${props => props.theme.border.thin};
   padding: 8px;
 `;
 

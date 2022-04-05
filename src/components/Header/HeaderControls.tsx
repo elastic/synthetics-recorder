@@ -36,14 +36,14 @@ import { RecordingStatusIndicator } from './StatusIndicator';
 import { UrlField } from './UrlField';
 
 const Header = styled(EuiFlexGroup)`
-  background-color: ${(props) => props.theme.colors.lightestShade};
-  border-bottom: ${(props) => props.theme.border.thin};
+  background-color: ${props => props.theme.colors.lightestShade};
+  border-bottom: ${props => props.theme.border.thin};
   margin: 0px;
   padding: 8px;
 `;
 
 const TestButtonDivider = styled(EuiFlexItem)`
-  border-right: ${(props) => props.theme.border.thin};
+  border-right: ${props => props.theme.border.thin};
   padding-right: 16px;
 `;
 

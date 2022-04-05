@@ -41,10 +41,10 @@ export function UrlField({ recordingStatus, setUrl, toggleRecording, url }: IUrl
     <EuiFieldText
       aria-label={URL_FIELD_LABEL}
       fullWidth
-      onChange={(e) => {
+      onChange={e => {
         setUrl(e.target.value);
       }}
-      onKeyUp={(e) => {
+      onKeyUp={e => {
         if (e.key === 'Enter' && recordingStatus === RecordingStatus.NotRecording) {
           toggleRecording();
         }

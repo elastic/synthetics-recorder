@@ -98,14 +98,14 @@ export function ActionDetail({ actionContext, actionIndex, close, stepIndex }: I
       <EuiFlexGroup alignItems="baseline">
         {url && (
           <EuiFlexItem>
-            <FormControl name={action.name} onChange={(e) => setUrl(e.target.value)} value={url} />
+            <FormControl name={action.name} onChange={e => setUrl(e.target.value)} value={url} />
           </EuiFlexItem>
         )}
         {selector && !action.isAssert && (
           <EuiFlexItem>
             <FormControl
               name={action.name}
-              onChange={(e) => setSelector(e.target.value)}
+              onChange={e => setSelector(e.target.value)}
               value={selector}
             />
           </EuiFlexItem>
@@ -116,7 +116,7 @@ export function ActionDetail({ actionContext, actionIndex, close, stepIndex }: I
               label="Value"
               name={action.name}
               noPrepend
-              onChange={(e) => setText(e.target.value)}
+              onChange={e => setText(e.target.value)}
               value={text}
             />
           </EuiFlexItem>

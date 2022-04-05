@@ -41,12 +41,12 @@ const buildFiles = async () => {
     ls.stdout.setEncoding('utf8');
     ls.stderr.setEncoding('utf8');
 
-    ls.stdout.on('data', (data) => {
+    ls.stdout.on('data', data => {
       // eslint-disable-next-line no-console
       console.log(data);
     });
 
-    ls.stderr.on('data', (data) => {
+    ls.stderr.on('data', data => {
       // eslint-disable-next-line no-console
       console.error(data);
       reject();

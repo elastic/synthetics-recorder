@@ -5,7 +5,7 @@ import Header from '../components/Header';
 import Product from '../components/Product';
 
 const Home = () => {
-  const { data, error } = useSWR('/api/product', (url) => fetch(url).then((r) => r.json()));
+  const { data, error } = useSWR('/api/product', url => fetch(url).then(r => r.json()));
   if (error) return <div>Failed to load products</div>;
   if (!data) return <div>loading products...</div>;
   return (

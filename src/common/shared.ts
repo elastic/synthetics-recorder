@@ -96,7 +96,7 @@ export function createExternalLinkHandler(
   ipc: RendererProcessIpc,
   url: string
 ): React.MouseEventHandler<HTMLAnchorElement> {
-  return async (e) => {
+  return async e => {
     e.preventDefault();
     await ipc.callMain('link-to-external', url);
   };
@@ -140,7 +140,7 @@ export async function getCodeForFailedResult(
   if (!failedJourneyStep) return '';
 
   const failedStep = steps.find(
-    (step) => step.actions.length > 0 && step.actions[0].title === failedJourneyStep.name
+    step => step.actions.length > 0 && step.actions[0].title === failedJourneyStep.name
   );
 
   if (!failedStep) return '';

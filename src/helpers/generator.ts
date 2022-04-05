@@ -130,6 +130,6 @@ export function generateMergedIR(prevSteps: Steps, nextSteps: Steps): Steps {
   const lastStep = mergedSteps[mergedSteps.length - 1];
   nextSteps[0].actions
     .filter((_, index) => index >= pwActionCount)
-    .map((action) => lastStep.actions.push(action));
+    .map(action => lastStep.actions.push(action));
   return mergedSteps;
 }

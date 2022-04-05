@@ -73,7 +73,7 @@ export function useSyntheticsTest(steps: Steps): ITestContext {
 
   useEffect(() => {
     if (result?.journey.status === 'failed') {
-      getCodeForFailedResult(ipc, steps, result?.journey).then((code) => setCodeBlocks(code));
+      getCodeForFailedResult(ipc, steps, result?.journey).then(code => setCodeBlocks(code));
     }
   }, [ipc, result?.journey, steps]);
 

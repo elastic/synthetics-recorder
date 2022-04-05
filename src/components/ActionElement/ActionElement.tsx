@@ -134,17 +134,17 @@ function ActionComponent({
 
 export const ActionElement = styled(ActionComponent)`
   .euiAccordion__triggerWrapper {
-    background-color: ${(props) => props.theme.colors.lightestShade};
-    border-top-left-radius: ${(props) => props.theme.border.radius.medium};
-    border-top-right-radius: ${(props) => props.theme.border.radius.medium};
-    border: ${(props) => props.theme.border.thin};
+    background-color: ${props => props.theme.colors.lightestShade};
+    border-top-left-radius: ${props => props.theme.border.radius.medium};
+    border-top-right-radius: ${props => props.theme.border.radius.medium};
+    border: ${props => props.theme.border.thin};
     padding: 12px;
   }
 
   .euiAccordion-isOpen > .euiAccordion__childWrapper {
-    border-right: ${(props) => props.theme.border.thin};
-    border-bottom: ${(props) => props.theme.border.thin};
-    border-left: ${(props) => props.theme.border.thin};
+    border-right: ${props => props.theme.border.thin};
+    border-bottom: ${props => props.theme.border.thin};
+    border-left: ${props => props.theme.border.thin};
   }
 
   @media (max-width: ${SMALL_SCREEN_BREAKPOINT}px) {

@@ -39,7 +39,7 @@ interface IControlButton {
 
 type Props = IControlButton & EuiButtonIconProps & EuiButtonProps;
 
-export const ControlButton: React.FC<Props> = (props) => {
+export const ControlButton: React.FC<Props> = props => {
   const [showIconOnly, setShowIconOnly] = useState(false);
   const {
     breakpoint: { l },

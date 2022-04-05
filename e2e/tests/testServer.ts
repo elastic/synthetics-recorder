@@ -33,7 +33,7 @@ export function createTestHttpServer(hostname = '127.0.0.1', port = 8082) {
 
   server.listen(port, hostname);
 
-  server.on('error', (err) => {
+  server.on('error', err => {
     // eslint-disable-next-line no-console
     console.error(err);
   });

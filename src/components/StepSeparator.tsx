@@ -31,7 +31,7 @@ import { useStepResultStatus } from '../hooks/useTestResult';
 import { ActionElement } from './ActionElement';
 
 export const StepSeparatorTopBorder = styled(EuiFlexItem)`
-  border-top: ${(props) => props.theme.border.thin};
+  border-top: ${props => props.theme.border.thin};
 
   && {
     margin-top: 20px;

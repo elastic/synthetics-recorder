@@ -38,7 +38,7 @@ export function AssertionHeadingText({ actionContext }: IAssertionHeadingText) {
       <Bold grow={false}>{actionContext.action.name}</Bold>
       <EuiFlexItem grow={false}>
         {
-          COMMAND_SELECTOR_OPTIONS.find((option) => option.value === actionContext.action.command)
+          COMMAND_SELECTOR_OPTIONS.find(option => option.value === actionContext.action.command)
             ?.text
         }
       </EuiFlexItem>

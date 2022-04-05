@@ -26,13 +26,13 @@ import React from 'react';
 import styled from 'styled-components';
 
 const AssertItem = styled(EuiFlexItem)`
-  border-left: ${(props) => props.theme.border.thick};
+  border-left: ${props => props.theme.border.thick};
   padding-left: 20px;
   margin-left: 50px;
 `;
 
 const ActionItem = styled(EuiFlexItem)`
-  border-left: ${(props) => props.theme.border.thick};
+  border-left: ${props => props.theme.border.thick};
   padding-left: 20px;
   margin-left: 0px;
 `;

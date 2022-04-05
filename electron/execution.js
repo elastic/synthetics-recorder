@@ -55,12 +55,12 @@ async function launchContext() {
     await browser.close();
   }
 
-  context.on('page', (page) => {
+  context.on('page', page => {
     page.on('dialog', () => {});
     page.on('close', () => {
-      const hasPage = browser.contexts().some((context) => context.pages().length > 0);
+      const hasPage = browser.contexts().some(context => context.pages().length > 0);
       if (hasPage) return;
-      closeBrowser().catch((_e) => null);
+      closeBrowser().catch(_e => null);
     });
   });
   return { browser, context };
@@ -86,7 +86,7 @@ async function recordJourneys(data, browserWindow) {
     browserContext = context;
     actionListener = new EventEmitter();
     // Listen to actions from Playwright recording session
-    const actionsHandler = (actions) => {
+    const actionsHandler = actions => {
       ipc.callRenderer(browserWindow, 'change', { actions });
     };
     actionListener.on('actions', actionsHandler);
@@ -125,7 +125,7 @@ async function recordJourneys(data, browserWindow) {
  */
 function addActionsToStepResult(steps, event) {
   const step = steps.find(
-    (s) => s.length && s[0].title && event?.data?.name && event.data.name === s[0].title
+    s => s.length && s[0].title && event?.data?.name && event.data.name === s[0].title
   );
   if (!step) return { ...event, data: { ...event.data, actionTitles: [] } };
   return {
@@ -138,10 +138,10 @@ function addActionsToStepResult(steps, event) {
 }
 
 async function onTest(data, browserWindow) {
-  const parseOrSkip = (chunk) => {
+  const parseOrSkip = chunk => {
     // at times stdout ships multiple steps in one chunk, broken by newline,
     // so here we split on the newline
-    return chunk.split('\n').map((subChunk) => {
+    return chunk.split('\n').map(subChunk => {
       try {
         return JSON.parse(subChunk);
       } catch (_) {
@@ -151,7 +151,7 @@ async function onTest(data, browserWindow) {
   };
 
   // returns TestEvent interface defined in common/types.ts
-  const constructEvent = (parsed) => {
+  const constructEvent = parsed => {
     switch (parsed.type) {
       case 'journey/start': {
         const { journey } = parsed;
@@ -187,12 +187,12 @@ async function onTest(data, browserWindow) {
     }
   };
 
-  const sendTestEvent = (event) => {
+  const sendTestEvent = event => {
     browserWindow.webContents.send('test-event', event);
   };
 
-  const emitResult = (chunk) => {
-    parseOrSkip(chunk).forEach((parsed) => {
+  const emitResult = chunk => {
+    parseOrSkip(chunk).forEach(parsed => {
       const event = constructEvent(parsed);
       if (event) {
         sendTestEvent(
