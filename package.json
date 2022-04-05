@@ -18,6 +18,7 @@
     "clean": "rm -rf ./build && rm -rf ./dist",
     "lint": "eslint .",
     "format": "prettier --write .",
+    "unused-exports": "node scripts/find-unused-exports.js",
     "lint:fix": "npm run lint -- --fix",
     "prepare": "husky install",
     "test": "npm run test:unit && npm run test:e2e",
@@ -110,6 +111,7 @@
     "react-scripts": "5.0.0",
     "react-test-renderer": "^17.0.2",
     "ts-jest": "^26.5.6",
+    "ts-unused-exports": "^8.0.0",
     "wait-on": "^6.0.1"
   },
   "dependencies": {

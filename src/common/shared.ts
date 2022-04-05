@@ -70,19 +70,6 @@ export const PLAYWRIGHT_ASSERTION_DOCS_LINK =
 
 export const SMALL_SCREEN_BREAKPOINT = 850;
 
-export function performSelectorLookup(
-  ipc: RendererProcessIpc,
-  onSelectorChange: Setter<string | undefined>
-) {
-  return async () => {
-    const selector = await ipc.callMain("set-mode", "inspecting");
-    if (typeof selector === "string" && selector.length) {
-      onSelectorChange(selector);
-      await ipc.callMain("set-mode", "recording");
-    }
-  };
-}
-
 export async function getCodeFromActions(
   ipc: RendererProcessIpc,
   actions: Steps,
