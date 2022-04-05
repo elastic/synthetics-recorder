@@ -85,7 +85,11 @@ const ActionAccordion = styled(EuiAccordion)<{ isDragOver: boolean }>`
   }
 `;
 
-const Container = styled(EuiFlexGroup)<{ isDragOver: boolean }>`
+interface IContainer {
+  isDragOver: boolean;
+}
+
+const Container = styled(EuiFlexGroup)<IContainer>`
   display: flex;
   min-height: 50px;
   min-width: 800px;
