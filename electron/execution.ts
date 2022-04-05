@@ -32,19 +32,16 @@ import { dialog, shell, BrowserWindow } from "electron";
 import { fork } from "child_process";
 import logger from "electron-log";
 import isDev from "electron-is-dev";
-import {
-  SyntheticsGenerator,
-} from "@elastic/synthetics/dist/formatter/javascript";
-const SYNTHETICS_CLI = require.resolve("@elastic/synthetics/dist/cli");
+import { SyntheticsGenerator } from "@elastic/synthetics/dist/formatter/javascript";
 import {
   JOURNEY_DIR,
   PLAYWRIGHT_BROWSERS_PATH,
   EXECUTABLE_PATH,
 } from "./config";
-import { Result } from '../src/common/types';
-import { BrowserContext } from 'playwright';
+import { BrowserContext } from "playwright";
+const SYNTHETICS_CLI = require.resolve("@elastic/synthetics/dist/cli");
 const IS_TEST_ENV = process.env.NODE_ENV === "test";
-const CDP_TEST_PORT = parseInt(process.env.TEST_PORT ?? '61337') + 1;
+const CDP_TEST_PORT = parseInt(process.env.TEST_PORT ?? "61337") + 1;
 
 async function launchContext() {
   const browser = await chromium.launch({
@@ -63,7 +60,7 @@ async function launchContext() {
   }
 
   context.on("page", page => {
-    page.on("dialog", () => {});
+    // page.on("dialog", () => {});
     page.on("close", () => {
       const hasPage = browser
         .contexts()
@@ -116,7 +113,9 @@ async function recordJourneys(data, browserWindow) {
     const closeBrowser = async () => {
       browserContext = null;
       actionListener.removeListener("actions", actionsHandler);
-      await browser.close().catch(_err => {});
+      await browser.close().catch(err => {
+        console.warn("Browser close threw an error", err);
+      });
     };
 
     ipc.on("stop", closeBrowser);
@@ -127,56 +126,103 @@ async function recordJourneys(data, browserWindow) {
   }
 }
 
-async function onTest(data) {
-  const result: Result = {
-    succeeded: 0,
-    failed: 0,
-    skipped: 0,
-    journey: {
-      status: "succeeded",
-      steps: [],
-      type: "inline"
+/**
+ * Attempts to find the step associated with a `step/end` event.
+ *
+ * If the step is found, the sequential titles of each action are overlayed
+ * onto the object.
+ * @param {*} steps list of steps to search
+ * @param {*} event the result data from Playwright
+ * @returns the event data combined with action titles in a new object
+ */
+function addActionsToStepResult(steps, event) {
+  const step = steps.find(
+    s =>
+      s.length &&
+      s[0].title &&
+      event?.data?.name &&
+      event.data.name === s[0].title
+  );
+  if (!step) return { ...event, data: { ...event.data, actionTitles: [] } };
+  return {
+    ...event,
+    data: {
+      ...event.data,
+      actionTitles: step.map(
+        (action, index) => action?.title ?? `Action ${index + 1}`
+      ),
     },
   };
+}
 
+async function onTest(data, browserWindow) {
   const parseOrSkip = chunk => {
-    try {
-      return JSON.parse(chunk);
-    } catch (_) {
-      return {};
-    }
+    // at times stdout ships multiple steps in one chunk, broken by newline,
+    // so here we split on the newline
+    return chunk.split("\n").map(subChunk => {
+      try {
+        return JSON.parse(subChunk);
+      } catch (_) {
+        return {};
+      }
+    });
   };
-  const constructResult = chunk => {
-    const parsed = parseOrSkip(chunk);
+
+  // returns TestEvent interface defined in common/types.ts
+  const constructEvent = parsed => {
     switch (parsed.type) {
       case "journey/start": {
         const { journey } = parsed;
-        result.journey = {
-          status: "succeeded",
-          steps: [],
-          type: journey.name,
+        return {
+          event: "journey/start",
+          data: {
+            name: journey.name,
+          },
         };
-        break;
       }
       case "step/end": {
         const { step, error } = parsed;
-        result[step.status]++;
-        result.journey.steps.push({
-          name: step.name,
-          status: step.status,
-          error,
-          duration: Math.ceil(step.duration.us / 1000),
-        });
-        break;
+        return {
+          event: "step/end",
+          data: {
+            name: step.name,
+            status: step.status,
+            error,
+            duration: Math.ceil(step.duration.us / 1000),
+          },
+        };
       }
       case "journey/end": {
         const { journey } = parsed;
-        result.journey.status = journey.status;
-        break;
+        return {
+          event: "journey/end",
+          data: {
+            name: journey.name,
+            status: journey.status,
+          },
+        };
       }
     }
   };
 
+  const sendTestEvent = event => {
+    browserWindow.webContents.send("test-event", event);
+  };
+
+  const emitResult = chunk => {
+    parseOrSkip(chunk).forEach(parsed => {
+      const event = constructEvent(parsed);
+      if (event) {
+        sendTestEvent(
+          event.event === "step/end"
+            ? addActionsToStepResult(data.steps, event)
+            : event
+        );
+      }
+    });
+  };
+
+  let synthCliProcess = null; // child process, define here to kill when finished
   try {
     const isSuite = data.isSuite;
     const args = [
@@ -189,21 +235,23 @@ async function onTest(data) {
     if (!isSuite) {
       args.push("--inline");
     } else {
-      await mkdir(JOURNEY_DIR).catch(() => {});
+      // es-lint ignore
+      await mkdir(JOURNEY_DIR, { recursive: true });
       await writeFile(filePath, data.code);
       args.unshift(filePath);
     }
     /**
      * Fork the Synthetics CLI with correct browser path and
-     * cwd correctly spanws the process
+     * cwd correctly spawns the process
      */
-    const { stdout, stdin, stderr } = fork(`${SYNTHETICS_CLI}`, args, {
+    synthCliProcess = fork(`${SYNTHETICS_CLI}`, args, {
       env: {
         PLAYWRIGHT_BROWSERS_PATH,
       },
       cwd: isDev ? process.cwd() : process.resourcesPath,
       stdio: "pipe",
     });
+    const { stdout, stdin, stderr } = synthCliProcess;
     if (!isSuite) {
       stdin.write(data.code);
       stdin.end();
@@ -211,7 +259,7 @@ async function onTest(data) {
     stdout.setEncoding("utf-8");
     stderr.setEncoding("utf-8");
     for await (const chunk of stdout) {
-      constructResult(chunk);
+      emitResult(chunk);
     }
     for await (const chunk of stderr) {
       logger.error(chunk);
@@ -219,10 +267,18 @@ async function onTest(data) {
     if (isSuite) {
       await rm(filePath, { recursive: true, force: true });
     }
-    return result;
-  } catch (err) {
-    logger.error(err);
-    return result;
+  } catch (error) {
+    logger.error(error);
+    sendTestEvent({
+      event: "journey/end",
+      data: {
+        error,
+      },
+    });
+  } finally {
+    if (synthCliProcess) {
+      synthCliProcess.kill();
+    }
   }
 }
 
@@ -243,8 +299,8 @@ async function onFileSave(code) {
 
 async function onTransformCode(data) {
   const generator = new SyntheticsGenerator(data.isSuite);
-  const code = generator.generateText(data.actions);
-  return code;
+  const code = generator.generateFromSteps(data.actions);
+  return code.join("\n");
 }
 
 async function onSetMode(mode) {

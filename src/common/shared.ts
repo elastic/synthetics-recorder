@@ -22,9 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import type { Step, Steps } from "@elastic/synthetics";
 import { RendererProcessIpc } from "electron-better-ipc";
 import React from "react";
-import type { ActionContext, Journey, JourneyType, Setter } from "./types";
+import type { Journey, JourneyType, Setter } from "./types";
 
 export const COMMAND_SELECTOR_OPTIONS = [
   {
@@ -64,6 +65,9 @@ export const COMMAND_SELECTOR_OPTIONS = [
 export const SYNTHETICS_DISCUSS_FORUM_URL =
   "https://forms.gle/PzVtYoExfqQ9UMkY6";
 
+export const PLAYWRIGHT_ASSERTION_DOCS_LINK =
+  "https://playwright.dev/docs/assertions/";
+
 export const SMALL_SCREEN_BREAKPOINT = 850;
 
 export function performSelectorLookup(
@@ -81,11 +85,11 @@ export function performSelectorLookup(
 
 export async function getCodeFromActions(
   ipc: RendererProcessIpc,
-  actions: ActionContext[][],
+  actions: Steps,
   type: JourneyType
 ): Promise<string> {
   return await ipc.callMain("actions-to-code", {
-    actions: actions.flat(),
+    actions,
     isSuite: type === "suite",
   });
 }
@@ -101,38 +105,51 @@ export function createExternalLinkHandler(
 }
 
 export function updateAction(
-  steps: ActionContext[][],
+  steps: Steps,
   value: string,
   stepIndex: number,
   actionIndex: number
-): ActionContext[][] {
+): Steps {
   return steps.map((step, sidx) => {
     if (sidx !== stepIndex) return step;
-    return step.map((ac, aidx) => {
-      if (aidx !== actionIndex) return ac;
-      const { action, ...rest } = ac;
-      return { action: { ...action, value }, ...rest };
-    });
+    const nextStep: Step = {
+      actions: step.actions.map((ac, aidx) => {
+        if (aidx !== actionIndex) return ac;
+        const { action, ...rest } = ac;
+        return { action: { ...action, value }, ...rest };
+      }),
+    };
+    if (step.name) nextStep.name = step.name;
+    return nextStep;
   });
 }
 
-export async function getCodeForResult(
+/**
+ * Gets code string for failed step in result object.
+ * @param steps steps to analyze
+ * @param journey journey result data
+ * @returns code string
+ */
+export async function getCodeForFailedResult(
   ipc: RendererProcessIpc,
-  steps: ActionContext[][],
-  journey: Journey | undefined
+  steps: Steps,
+  journey?: Journey
 ): Promise<string> {
   if (!journey) return "";
-  const journeyStepNames = new Set(journey.steps.map(({ name }) => name));
 
-  return await getCodeFromActions(
-    ipc,
-    steps.filter(
-      step =>
-        step !== null &&
-        step.length > 0 &&
-        step[0].title &&
-        journeyStepNames.has(step[0].title)
-    ),
-    journey.type
+  const failedJourneyStep = journey.steps.find(
+    ({ status }) => status === "failed"
   );
+
+  if (!failedJourneyStep) return "";
+
+  const failedStep = steps.find(
+    step =>
+      step.actions.length > 0 &&
+      step.actions[0].title === failedJourneyStep.name
+  );
+
+  if (!failedStep) return "";
+
+  return getCodeFromActions(ipc, [failedStep], journey.type);
 }

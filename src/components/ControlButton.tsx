@@ -22,25 +22,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiButton, EuiButtonIcon, useEuiTheme } from "@elastic/eui";
-import React, { useEffect, useState } from "react";
+import {
+  EuiButton,
+  EuiButtonProps,
+  EuiButtonIcon,
+  EuiButtonIconProps,
+  EuiThemeContext,
+  EuiToolTip,
+} from "@elastic/eui";
+import React, { useContext, useEffect, useState } from "react";
 
 interface IControlButton {
-  "aria-label": string;
-  color: "primary";
-  disabled?: boolean;
-  fill?: boolean;
-  iconType: string;
-  onClick: () => void;
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
+  tooltipContent?: string;
 }
 
-export const ControlButton: React.FC<IControlButton> = props => {
+type Props = IControlButton & EuiButtonIconProps & EuiButtonProps;
+
+export const ControlButton: React.FC<Props> = props => {
   const [showIconOnly, setShowIconOnly] = useState(false);
   const {
-    euiTheme: {
-      breakpoint: { l },
-    },
-  } = useEuiTheme();
+    breakpoint: { l },
+  } = useContext(EuiThemeContext);
 
   useEffect(() => {
     function evaluateSize() {
@@ -54,11 +57,20 @@ export const ControlButton: React.FC<IControlButton> = props => {
     return () => window.removeEventListener("resize", evaluateSize);
   }, [l, showIconOnly]);
 
-  if (showIconOnly) {
-    const { children, fill, ...rest } = props;
+  const { fill, tooltipContent, ...rest } = props;
+  const button = showIconOnly ? (
+    <EuiButtonIcon display={fill ? "fill" : "base"} size="m" {...rest} />
+  ) : (
+    <EuiButton fill={fill} {...rest} />
+  );
+  const ttContent = tooltipContent || (showIconOnly && props["aria-label"]);
+  if (ttContent) {
     return (
-      <EuiButtonIcon display={fill ? "fill" : "base"} size="m" {...rest} />
+      <EuiToolTip content={ttContent} delay="long">
+        {button}
+      </EuiToolTip>
     );
   }
-  return <EuiButton {...props} />;
+
+  return button;
 };

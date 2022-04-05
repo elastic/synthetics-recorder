@@ -22,61 +22,35 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import type { Step, Steps } from "@elastic/synthetics";
 import React from "react";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useState } from "react";
 import {
   EuiAccordion,
   EuiButtonIcon,
   EuiFlexGroup,
   EuiFlexItem,
-  useEuiTheme,
+  EuiThemeContext,
 } from "@elastic/eui";
-import "./StepList.css";
 import { ActionDetail } from "../ActionDetail";
 import { StepAccordionTitle } from "./StepAccordionTitle";
 import "./StepDetails.css";
 import { RecordingContext } from "../../contexts/RecordingContext";
-import { ActionContext, RecordingStatus } from "../../common/types";
+import { RecordingStatus } from "../../common/types";
 
 interface IStepDetail {
-  step: ActionContext[];
+  step: Step;
   stepIndex: number;
-  onStepDetailChange: StepChangeHandler;
 }
 
-function StepDetail({ step, stepIndex, onStepDetailChange }: IStepDetail) {
-  const assertionNumberTable = useMemo(() => {
-    let assertionCount = 0;
-    return step.reduce<Record<number, number>>(
-      (table, actionContext, index) => {
-        if (actionContext.action.isAssert) {
-          table[index] = ++assertionCount;
-        }
-        return table;
-      },
-      {}
-    );
-  }, [step]);
-
-  const onActionContextChange = (
-    actionContext: ActionContext,
-    actionIndex: number
-  ) => {
-    onStepDetailChange(
-      step.map((a, index) => (index === actionIndex ? actionContext : a)),
-      stepIndex
-    );
-  };
-
+function StepDetail({ step, stepIndex }: IStepDetail) {
   return (
     <>
-      {step.map((actionContext, index) => (
+      {step.actions.map((actionContext, index) => (
         <ActionDetail
           key={index}
           actionContext={actionContext}
           actionIndex={index}
-          assertionCount={assertionNumberTable[index]}
-          onActionContextChange={onActionContextChange}
           stepIndex={stepIndex}
         />
       ))}
@@ -85,14 +59,14 @@ function StepDetail({ step, stepIndex, onStepDetailChange }: IStepDetail) {
 }
 
 type StepDeleteHandler = (stepIndex: number) => void;
-type StepChangeHandler = (step: ActionContext[], stepIndex: number) => void;
+type StepChangeHandler = (step: Step, stepIndex: number) => void;
 
 interface IStepAccordion {
   title: string;
   index: number;
   onStepDetailChange: StepChangeHandler;
   onStepDelete: StepDeleteHandler;
-  step: ActionContext[];
+  step: Step;
 }
 
 function StepAccordion({
@@ -103,32 +77,28 @@ function StepAccordion({
   step,
 }: IStepAccordion) {
   const {
-    euiTheme: {
-      border: {
-        thin,
-        radius: { medium },
-      },
+    border: {
+      thin,
+      radius: { medium },
     },
-  } = useEuiTheme();
+    colors: { darkShade },
+  } = useContext(EuiThemeContext);
   const { recordingStatus } = useContext(RecordingContext);
   const [isEditing, setIsEditing] = useState(false);
   const onStepTitleChange = (updatedTitle: string) => {
     onStepDetailChange(
-      step.map((s, stepIdx) => {
-        if (stepIdx === 0) {
-          return { ...s, title: updatedTitle, modified: true };
-        }
-        return s;
-      }),
+      {
+        actions: step.actions.map((s, stepIdx) => {
+          if (stepIdx === 0) {
+            return { ...s, title: updatedTitle, modified: true };
+          }
+          return s;
+        }),
+        name: step.name,
+      },
       index
     );
   };
-
-  const {
-    euiTheme: {
-      colors: { darkShade },
-    },
-  } = useEuiTheme();
 
   return (
     <EuiAccordion
@@ -183,17 +153,13 @@ function StepAccordion({
         </EuiFlexGroup>
       }
     >
-      <StepDetail
-        step={step}
-        stepIndex={index}
-        onStepDetailChange={onStepDetailChange}
-      />
+      <StepDetail step={step} stepIndex={index} />
     </EuiAccordion>
   );
 }
 
 interface IStepAccordions {
-  steps: ActionContext[][];
+  steps: Steps;
   onStepDelete: StepDeleteHandler;
   onStepDetailChange: StepChangeHandler;
 }
@@ -206,7 +172,7 @@ export function StepAccordions({
   return (
     <>
       {steps.map((step, index) => {
-        const { title } = step[0];
+        const { title } = step.actions[0];
         return (
           <StepAccordion
             index={index}

@@ -22,42 +22,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React, { useContext } from "react";
-import { EuiFieldText, EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
-import { RecordingContext } from "../contexts/RecordingContext";
-import { RecordingStatus } from "../common/types";
-import { UrlContext } from "../contexts/UrlContext";
+import {
+  EuiFlyoutFooter,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiButtonEmpty,
+} from "@elastic/eui";
+import React from "react";
+import type { JourneyType, Setter } from "../../common/types";
+import { SaveCodeButton } from "../SaveCodeButton";
 
-export interface IHeader {
-  onUrlChange: (url: string) => void;
-  stepCount: number;
-  url: string;
+interface IFlyoutFooter {
+  setVisible: Setter<boolean>;
+  type: JourneyType;
 }
 
-export function Header(props: IHeader) {
-  const { urlRef } = useContext(UrlContext);
-  const { recordingStatus, toggleRecording } = useContext(RecordingContext);
-
-  const onUrlFieldKeyUp = async (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && recordingStatus === RecordingStatus.NotRecording) {
-      await toggleRecording();
-    }
-  };
-
+export function Footer({ setVisible, type }: IFlyoutFooter) {
   return (
-    <>
-      <EuiFlexGroup wrap gutterSize="s">
-        <EuiFlexItem>
-          <EuiFieldText
-            placeholder="Enter URL to test"
-            value={props.url}
-            onKeyUp={onUrlFieldKeyUp}
-            onChange={e => props.onUrlChange(e.target.value)}
-            fullWidth
-            inputRef={urlRef}
-          />
+    <EuiFlyoutFooter>
+      <EuiFlexGroup justifyContent="spaceBetween">
+        <EuiFlexItem grow={false}>
+          <EuiButtonEmpty onClick={() => setVisible(false)}>
+            Close
+          </EuiButtonEmpty>
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          <SaveCodeButton type={type} />
         </EuiFlexItem>
       </EuiFlexGroup>
-    </>
+    </EuiFlyoutFooter>
   );
 }

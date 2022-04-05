@@ -24,17 +24,14 @@ THE SOFTWARE.
 
 import { join } from "path";
 import isDev from "electron-is-dev";
-import {
-  getExecutablePath,
-  getChromeVersion,
-} from "../scripts/install-pw";
+import { getExecutablePath, getChromeVersion } from "../scripts/install-pw";
 
 /**
  * Electron resources path where all the `extraResources`
  * mentioned in build are copied to on all platforms
  */
 export const RESOURCES_PATH = process.resourcesPath;
-const ROOT_DIR = process.cwd();// dirname(process.cwd());
+const ROOT_DIR = process.cwd(); // dirname(process.cwd());
 
 /**
  * Journey directory is for storing a dummy file to simulate

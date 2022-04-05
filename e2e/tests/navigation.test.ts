@@ -22,12 +22,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import type { Server } from "http";
 import { ElectronServiceFactory, env } from "../services";
+import { createTestHttpServer } from "./testServer";
 
 const electronService = new ElectronServiceFactory();
 
-afterEach(() => {
-  electronService.terminate();
+let server: Server;
+let hostname: string;
+let port: number;
+let url: string;
+
+beforeEach(() => {
+  const { server: s, hostname: h, port: p } = createTestHttpServer();
+  server = s;
+  hostname = h;
+  port = p;
+  url = `http://${hostname}:${port}`;
+});
+
+afterEach(async () => {
+  await electronService.terminate();
+  server.close();
 });
 
 describe("Navigation", () => {
@@ -38,14 +54,12 @@ describe("Navigation", () => {
 
     await electronService.clickStartRecording();
     await electronService.waitForPageToBeIdle();
-    await electronService.navigateRecordingBrowser("http://example.com");
+    await electronService.navigateRecordingBrowser(url);
 
-    expect(await electronWindow.$("text=2 Recorded Steps")).toBeTruthy();
+    expect(await electronWindow.$("text=Step 1")).toBeTruthy();
     expect(
-      await electronWindow.$(`text=Go to ${env.DEMO_APP_URL}`)
+      await electronWindow.$(`text=navigate ${env.DEMO_APP_URL}`)
     ).toBeTruthy();
-    expect(
-      await electronWindow.$("text=Go to http://example.com/")
-    ).toBeTruthy();
+    expect(await electronWindow.$(`text=navigate ${url}`)).toBeTruthy();
   });
 });
