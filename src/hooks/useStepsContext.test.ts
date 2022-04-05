@@ -51,6 +51,19 @@ describe("useStepsContext", () => {
     });
   });
 
+  describe("setStepName", () => {
+    it("sets the target step name", () => {
+      act(() => {
+        defaultResult.result.current.setStepName(0, "test-name");
+      });
+
+      const { steps } = defaultResult.result.current;
+
+      expect(steps[0].name).toEqual("test-name");
+      expect(steps[1].name).toBeUndefined();
+    });
+  });
+
   describe("onStepDetailChange", () => {
     it("updates the targeted step", () => {
       const testStep: Step = { actions: [createAction("new-action")] };
