@@ -104,7 +104,8 @@ interface IStepSeparator {
 
 export function StepSeparator({ index, step }: IStepSeparator) {
   const testStatus = useStepResultStatus(
-    step.actions.length ? step.actions[0].title : undefined
+    step.actions.length ? step.actions[0].title : undefined,
+    step.name
   );
   const { setDragIndex } = useContext(DragAndDropContext);
   const { onMergeSteps, setStepName } = useContext(StepsContext);

@@ -31,10 +31,12 @@ import { TestContext } from "../contexts/TestContext";
  *
  * As such, we can simply check a step's status and apply that to its
  * constitutent actions.
- * @param stepName The name of the step to check
+ * @param stepTitle The default step title, the title of the first action
+ * @param stepName The name of the step
  * @returns The status of the step, if available
  */
 export function useStepResultStatus(
+  stepTitle?: string,
   stepName?: string
 ): ResultCategory | undefined {
   const { result } = useContext(TestContext);
@@ -53,7 +55,8 @@ export function useStepResultStatus(
     }
   }, [result, setStatuses]);
 
-  if (!stepName || !statuses[stepName]) return undefined;
+  if (stepName && statuses[stepName]) return statuses[stepName];
+  if (!stepTitle || !statuses[stepTitle]) return undefined;
 
-  return statuses[stepName];
+  return statuses[stepTitle];
 }
