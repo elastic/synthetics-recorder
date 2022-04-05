@@ -22,20 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import {
-  EuiAccordion,
-  EuiFlexItem,
-  EuiFlexGroup,
-  EuiButtonIcon,
-  EuiToolTip,
-} from "@elastic/eui";
+import { EuiFlexItem, EuiButtonIcon, EuiToolTip } from "@elastic/eui";
 import type { Step } from "@elastic/synthetics";
 import React, { useContext, useState } from "react";
-import styled from "styled-components";
-import {
-  DRAG_AND_DROP_DATA_TRANSFER_TYPE,
-  SMALL_SCREEN_BREAKPOINT,
-} from "../../common/shared";
+import { DRAG_AND_DROP_DATA_TRANSFER_TYPE } from "../../common/shared";
 import { StepSeparatorDragDropDataTransfer } from "../../common/types";
 import { DragAndDropContext } from "../../contexts/DragAndDropContext";
 import { StepsContext } from "../../contexts/StepsContext";
@@ -43,53 +33,13 @@ import { useDragAndDrop } from "../../hooks/useDragAndDrop";
 import { useStepResultStatus } from "../../hooks/useTestResult";
 import { ActionElement } from "../ActionElement/ActionElement";
 import { EditStepNameInput } from "./EditStepNameInput";
-
-export const StepSeparatorTopBorder = styled(EuiFlexItem)`
-  border-top: ${props => props.theme.border.thin};
-
-  @media (max-width: ${SMALL_SCREEN_BREAKPOINT}px) {
-    max-width: 566px;
-  }
-`;
-
-export const StepSeparatorAccordion = styled(EuiAccordion)`
-  .euiAccordion__button {
-    width: auto;
-    flex-grow: 0;
-  }
-
-  .euiAccordion__optionalAction {
-    flex-grow: 1;
-    flex-shrink: 1;
-  }
-
-  div[id^="step-separator-"] {
-    overflow: visible;
-  }
-
-  margin: 16px;
-`;
-
-export const StepSeparatorHeading = styled(EuiFlexItem)`
-  font-weight: bold;
-`;
-
-interface IDeleteButtonProps {
-  isVisible: boolean;
-}
-
-const DeleteButton = styled(EuiButtonIcon)<IDeleteButtonProps>`
-  visibility: ${props => (props.isVisible ? "visible" : "hidden")};
-`;
-
-interface IControlsWrapper {
-  isGrabbing: boolean | null;
-}
-
-const ControlsWrapper = styled(EuiFlexGroup)<IControlsWrapper>`
-  cursor: ${({ isGrabbing }) =>
-    isGrabbing === null ? "default" : isGrabbing ? "grabbing" : "grab"};
-`;
+import {
+  ControlsWrapper,
+  DeleteButton,
+  StepSeparatorAccordion,
+  StepSeparatorHeading,
+  StepSeparatorTopBorder,
+} from "./styles";
 
 function createStepSeparatorDragDropData(
   stepIndex: number
@@ -100,6 +50,13 @@ function createStepSeparatorDragDropData(
 interface IStepSeparator {
   index: number;
   step: Step;
+}
+
+type DragHandler = React.DragEventHandler<HTMLDivElement | HTMLSpanElement>;
+
+interface IDragProps {
+  onDragStart?: DragHandler;
+  onDragEnd?: DragHandler;
 }
 
 export function StepSeparator({ index, step }: IStepSeparator) {
@@ -119,31 +76,25 @@ export function StepSeparator({ index, step }: IStepSeparator) {
     isDraggable === null ? isDraggable : false
   );
 
-  const onDragStart:
-    | React.DragEventHandler<HTMLDivElement | HTMLSpanElement>
-    | undefined = isDraggable
-    ? e => {
-        setDragIndex(index);
-        setShowDeleteButton(false);
-        setShowEditButton(false);
-        const dragDataString = JSON.stringify(
-          createStepSeparatorDragDropData(index)
-        );
-        e.dataTransfer.setData(
-          DRAG_AND_DROP_DATA_TRANSFER_TYPE,
-          dragDataString
-        );
-        e.dataTransfer.setData("text/plain", dragDataString);
-      }
-    : undefined;
-  const onDragEnd = isDraggable
-    ? () => {
-        setShowDeleteButton(true);
-        setShowEditButton(true);
-        setDragIndex(undefined);
-        setIsGrabbing(false);
-      }
-    : undefined;
+  const dragParams: IDragProps = {};
+  if (isDraggable) {
+    dragParams.onDragStart = e => {
+      setDragIndex(index);
+      setShowDeleteButton(false);
+      setShowEditButton(false);
+      const dragDataString = JSON.stringify(
+        createStepSeparatorDragDropData(index)
+      );
+      e.dataTransfer.setData(DRAG_AND_DROP_DATA_TRANSFER_TYPE, dragDataString);
+      e.dataTransfer.setData("text/plain", dragDataString);
+    };
+    dragParams.onDragEnd = () => {
+      setShowDeleteButton(true);
+      setShowEditButton(true);
+      setDragIndex(undefined);
+      setIsGrabbing(false);
+    };
+  }
 
   const defaultStepName = `Step ${index + 1}`;
   const stepHeadingText = step.name ?? defaultStepName;
@@ -161,10 +112,9 @@ export function StepSeparator({ index, step }: IStepSeparator) {
             draggable={!!isDraggable}
             gutterSize="s"
             isGrabbing={isGrabbing}
-            onDragStart={onDragStart}
-            onDragEnd={onDragEnd}
             onMouseDown={() => setIsGrabbing(true)}
             onMouseUp={() => setIsGrabbing(false)}
+            {...dragParams}
           >
             {!isEditingName && (
               <StepSeparatorHeading id={`step-${index}`} grow={false}>
