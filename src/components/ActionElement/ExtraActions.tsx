@@ -37,7 +37,7 @@ interface IExtraActions {
   areControlsVisible: boolean;
   isOpen: boolean;
   setIsOpen: Setter<boolean>;
-  step: ActionInContext;
+  actionContext: ActionInContext;
   stepIndex: number;
 }
 
@@ -46,7 +46,7 @@ export function ExtraActions({
   areControlsVisible,
   isOpen,
   setIsOpen,
-  step,
+  actionContext,
   stepIndex,
 }: IExtraActions) {
   const [isSettingsPopoverOpen, setIsSettingsPopoverOpen] = useState(false);
@@ -70,7 +70,7 @@ export function ExtraActions({
       justifyContent="spaceBetween"
     >
       <EuiFlexItem>
-        <HeadingText actionContext={step} />
+        <HeadingText actionContext={actionContext} />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <ActionControlButton
@@ -88,13 +88,13 @@ export function ExtraActions({
           onAddAssertion={settingsHandler(() => {
             onInsertAction(
               {
-                ...step,
+                ...actionContext,
                 action: {
-                  ...step.action,
+                  ...actionContext.action,
                   name: "assert",
-                  selector: step.action.selector || "",
+                  selector: actionContext.action.selector || "",
                   command: "isVisible",
-                  value: step.action.value || undefined,
+                  value: actionContext.action.value || undefined,
                   signals: [],
                   isAssert: true,
                 },

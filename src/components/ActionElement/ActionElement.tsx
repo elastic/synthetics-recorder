@@ -96,10 +96,10 @@ const Container = styled(EuiFlexGroup)<{ isDragOver: boolean }>`
 type DragEvent = React.DragEventHandler<HTMLDivElement | HTMLSpanElement>;
 
 interface DropProps {
-  onDrop: DragEvent;
-  onDragEnter: DragEvent;
-  onDragLeave: DragEvent;
-  onDragOver: DragEvent;
+  onDrop?: DragEvent;
+  onDragEnter?: DragEvent;
+  onDragLeave?: DragEvent;
+  onDragOver?: DragEvent;
 }
 
 function ActionComponent({
@@ -127,29 +127,29 @@ function ActionComponent({
   );
   const { onDropStep } = useContext(StepsContext);
 
-  const dropProps: DropProps | undefined = isDroppable
-    ? {
-        onDrop: e => {
-          const { initiatorIndex } = JSON.parse(
-            e.dataTransfer.getData(DRAG_AND_DROP_DATA_TRANSFER_TYPE)
-          ) as StepSeparatorDragDropDataTransfer;
-          setDropzeonOver(false);
-          onDropStep(stepIndex, initiatorIndex, actionIndex);
-          e.preventDefault();
-        },
-        onDragEnter: e => {
-          setEnterTarget(e.target);
-          setDropzeonOver(true);
-          e.preventDefault();
-        },
-        onDragOver: e => {
-          e.preventDefault();
-        },
-        onDragLeave: e => {
-          if (e.target === enterTarget) setDropzeonOver(false);
-        },
-      }
-    : undefined;
+  const dropProps: DropProps = {};
+  if (isDroppable) {
+    dropProps.onDrop = e => {
+      const { initiatorIndex } = JSON.parse(
+        e.dataTransfer.getData(DRAG_AND_DROP_DATA_TRANSFER_TYPE)
+      ) as StepSeparatorDragDropDataTransfer;
+      setDropzeonOver(false);
+      onDropStep(stepIndex, initiatorIndex, actionIndex);
+      e.preventDefault();
+    };
+    dropProps.onDragEnter = e => {
+      setEnterTarget(e.target);
+      setDropzeonOver(true);
+      e.preventDefault();
+    };
+    dropProps.onDragOver = e => {
+      e.preventDefault();
+    };
+    dropProps.onDragLeave = e => {
+      if (e.target === enterTarget) setDropzeonOver(false);
+    };
+  }
+
   return (
     <Container
       className={className}
@@ -193,7 +193,7 @@ function ActionComponent({
               areControlsVisible={areControlsVisible}
               isOpen={isOpen}
               setIsOpen={setIsOpen}
-              step={actionContext}
+              actionContext={actionContext}
               stepIndex={stepIndex}
             />
           }
