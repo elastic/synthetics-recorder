@@ -129,6 +129,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
                 steps.length === 0 ||
                 recordingStatus === RecordingStatus.Recording
               }
+              showTooltip={steps.length === 0}
               onTest={onTest}
             />
           </TestButtonDivider>

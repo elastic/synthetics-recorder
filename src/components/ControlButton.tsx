@@ -58,17 +58,19 @@ export const ControlButton: React.FC<Props> = props => {
   }, [l, showIconOnly]);
 
   const { fill, tooltipContent, ...rest } = props;
-  if (showIconOnly) {
+  const button = showIconOnly ? (
+    <EuiButtonIcon display={fill ? "fill" : "base"} size="m" {...rest} />
+  ) : (
+    <EuiButton fill={fill} {...rest} />
+  );
+  const ttContent = tooltipContent || (showIconOnly && props["aria-label"]);
+  if (ttContent) {
     return (
-      <EuiToolTip content={tooltipContent || props["aria-label"]}>
-        <EuiButtonIcon display={fill ? "fill" : "base"} size="m" {...rest} />
+      <EuiToolTip content={ttContent} delay="long">
+        {button}
       </EuiToolTip>
     );
   }
 
-  return (
-    <EuiToolTip content={tooltipContent} delay="long">
-      <EuiButton fill={fill} {...rest} />
-    </EuiToolTip>
-  );
+  return button;
 };
