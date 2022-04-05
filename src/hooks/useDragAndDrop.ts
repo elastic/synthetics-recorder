@@ -29,8 +29,6 @@ import { StepsContext } from "../contexts/StepsContext";
 export function canDrag(stepIndex: number, steps: Steps): boolean | null {
   if (stepIndex === 0) return null;
   /**
-   * Explanation of this bundle of logic:
-   *
    * A step heading is draggable if there's _somewhere_ for it to go between the preceeding
    * step and the next step. This means there needs to be two successive actions for the
    * step heading to place itself when dragging.
