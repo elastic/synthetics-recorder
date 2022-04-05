@@ -27,8 +27,14 @@ import { canDrag } from "./useDragAndDrop";
 
 describe("useDragAndDrop", () => {
   describe(canDrag.name, () => {
-    it("returns `false` for first step", () => {
-      expect(canDrag(0, [])).toBeNull();
+    it("returns `null` for first step", () => {
+      expect(
+        canDrag(0, [
+          { actions: [createAction("action-1")] },
+          { actions: [createAction("action-2"), createAction("action-3")] },
+          { actions: [createAction("action-4")] },
+        ])
+      ).toBeNull();
     });
 
     it("returns `false` if preceding, current, and following steps have only one element", () => {
@@ -39,6 +45,37 @@ describe("useDragAndDrop", () => {
           { actions: [createAction("action-3")] },
         ])
       ).toBe(false);
+    });
+
+    it("returns `false` when non-adjacent step has > 1 action", () => {
+      expect(
+        canDrag(1, [
+          { actions: [createAction("action-1")] },
+          { actions: [createAction("action-2")] },
+          { actions: [createAction("action-3")] },
+          { actions: [createAction("action-4"), createAction("action-5")] },
+        ])
+      ).toBe(false);
+    });
+
+    it("returns `true` if prev step has > 1 action", () => {
+      expect(
+        canDrag(2, [
+          { actions: [createAction("action-1")] },
+          { actions: [createAction("action-2"), createAction("action-3")] },
+          { actions: [createAction("action-4")] },
+        ])
+      ).toBe(true);
+    });
+
+    it("returns `true` if next step has > 1 action", () => {
+      expect(
+        canDrag(1, [
+          { actions: [createAction("action-1")] },
+          { actions: [createAction("action-2")] },
+          { actions: [createAction("action-3"), createAction("action-4")] },
+        ])
+      ).toBe(true);
     });
 
     it("returns `true` if step heading can be dragged", () => {
