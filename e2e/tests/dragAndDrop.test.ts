@@ -79,10 +79,8 @@ describe("Drag and Drop", () => {
     await electronWindow.mouse.move(dzx, dzy, { steps: 5 });
     await electronWindow.mouse.up();
     /**
-     * There was only one action in this step before, so
-     * this insert button would only be rendered if Playwright
-     * successfully dragged the step separator we created over
-     * a drop zone and released it, thereby changing the bucketed action order
+     * There was originally only one action in this step, so the targeted insert button would only be
+     * rendered if Playwright successfully dragged the step separator over drop zone and released it.
      */
     expect(await electronWindow.$("id=insert-divider-0-1")).toBeTruthy();
   });
