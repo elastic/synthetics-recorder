@@ -22,21 +22,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Step, Steps } from "@elastic/synthetics";
-import React from "react";
-import { useContext, useState } from "react";
+import type { Step, Steps } from '@elastic/synthetics';
+import React from 'react';
+import { useContext, useState } from 'react';
 import {
   EuiAccordion,
   EuiButtonIcon,
   EuiFlexGroup,
   EuiFlexItem,
   EuiThemeContext,
-} from "@elastic/eui";
-import { ActionDetail } from "../ActionDetail";
-import { StepAccordionTitle } from "./StepAccordionTitle";
-import "./StepDetails.css";
-import { RecordingContext } from "../../contexts/RecordingContext";
-import { RecordingStatus } from "../../common/types";
+} from '@elastic/eui';
+import { ActionDetail } from '../ActionDetail';
+import { StepAccordionTitle } from './StepAccordionTitle';
+import './StepDetails.css';
+import { RecordingContext } from '../../contexts/RecordingContext';
+import { RecordingStatus } from '../../common/types';
 
 interface IStepDetail {
   step: Step;
@@ -69,13 +69,7 @@ interface IStepAccordion {
   step: Step;
 }
 
-function StepAccordion({
-  title,
-  index,
-  onStepDetailChange,
-  onStepDelete,
-  step,
-}: IStepAccordion) {
+function StepAccordion({ title, index, onStepDetailChange, onStepDelete, step }: IStepAccordion) {
   const {
     border: {
       thin,
@@ -107,7 +101,7 @@ function StepAccordion({
       style={{
         border: thin,
         borderRadius: medium,
-        margin: "8px 0px",
+        margin: '8px 0px',
       }}
       paddingSize="m"
       className="euiAccordionForm stepAccordion"
@@ -139,8 +133,8 @@ function StepAccordion({
             <EuiButtonIcon
               aria-label={
                 recordingStatus === RecordingStatus.Recording
-                  ? "Delete this step. You cannot delete steps until you end the recording session."
-                  : "Delete this step."
+                  ? 'Delete this step. You cannot delete steps until you end the recording session.'
+                  : 'Delete this step.'
               }
               className="euiAccordionForm__extraAction"
               // @ts-expect-error using EUI theme colors
@@ -164,11 +158,7 @@ interface IStepAccordions {
   onStepDetailChange: StepChangeHandler;
 }
 
-export function StepAccordions({
-  steps,
-  onStepDelete,
-  onStepDetailChange,
-}: IStepAccordions) {
+export function StepAccordions({ steps, onStepDelete, onStepDetailChange }: IStepAccordions) {
   return (
     <>
       {steps.map((step, index) => {
@@ -180,7 +170,7 @@ export function StepAccordions({
             onStepDelete={onStepDelete}
             onStepDetailChange={onStepDetailChange}
             step={step}
-            title={title || ""}
+            title={title || ''}
           />
         );
       })}

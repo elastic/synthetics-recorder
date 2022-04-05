@@ -22,15 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
-import { ActionInContext } from "@elastic/synthetics";
-import React, { useContext, useState } from "react";
-import { RecordingStatus, Setter } from "../../common/types";
-import { RecordingContext } from "../../contexts/RecordingContext";
-import { StepsContext } from "../../contexts/StepsContext";
-import { ActionControlButton } from "./ControlButton";
-import { HeadingText } from "./HeadingText";
-import { SettingsPopover } from "./SettingsPopover";
+import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import { ActionInContext } from '@elastic/synthetics';
+import React, { useContext, useState } from 'react';
+import { RecordingStatus, Setter } from '../../common/types';
+import { RecordingContext } from '../../contexts/RecordingContext';
+import { StepsContext } from '../../contexts/StepsContext';
+import { ActionControlButton } from './ControlButton';
+import { HeadingText } from './HeadingText';
+import { SettingsPopover } from './SettingsPopover';
 
 interface IExtraActions {
   actionIndex: number;
@@ -64,11 +64,7 @@ export function ExtraActions({
     setIsOpen(!isOpen);
   });
   return (
-    <EuiFlexGroup
-      alignItems="center"
-      gutterSize="xs"
-      justifyContent="spaceBetween"
-    >
+    <EuiFlexGroup alignItems="center" gutterSize="xs" justifyContent="spaceBetween">
       <EuiFlexItem>
         <HeadingText actionContext={step} />
       </EuiFlexItem>
@@ -91,9 +87,9 @@ export function ExtraActions({
                 ...step,
                 action: {
                   ...step.action,
-                  name: "assert",
-                  selector: step.action.selector || "",
-                  command: "isVisible",
+                  name: 'assert',
+                  selector: step.action.selector || '',
+                  command: 'isVisible',
                   value: step.action.value || undefined,
                   signals: [],
                   isAssert: true,

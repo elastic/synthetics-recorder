@@ -22,11 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React, { useContext } from "react";
-import { EuiCode, EuiEmptyPrompt, EuiSpacer, EuiTitle } from "@elastic/eui";
+import React, { useContext } from 'react';
+import { EuiCode, EuiEmptyPrompt, EuiSpacer, EuiTitle } from '@elastic/eui';
 
-import { StepAccordions } from "./StepList/StepDetails";
-import { StepsContext } from "../contexts/StepsContext";
+import { StepAccordions } from './StepList/StepDetails';
+import { StepsContext } from '../contexts/StepsContext';
 
 export function Steps() {
   const { steps, onStepDetailChange, onDeleteStep } = useContext(StepsContext);
@@ -39,8 +39,7 @@ export function Steps() {
         hasBorder={false}
         body={
           <p>
-            Click on <EuiCode>Start recording</EuiCode> to get started with your
-            script.
+            Click on <EuiCode>Start recording</EuiCode> to get started with your script.
           </p>
         }
       />
@@ -52,7 +51,7 @@ export function Steps() {
       <EuiTitle size="s">
         <h2>
           {steps.length}&nbsp;
-          {steps.length === 1 ? "step recorded" : "steps recorded"}
+          {steps.length === 1 ? 'step recorded' : 'steps recorded'}
         </h2>
       </EuiTitle>
       <EuiSpacer />

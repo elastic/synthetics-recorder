@@ -22,11 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
-import { ActionInContext } from "@elastic/synthetics";
-import React from "react";
-import { COMMAND_SELECTOR_OPTIONS } from "../../common/shared";
-import { Bold } from "./styles";
+import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import { ActionInContext } from '@elastic/synthetics';
+import React from 'react';
+import { COMMAND_SELECTOR_OPTIONS } from '../../common/shared';
+import { Bold } from './styles';
 
 interface IAssertionHeadingText {
   actionContext: ActionInContext;
@@ -38,9 +38,8 @@ export function AssertionHeadingText({ actionContext }: IAssertionHeadingText) {
       <Bold grow={false}>{actionContext.action.name}</Bold>
       <EuiFlexItem grow={false}>
         {
-          COMMAND_SELECTOR_OPTIONS.find(
-            option => option.value === actionContext.action.command
-          )?.text
+          COMMAND_SELECTOR_OPTIONS.find((option) => option.value === actionContext.action.command)
+            ?.text
         }
       </EuiFlexItem>
       <EuiFlexItem grow={false}>{actionContext.action.selector}</EuiFlexItem>

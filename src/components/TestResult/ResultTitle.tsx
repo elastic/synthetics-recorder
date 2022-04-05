@@ -22,20 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
-import React from "react";
-import { Bold, ResultContainer, ResultHeader } from "./styles";
+import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import React from 'react';
+import { Bold, ResultContainer, ResultHeader } from './styles';
 
 export interface IResultHeader {
   durationElement: JSX.Element;
   titleText: string;
 }
 
-export const ResultTitle: React.FC<IResultHeader> = ({
-  children,
-  durationElement,
-  titleText,
-}) => {
+export const ResultTitle: React.FC<IResultHeader> = ({ children, durationElement, titleText }) => {
   return (
     <ResultContainer hasShadow={false}>
       <ResultHeader>

@@ -1,9 +1,9 @@
-import React from "react";
+import React from 'react';
 
-export const renderPrice = (data, key = "price_usd") => {
+export const renderPrice = (data, key = 'price_usd') => {
   const value = data[key];
   const price = `${value.units}.${value.nanos || 0}`;
-  return value.currency_code + " " + Number(price).toFixed(2);
+  return value.currency_code + ' ' + Number(price).toFixed(2);
 };
 
 export const renderTotalCost = (items) => {

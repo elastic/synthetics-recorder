@@ -22,51 +22,49 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Step, Steps } from "@elastic/synthetics";
-import { RendererProcessIpc } from "electron-better-ipc";
-import React from "react";
-import type { Journey, JourneyType, Setter } from "./types";
+import type { Step, Steps } from '@elastic/synthetics';
+import { RendererProcessIpc } from 'electron-better-ipc';
+import React from 'react';
+import type { Journey, JourneyType, Setter } from './types';
 
 export const COMMAND_SELECTOR_OPTIONS = [
   {
-    value: "innerText",
-    text: "Inner Text",
+    value: 'innerText',
+    text: 'Inner Text',
   },
   {
-    value: "textContent",
-    text: "Text content",
+    value: 'textContent',
+    text: 'Text content',
   },
   {
-    value: "isHidden",
-    text: "Check Hidden",
+    value: 'isHidden',
+    text: 'Check Hidden',
   },
   {
-    value: "isVisible",
-    text: "Check Visibility",
+    value: 'isVisible',
+    text: 'Check Visibility',
   },
   {
-    value: "isChecked",
-    text: "Is Checked",
+    value: 'isChecked',
+    text: 'Is Checked',
   },
   {
-    value: "isDisabled",
-    text: "Is Disabled",
+    value: 'isDisabled',
+    text: 'Is Disabled',
   },
   {
-    value: "isEditable",
-    text: "Is Editable",
+    value: 'isEditable',
+    text: 'Is Editable',
   },
   {
-    value: "isEnabled",
-    text: "Is Enabled",
+    value: 'isEnabled',
+    text: 'Is Enabled',
   },
 ];
 
-export const SYNTHETICS_DISCUSS_FORUM_URL =
-  "https://forms.gle/PzVtYoExfqQ9UMkY6";
+export const SYNTHETICS_DISCUSS_FORUM_URL = 'https://forms.gle/PzVtYoExfqQ9UMkY6';
 
-export const PLAYWRIGHT_ASSERTION_DOCS_LINK =
-  "https://playwright.dev/docs/assertions/";
+export const PLAYWRIGHT_ASSERTION_DOCS_LINK = 'https://playwright.dev/docs/assertions/';
 
 export const SMALL_SCREEN_BREAKPOINT = 850;
 
@@ -75,10 +73,10 @@ export function performSelectorLookup(
   onSelectorChange: Setter<string | undefined>
 ) {
   return async () => {
-    const selector = await ipc.callMain("set-mode", "inspecting");
-    if (typeof selector === "string" && selector.length) {
+    const selector = await ipc.callMain('set-mode', 'inspecting');
+    if (typeof selector === 'string' && selector.length) {
       onSelectorChange(selector);
-      await ipc.callMain("set-mode", "recording");
+      await ipc.callMain('set-mode', 'recording');
     }
   };
 }
@@ -88,9 +86,9 @@ export async function getCodeFromActions(
   actions: Steps,
   type: JourneyType
 ): Promise<string> {
-  return await ipc.callMain("actions-to-code", {
+  return await ipc.callMain('actions-to-code', {
     actions,
-    isSuite: type === "suite",
+    isSuite: type === 'suite',
   });
 }
 
@@ -98,9 +96,9 @@ export function createExternalLinkHandler(
   ipc: RendererProcessIpc,
   url: string
 ): React.MouseEventHandler<HTMLAnchorElement> {
-  return async e => {
+  return async (e) => {
     e.preventDefault();
-    await ipc.callMain("link-to-external", url);
+    await ipc.callMain('link-to-external', url);
   };
 }
 
@@ -135,21 +133,17 @@ export async function getCodeForFailedResult(
   steps: Steps,
   journey?: Journey
 ): Promise<string> {
-  if (!journey) return "";
+  if (!journey) return '';
 
-  const failedJourneyStep = journey.steps.find(
-    ({ status }) => status === "failed"
-  );
+  const failedJourneyStep = journey.steps.find(({ status }) => status === 'failed');
 
-  if (!failedJourneyStep) return "";
+  if (!failedJourneyStep) return '';
 
   const failedStep = steps.find(
-    step =>
-      step.actions.length > 0 &&
-      step.actions[0].title === failedJourneyStep.name
+    (step) => step.actions.length > 0 && step.actions[0].title === failedJourneyStep.name
   );
 
-  if (!failedStep) return "";
+  if (!failedStep) return '';
 
   return getCodeFromActions(ipc, [failedStep], journey.type);
 }

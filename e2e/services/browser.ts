@@ -22,12 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { chromium, Browser } from "playwright";
-import { env } from "../services";
+import { chromium, Browser } from 'playwright';
+import { env } from '../services';
 
 type ConnectRetryParams = { url?: string; timeout?: number; interval?: number };
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const DEFAULT_TIMEOUT = 10000;
 const DEFAULT_INTERVAL = 250;
@@ -54,8 +54,7 @@ export class TestBrowserService {
         return remoteChromium;
       } catch (e) {
         const elapsedTime = Date.now() - startTime;
-        if (elapsedTime > timeout)
-          throw new Error(`Can't connect to a browser at ${url}`);
+        if (elapsedTime > timeout) throw new Error(`Can't connect to a browser at ${url}`);
         await sleep(interval);
         return connectLoop();
       }
@@ -65,16 +64,12 @@ export class TestBrowserService {
   }
 
   static async getRemoteBrowserContext(connectParams?: ConnectRetryParams) {
-    const browserContexts = (
-      await TestBrowserService.getRemoteBrowser(connectParams)
-    ).contexts();
+    const browserContexts = (await TestBrowserService.getRemoteBrowser(connectParams)).contexts();
 
-    if (browserContexts.length > 1)
-      throw new Error("More than one browser context detected.");
+    if (browserContexts.length > 1) throw new Error('More than one browser context detected.');
 
     const browserContext = browserContexts[0];
-    if (!browserContext)
-      throw new Error("Not connected to a remote browser with contexts.");
+    if (!browserContext) throw new Error('Not connected to a remote browser with contexts.');
 
     return browserContext;
   }
@@ -86,16 +81,13 @@ export class TestBrowserService {
       interval: DEFAULT_INTERVAL,
     }
   ) {
-    const browserContext = await TestBrowserService.getRemoteBrowserContext(
-      connectParams
-    );
+    const browserContext = await TestBrowserService.getRemoteBrowserContext(connectParams);
 
     const startTime = Date.now();
 
     while (browserContext.pages().length === 0 || !browserContext.pages()[0]) {
       const elapsedTime = Date.now() - startTime;
-      if (elapsedTime > connectParams.timeout)
-        throw new Error("Can't obtain a browser page.");
+      if (elapsedTime > connectParams.timeout) throw new Error("Can't obtain a browser page.");
       await sleep(connectParams.interval);
     }
 

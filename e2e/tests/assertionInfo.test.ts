@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ElectronServiceFactory, env } from "../services";
+import { ElectronServiceFactory, env } from '../services';
 
 const electronService = new ElectronServiceFactory();
 
@@ -30,22 +30,20 @@ afterEach(async () => {
   await electronService.terminate();
 });
 
-describe("Assertion Info Popover", () => {
-  it("creates a link to playwright docs on assertion info popover", async () => {
+describe('Assertion Info Popover', () => {
+  it('creates a link to playwright docs on assertion info popover', async () => {
     const electronWindow = await electronService.getWindow();
     await electronService.enterTestUrl(env.DEMO_APP_URL);
     await electronService.clickStartRecording();
     await electronService.waitForPageToBeIdle();
     await electronService.clickStopRecording();
     await electronService.clickActionElementSettingsButton(
-      "id=action-element-0-0",
-      "text=Add assertion"
+      'id=action-element-0-0',
+      'text=Add assertion'
     );
-    await electronWindow.click("id=action-element-0-1");
-    await electronWindow.hover("id=action-element-0-1");
-    await electronWindow.click(
-      `[aria-label="Begin editing this action"] >> nth=1`
-    );
+    await electronWindow.click('id=action-element-0-1');
+    await electronWindow.hover('id=action-element-0-1');
+    await electronWindow.click(`[aria-label="Begin editing this action"] >> nth=1`);
     await electronWindow.click(
       `[aria-label="Shows a popover with more information about Playwright assertions."]`
     );
@@ -55,6 +53,6 @@ describe("Assertion Info Popover", () => {
         "text=You can add assertions to validate your page's content matches your expectations."
       )
     ).toBeTruthy();
-    expect(await electronWindow.$("text=Read more")).toBeTruthy();
+    expect(await electronWindow.$('text=Read more')).toBeTruthy();
   });
 });

@@ -1,12 +1,12 @@
-import { getProduct, getRecommendedProducts } from "../";
+import { getProduct, getRecommendedProducts } from '../';
 
-const ORDER = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
-const TRACKING = "xx-xxxxxx-xxyxxx";
+const ORDER = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+const TRACKING = 'xx-xxxxxx-xxyxxx';
 
 const createUniqueId = (str) => {
   return str.replace(/[xy]/g, (c) => {
     var r = (Math.random() * 16) | 0,
-      v = c == "x" ? r : (r & 0x3) | 0x8;
+      v = c == 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 };

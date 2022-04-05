@@ -35,9 +35,9 @@ export interface Journey {
   type: JourneyType;
 }
 
-export type StepStatus = "succeeded" | "failed" | "skipped";
+export type StepStatus = 'succeeded' | 'failed' | 'skipped';
 
-export type ResultCategory = StepStatus | "running";
+export type ResultCategory = StepStatus | 'running';
 
 export interface JourneyStep {
   duration: number;
@@ -47,44 +47,40 @@ export interface JourneyStep {
   status: StepStatus;
 }
 
-export type JourneyType = "suite" | "inline";
+export type JourneyType = 'suite' | 'inline';
 
-export type AssertionDrawerMode = "create" | "edit";
+export type AssertionDrawerMode = 'create' | 'edit';
 
 export type Setter<T> = React.Dispatch<React.SetStateAction<T>>;
 
 export enum RecordingStatus {
-  NotRecording = "NOT_RECORDING",
-  Recording = "RECORDING",
-  Paused = "PAUSED",
+  NotRecording = 'NOT_RECORDING',
+  Recording = 'RECORDING',
+  Paused = 'PAUSED',
 }
 
 export interface JourneyStartEvent {
-  event: "journey/start";
+  event: 'journey/start';
   data: {
     name: string;
   };
 }
 
 export interface JourneyEndEvent {
-  event: "journey/end";
+  event: 'journey/end';
   data: {
     name: string;
-    status: "succeeded" | "failed";
+    status: 'succeeded' | 'failed';
   };
 }
 export interface StepEndEvent {
-  event: "step/end";
+  event: 'step/end';
   data: JourneyStep;
 }
 
 export interface ResultOverride {
-  event: "override";
+  event: 'override';
   data: Result | undefined;
 }
 
-export type TestEvent =
-  | JourneyStartEvent
-  | JourneyEndEvent
-  | StepEndEvent
-  | ResultOverride;
+export type TestEvent = JourneyStartEvent | JourneyEndEvent | StepEndEvent | ResultOverride;

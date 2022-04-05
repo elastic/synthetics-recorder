@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiPopover, EuiContextMenu, EuiIcon, EuiText } from "@elastic/eui";
-import React from "react";
-import { Setter } from "../../common/types";
-import { ActionControlButton } from "./ControlButton";
+import { EuiPopover, EuiContextMenu, EuiIcon, EuiText } from '@elastic/eui';
+import React from 'react';
+import { Setter } from '../../common/types';
+import { ActionControlButton } from './ControlButton';
 
 interface ISettingsPopover {
   isRecording: boolean;
@@ -67,28 +67,21 @@ export function SettingsPopover({
             id: 0,
             items: [
               {
-                icon: "plusInCircle",
-                name: "Add assertion",
+                icon: 'plusInCircle',
+                name: 'Add assertion',
                 onClick: onAddAssertion,
               },
               {
                 disabled: isRecording,
-                icon: "pencil",
-                name: "Edit action",
+                icon: 'pencil',
+                name: 'Edit action',
                 onClick: onEdit,
               },
               {
-                icon: (
-                  <EuiIcon
-                    type="trash"
-                    color={isRecording ? "disabledText" : "danger"}
-                  />
-                ),
+                icon: <EuiIcon type="trash" color={isRecording ? 'disabledText' : 'danger'} />,
                 disabled: isRecording,
                 name: (
-                  <EuiText color={isRecording ? "disabledText" : "danger"}>
-                    Delete action
-                  </EuiText>
+                  <EuiText color={isRecording ? 'disabledText' : 'danger'}>Delete action</EuiText>
                 ),
                 onClick: onDelete,
               },

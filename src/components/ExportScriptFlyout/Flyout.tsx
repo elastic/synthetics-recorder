@@ -22,35 +22,35 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlyout } from "@elastic/eui";
-import type { Steps } from "@elastic/synthetics";
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import { getCodeFromActions } from "../../common/shared";
-import type { JourneyType, Setter } from "../../common/types";
-import { CommunicationContext } from "../../contexts/CommunicationContext";
-import { Body } from "./Body";
-import { Footer } from "./Footer";
-import { Header } from "./Header";
+import { EuiFlyout } from '@elastic/eui';
+import type { Steps } from '@elastic/synthetics';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { getCodeFromActions } from '../../common/shared';
+import type { JourneyType, Setter } from '../../common/types';
+import { CommunicationContext } from '../../contexts/CommunicationContext';
+import { Body } from './Body';
+import { Footer } from './Footer';
+import { Header } from './Header';
 
 interface IExportScriptFlyout {
   setVisible: Setter<boolean>;
   steps: Steps;
 }
 
-const FLYOUT_ID = "export-script-flyout-title";
+const FLYOUT_ID = 'export-script-flyout-title';
 
 const LARGE_FLYOUT_SIZE_LINE_LENGTH = 100;
 
 export function ExportScriptFlyout({ setVisible, steps }: IExportScriptFlyout) {
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState('');
   const { ipc } = useContext(CommunicationContext);
   const [exportAsSuite, setExportAsSuite] = useState(false);
 
-  const type: JourneyType = exportAsSuite ? "suite" : "inline";
+  const type: JourneyType = exportAsSuite ? 'suite' : 'inline';
 
   const maxLineSize = useMemo(
     // get max line size in code string
-    () => code.split("\n").reduce((prev, cur) => Math.max(prev, cur.length), 0),
+    () => code.split('\n').reduce((prev, cur) => Math.max(prev, cur.length), 0),
     [code]
   );
 
@@ -65,14 +65,10 @@ export function ExportScriptFlyout({ setVisible, steps }: IExportScriptFlyout) {
     <EuiFlyout
       aria-labelledby={FLYOUT_ID}
       onClose={() => setVisible(false)}
-      size={maxLineSize > LARGE_FLYOUT_SIZE_LINE_LENGTH ? "l" : "m"}
+      size={maxLineSize > LARGE_FLYOUT_SIZE_LINE_LENGTH ? 'l' : 'm'}
     >
       <Header headerText="Journey code" id={FLYOUT_ID} />
-      <Body
-        code={code}
-        exportAsSuite={exportAsSuite}
-        setExportAsSuite={setExportAsSuite}
-      />
+      <Body code={code} exportAsSuite={exportAsSuite} setExportAsSuite={setExportAsSuite} />
       <Footer setVisible={setVisible} type={type} />
     </EuiFlyout>
   );

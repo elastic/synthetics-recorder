@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 const stopDemoApp = () => {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     global.__demoApp__.close(resolve);
   });
 };

@@ -22,24 +22,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import { EuiFlyout, EuiFlyoutBody } from "@elastic/eui";
-import { StepsContext } from "../../contexts/StepsContext";
-import type { JourneyStep, Result } from "../../common/types";
-import { TestContext } from "../../contexts/TestContext";
-import { getCodeFromActions } from "../../common/shared";
-import { ResultFlyoutItem } from "./ResultFlyoutItem";
-import { TestResultFlyoutHeader } from "./TestResultFlyoutHeader";
-import { CommunicationContext } from "../../contexts/CommunicationContext";
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { EuiFlyout, EuiFlyoutBody } from '@elastic/eui';
+import { StepsContext } from '../../contexts/StepsContext';
+import type { JourneyStep, Result } from '../../common/types';
+import { TestContext } from '../../contexts/TestContext';
+import { getCodeFromActions } from '../../common/shared';
+import { ResultFlyoutItem } from './ResultFlyoutItem';
+import { TestResultFlyoutHeader } from './TestResultFlyoutHeader';
+import { CommunicationContext } from '../../contexts/CommunicationContext';
 
-const FLYOUT_TITLE = "result-flyout-title";
+const FLYOUT_TITLE = 'result-flyout-title';
 
 export function TestResult() {
   const { steps } = useContext(StepsContext);
   const { isResultFlyoutVisible, result, setResult, setIsResultFlyoutVisible } =
     useContext(TestContext);
   const { ipc } = useContext(CommunicationContext);
-  const [stepCodeToDisplay, setStepCodeToDisplay] = useState("");
+  const [stepCodeToDisplay, setStepCodeToDisplay] = useState('');
 
   /**
    * This effect will fetch the code for the failed step in the most recent result,
@@ -51,7 +51,7 @@ export function TestResult() {
         ipc,
         // index of failed step will equal number of successful items
         [steps[r.succeeded]],
-        "inline"
+        'inline'
       );
       setStepCodeToDisplay(failedCode);
     }
@@ -63,10 +63,7 @@ export function TestResult() {
   }, [ipc, result, setResult, steps]);
 
   const maxLineLength = useMemo(
-    () =>
-      stepCodeToDisplay
-        .split("\n")
-        .reduce((prev, cur) => Math.max(prev, cur.length), 0),
+    () => stepCodeToDisplay.split('\n').reduce((prev, cur) => Math.max(prev, cur.length), 0),
     [stepCodeToDisplay]
   );
 
@@ -82,7 +79,7 @@ export function TestResult() {
     <EuiFlyout
       aria-labelledby={FLYOUT_TITLE}
       onClose={() => setIsResultFlyoutVisible(false)}
-      size={result.failed === 0 ? "s" : maxLineLength > 60 ? "l" : "m"}
+      size={result.failed === 0 ? 's' : maxLineLength > 60 ? 'l' : 'm'}
     >
       <TestResultFlyoutHeader id={FLYOUT_TITLE} title="Journey Test Result" />
       <EuiFlyoutBody>

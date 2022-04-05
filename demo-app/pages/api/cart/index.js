@@ -1,4 +1,4 @@
-import { getProduct, getRecommendedProducts } from "../";
+import { getProduct, getRecommendedProducts } from '../';
 
 export default async function handler(req, res) {
   const itemsInSession = req.body;

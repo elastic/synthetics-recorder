@@ -21,11 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import { createContext } from "react";
-import { Result, Setter } from "../common/types";
+import { createContext } from 'react';
+import { Result, Setter } from '../common/types';
 
 function notImplemented() {
-  throw Error("Test context not initialized");
+  throw Error('Test context not initialized');
 }
 
 async function notImplementedAsync() {
@@ -45,7 +45,7 @@ export interface ITestContext {
 }
 
 export const TestContext = createContext<ITestContext>({
-  codeBlocks: "",
+  codeBlocks: '',
   isResultFlyoutVisible: false,
   isTestInProgress: false,
   onTest: notImplementedAsync,

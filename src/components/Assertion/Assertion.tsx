@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Action, ActionInContext } from "@elastic/synthetics";
-import React, { useContext, useState } from "react";
+import type { Action, ActionInContext } from '@elastic/synthetics';
+import React, { useContext, useState } from 'react';
 import {
   EuiButton,
   EuiButtonEmpty,
@@ -32,10 +32,10 @@ import {
   EuiFlexItem,
   EuiFormRow,
   EuiSpacer,
-} from "@elastic/eui";
-import { StepsContext } from "../../contexts/StepsContext";
-import { AssertionSelect } from "./Select";
-import { AssertionInfo } from "./AssertionInfo";
+} from '@elastic/eui';
+import { StepsContext } from '../../contexts/StepsContext';
+import { AssertionSelect } from './Select';
+import { AssertionInfo } from './AssertionInfo';
 
 interface IAssertion {
   action: Action;
@@ -59,25 +59,15 @@ function updateAction(
   };
 }
 
-export function Assertion({
-  action,
-  actionContext,
-  actionIndex,
-  close,
-  stepIndex,
-}: IAssertion) {
+export function Assertion({ action, actionContext, actionIndex, close, stepIndex }: IAssertion) {
   const { onUpdateAction } = useContext(StepsContext);
 
-  const [command, setCommand] = useState(action.command || "");
+  const [command, setCommand] = useState(action.command || '');
   const [selector, setSelector] = useState(action.selector);
-  const [value, setValue] = useState(action.value || "");
+  const [value, setValue] = useState(action.value || '');
 
   const saveAssertion = () => {
-    onUpdateAction(
-      updateAction(actionContext, command, selector, value),
-      stepIndex,
-      actionIndex
-    );
+    onUpdateAction(updateAction(actionContext, command, selector, value), stepIndex, actionIndex);
     if (close) close();
   };
 
@@ -98,24 +88,18 @@ export function Assertion({
       <EuiSpacer />
       <EuiFlexGroup direction="column">
         <EuiFlexItem>
-          <AssertionSelect
-            onChange={e => setCommand(e.target.value)}
-            value={command}
-          />
+          <AssertionSelect onChange={(e) => setCommand(e.target.value)} value={command} />
         </EuiFlexItem>
         <EuiFlexItem>
           <EuiFormRow label="Selector">
-            <EuiFieldText
-              onChange={e => setSelector(e.target.value)}
-              value={selector}
-            />
+            <EuiFieldText onChange={(e) => setSelector(e.target.value)} value={selector} />
           </EuiFormRow>
         </EuiFlexItem>
         <EuiFlexItem>
           <EuiFormRow label="Value">
             <EuiFieldText
-              disabled={["innerText", "textContent"].indexOf(command) === -1}
-              onChange={e => setValue(e.target.value)}
+              disabled={['innerText', 'textContent'].indexOf(command) === -1}
+              onChange={(e) => setValue(e.target.value)}
               value={value}
             />
           </EuiFormRow>

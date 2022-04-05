@@ -23,10 +23,10 @@ THE SOFTWARE.
 */
 
 // Load the process.env config from .env file
-require("dotenv").config();
+require('dotenv').config();
 
-const { Registry } = require("playwright/lib/utils/registry");
-const SYNTHETICS_BROWSER_REVISIONS = require("@elastic/synthetics/node_modules/playwright-chromium/browsers.json");
+const { Registry } = require('playwright/lib/utils/registry');
+const SYNTHETICS_BROWSER_REVISIONS = require('@elastic/synthetics/node_modules/playwright-chromium/browsers.json');
 
 /**
  * Constructs the Registry with browsers that will be used
@@ -36,13 +36,11 @@ const registry = new Registry(SYNTHETICS_BROWSER_REVISIONS);
 
 module.exports.getChromeVersion = function () {
   const { browsers } = SYNTHETICS_BROWSER_REVISIONS;
-  const revision = browsers.find(
-    browser => browser.name === "chromium"
-  ).revision;
+  const revision = browsers.find((browser) => browser.name === 'chromium').revision;
   return `chromium-${revision}`;
 };
 
-module.exports.getExecutablePath = function (browserName = "chromium") {
+module.exports.getExecutablePath = function (browserName = 'chromium') {
   return registry.findExecutable(browserName).executablePath();
 };
 
@@ -51,7 +49,7 @@ module.exports.getExecutablePath = function (browserName = "chromium") {
     try {
       await registry.install();
       // eslint-disable-next-line no-console
-      console.log("Installation complete");
+      console.log('Installation complete');
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error(e);

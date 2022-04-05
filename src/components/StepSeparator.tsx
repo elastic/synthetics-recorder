@@ -22,16 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Step } from "@elastic/synthetics";
-import { EuiAccordion, EuiFlexItem, EuiFlexGroup } from "@elastic/eui";
-import React from "react";
-import styled from "styled-components";
-import { SMALL_SCREEN_BREAKPOINT } from "../common/shared";
-import { useStepResultStatus } from "../hooks/useTestResult";
-import { ActionElement } from "./ActionElement";
+import type { Step } from '@elastic/synthetics';
+import { EuiAccordion, EuiFlexItem, EuiFlexGroup } from '@elastic/eui';
+import React from 'react';
+import styled from 'styled-components';
+import { SMALL_SCREEN_BREAKPOINT } from '../common/shared';
+import { useStepResultStatus } from '../hooks/useTestResult';
+import { ActionElement } from './ActionElement';
 
 export const StepSeparatorTopBorder = styled(EuiFlexItem)`
-  border-top: ${props => props.theme.border.thin};
+  border-top: ${(props) => props.theme.border.thin};
 
   && {
     margin-top: 20px;
@@ -61,18 +61,14 @@ interface IStepSeparator {
 }
 
 export function StepSeparator({ index, step }: IStepSeparator) {
-  const testStatus = useStepResultStatus(
-    step.actions.length ? step.actions[0].title : undefined
-  );
+  const testStatus = useStepResultStatus(step.actions.length ? step.actions[0].title : undefined);
 
   return (
     <StepSeparatorAccordion
-      buttonProps={{ style: { width: "auto", flexGrow: 0 } }}
+      buttonProps={{ style: { width: 'auto', flexGrow: 0 } }}
       extraAction={
         <EuiFlexGroup>
-          <StepSeparatorHeading grow={false}>
-            Step {index + 1}
-          </StepSeparatorHeading>
+          <StepSeparatorHeading grow={false}>Step {index + 1}</StepSeparatorHeading>
           <StepSeparatorTopBorder />
         </EuiFlexGroup>
       }

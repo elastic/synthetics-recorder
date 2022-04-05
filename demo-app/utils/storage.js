@@ -1,4 +1,4 @@
-const storage = typeof window === "undefined" ? {} : window.sessionStorage;
+const storage = typeof window === 'undefined' ? {} : window.sessionStorage;
 
 export function get(key) {
   if (!storage) {

@@ -22,29 +22,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import {
-  render as rtlRender,
-  RenderResult,
-  RenderOptions,
-} from "@testing-library/react";
-import React from "react";
-import {
-  IRecordingContext,
-  RecordingContext,
-} from "../../contexts/RecordingContext";
-import { IStepsContext, StepsContext } from "../../contexts/StepsContext";
-import { StyledComponentsEuiProvider } from "../../contexts/StyledComponentsEuiProvider";
-import { IUrlContext, UrlContext } from "../../contexts/UrlContext";
+import { render as rtlRender, RenderResult, RenderOptions } from '@testing-library/react';
+import React from 'react';
+import { IRecordingContext, RecordingContext } from '../../contexts/RecordingContext';
+import { IStepsContext, StepsContext } from '../../contexts/StepsContext';
+import { StyledComponentsEuiProvider } from '../../contexts/StyledComponentsEuiProvider';
+import { IUrlContext, UrlContext } from '../../contexts/UrlContext';
 import {
   getRecordingContextDefaults,
   getUrlContextDefaults,
   getStepsContextDefaults,
-} from "./defaults";
-import { RenderContexts } from "./RenderContexts";
+} from './defaults';
+import { RenderContexts } from './RenderContexts';
 
 export function render<ComponentType>(
   component: React.ReactElement<ComponentType>,
-  rtlRenderOptions?: Omit<RenderOptions, "queries">,
+  rtlRenderOptions?: Omit<RenderOptions, 'queries'>,
   options?: {
     contextOverrides?: {
       recording?: Partial<IRecordingContext>;

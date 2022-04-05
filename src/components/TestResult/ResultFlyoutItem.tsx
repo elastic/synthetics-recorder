@@ -22,12 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiText } from "@elastic/eui";
-import React from "react";
-import type { JourneyStep } from "../../common/types";
-import { ResultBody } from "./ResultBody";
-import { ResultErrorBody } from "./ResultErrorBody";
-import { ResultTitle } from "./ResultTitle";
+import { EuiText } from '@elastic/eui';
+import React from 'react';
+import type { JourneyStep } from '../../common/types';
+import { ResultBody } from './ResultBody';
+import { ResultErrorBody } from './ResultErrorBody';
+import { ResultTitle } from './ResultTitle';
 
 export interface IResultFlyoutItem {
   code: string;
@@ -38,15 +38,10 @@ export interface IResultFlyoutItem {
 export function ResultFlyoutItem({ code, step, stepIndex }: IResultFlyoutItem) {
   const { actionTitles, status, error, duration } = step;
 
-  const durationElement = (
-    <EuiText size="s">{Math.round(duration / 1000)}s</EuiText>
-  );
+  const durationElement = <EuiText size="s">{Math.round(duration / 1000)}s</EuiText>;
 
   return (
-    <ResultTitle
-      durationElement={durationElement}
-      titleText={`Step ${stepIndex + 1}`}
-    >
+    <ResultTitle durationElement={durationElement} titleText={`Step ${stepIndex + 1}`}>
       {error ? (
         <ResultErrorBody
           actionTitles={actionTitles ?? []}

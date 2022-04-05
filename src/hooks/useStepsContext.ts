@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { ActionInContext, Step, Steps } from "@elastic/synthetics";
-import { useState } from "react";
-import type { IStepsContext } from "../contexts/StepsContext";
+import type { ActionInContext, Step, Steps } from '@elastic/synthetics';
+import { useState } from 'react';
+import type { IStepsContext } from '../contexts/StepsContext';
 
 export function useStepsContext(): IStepsContext {
   const [steps, setSteps] = useState<Steps>([]);
@@ -40,7 +40,7 @@ export function useStepsContext(): IStepsContext {
     steps,
     setSteps,
     onDeleteAction: (targetStepIdx, indexToDelete) => {
-      setSteps(steps =>
+      setSteps((steps) =>
         steps.map((step, currentStepIndex) => {
           if (currentStepIndex !== targetStepIdx) return step;
 
@@ -50,7 +50,7 @@ export function useStepsContext(): IStepsContext {
         })
       );
     },
-    onDeleteStep: stepIndex => {
+    onDeleteStep: (stepIndex) => {
       setSteps([...steps.slice(0, stepIndex), ...steps.slice(stepIndex + 1)]);
     },
     onInsertAction: (action, targetStepIdx, indexToInsert) => {
@@ -65,23 +65,17 @@ export function useStepsContext(): IStepsContext {
       );
     },
     onMergeSteps: (indexToInsert, indexToRemove) => {
-      setSteps(oldSteps => {
+      setSteps((oldSteps) => {
         oldSteps[indexToInsert] = {
-          name:
-            oldSteps[indexToInsert].name ??
-            oldSteps[indexToRemove].name ??
-            undefined,
-          actions: [
-            ...steps[indexToInsert].actions,
-            ...steps[indexToRemove].actions,
-          ],
+          name: oldSteps[indexToInsert].name ?? oldSteps[indexToRemove].name ?? undefined,
+          actions: [...steps[indexToInsert].actions, ...steps[indexToRemove].actions],
         };
         oldSteps.splice(indexToRemove, 1);
         return oldSteps;
       });
     },
     onRearrangeSteps: (indexA, indexB) => {
-      setSteps(oldSteps => {
+      setSteps((oldSteps) => {
         const placeholder = steps[indexA];
         oldSteps[indexA] = oldSteps[indexB];
         oldSteps[indexB] = placeholder;
@@ -93,11 +87,11 @@ export function useStepsContext(): IStepsContext {
         throw Error(`Cannot remove all actions from a step.`);
       }
       if (steps.length <= stepIndex) {
-        throw Error("Step index cannot exceed steps length.");
+        throw Error('Step index cannot exceed steps length.');
       }
       const stepToSplit = steps[stepIndex];
       if (stepToSplit.actions.length <= 1) {
-        throw Error("Cannot split step with only one action.");
+        throw Error('Cannot split step with only one action.');
       }
       const reducedStepActions = stepToSplit.actions.slice(0, actionIndex);
       const insertedStepActions = stepToSplit.actions.slice(actionIndex);
@@ -110,11 +104,7 @@ export function useStepsContext(): IStepsContext {
       ]);
     },
     onStepDetailChange,
-    onUpdateAction: (
-      action: ActionInContext,
-      stepIndex: number,
-      actionIndex: number
-    ) => {
+    onUpdateAction: (action: ActionInContext, stepIndex: number, actionIndex: number) => {
       const step = steps[stepIndex];
       onStepDetailChange(
         {

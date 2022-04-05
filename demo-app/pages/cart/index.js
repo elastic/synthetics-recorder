@@ -1,19 +1,19 @@
-import React from "react";
-import { Form } from "react-final-form";
-import useSWR from "swr";
-import Cookies from "js-cookie";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
-import Price, { TotalPrice } from "../../components/Price";
-import CheckoutDetails from "../../components/CheckoutDetails";
-import Recommendations from "../../components/Recommendations";
-import * as storage from "../../utils/storage";
+import React from 'react';
+import { Form } from 'react-final-form';
+import useSWR from 'swr';
+import Cookies from 'js-cookie';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import Price, { TotalPrice } from '../../components/Price';
+import CheckoutDetails from '../../components/CheckoutDetails';
+import Recommendations from '../../components/Recommendations';
+import * as storage from '../../utils/storage';
 
 const CartForm = () => {
   const onSubmit = () => {
-    const sessionId = Cookies.get("session_id");
+    const sessionId = Cookies.get('session_id');
     storage.del(sessionId);
-    window.location.replace("/");
+    window.location.replace('/');
   };
 
   return (
@@ -25,7 +25,7 @@ const CartForm = () => {
             Empty cart
           </button>
           <a className="btn btn-info" href="/" role="button">
-            Browse more products &rarr;{" "}
+            Browse more products &rarr;{' '}
           </a>
         </form>
       )}
@@ -34,11 +34,11 @@ const CartForm = () => {
 };
 
 const Cart = () => {
-  const sessionId = Cookies.get("session_id");
+  const sessionId = Cookies.get('session_id');
   const { data, error } = useSWR(`/api/cart`, (url) =>
     fetch(url, {
-      method: "post",
-      headers: { "content-type": "application/json" },
+      method: 'post',
+      headers: { 'content-type': 'application/json' },
       body: JSON.stringify(storage.get(sessionId)),
     }).then((r) => r.json())
   );
@@ -54,11 +54,9 @@ const Cart = () => {
         <h3>Your shopping cart is empty!</h3>
         <p>Items you add to your shopping cart will appear here.</p>
         <a className="btn btn-primary" href="/" role="button">
-          Browse Products &rarr;{" "}
+          Browse Products &rarr;{' '}
         </a>
-        {recommendations.length > 0 && (
-          <Recommendations recommendations={recommendations} />
-        )}
+        {recommendations.length > 0 && <Recommendations recommendations={recommendations} />}
       </>
     );
   } else {
@@ -77,7 +75,7 @@ const Cart = () => {
           <div key={i}>
             <div className="row pt-2 mb-2">
               <div className="col text-right">
-                <a href={"/product/" + item.id}>
+                <a href={'/product/' + item.id}>
                   <img width="auto" height="60px" src={item.picture} />
                 </a>
               </div>
@@ -99,9 +97,7 @@ const Cart = () => {
         <TotalPrice items={items} />
         <hr />
         <CheckoutDetails />
-        {recommendations.length > 0 && (
-          <Recommendations recommendations={recommendations} />
-        )}
+        {recommendations.length > 0 && <Recommendations recommendations={recommendations} />}
       </>
     );
   }

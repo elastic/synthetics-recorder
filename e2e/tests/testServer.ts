@@ -22,18 +22,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import http from "http";
+import http from 'http';
 
-export function createTestHttpServer(hostname = "127.0.0.1", port = 8082) {
+export function createTestHttpServer(hostname = '127.0.0.1', port = 8082) {
   const server = http.createServer((_req, res) => {
     res.statusCode = 200;
-    res.setHeader("Content-Type", "text/plain");
-    res.end("Hello Elastic Synthetics Recorder");
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('Hello Elastic Synthetics Recorder');
   });
 
   server.listen(port, hostname);
 
-  server.on("error", err => {
+  server.on('error', (err) => {
     // eslint-disable-next-line no-console
     console.error(err);
   });

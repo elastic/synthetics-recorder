@@ -22,18 +22,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem, EuiAccordion } from "@elastic/eui";
-import { ActionInContext } from "@elastic/synthetics";
-import React, { useContext, useState } from "react";
-import styled from "styled-components";
-import { SMALL_SCREEN_BREAKPOINT } from "../../common/shared";
-import { ResultCategory } from "../../common/types";
-import { StepsContext } from "../../contexts/StepsContext";
-import { ActionDetail } from "../ActionDetail";
-import { ActionStatusIndicator } from "../ActionStatusIndicator";
-import { Assertion } from "../Assertion";
-import { Behavior } from "./Behavior";
-import { ExtraActions } from "./ExtraActions";
+import { EuiFlexGroup, EuiFlexItem, EuiAccordion } from '@elastic/eui';
+import { ActionInContext } from '@elastic/synthetics';
+import React, { useContext, useState } from 'react';
+import styled from 'styled-components';
+import { SMALL_SCREEN_BREAKPOINT } from '../../common/shared';
+import { ResultCategory } from '../../common/types';
+import { StepsContext } from '../../contexts/StepsContext';
+import { ActionDetail } from '../ActionDetail';
+import { ActionStatusIndicator } from '../ActionStatusIndicator';
+import { Assertion } from '../Assertion';
+import { Behavior } from './Behavior';
+import { ExtraActions } from './ExtraActions';
 
 interface IActionElement {
   actionIndex: number;
@@ -96,18 +96,16 @@ function ActionComponent({
       gutterSize="none"
     >
       <EuiFlexItem grow={false}>
-        {!step.action.isAssert && (
-          <ActionStatusIndicator showRect={isLast} status={testStatus} />
-        )}
+        {!step.action.isAssert && <ActionStatusIndicator showRect={isLast} status={testStatus} />}
       </EuiFlexItem>
       <Behavior isAssert={step.action.isAssert} omitBorder={isLast}>
         <ActionAccordion
           arrowDisplay="none"
-          buttonProps={{ style: { display: "none" } }}
+          buttonProps={{ style: { display: 'none' } }}
           paddingSize="m"
           id={`step-accordion-${step.title}`}
           initialIsOpen={initialIsOpen}
-          forceState={isOpen ? "open" : "closed"}
+          forceState={isOpen ? 'open' : 'closed'}
           onMouseOver={() => {
             if (!areControlsVisible) {
               setAreControlsVisible(true);
@@ -136,17 +134,17 @@ function ActionComponent({
 
 export const ActionElement = styled(ActionComponent)`
   .euiAccordion__triggerWrapper {
-    background-color: ${props => props.theme.colors.lightestShade};
-    border-top-left-radius: ${props => props.theme.border.radius.medium};
-    border-top-right-radius: ${props => props.theme.border.radius.medium};
-    border: ${props => props.theme.border.thin};
+    background-color: ${(props) => props.theme.colors.lightestShade};
+    border-top-left-radius: ${(props) => props.theme.border.radius.medium};
+    border-top-right-radius: ${(props) => props.theme.border.radius.medium};
+    border: ${(props) => props.theme.border.thin};
     padding: 12px;
   }
 
   .euiAccordion-isOpen > .euiAccordion__childWrapper {
-    border-right: ${props => props.theme.border.thin};
-    border-bottom: ${props => props.theme.border.thin};
-    border-left: ${props => props.theme.border.thin};
+    border-right: ${(props) => props.theme.border.thin};
+    border-bottom: ${(props) => props.theme.border.thin};
+    border-left: ${(props) => props.theme.border.thin};
   }
 
   @media (max-width: ${SMALL_SCREEN_BREAKPOINT}px) {

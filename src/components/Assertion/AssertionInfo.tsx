@@ -30,17 +30,14 @@ import {
   EuiPopover,
   EuiText,
   EuiTitle,
-} from "@elastic/eui";
-import React, { useContext, useState } from "react";
-import styled from "styled-components";
-import {
-  createExternalLinkHandler,
-  PLAYWRIGHT_ASSERTION_DOCS_LINK,
-} from "../../common/shared";
-import { CommunicationContext } from "../../contexts/CommunicationContext";
+} from '@elastic/eui';
+import React, { useContext, useState } from 'react';
+import styled from 'styled-components';
+import { createExternalLinkHandler, PLAYWRIGHT_ASSERTION_DOCS_LINK } from '../../common/shared';
+import { CommunicationContext } from '../../contexts/CommunicationContext';
 
 const InfoPopoverTitle = styled(EuiTitle)`
-  border-bottom: ${props => props.theme.border.thin};
+  border-bottom: ${(props) => props.theme.border.thin};
   padding: 8px;
 `;
 
@@ -73,24 +70,16 @@ export function AssertionInfo() {
         <h4>Add assertion</h4>
       </InfoPopoverTitle>
       <InfoPopoverTextWrapper>
-        <EuiFlexGroup
-          alignItems="flexStart"
-          direction="column"
-          gutterSize="none"
-        >
+        <EuiFlexGroup alignItems="flexStart" direction="column" gutterSize="none">
           <EuiFlexItem grow={false}>
             <AssertionInfoText>
-              You can add assertions to validate your page&apos;s content
-              matches your expectations.
+              You can add assertions to validate your page&apos;s content matches your expectations.
             </AssertionInfoText>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <EuiButtonEmpty
               href={PLAYWRIGHT_ASSERTION_DOCS_LINK}
-              onClick={createExternalLinkHandler(
-                ipc,
-                PLAYWRIGHT_ASSERTION_DOCS_LINK
-              )}
+              onClick={createExternalLinkHandler(ipc, PLAYWRIGHT_ASSERTION_DOCS_LINK)}
             >
               Read more
             </EuiButtonEmpty>

@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React from "react";
-import { useEffect, useRef, useState } from "react";
-import { EuiFieldText } from "@elastic/eui";
-import { Setter } from "../../common/types";
+import React from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { EuiFieldText } from '@elastic/eui';
+import { Setter } from '../../common/types';
 
 interface IStepTitleEditField {
   onStepTitleChange: (text: string) => void;
@@ -55,15 +55,15 @@ export function StepTitleEditField({
   return (
     <EuiFieldText
       aria-label="Sets the title for the current step."
-      onKeyDown={e => {
-        if (e.key === "Enter") {
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
           updateTitle();
-        } else if (e.key === "Escape") {
+        } else if (e.key === 'Escape') {
           setIsEditing(false);
         }
       }}
       onBlur={updateTitle}
-      onChange={e => {
+      onChange={(e) => {
         setTempText(e.target.value);
       }}
       placeholder={title}

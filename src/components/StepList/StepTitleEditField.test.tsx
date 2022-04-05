@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React from "react";
-import { StepTitleEditField } from "./StepTitleEditField";
-import { render } from "@testing-library/react";
+import React from 'react';
+import { StepTitleEditField } from './StepTitleEditField';
+import { render } from '@testing-library/react';
 
 /*
  * This test block is included as an example for the initial
@@ -34,8 +34,8 @@ import { render } from "@testing-library/react";
  * If you're writing more robust tests for this component, feel
  * free to delete this comment and update the test.
  */
-describe("<StepTitleEditField />", () => {
-  it("renders component", () => {
+describe('<StepTitleEditField />', () => {
+  it('renders component', () => {
     const { getByLabelText } = render(
       <StepTitleEditField
         onStepTitleChange={jest.fn()}
@@ -43,6 +43,6 @@ describe("<StepTitleEditField />", () => {
         title="Hello there!"
       />
     );
-    expect(getByLabelText("Sets the title for the current step."));
+    expect(getByLabelText('Sets the title for the current step.'));
   });
 });

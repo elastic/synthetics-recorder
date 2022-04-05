@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { useContext, useEffect, useState } from "react";
-import { ResultCategory } from "../common/types";
-import { TestContext } from "../contexts/TestContext";
+import { useContext, useEffect, useState } from 'react';
+import { ResultCategory } from '../common/types';
+import { TestContext } from '../contexts/TestContext';
 
 /**
  * Today test results are limited to the resolution of step-level.
@@ -34,9 +34,7 @@ import { TestContext } from "../contexts/TestContext";
  * @param stepName The name of the step to check
  * @returns The status of the step, if available
  */
-export function useStepResultStatus(
-  stepName?: string
-): ResultCategory | undefined {
+export function useStepResultStatus(stepName?: string): ResultCategory | undefined {
   const { result } = useContext(TestContext);
   const [statuses, setStatuses] = useState<Record<string, ResultCategory>>({});
 

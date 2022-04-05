@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React from "react";
-import { EuiFlexGroup, EuiFlexItem, EuiText } from "@elastic/eui";
-import { StepTitleEditField } from "./StepTitleEditField";
-import { Setter } from "../../common/types";
+import React from 'react';
+import { EuiFlexGroup, EuiFlexItem, EuiText } from '@elastic/eui';
+import { StepTitleEditField } from './StepTitleEditField';
+import { Setter } from '../../common/types';
 
 interface IStepAccordionTitle {
   index: number;
