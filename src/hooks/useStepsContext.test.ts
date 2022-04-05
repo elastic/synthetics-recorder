@@ -220,7 +220,7 @@ describe("useStepsContext", () => {
       ];
     });
 
-    const mapActionName = (a: ActionInContext, _: number) => a.action.name;
+    const mapActionName = (a: ActionInContext) => a.action.name;
 
     it("throws an error if target index is less than 0", () => {
       expect(() =>
