@@ -22,26 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ActionInContext } from "@elastic/synthetics";
+import { createAction } from "../helpers/test";
 import { isDroppable } from "./useDrop";
-
-// copied from upstream branch, do not merge this but delete and reference
-// original function after rebasing
-function createAction(
-  name: string,
-  overrides?: Partial<ActionInContext>
-): ActionInContext {
-  return {
-    action: {
-      name,
-      signals: [],
-    },
-    frameUrl: "https://www.elastic.co",
-    isMainFrame: true,
-    pageAlias: "pageAlias",
-    ...(overrides ?? {}),
-  };
-}
 
 describe("useDrop", () => {
   describe(isDroppable.name, () => {

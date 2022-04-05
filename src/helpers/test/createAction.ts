@@ -22,33 +22,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { createAction } from "../helpers/test";
-import { canDrag } from "./useDragAndDrop";
+import { ActionInContext } from "@elastic/synthetics";
 
-describe("useDragAndDrop", () => {
-  describe(canDrag.name, () => {
-    it("returns `false` for first step", () => {
-      expect(canDrag(0, [])).toBeNull();
-    });
-
-    it("returns `false` if preceding, current, and following steps have only one element", () => {
-      expect(
-        canDrag(1, [
-          { actions: [createAction("action-1")] },
-          { actions: [createAction("action-2")] },
-          { actions: [createAction("action-3")] },
-        ])
-      ).toBe(false);
-    });
-
-    it("returns `true` if step heading can be dragged", () => {
-      expect(
-        canDrag(2, [
-          { actions: [createAction("action-1")] },
-          { actions: [createAction("action-2")] },
-          { actions: [createAction("action-3"), createAction("action-4")] },
-        ])
-      ).toBe(true);
-    });
-  });
-});
+export function createAction(
+  name: string,
+  overrides?: Partial<ActionInContext>
+): ActionInContext {
+  return {
+    action: {
+      name,
+      signals: [],
+    },
+    frameUrl: "https://www.elastic.co",
+    isMainFrame: true,
+    pageAlias: "pageAlias",
+    ...(overrides ?? {}),
+  };
+}

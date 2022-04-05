@@ -29,25 +29,8 @@ import {
   RenderHookResult,
 } from "@testing-library/react-hooks";
 import { IStepsContext } from "../contexts/StepsContext";
+import { createAction } from "../helpers/test";
 import { useStepsContext } from "./useStepsContext";
-
-// TODO: copied from upstream branch, do not merge this but delete and reference
-// original function after rebasing
-function createAction(
-  name: string,
-  overrides?: Partial<ActionInContext>
-): ActionInContext {
-  return {
-    action: {
-      name,
-      signals: [],
-    },
-    frameUrl: "https://www.elastic.co",
-    isMainFrame: true,
-    pageAlias: "pageAlias",
-    ...(overrides ?? {}),
-  };
-}
 
 describe("useStepsContext", () => {
   let defaultResult: RenderHookResult<unknown, IStepsContext>;
