@@ -44,11 +44,6 @@ export function useSyntheticsTest(steps: Steps): ITestContext {
   const [isTestInProgress, setIsTestInProgress] = useState(false);
   const { ipc } = useContext(CommunicationContext);
 
-  /**
-   * This is needed to satisfy some tech debt where we reference a function by this
-   * name elsewhere in the application. This functionality is removed by a downstream branch,
-   * when it's merged we can delete this handler.
-   */
   const setResult = useCallback((data: Result | undefined) => {
     dispatch({
       event: "override",
