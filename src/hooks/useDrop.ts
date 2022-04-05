@@ -35,9 +35,9 @@ export const isDroppable = (
   /**
    * An action element is droppable when its parent step has > 1 item,
    * it is not the final item in the step, and the step being dragged is
-   * a neighboring step.
+   * either a neighboring step, or the action's own step.
    */
-  steps[stepIndex].actions.length !== 1 &&
+  steps[stepIndex].actions.length > 1 &&
   steps[stepIndex].actions.length !== actionIndex + 1 &&
   (dragStepIndex === undefined || Math.abs(dragStepIndex - stepIndex) <= 1);
 
