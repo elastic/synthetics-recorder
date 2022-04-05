@@ -28,23 +28,25 @@ import type { IStepsContext } from "../contexts/StepsContext";
 
 export function useStepsContext(): IStepsContext {
   const [steps, setSteps] = useState<Steps>([]);
+
   const setStepName = useCallback((idx: number, name?: string) => {
-    setSteps(oldSteps => {
-      return oldSteps.map((step, i) => {
+    setSteps(oldSteps =>
+      oldSteps.map((step, i) => {
         if (idx !== i) return step;
         step.name = name;
         return step;
-      });
-    });
+      })
+    );
   }, []);
+
   const onStepDetailChange = (updatedStep: Step, indexToUpdate: number) => {
     setSteps(
       steps.map((currentStep, iterIndex) =>
-        // if the `currentStep` is at the `indexToUpdate`, return `updatedStep` instead of stale object
         iterIndex === indexToUpdate ? updatedStep : currentStep
       )
     );
   };
+
   return {
     steps,
     setSteps,
@@ -129,11 +131,9 @@ export function useStepsContext(): IStepsContext {
      */
     onDropStep: (targetIndex, initiatorIndex, actionIndex) => {
       if (targetIndex < 0 || targetIndex >= steps.length)
-        // TODO: improve error message
-        throw Error("Invalid index for drag and drop step merge procedure");
+        throw Error("Cannot drop step index because it does not exist");
       if (initiatorIndex <= 0 || initiatorIndex >= steps.length)
-        // TODO: improve error message
-        throw Error("Cannot drag/drop from specified index");
+        throw Error("Cannot drag specified index because it does not exist");
 
       const targetStep = steps[targetIndex];
       const initiatorStep = steps[initiatorIndex];
