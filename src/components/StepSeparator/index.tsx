@@ -22,41 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexItem, EuiButtonIcon, EuiToolTip } from "@elastic/eui";
 import type { Step } from "@elastic/synthetics";
-import React, { useContext, useState } from "react";
-import { DRAG_AND_DROP_DATA_TRANSFER_TYPE } from "../../common/shared";
-import { StepSeparatorDragDropDataTransfer } from "../../common/types";
-import { DragAndDropContext } from "../../contexts/DragAndDropContext";
-import { StepsContext } from "../../contexts/StepsContext";
+import React, { useState } from "react";
 import { useDragAndDrop } from "../../hooks/useDragAndDrop";
 import { useStepResultStatus } from "../../hooks/useTestResult";
 import { ActionElement } from "../ActionElement/ActionElement";
-import { EditStepNameInput } from "./EditStepNameInput";
-import {
-  ControlsWrapper,
-  DeleteButton,
-  StepSeparatorAccordion,
-  StepSeparatorHeading,
-  StepSeparatorTopBorder,
-} from "./styles";
-
-function createStepSeparatorDragDropData(
-  stepIndex: number
-): StepSeparatorDragDropDataTransfer {
-  return { initiatorIndex: stepIndex };
-}
+import { SeparatorActions } from "./SeparatorActions";
+import { StepSeparatorAccordion } from "./styles";
 
 interface IStepSeparator {
   index: number;
   step: Step;
-}
-
-type DragHandler = React.DragEventHandler<HTMLDivElement | HTMLSpanElement>;
-
-interface IDragProps {
-  onDragStart?: DragHandler;
-  onDragEnd?: DragHandler;
 }
 
 export function StepSeparator({ index, step }: IStepSeparator) {
@@ -64,40 +40,9 @@ export function StepSeparator({ index, step }: IStepSeparator) {
     step.actions.length ? step.actions[0].title : undefined,
     step.name
   );
-  const { setDragIndex } = useContext(DragAndDropContext);
-  const { onMergeSteps, setStepName } = useContext(StepsContext);
-  const [showEditButton, setShowEditButton] = useState(true);
-  const [showDeleteButton, setShowDeleteButton] = useState(true);
-  const [isEditingName, setIsEditingName] = useState(false);
   const [showControls, setShowControls] = useState(false);
   const [canDelete, setCanDelete] = useState(true);
   const { isDraggable } = useDragAndDrop(index);
-  const [isGrabbing, setIsGrabbing] = useState<boolean | null>(
-    isDraggable === null ? isDraggable : false
-  );
-
-  const dragParams: IDragProps = {};
-  if (isDraggable) {
-    dragParams.onDragStart = e => {
-      setDragIndex(index);
-      setShowDeleteButton(false);
-      setShowEditButton(false);
-      const dragDataString = JSON.stringify(
-        createStepSeparatorDragDropData(index)
-      );
-      e.dataTransfer.setData(DRAG_AND_DROP_DATA_TRANSFER_TYPE, dragDataString);
-      e.dataTransfer.setData("text/plain", dragDataString);
-    };
-    dragParams.onDragEnd = () => {
-      setShowDeleteButton(true);
-      setShowEditButton(true);
-      setDragIndex(undefined);
-      setIsGrabbing(false);
-    };
-  }
-
-  const defaultStepName = `Step ${index + 1}`;
-  const stepHeadingText = step.name ?? defaultStepName;
 
   return (
     <div
@@ -105,69 +50,14 @@ export function StepSeparator({ index, step }: IStepSeparator) {
       onMouseLeave={() => setShowControls(false)}
     >
       <StepSeparatorAccordion
-        className="stepSeparator"
         extraAction={
-          <ControlsWrapper
-            alignItems="center"
-            draggable={!!isDraggable}
-            gutterSize="s"
-            isGrabbing={isGrabbing}
-            onMouseDown={() => setIsGrabbing(true)}
-            onMouseUp={() => setIsGrabbing(false)}
-            {...dragParams}
-          >
-            {!isEditingName && (
-              <StepSeparatorHeading id={`step-${index}`} grow={false}>
-                {stepHeadingText}
-              </StepSeparatorHeading>
-            )}
-            {isEditingName && (
-              <EditStepNameInput
-                placeholder={defaultStepName}
-                defaultValue={step.name}
-                onComplete={(value?: string | null) => {
-                  setIsEditingName(false);
-                  setShowEditButton(true);
-                  if (value !== null) {
-                    setStepName(index, value);
-                  }
-                }}
-              />
-            )}
-            {showEditButton && (
-              <EuiFlexItem
-                grow={false}
-                style={{ visibility: showControls ? "visible" : "hidden" }}
-              >
-                <EuiToolTip content="Edit step name">
-                  <EuiButtonIcon
-                    aria-label="Rename step"
-                    color="text"
-                    iconType="pencil"
-                    onClick={() => {
-                      setIsEditingName(true);
-                      setShowEditButton(false);
-                    }}
-                  />
-                </EuiToolTip>
-              </EuiFlexItem>
-            )}
-            {index > 0 && canDelete && showDeleteButton && !isEditingName && (
-              <EuiFlexItem grow={false}>
-                <EuiToolTip content="Delete this step divider">
-                  <DeleteButton
-                    aria-label="Delete step"
-                    color="text"
-                    disabled={!canDelete}
-                    iconType="trash"
-                    isVisible={showControls}
-                    onClick={() => onMergeSteps(index - 1, index)}
-                  />
-                </EuiToolTip>
-              </EuiFlexItem>
-            )}
-            {!isEditingName && <StepSeparatorTopBorder />}
-          </ControlsWrapper>
+          <SeparatorActions
+            canDelete={canDelete}
+            index={index}
+            isDraggable={isDraggable}
+            showControls={showControls}
+            step={step}
+          />
         }
         id={`step-separator-${index}`}
         initialIsOpen
