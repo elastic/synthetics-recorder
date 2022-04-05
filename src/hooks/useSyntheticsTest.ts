@@ -109,3 +109,9 @@ export function useSyntheticsTest(steps: Steps): ITestContext {
     setResult,
   };
 }
+
+export type RunJourneyOptions = {
+  steps: Steps;
+  code: string;
+  isSuite: boolean;
+};

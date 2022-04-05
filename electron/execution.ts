@@ -29,7 +29,7 @@ import { writeFile, rm, mkdir } from "fs/promises";
 import { ipcMain as ipc } from "electron-better-ipc";
 import { EventEmitter, once } from "events";
 import { dialog, shell, BrowserWindow } from "electron";
-import { fork } from "child_process";
+import { fork, ChildProcess } from "child_process";
 import logger from "electron-log";
 import isDev from "electron-is-dev";
 import { SyntheticsGenerator } from "@elastic/synthetics/dist/formatter/javascript";
@@ -39,6 +39,9 @@ import {
   EXECUTABLE_PATH,
 } from "./config";
 import { BrowserContext } from "playwright";
+import type { ActionInContext, Steps } from "@elastic/synthetics";
+import { TestEvent } from "../src/common/types";
+import { RunJourneyOptions } from "../src/hooks/useSyntheticsTest";
 const SYNTHETICS_CLI = require.resolve("@elastic/synthetics/dist/cli");
 const IS_TEST_ENV = process.env.NODE_ENV === "test";
 const CDP_TEST_PORT = parseInt(process.env.TEST_PORT ?? "61337") + 1;
@@ -90,13 +93,16 @@ async function openPage(context: BrowserContext, url: string) {
 let browserContext: BrowserContext | null = null;
 let actionListener = new EventEmitter();
 
-async function recordJourneys(data, browserWindow) {
+async function recordJourneys(
+  data: { url: string },
+  browserWindow: BrowserWindow
+) {
   try {
     const { browser, context } = await launchContext();
     browserContext = context;
     actionListener = new EventEmitter();
     // Listen to actions from Playwright recording session
-    const actionsHandler = actions => {
+    const actionsHandler = (actions: ActionInContext[]) => {
       ipc.callRenderer(browserWindow, "change", { actions });
     };
     actionListener.on("actions", actionsHandler);
@@ -135,9 +141,9 @@ async function recordJourneys(data, browserWindow) {
  * @param {*} event the result data from Playwright
  * @returns the event data combined with action titles in a new object
  */
-function addActionsToStepResult(steps, event) {
+function addActionsToStepResult(steps: any, event: any) {
   const step = steps.find(
-    s =>
+    (s: any) =>
       s.length &&
       s[0].title &&
       event?.data?.name &&
@@ -149,14 +155,15 @@ function addActionsToStepResult(steps, event) {
     data: {
       ...event.data,
       actionTitles: step.map(
-        (action, index) => action?.title ?? `Action ${index + 1}`
+        (action: ActionInContext, index: number) =>
+          action?.title ?? `Action ${index + 1}`
       ),
     },
   };
 }
 
-async function onTest(data, browserWindow) {
-  const parseOrSkip = chunk => {
+async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
+  const parseOrSkip = (chunk: string) => {
     // at times stdout ships multiple steps in one chunk, broken by newline,
     // so here we split on the newline
     return chunk.split("\n").map(subChunk => {
@@ -169,7 +176,7 @@ async function onTest(data, browserWindow) {
   };
 
   // returns TestEvent interface defined in common/types.ts
-  const constructEvent = parsed => {
+  const constructEvent = (parsed: any) => {
     switch (parsed.type) {
       case "journey/start": {
         const { journey } = parsed;
@@ -205,11 +212,11 @@ async function onTest(data, browserWindow) {
     }
   };
 
-  const sendTestEvent = event => {
+  const sendTestEvent = (event: TestEvent) => {
     browserWindow.webContents.send("test-event", event);
   };
 
-  const emitResult = chunk => {
+  const emitResult = (chunk: any) => {
     parseOrSkip(chunk).forEach(parsed => {
       const event = constructEvent(parsed);
       if (event) {
@@ -222,7 +229,7 @@ async function onTest(data, browserWindow) {
     });
   };
 
-  let synthCliProcess = null; // child process, define here to kill when finished
+  let synthCliProcess: ChildProcess | null = null; // child process, define here to kill when finished
   try {
     const isSuite = data.isSuite;
     const args = [
@@ -246,32 +253,34 @@ async function onTest(data, browserWindow) {
      */
     synthCliProcess = fork(`${SYNTHETICS_CLI}`, args, {
       env: {
+        ...process.env,
         PLAYWRIGHT_BROWSERS_PATH,
       },
       cwd: isDev ? process.cwd() : process.resourcesPath,
       stdio: "pipe",
     });
-    const { stdout, stdin, stderr } = synthCliProcess;
+    const { stdout, stdin, stderr } = synthCliProcess as ChildProcess;
     if (!isSuite) {
-      stdin.write(data.code);
-      stdin.end();
+      stdin!.write(data.code);
+      stdin!.end();
     }
-    stdout.setEncoding("utf-8");
-    stderr.setEncoding("utf-8");
-    for await (const chunk of stdout) {
+    stdout!.setEncoding("utf-8");
+    stderr!.setEncoding("utf-8");
+    for await (const chunk of stdout!) {
       emitResult(chunk);
     }
-    for await (const chunk of stderr) {
+    for await (const chunk of stderr!) {
       logger.error(chunk);
     }
     if (isSuite) {
       await rm(filePath, { recursive: true, force: true });
     }
-  } catch (error) {
+  } catch (error: any) {
     logger.error(error);
     sendTestEvent({
       event: "journey/end",
       data: {
+        status: "failed",
         error,
       },
     });
@@ -282,28 +291,27 @@ async function onTest(data, browserWindow) {
   }
 }
 
-async function onFileSave(code) {
-  const { filePath, canceled } = await dialog.showSaveDialog(
-    BrowserWindow.getFocusedWindow(),
-    {
-      defaultPath: "recorded.journey.js",
-    }
-  );
+async function onFileSave(code: string) {
+  const window =
+    BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
+  const { filePath, canceled } = await dialog.showSaveDialog(window, {
+    defaultPath: "recorded.journey.js",
+  });
 
-  if (!canceled) {
+  if (!canceled && filePath) {
     await writeFile(filePath, code);
     return true;
   }
   return false;
 }
 
-async function onTransformCode(data) {
+async function onTransformCode(data: { isSuite: boolean; steps: Steps }) {
   const generator = new SyntheticsGenerator(data.isSuite);
-  const code = generator.generateFromSteps(data.actions);
-  return code.join("\n");
+  const code = generator.generateFromSteps(data.steps);
+  return code;
 }
 
-async function onSetMode(mode) {
+async function onSetMode(mode: string) {
   if (!browserContext) return;
   const page = browserContext.pages()[0];
   if (!page) return;
@@ -318,7 +326,7 @@ async function onSetMode(mode) {
   return selector;
 }
 
-async function onLinkExternal(url) {
+async function onLinkExternal(url: string) {
   try {
     await shell.openExternal(url);
   } catch (e) {
@@ -327,8 +335,8 @@ async function onLinkExternal(url) {
 }
 
 export default function setupListeners() {
-  ipc.answerRenderer("record-journey", recordJourneys);
-  ipc.answerRenderer("run-journey", onTest);
+  ipc.answerRenderer<{ url: string }>("record-journey", recordJourneys);
+  ipc.answerRenderer<RunJourneyOptions>("run-journey", onTest);
   ipc.answerRenderer("save-file", onFileSave);
   ipc.answerRenderer("actions-to-code", onTransformCode);
   ipc.answerRenderer("set-mode", onSetMode);

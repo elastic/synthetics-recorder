@@ -1,6 +1,7 @@
 coverage
 dist
 build
+out
 node_modules
 journeys/*.js
 

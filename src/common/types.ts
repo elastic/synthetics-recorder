@@ -69,8 +69,9 @@ export interface JourneyStartEvent {
 export interface JourneyEndEvent {
   event: "journey/end";
   data: {
-    name: string;
+    name?: string;
     status: "succeeded" | "failed";
+    error?: Error;
   };
 }
 export interface StepEndEvent {
