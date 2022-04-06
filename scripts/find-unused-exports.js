@@ -27,4 +27,5 @@ const result = unusedExports.default("./tsconfig.json");
 if (Object.keys(result).length) {
   throw Error(`Unused exports detected\n${JSON.stringify(result, null, 2)}`);
 }
+// eslint-disable-next-line no-console
 console.log("No unused exports detected.");
