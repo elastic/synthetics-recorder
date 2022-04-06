@@ -24,7 +24,8 @@ THE SOFTWARE.
 
 import type { ActionInContext, Step, Steps } from "@elastic/synthetics";
 import { useCallback, useState } from "react";
-import type { IStepsContext } from "../contexts/StepsContext";
+import type { IStepsContext } from "../../contexts/StepsContext";
+import { onDropStep } from "./onDropStep";
 
 export function useStepsContext(): IStepsContext {
   const [steps, setSteps] = useState<Steps>([]);
@@ -129,75 +130,7 @@ export function useStepsContext(): IStepsContext {
      * Action index: 0
      * Output: [[1, 2, 3], [4, 5], [6, 7, 8, 9]]
      */
-    onDropStep: (targetIndex, initiatorIndex, actionIndex) => {
-      if (targetIndex < 0 || targetIndex >= steps.length)
-        throw Error("Cannot drop step index because it does not exist");
-      if (initiatorIndex <= 0 || initiatorIndex >= steps.length)
-        throw Error("Cannot drag specified index because it does not exist");
-
-      const targetStep = steps[targetIndex];
-      const initiatorStep = steps[initiatorIndex];
-
-      // corresponds to example 1 above
-      if (targetIndex < initiatorIndex) {
-        const newTargetStep = targetStep.actions.slice(0, actionIndex + 1);
-        const toMerge = targetStep.actions.slice(
-          actionIndex + 1,
-          targetStep.actions.length
-        );
-        const newInitiator = [...toMerge, ...initiatorStep.actions];
-        setSteps(oldSteps => [
-          ...oldSteps.slice(0, targetIndex),
-          { actions: newTargetStep, name: targetStep.name },
-          { actions: newInitiator, name: initiatorStep.name },
-          ...oldSteps.slice(initiatorIndex + 1, oldSteps.length),
-        ]);
-      }
-      // corresponds to example 2 above
-      else if (targetIndex === initiatorIndex) {
-        setSteps(oldSteps => {
-          return [
-            ...oldSteps.slice(0, initiatorIndex - 1),
-            {
-              actions: [
-                ...oldSteps[initiatorIndex - 1].actions,
-                ...targetStep.actions.slice(0, actionIndex + 1),
-              ],
-              name: oldSteps[initiatorIndex - 1].name,
-            },
-            {
-              actions: targetStep.actions.slice(
-                actionIndex + 1,
-                targetStep.actions.length
-              ),
-              name: initiatorStep.name,
-            },
-            ...oldSteps.slice(initiatorIndex + 1, oldSteps.length),
-          ];
-        });
-      }
-      // corresponds to example 3 above
-      else {
-        setSteps(oldSteps => [
-          ...oldSteps.slice(0, initiatorIndex),
-          {
-            actions: [
-              ...initiatorStep.actions,
-              ...targetStep.actions.slice(0, actionIndex + 1),
-            ],
-            name: initiatorStep.name,
-          },
-          {
-            actions: targetStep.actions.slice(
-              actionIndex + 1,
-              targetStep.actions.length
-            ),
-            name: targetStep.name,
-          },
-          ...oldSteps.slice(targetIndex + 1, oldSteps.length),
-        ]);
-      }
-    },
+    onDropStep: onDropStep(steps, setSteps),
     onSplitStep: (stepIndex, actionIndex) => {
       if (actionIndex === 0) {
         throw Error(`Cannot remove all actions from a step.`);

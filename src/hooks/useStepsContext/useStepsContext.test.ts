@@ -28,8 +28,8 @@ import {
   renderHook,
   RenderHookResult,
 } from "@testing-library/react-hooks";
-import { IStepsContext } from "../contexts/StepsContext";
-import { createAction, createStep, createSteps } from "../helpers/test";
+import { IStepsContext } from "../../contexts/StepsContext";
+import { createAction, createStep, createSteps } from "../../helpers/test";
 import { useStepsContext } from "./useStepsContext";
 
 describe("useStepsContext", () => {
