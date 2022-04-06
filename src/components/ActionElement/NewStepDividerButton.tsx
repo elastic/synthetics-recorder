@@ -52,7 +52,7 @@ export function NewStepDividerButton({
 }: Props) {
   return (
     <AddStepDivider
-      aria-label="Insert a step between actions. Use this to to group actions into logical steps"
+      aria-label="Insert a step between actions. Use this button to group actions into logical steps"
       computedvisibility={actionIndex > 0 ? "visible" : "hidden"}
       color="text"
       iconType="plusInCircle"
