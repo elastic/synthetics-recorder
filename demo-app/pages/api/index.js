@@ -114,15 +114,15 @@ export const getProducts = () => [
   },
 ];
 
-export const getProduct = (productId) => {
+export const getProduct = productId => {
   const products = getProducts();
-  return products.find((product) => product.id === productId);
+  return products.find(product => product.id === productId);
 };
 
-export const getRecommendedProducts = (productId) => {
+export const getRecommendedProducts = productId => {
   const products = getProducts();
   const recommendedProducts = products.filter(
-    (product) => product.id !== productId
+    product => product.id !== productId
   );
   return recommendedProducts.sort(() => Math.random() - Math.random());
 };

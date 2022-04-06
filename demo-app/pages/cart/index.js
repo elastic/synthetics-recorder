@@ -35,12 +35,12 @@ const CartForm = () => {
 
 const Cart = () => {
   const sessionId = Cookies.get("session_id");
-  const { data, error } = useSWR(`/api/cart`, (url) =>
+  const { data, error } = useSWR(`/api/cart`, url =>
     fetch(url, {
       method: "post",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(storage.get(sessionId)),
-    }).then((r) => r.json())
+    }).then(r => r.json())
   );
   if (error) return <div>Failed to load products</div>;
   if (!data) return <div>loading products...</div>;

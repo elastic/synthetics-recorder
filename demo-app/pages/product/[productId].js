@@ -17,7 +17,7 @@ export async function getServerSideProps({ params }) {
   };
 }
 
-const onSubmit = async (value) => {
+const onSubmit = async value => {
   const sessionId = Cookies.get("session_id");
   if (!storage.get(sessionId)) {
     storage.set(sessionId, []);
@@ -65,8 +65,8 @@ const ProductForm = ({ data }) => (
 );
 
 const Product = ({ productId }) => {
-  const { data, error } = useSWR(`/api/product/${productId}`, (url) =>
-    fetch(url).then((r) => r.json())
+  const { data, error } = useSWR(`/api/product/${productId}`, url =>
+    fetch(url).then(r => r.json())
   );
   if (error) return <div>Failed to load products</div>;
   if (!data) return <div>loading products...</div>;

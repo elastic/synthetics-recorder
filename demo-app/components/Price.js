@@ -6,7 +6,7 @@ export const renderPrice = (data, key = "price_usd") => {
   return value.currency_code + " " + Number(price).toFixed(2);
 };
 
-export const renderTotalCost = (items) => {
+export const renderTotalCost = items => {
   const price = items.reduce((acc, { price_usd, quantity }) => {
     const value = `${price_usd.units}.${price_usd.nanos || 0}`;
     return acc + Number(value) * Number(quantity);

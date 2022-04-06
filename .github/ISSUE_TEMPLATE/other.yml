@@ -1,7 +1,7 @@
 name: Other ⚙
 description: Register a chore, or some other type of task.
-title: '[Other] '
-labels: ['chore']
+title: "[Other] "
+labels: ["chore"]
 body:
   - type: textarea
     id: task_summary

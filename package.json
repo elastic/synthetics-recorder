@@ -6,16 +6,13 @@
   "scripts": {
     "install:pw": "node scripts/install-pw.js",
     "preinstall": "npx npm-force-resolutions@0.0.10",
-    "postinstall": "npm run install:pw && electron-builder install-app-deps && npm run prepare-demo-app",
+    "postinstall": "npm run install:pw && electron-builder install-app-deps && npm run prepare-demo-app && tsc",
     "prepare-demo-app": "npm install --prefix demo-app && npm run build --prefix demo-app",
     "react:start": "react-scripts start",
     "react:build": "react-scripts build",
     "electron:copy": "cp -r ./electron/. ./build",
-    "dev": "concurrently -k \"BROWSER=none npm run react:start\" \"npm run dev:electron:tsc\" \"wait-on tcp:3000 && nodemon --exec electron out/electron/electron.js\"",
-    "dev:electron": "npm run dev:electron:tsc && npm run dev:electron:run",
-    "dev:electron:tsc": "tsc -p tsconfig.electron.json -w",
-    "dev:electron:run": "nodemon --exec electron out/electron/electron.js",
-    "build": "npm run clean && npm run react:build && npm run electron:copy",
+    "dev": "concurrently -k \"BROWSER=none npm run react:start\" \"tsc -w\" \"wait-on tcp:3000 && nodemon --exec electron build/electron/electron.js\"",
+    "build": "npm run clean && npm run react:build && tsc",
     "pack": "npm run build && electron-builder",
     "release": "npm run build && electron-builder -mwl --publish=always",
     "clean": "rm -rf ./build && rm -rf ./dist",
@@ -42,7 +39,7 @@
     "playwright"
   ],
   "license": "MIT",
-  "main": "build/electron.js",
+  "main": "build/electron/electron.js",
   "homepage": "./",
   "build": {
     "productName": "Elastic-Synthetics-Recorder",
@@ -113,6 +110,8 @@
     "react-scripts": "5.0.0",
     "react-test-renderer": "^17.0.2",
     "ts-jest": "^26.5.6",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.5.5",
     "wait-on": "^6.0.1"
   },
   "dependencies": {

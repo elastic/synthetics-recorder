@@ -35,7 +35,7 @@ unhandled({ logger: err => logger.error(err) });
 debug({ isEnabled: true, showDevTools: false });
 
 const BUILD_DIR = join(__dirname, "..", "build");
-
+console.log("HI");
 // We can't read from the `env` file within `services` here
 // so we must access the process env directly
 const IS_TEST = process.env.NODE_ENV === "test";
