@@ -1,13 +1,13 @@
-import React from 'react';
-import { Form, Field } from 'react-final-form';
-import useSWR from 'swr';
-import Cookies from 'js-cookie';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
-import Price from '../../components/Price';
-import Recommendations from '../../components/Recommendations';
-import Ad from '../../components/Ad';
-import * as storage from '../../utils/storage';
+import React from "react";
+import { Form, Field } from "react-final-form";
+import useSWR from "swr";
+import Cookies from "js-cookie";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
+import Price from "../../components/Price";
+import Recommendations from "../../components/Recommendations";
+import Ad from "../../components/Ad";
+import * as storage from "../../utils/storage";
 
 export async function getServerSideProps({ params }) {
   return {
@@ -18,7 +18,7 @@ export async function getServerSideProps({ params }) {
 }
 
 const onSubmit = async value => {
-  const sessionId = Cookies.get('session_id');
+  const sessionId = Cookies.get("session_id");
   if (!storage.get(sessionId)) {
     storage.set(sessionId, []);
   }
@@ -26,7 +26,7 @@ const onSubmit = async value => {
   const items = storage.get(sessionId);
   items.push({ id: productId, quantity });
   storage.set(sessionId, items);
-  window.location.replace('/cart');
+  window.location.replace("/cart");
 };
 
 const ProductForm = ({ data }) => (

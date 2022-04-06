@@ -32,7 +32,7 @@ module.exports = {
   },
   plugins: ['header', 'prettier'],
   extends: ['react-app', 'plugin:react/recommended', 'prettier'],
-  ignorePatterns: ['build', 'local-browsers'],
+  ignorePatterns: ['build', 'local-browsers', 'demo-app'],
   overrides: [
     {
       extends: ['eslint:recommended'],

@@ -1,9 +1,9 @@
-import React from 'react';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
-import Recommendations from '../../components/Recommendations';
-import { renderTotalCost, getShippingCost } from '../../components/Price';
-import * as storage from '../../utils/storage';
+import React from "react";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
+import Recommendations from "../../components/Recommendations";
+import { renderTotalCost, getShippingCost } from "../../components/Price";
+import * as storage from "../../utils/storage";
 
 const Checkout = ({}) => {
   const NoOrders = () => (
@@ -25,12 +25,12 @@ const Checkout = ({}) => {
   if (!global.window) {
     return <NoOrders />;
   }
-  const orderDetails = storage.get('order');
+  const orderDetails = storage.get("order");
   if (!orderDetails) {
     return <NoOrders />;
   }
   // clear order
-  storage.del('order');
+  storage.del("order");
   const { order_id, tracking_id, items, recommendations } = orderDetails;
 
   let Rendered = null;
@@ -51,7 +51,7 @@ const Checkout = ({}) => {
               Total Paid: <strong>USD {renderTotalCost(items)}</strong>
             </p>
             <a className="btn btn-primary" href="/" role="button">
-              Browse other products &rarr;{' '}
+              Browse other products &rarr;{" "}
             </a>
           </div>
         </div>

@@ -1,18 +1,21 @@
-import React from 'react';
-import Head from 'next/head';
-import Link from 'next/link';
-import Cookies from 'js-cookie';
+import React from "react";
+import Head from "next/head";
+import Link from "next/link";
+import Cookies from "js-cookie";
 
 const Header = ({}) => {
-  if (!Cookies.get('session_id') && global.window) {
-    Cookies.set('session_id', performance.now() + '-' + Date.now());
+  if (!Cookies.get("session_id") && global.window) {
+    Cookies.set("session_id", performance.now() + "-" + Date.now());
   }
 
   return (
     <>
       <Head>
         <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+        />
         <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
         <title>Hipster Shop</title>
         <link
