@@ -76,6 +76,8 @@ interface StepEndEvent {
   data: JourneyStep;
 }
 
+export type TestUnused = "never used";
+
 interface ResultOverride {
   event: "override";
   data: Result | undefined;
