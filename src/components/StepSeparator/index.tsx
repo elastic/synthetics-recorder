@@ -26,7 +26,7 @@ import type { Step } from "@elastic/synthetics";
 import React, { useState } from "react";
 import { useDragAndDrop } from "../../hooks/useDragAndDrop";
 import { useStepResultStatus } from "../../hooks/useTestResult";
-import { ActionElement } from "../ActionElement/ActionElement";
+import { ActionElement } from "../ActionElement";
 import { SeparatorActions } from "./SeparatorActions";
 import { StepSeparatorAccordion } from "./styles";
 

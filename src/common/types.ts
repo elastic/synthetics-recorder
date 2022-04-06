@@ -49,8 +49,6 @@ export interface JourneyStep {
 
 export type JourneyType = "suite" | "inline";
 
-export type AssertionDrawerMode = "create" | "edit";
-
 export interface StepSeparatorDragDropDataTransfer {
   initiatorIndex: number;
 }
@@ -63,26 +61,26 @@ export enum RecordingStatus {
   Paused = "PAUSED",
 }
 
-export interface JourneyStartEvent {
+interface JourneyStartEvent {
   event: "journey/start";
   data: {
     name: string;
   };
 }
 
-export interface JourneyEndEvent {
+interface JourneyEndEvent {
   event: "journey/end";
   data: {
     name: string;
     status: "succeeded" | "failed";
   };
 }
-export interface StepEndEvent {
+interface StepEndEvent {
   event: "step/end";
   data: JourneyStep;
 }
 
-export interface ResultOverride {
+interface ResultOverride {
   event: "override";
   data: Result | undefined;
 }

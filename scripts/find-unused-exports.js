@@ -22,32 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexItem } from "@elastic/eui";
-import React from "react";
-import styled from "styled-components";
-
-const AssertItem = styled(EuiFlexItem)`
-  border-left: ${props => props.theme.border.thick};
-  padding-left: 20px;
-  margin-left: 50px;
-`;
-
-const ActionItem = styled(EuiFlexItem)`
-  border-left: ${props => props.theme.border.thick};
-  padding-left: 20px;
-  margin-left: 0px;
-`;
-
-interface IActionWrapper {
-  isAssert?: boolean;
+const unusedExports = require("ts-unused-exports");
+const result = unusedExports.default("./tsconfig.json");
+if (Object.keys(result).length) {
+  throw Error(`Unused exports detected\n${JSON.stringify(result, null, 2)}`);
 }
-
-export const ActionWrapper: React.FC<IActionWrapper> = ({
-  children,
-  isAssert,
-}) =>
-  isAssert ? (
-    <AssertItem>{children}</AssertItem>
-  ) : (
-    <ActionItem>{children}</ActionItem>
-  );
+// eslint-disable-next-line no-console
+console.log("No unused exports detected.");

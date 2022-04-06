@@ -50,7 +50,7 @@ export function generateIR(steps: Steps): Steps {
   return result;
 }
 
-export function actionTitle(action: Action) {
+function actionTitle(action: Action) {
   switch (action.name) {
     case "openPage":
       return `Open new page`;

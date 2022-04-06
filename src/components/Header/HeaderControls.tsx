@@ -47,7 +47,7 @@ const TestButtonDivider = styled(EuiFlexItem)`
   padding-right: 16px;
 `;
 
-export interface IHeaderControls {
+interface IHeaderControls {
   setIsCodeFlyoutVisible: Setter<boolean>;
 }
 

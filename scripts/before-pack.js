@@ -21,16 +21,34 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+const { spawn } = require("child_process");
+const { Arch } = require("electron-builder");
+const { downloadForPlatform } = require("./download-chromium");
 
-import { RendererProcessIpc } from "electron-better-ipc";
-import { createContext } from "react";
+exports.default = function beforePack(ctx) {
+  const arch = Arch[ctx.arch];
+  const platform = ctx.electronPlatformName;
+  return Promise.all([downloadForPlatform(platform), fixSharp(arch, platform)]);
+};
 
-const { ipcRenderer } = window.require("electron-better-ipc");
-
-interface ICommunicationContext {
-  ipc: RendererProcessIpc;
+function fixSharp(arch, platform) {
+  return new Promise((resolve, reject) => {
+    const npmInstall = spawn("npm", ["run", "fix-sharp"], {
+      stdio: "inherit",
+      shell: true,
+      env: {
+        ...process.env,
+        npm_config_arch: arch,
+        npm_config_platform: platform,
+      },
+    });
+    npmInstall.on("close", code => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error("process finished with error code " + code));
+      }
+    });
+    npmInstall.on("error", reject);
+  });
 }
-
-export const CommunicationContext = createContext<ICommunicationContext>({
-  ipc: ipcRenderer,
-});
