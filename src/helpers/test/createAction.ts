@@ -22,20 +22,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ActionInContext } from "@elastic/synthetics";
+import { ActionInContext, Step } from "@elastic/synthetics";
 
-export function createAction(
-  name: string,
-  overrides?: Partial<ActionInContext>
-): ActionInContext {
-  return {
-    action: {
-      name,
-      signals: [],
-    },
-    frameUrl: "https://www.elastic.co",
-    isMainFrame: true,
-    pageAlias: "pageAlias",
-    ...(overrides ?? {}),
-  };
-}
+export const createAction = (name: string): ActionInContext => ({
+  action: {
+    name,
+    signals: [],
+  },
+  frameUrl: "https://www.elastic.co",
+  isMainFrame: true,
+  pageAlias: "pageAlias",
+});
+
+export const createStep = (actionNames: string[]): Step => ({
+  actions: actionNames.map(name => createAction(name)),
+});
+
+export const createSteps = (stepList: string[][]) =>
+  stepList.map(stepParams => createStep(stepParams));

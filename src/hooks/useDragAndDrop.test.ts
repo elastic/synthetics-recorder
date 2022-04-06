@@ -22,69 +22,64 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { createAction } from "../helpers/test";
+import { createSteps } from "../helpers/test";
 import { canDrag } from "./useDragAndDrop";
 
 describe("useDragAndDrop", () => {
   describe(canDrag.name, () => {
     it("returns `null` for first step", () => {
       expect(
-        canDrag(0, [
-          { actions: [createAction("action-1")] },
-          { actions: [createAction("action-2"), createAction("action-3")] },
-          { actions: [createAction("action-4")] },
-        ])
+        canDrag(
+          0,
+          createSteps([["action-1"], ["action-2", "action-3"], ["action-4"]])
+        )
       ).toBeNull();
     });
 
     it("returns `false` if preceding, current, and following steps have only one element", () => {
       expect(
-        canDrag(1, [
-          { actions: [createAction("action-1")] },
-          { actions: [createAction("action-2")] },
-          { actions: [createAction("action-3")] },
-        ])
+        canDrag(1, createSteps([["action-1"], ["action-2"], ["action-3"]]))
       ).toBe(false);
     });
 
     it("returns `false` when non-adjacent step has > 1 action", () => {
       expect(
-        canDrag(1, [
-          { actions: [createAction("action-1")] },
-          { actions: [createAction("action-2")] },
-          { actions: [createAction("action-3")] },
-          { actions: [createAction("action-4"), createAction("action-5")] },
-        ])
+        canDrag(
+          1,
+          createSteps([
+            ["action-1"],
+            ["action-2"],
+            ["action-3"],
+            ["action-4", "action-5"],
+          ])
+        )
       ).toBe(false);
     });
 
     it("returns `true` if prev step has > 1 action", () => {
       expect(
-        canDrag(2, [
-          { actions: [createAction("action-1")] },
-          { actions: [createAction("action-2"), createAction("action-3")] },
-          { actions: [createAction("action-4")] },
-        ])
+        canDrag(
+          2,
+          createSteps([["action-1"], ["action-2", "action-3"], ["action-4"]])
+        )
       ).toBe(true);
     });
 
     it("returns `true` if next step has > 1 action", () => {
       expect(
-        canDrag(1, [
-          { actions: [createAction("action-1")] },
-          { actions: [createAction("action-2")] },
-          { actions: [createAction("action-3"), createAction("action-4")] },
-        ])
+        canDrag(
+          1,
+          createSteps([["action-1"], ["action-2"], ["action-3", "action-4"]])
+        )
       ).toBe(true);
     });
 
     it("returns `true` if step heading can be dragged", () => {
       expect(
-        canDrag(2, [
-          { actions: [createAction("action-1")] },
-          { actions: [createAction("action-2")] },
-          { actions: [createAction("action-3"), createAction("action-4")] },
-        ])
+        canDrag(
+          2,
+          createSteps([["action-1"], ["action-2"], ["action-3", "action-4"]])
+        )
       ).toBe(true);
     });
   });

@@ -22,47 +22,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { createAction } from "../helpers/test";
+import { createAction, createSteps } from "../helpers/test";
 import { isDroppable } from "./useDrop";
 
 describe("useDrop", () => {
   describe(isDroppable.name, () => {
     it(`is not droppable if there is no action in front or behind`, () => {
-      expect(
-        isDroppable(0, 0, [
-          { actions: [createAction("action-1")] },
-          { actions: [createAction("action-2")] },
-        ])
-      ).toBe(false);
+      expect(isDroppable(0, 0, createSteps([["action-1"], ["action-2"]]))).toBe(
+        false
+      );
     });
 
     it(`is not droppable if the targeted action is the final item in the step`, () => {
       expect(
-        isDroppable(0, 3, [
-          {
-            actions: [
-              createAction("action-1"),
-              createAction("action-2"),
-              createAction("action-3"),
-              createAction("action-4"),
-            ],
-          },
-        ])
+        isDroppable(
+          0,
+          3,
+          createSteps([["action-1", "action-2", "action-3", "action-4"]])
+        )
       ).toBe(false);
     });
 
     it("is droppable if there is an action behind", () => {
       expect(
-        isDroppable(0, 2, [
-          {
-            actions: [
-              createAction("action-1"),
-              createAction("action-2"),
-              createAction("action-3"),
-              createAction("action-4"),
-            ],
-          },
-        ])
+        isDroppable(
+          0,
+          2,
+          createSteps([["action-1", "action-2", "action-3", "action-4"]])
+        )
       ).toBe(true);
     });
 
@@ -71,25 +58,11 @@ describe("useDrop", () => {
         isDroppable(
           0,
           0,
-          [
-            {
-              actions: [
-                createAction("a0"),
-                createAction("a1"),
-                createAction("a2"),
-              ],
-            },
-            {
-              actions: [
-                createAction("a3"),
-                createAction("a4"),
-                createAction("a5"),
-              ],
-            },
-            {
-              actions: [createAction("a6"), createAction("a7")],
-            },
-          ],
+          createSteps([
+            ["a0", "a1", "a2"],
+            ["a3", "a4", "a5"],
+            ["a6", "a7"],
+          ]),
           2
         )
       ).toBe(false);

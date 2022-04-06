@@ -29,7 +29,7 @@ import {
   RenderHookResult,
 } from "@testing-library/react-hooks";
 import { IStepsContext } from "../contexts/StepsContext";
-import { createAction } from "../helpers/test";
+import { createAction, createStep, createSteps } from "../helpers/test";
 import { useStepsContext } from "./useStepsContext";
 
 describe("useStepsContext", () => {
@@ -37,12 +37,10 @@ describe("useStepsContext", () => {
   let defaultSteps: Steps;
 
   beforeEach(async () => {
-    defaultSteps = [
-      { actions: [createAction("first-step-1")] },
-      {
-        actions: [createAction("first-step-2"), createAction("second-step-2")],
-      },
-    ];
+    defaultSteps = createSteps([
+      ["first-step-1"],
+      ["first-step-2", "second-step-2"],
+    ]);
 
     defaultResult = renderHook(() => useStepsContext());
 
@@ -66,7 +64,7 @@ describe("useStepsContext", () => {
 
   describe("onStepDetailChange", () => {
     it("updates the targeted step", () => {
-      const testStep: Step = { actions: [createAction("new-action")] };
+      const testStep: Step = createStep(["new-action"]);
 
       act(() => {
         defaultResult.result.current.onStepDetailChange(testStep, 1);
@@ -127,7 +125,7 @@ describe("useStepsContext", () => {
 
   describe("onUpdateAction", () => {
     it("updates the targeted action", () => {
-      const updatedAction: ActionInContext = createAction("updated-action");
+      const updatedAction = createAction("updated-action");
 
       act(() => {
         defaultResult.result.current.onUpdateAction(updatedAction, 0, 0);
@@ -144,17 +142,11 @@ describe("useStepsContext", () => {
   });
 
   describe("onMergeSteps", () => {
-    const mergeSteps: Steps = [
-      {
-        actions: [createAction("first-step-1")],
-      },
-      {
-        actions: [createAction("second-step-1")],
-      },
-      {
-        actions: [createAction("third-step-1")],
-      },
-    ];
+    const mergeSteps: Steps = createSteps([
+      ["first-step-1"],
+      ["second-step-1"],
+      ["third-step-1"],
+    ]);
 
     it("merges two steps and inserts them at the first index", () => {
       const { result } = renderHook(() => useStepsContext());
@@ -166,9 +158,7 @@ describe("useStepsContext", () => {
       });
       const { steps } = result.current;
       expect(steps).toHaveLength(2);
-      expect(steps[0]).toEqual({
-        actions: [createAction("first-step-1"), createAction("second-step-1")],
-      });
+      expect(steps[0]).toEqual(createStep(["first-step-1", "second-step-1"]));
       expect(steps[1]).toEqual({
         actions: [
           {
@@ -208,29 +198,11 @@ describe("useStepsContext", () => {
     let dropSteps: Steps;
 
     beforeEach(() => {
-      dropSteps = [
-        {
-          actions: [
-            createAction("step-0-action-0"),
-            createAction("step-0-action-1"),
-            createAction("step-0-action-2"),
-          ],
-        },
-        {
-          actions: [
-            createAction("step-1-action-0"),
-            createAction("step-1-action-1"),
-            createAction("step-1-action-2"),
-          ],
-        },
-        {
-          actions: [
-            createAction("step-2-action-0"),
-            createAction("step-2-action-1"),
-            createAction("step-2-action-2"),
-          ],
-        },
-      ];
+      dropSteps = createSteps([
+        ["step-0-action-0", "step-0-action-1", "step-0-action-2"],
+        ["step-1-action-0", "step-1-action-1", "step-1-action-2"],
+        ["step-2-action-0", "step-2-action-1", "step-2-action-2"],
+      ]);
     });
 
     const mapActionName = (a: ActionInContext) => a.action.name;
@@ -313,35 +285,28 @@ describe("useStepsContext", () => {
         defaultResult.result.current.onDropStep(1, 1, 0);
       });
       const { steps } = defaultResult.result.current;
-      expect(steps[0].actions).toHaveLength(4);
-      expect(steps[1].actions).toHaveLength(2);
-      expect(steps[2].actions).toHaveLength(3);
-      expect(steps[0].actions.map(mapActionName)).toEqual([
-        "step-0-action-0",
-        "step-0-action-1",
-        "step-0-action-2",
-        "step-1-action-0",
-      ]);
-      expect(steps[1].actions.map(mapActionName)).toEqual([
-        "step-1-action-1",
-        "step-1-action-2",
-      ]);
+      expect(steps).toEqual(
+        createSteps([
+          [
+            "step-0-action-0",
+            "step-0-action-1",
+            "step-0-action-2",
+            "step-1-action-0",
+          ],
+          ["step-1-action-1", "step-1-action-2"],
+
+          ["step-2-action-0", "step-2-action-1", "step-2-action-2"],
+        ])
+      );
     });
   });
 
   describe("onSplitStep", () => {
-    const splitSteps: Steps = [
-      { actions: [createAction("first-step-1"), createAction("first-step-2")] },
-      {
-        actions: [
-          createAction("second-step-1"),
-          createAction("second-step-2"),
-          createAction("second-step-3"),
-          createAction("second-step-4"),
-        ],
-      },
-      { actions: [createAction("third-step-1"), createAction("third-step-2")] },
-    ];
+    const splitSteps: Steps = createSteps([
+      ["first-step-1", "first-step-2"],
+      ["second-step-1", "second-step-2", "second-step-3", "second-step-4"],
+      ["third-step-1", "third-step-2"],
+    ]);
 
     it("throws error when `actionIndex` is 0", () => {
       const result = renderHook(() => useStepsContext());
@@ -377,6 +342,7 @@ describe("useStepsContext", () => {
       expect(steps[0].actions).toEqual([createAction("first-step-1")]);
       expect(steps[1].actions).toEqual([createAction("first-step-2")]);
     });
+
     it("splits the target step at the tail of the list", () => {
       const result = renderHook(() => useStepsContext());
 
@@ -416,23 +382,14 @@ describe("useStepsContext", () => {
         result.result.current.onSplitStep(1, 2);
       });
       const { steps } = result.result.current;
-      expect(steps).toHaveLength(4);
-      expect(steps[0].actions).toEqual([
-        createAction("first-step-1"),
-        createAction("first-step-2"),
-      ]);
-      expect(steps[1].actions).toEqual([
-        createAction("second-step-1"),
-        createAction("second-step-2"),
-      ]);
-      expect(steps[2].actions).toEqual([
-        createAction("second-step-3"),
-        createAction("second-step-4"),
-      ]);
-      expect(steps[3].actions).toEqual([
-        createAction("third-step-1"),
-        createAction("third-step-2"),
-      ]);
+      expect(steps).toEqual(
+        createSteps([
+          ["first-step-1", "first-step-2"],
+          ["second-step-1", "second-step-2"],
+          ["second-step-3", "second-step-4"],
+          ["third-step-1", "third-step-2"],
+        ])
+      );
     });
   });
 });
