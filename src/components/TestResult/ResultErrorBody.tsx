@@ -32,7 +32,7 @@ function removeColorCodes(str = "") {
   return str.replace(/\u001b\[.*?m/g, "");
 }
 
-export interface IResultErrorBody {
+interface IResultErrorBody {
   code: string;
   errorMessage?: string;
   actionTitles: string[];

@@ -25,7 +25,7 @@ THE SOFTWARE.
 import type { Step, Steps } from "@elastic/synthetics";
 import { RendererProcessIpc } from "electron-better-ipc";
 import React from "react";
-import type { Journey, JourneyType, Setter } from "./types";
+import type { Journey, JourneyType } from "./types";
 
 export const COMMAND_SELECTOR_OPTIONS = [
   {
@@ -69,19 +69,6 @@ export const PLAYWRIGHT_ASSERTION_DOCS_LINK =
   "https://playwright.dev/docs/assertions/";
 
 export const SMALL_SCREEN_BREAKPOINT = 850;
-
-export function performSelectorLookup(
-  ipc: RendererProcessIpc,
-  onSelectorChange: Setter<string | undefined>
-) {
-  return async () => {
-    const selector = await ipc.callMain("set-mode", "inspecting");
-    if (typeof selector === "string" && selector.length) {
-      onSelectorChange(selector);
-      await ipc.callMain("set-mode", "recording");
-    }
-  };
-}
 
 export async function getCodeFromActions(
   ipc: RendererProcessIpc,

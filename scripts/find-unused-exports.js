@@ -22,15 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { RendererProcessIpc } from "electron-better-ipc";
-import { createContext } from "react";
-
-const { ipcRenderer } = window.require("electron-better-ipc");
-
-interface ICommunicationContext {
-  ipc: RendererProcessIpc;
+const unusedExports = require("ts-unused-exports");
+const result = unusedExports.default("./tsconfig.json");
+if (Object.keys(result).length) {
+  throw Error(`Unused exports detected\n${JSON.stringify(result, null, 2)}`);
 }
-
-export const CommunicationContext = createContext<ICommunicationContext>({
-  ipc: ipcRenderer,
-});
+// eslint-disable-next-line no-console
+console.log("No unused exports detected.");
