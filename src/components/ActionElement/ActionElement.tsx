@@ -24,17 +24,10 @@ THE SOFTWARE.
 
 import { EuiFlexGroup, EuiFlexItem, EuiAccordion } from "@elastic/eui";
 import { ActionInContext } from "@elastic/synthetics";
-import React, { useCallback, useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
-import {
-  DRAG_AND_DROP_DATA_TRANSFER_TYPE,
-  SMALL_SCREEN_BREAKPOINT,
-} from "../../common/shared";
-import {
-  ResultCategory,
-  StepSeparatorDragDropDataTransfer,
-} from "../../common/types";
-import { DragAndDropContext } from "../../contexts/DragAndDropContext";
+import { SMALL_SCREEN_BREAKPOINT } from "../../common/shared";
+import { ResultCategory } from "../../common/types";
 import { StepsContext } from "../../contexts/StepsContext";
 import { useDrop } from "../../hooks/useDrop";
 import { ActionDetail } from "../ActionDetail";
@@ -97,15 +90,6 @@ const Container = styled(EuiFlexGroup)<IContainer>`
   overflow: visible;
 `;
 
-type DragEvent = React.DragEventHandler<HTMLDivElement | HTMLSpanElement>;
-
-interface DropProps {
-  onDrop?: DragEvent;
-  onDragEnter?: DragEvent;
-  onDragLeave?: DragEvent;
-  onDragOver?: DragEvent;
-}
-
 function ActionComponent({
   actionIndex,
   className,
@@ -115,52 +99,23 @@ function ActionComponent({
   stepIndex,
   testStatus,
 }: IActionElement) {
-  const { onDeleteAction, onSplitStep } = useContext(StepsContext);
+  const { onDeleteAction } = useContext(StepsContext);
   const isAssertion = actionContext.action.isAssert;
   const [isOpen, setIsOpen] = useState(isAssertion ?? false);
   const [areControlsVisible, setAreControlsVisible] = useState(false);
   const close = () => setIsOpen(false);
-  const splitStepAtAction = useCallback(() => {
-    onSplitStep(stepIndex, actionIndex);
-  }, [actionIndex, onSplitStep, stepIndex]);
-  const { dragIndex } = useContext(DragAndDropContext);
-  const { isDroppable } = useDrop(stepIndex, actionIndex, dragIndex);
-  const [dropzoneOver, setDropzeonOver] = useState(false);
-  const [enterTarget, setEnterTarget] = useState<EventTarget | undefined>(
-    undefined
+  const { isDragOver, onDropActions, splitStepAtAction } = useDrop(
+    stepIndex,
+    actionIndex
   );
-  const { onDropStep } = useContext(StepsContext);
-
-  const dropProps: DropProps = {};
-  if (isDroppable) {
-    dropProps.onDrop = e => {
-      const { initiatorIndex } = JSON.parse(
-        e.dataTransfer.getData(DRAG_AND_DROP_DATA_TRANSFER_TYPE)
-      ) as StepSeparatorDragDropDataTransfer;
-      setDropzeonOver(false);
-      onDropStep(stepIndex, initiatorIndex, actionIndex);
-      e.preventDefault();
-    };
-    dropProps.onDragEnter = e => {
-      setEnterTarget(e.target);
-      setDropzeonOver(true);
-      e.preventDefault();
-    };
-    dropProps.onDragOver = e => {
-      e.preventDefault();
-    };
-    dropProps.onDragLeave = e => {
-      if (e.target === enterTarget) setDropzeonOver(false);
-    };
-  }
 
   return (
     <Container
       className={className}
-      isDragOver={isDroppable && dropzoneOver}
+      isDragOver={isDragOver}
       id={`action-element-${stepIndex}-${actionIndex}`}
       gutterSize="none"
-      {...dropProps}
+      {...onDropActions}
     >
       <EuiFlexItem grow={false}>
         <NewStepDividerButton
@@ -176,7 +131,7 @@ function ActionComponent({
       </EuiFlexItem>
       <Behavior isAssert={isAssertion} omitBorder={isLast}>
         <ActionAccordion
-          isDragOver={isDroppable && dropzoneOver}
+          isDragOver={isDragOver}
           arrowDisplay="none"
           buttonProps={{ style: { display: "none" } }}
           paddingSize="m"

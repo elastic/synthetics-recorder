@@ -22,20 +22,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { createAction, createSteps } from "../helpers/test";
-import { isDroppable } from "./useDrop";
+import { createSteps } from "../helpers/test";
+import { computeIsDroppable } from "./useDrop";
 
 describe("useDrop", () => {
-  describe(isDroppable.name, () => {
+  describe(computeIsDroppable.name, () => {
     it(`is not droppable if there is no action in front or behind`, () => {
-      expect(isDroppable(0, 0, createSteps([["action-1"], ["action-2"]]))).toBe(
-        false
-      );
+      expect(
+        computeIsDroppable(0, 0, createSteps([["action-1"], ["action-2"]]))
+      ).toBe(false);
     });
 
     it(`is not droppable if the targeted action is the final item in the step`, () => {
       expect(
-        isDroppable(
+        computeIsDroppable(
           0,
           3,
           createSteps([["action-1", "action-2", "action-3", "action-4"]])
@@ -45,7 +45,7 @@ describe("useDrop", () => {
 
     it("is droppable if there is an action behind", () => {
       expect(
-        isDroppable(
+        computeIsDroppable(
           0,
           2,
           createSteps([["action-1", "action-2", "action-3", "action-4"]])
@@ -55,7 +55,7 @@ describe("useDrop", () => {
 
     it("is not droppable if the dragged step is more than one step away", () => {
       expect(
-        isDroppable(
+        computeIsDroppable(
           0,
           0,
           createSteps([

@@ -23,10 +23,13 @@ THE SOFTWARE.
 */
 
 import { Steps } from "@elastic/synthetics";
-import { useContext } from "react";
+import { useCallback, useContext, useState } from "react";
+import { DRAG_AND_DROP_DATA_TRANSFER_TYPE } from "../common/shared";
+import { StepSeparatorDragDropDataTransfer } from "../common/types";
+import { DragAndDropContext } from "../contexts/DragAndDropContext";
 import { StepsContext } from "../contexts/StepsContext";
 
-export const isDroppable = (
+export const computeIsDroppable = (
   stepIndex: number,
   actionIndex: number,
   steps: Steps,
@@ -41,13 +44,59 @@ export const isDroppable = (
   steps[stepIndex].actions.length !== actionIndex + 1 &&
   (dragStepIndex === undefined || Math.abs(dragStepIndex - stepIndex) <= 1);
 
-export function useDrop(
-  stepIndex: number,
-  actionIndex: number,
-  isDragInProgress?: number
-) {
-  const { steps } = useContext(StepsContext);
+type DragEvent = React.DragEventHandler<HTMLDivElement | HTMLSpanElement>;
+
+interface DropProps {
+  onDrop?: DragEvent;
+  onDragEnter?: DragEvent;
+  onDragLeave?: DragEvent;
+  onDragOver?: DragEvent;
+}
+export function useDrop(stepIndex: number, actionIndex: number) {
+  const { dragIndex } = useContext(DragAndDropContext);
+  const { steps, onDropStep, onSplitStep } = useContext(StepsContext);
+  const [dropzoneOver, setDropzeonOver] = useState(false);
+  const [enterTarget, setEnterTarget] = useState<EventTarget | undefined>(
+    undefined
+  );
+
+  const splitStepAtAction = useCallback(() => {
+    onSplitStep(stepIndex, actionIndex);
+  }, [actionIndex, onSplitStep, stepIndex]);
+
+  const isDroppable = computeIsDroppable(
+    stepIndex,
+    actionIndex,
+    steps,
+    dragIndex
+  );
+
+  const onDropActions: DropProps = {};
+  if (isDroppable) {
+    onDropActions.onDrop = e => {
+      const { initiatorIndex } = JSON.parse(
+        e.dataTransfer.getData(DRAG_AND_DROP_DATA_TRANSFER_TYPE)
+      ) as StepSeparatorDragDropDataTransfer;
+      setDropzeonOver(false);
+      onDropStep(stepIndex, initiatorIndex, actionIndex);
+      e.preventDefault();
+    };
+    onDropActions.onDragEnter = e => {
+      setEnterTarget(e.target);
+      setDropzeonOver(true);
+      e.preventDefault();
+    };
+    onDropActions.onDragOver = e => {
+      e.preventDefault();
+    };
+    onDropActions.onDragLeave = e => {
+      if (e.target === enterTarget) setDropzeonOver(false);
+    };
+  }
+
   return {
-    isDroppable: isDroppable(stepIndex, actionIndex, steps, isDragInProgress),
+    isDragOver: isDroppable && dropzoneOver,
+    onDropActions,
+    splitStepAtAction,
   };
 }
