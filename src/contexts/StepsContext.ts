@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { ActionInContext, Step, Steps } from "@elastic/synthetics";
+import type { Step, Steps } from "@elastic/synthetics";
 import { createContext } from "react";
-import type { Setter } from "../common/types";
+import type { ActionContext, Setter } from "../common/types";
 
 function notImplemented() {
   throw Error("Step context not initialized");
@@ -55,7 +55,7 @@ export interface IStepsContext {
    * Inserts the `action` to the given step at `actionIndex`.
    */
   onInsertAction: (
-    action: ActionInContext,
+    action: ActionContext,
     stepIndex: number,
     actionIndex: number
   ) => void;
@@ -76,6 +76,14 @@ export interface IStepsContext {
    */
   onRearrangeSteps: (indexA: number, indexB: number) => void;
   /**
+   * Used to set the state of an action open/closed in the UI.
+   */
+  onSetActionIsOpen: (
+    stepIndex: number,
+    actionIndex: number,
+    isOpen: boolean
+  ) => void;
+  /**
    * Creates a new step, composed of the previous step's actions starting at the given index.
    */
   onSplitStep: (stepIndex: number, actionIndex: number) => void;
@@ -83,7 +91,7 @@ export interface IStepsContext {
    * Overwrites the action at the given step -> action index.
    */
   onUpdateAction: (
-    action: ActionInContext,
+    action: ActionContext,
     stepIndex: number,
     actionIndex: number
   ) => void;
@@ -103,6 +111,7 @@ export const StepsContext = createContext<IStepsContext>({
   onInsertAction: notImplemented,
   onMergeSteps: notImplemented,
   onRearrangeSteps: notImplemented,
+  onSetActionIsOpen: notImplemented,
   onSplitStep: notImplemented,
   onStepDetailChange: notImplemented,
   onUpdateAction: notImplemented,

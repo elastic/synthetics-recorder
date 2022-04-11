@@ -24,7 +24,7 @@ THE SOFTWARE.
 import React, { useContext } from "react";
 import { useEffect, useState } from "react";
 import { EuiCode, EuiEmptyPrompt, EuiProvider } from "@elastic/eui";
-import type { ActionInContext, Steps } from "@elastic/synthetics";
+import type { Steps } from "@elastic/synthetics";
 import createCache from "@emotion/cache";
 import "@elastic/eui/dist/eui_theme_light.css";
 import { Title } from "./components/Header/Title";
@@ -47,6 +47,7 @@ import { useRecordingContext } from "./hooks/useRecordingContext";
 import { StartOverWarningModal } from "./components/StartOverWarningModal";
 import { DragAndDropContext } from "./contexts/DragAndDropContext";
 import { useDragAndDropContext } from "./hooks/useDragAndDropContext";
+import { ActionContext } from "./common/types";
 
 /**
  * This is the prescribed workaround to some internal EUI issues that occur
@@ -80,7 +81,7 @@ export default function App() {
 
   useEffect(() => {
     // `actions` here is a set of `ActionInContext`s that make up a `Step`
-    const listener = ({ actions }: { actions: ActionInContext[] }) => {
+    const listener = ({ actions }: { actions: ActionContext[] }) => {
       setSteps((prevSteps: Steps) => {
         const nextSteps: Steps = generateIR([{ actions }]);
         return generateMergedIR(prevSteps, nextSteps);

@@ -22,12 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { ActionInContext, Step, Steps } from "@elastic/synthetics";
+import type { Step, Steps } from "@elastic/synthetics";
 import {
   act,
   renderHook,
   RenderHookResult,
 } from "@testing-library/react-hooks";
+import { ActionContext } from "../../common/types";
 import { IStepsContext } from "../../contexts/StepsContext";
 import { createAction, createStep, createSteps } from "../../helpers/test";
 import { useStepsContext } from "./useStepsContext";
@@ -205,7 +206,7 @@ describe("useStepsContext", () => {
       ]);
     });
 
-    const mapActionName = (a: ActionInContext) => a.action.name;
+    const mapActionName = (a: ActionContext) => a.action.name;
 
     it("throws an error if target index is less than 0", () => {
       expect(() =>

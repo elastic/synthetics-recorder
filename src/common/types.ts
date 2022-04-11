@@ -22,6 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import { ActionInContext } from "@elastic/synthetics";
+
+export type ActionContext = ActionInContext & { isOpen?: boolean };
+
 export interface Result {
   failed: number;
   skipped: number;

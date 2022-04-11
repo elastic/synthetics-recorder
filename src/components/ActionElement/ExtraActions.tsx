@@ -23,9 +23,8 @@ THE SOFTWARE.
 */
 
 import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
-import { ActionInContext } from "@elastic/synthetics";
 import React, { useContext, useState } from "react";
-import { RecordingStatus, Setter } from "../../common/types";
+import { ActionContext, RecordingStatus } from "../../common/types";
 import { RecordingContext } from "../../contexts/RecordingContext";
 import { StepsContext } from "../../contexts/StepsContext";
 import { ActionControlButton } from "./ControlButton";
@@ -36,8 +35,8 @@ interface IExtraActions {
   actionIndex: number;
   areControlsVisible: boolean;
   isOpen: boolean;
-  setIsOpen: Setter<boolean>;
-  actionContext: ActionInContext;
+  setIsOpen: (isOpen: boolean) => void;
+  actionContext: ActionContext;
   stepIndex: number;
 }
 
@@ -98,6 +97,7 @@ export function ExtraActions({
                   signals: [],
                   isAssert: true,
                 },
+                isOpen: true,
                 modified: false,
               },
               stepIndex,

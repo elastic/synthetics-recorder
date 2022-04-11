@@ -23,11 +23,10 @@ THE SOFTWARE.
 */
 
 import { EuiFlexGroup, EuiFlexItem, EuiAccordion } from "@elastic/eui";
-import { ActionInContext } from "@elastic/synthetics";
-import React, { useContext, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import styled from "styled-components";
 import { SMALL_SCREEN_BREAKPOINT } from "../../common/shared";
-import { ResultCategory } from "../../common/types";
+import { ActionContext, ResultCategory } from "../../common/types";
 import { StepsContext } from "../../contexts/StepsContext";
 import { useDrop } from "../../hooks/useDrop";
 import { ActionDetail } from "../ActionDetail";
@@ -36,17 +35,6 @@ import { Assertion } from "../Assertion";
 import { Behavior } from "./Behavior";
 import { ExtraActions } from "./ExtraActions";
 import { NewStepDividerButton } from "./NewStepDividerButton";
-
-interface IActionElement {
-  actionIndex: number;
-  className?: string;
-  initialIsOpen?: boolean;
-  isDragging?: boolean;
-  actionContext: ActionInContext;
-  isLast?: boolean;
-  stepIndex: number;
-  testStatus?: ResultCategory;
-}
 
 const ActionAccordion = styled(EuiAccordion)<{ isDragOver: boolean }>`
   padding: 8px 0px;
@@ -90,19 +78,33 @@ const Container = styled(EuiFlexGroup)<IContainer>`
   overflow: visible;
 `;
 
+interface IActionElement {
+  actionIndex: number;
+  className?: string;
+  isDragging?: boolean;
+  actionContext: ActionContext;
+  isLast?: boolean;
+  stepIndex: number;
+  testStatus?: ResultCategory;
+}
+
 function ActionComponent({
   actionIndex,
   className,
-  initialIsOpen,
   isLast,
   actionContext,
   stepIndex,
   testStatus,
 }: IActionElement) {
-  const { onDeleteAction } = useContext(StepsContext);
+  const { onDeleteAction, onSetActionIsOpen } = useContext(StepsContext);
   const isAssertion = actionContext.action.isAssert;
-  const [isOpen, setIsOpen] = useState(isAssertion ?? false);
   const [areControlsVisible, setAreControlsVisible] = useState(false);
+  const setIsOpen = useCallback(
+    (isOpen: boolean) => {
+      onSetActionIsOpen(stepIndex, actionIndex, isOpen);
+    },
+    [actionIndex, stepIndex, onSetActionIsOpen]
+  );
   const close = () => setIsOpen(false);
   const { isDragOver, onDropActions, splitStepAtAction } = useDrop(
     stepIndex,
@@ -136,8 +138,8 @@ function ActionComponent({
           buttonProps={{ style: { display: "none" } }}
           paddingSize="m"
           id={`step-accordion-${actionContext.title}`}
-          initialIsOpen={initialIsOpen}
-          forceState={isOpen ? "open" : "closed"}
+          initialIsOpen={actionContext.isOpen}
+          forceState={actionContext.isOpen ? "open" : "closed"}
           onMouseOver={() => {
             if (!areControlsVisible) {
               setAreControlsVisible(true);
@@ -150,7 +152,7 @@ function ActionComponent({
             <ExtraActions
               actionIndex={actionIndex}
               areControlsVisible={areControlsVisible}
-              isOpen={isOpen}
+              isOpen={actionContext.isOpen ?? false}
               setIsOpen={setIsOpen}
               actionContext={actionContext}
               stepIndex={stepIndex}

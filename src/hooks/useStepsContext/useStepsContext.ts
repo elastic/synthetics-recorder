@@ -22,8 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { ActionInContext, Step, Steps } from "@elastic/synthetics";
+import type { Step, Steps } from "@elastic/synthetics";
 import { useCallback, useState } from "react";
+import { ActionContext } from "../../common/types";
 import type { IStepsContext } from "../../contexts/StepsContext";
 import { onDropStep } from "./onDropStep";
 
@@ -74,6 +75,18 @@ export function useStepsContext(): IStepsContext {
           step.actions.splice(indexToInsert, 0, action);
 
           return { name: step.name, actions: [...step.actions] };
+        })
+      );
+    },
+    onSetActionIsOpen: (stepIndex, actionIndex, isOpen) => {
+      setSteps(
+        steps.map((step, currentStepIndex) => {
+          if (currentStepIndex !== stepIndex) return step;
+          const actions = step.actions.map((action, currentActionIndex) => {
+            if (currentActionIndex !== actionIndex) return action;
+            return { ...action, isOpen };
+          });
+          return { name: step.name, actions };
         })
       );
     },
@@ -154,7 +167,7 @@ export function useStepsContext(): IStepsContext {
     },
     onStepDetailChange,
     onUpdateAction: (
-      action: ActionInContext,
+      action: ActionContext,
       stepIndex: number,
       actionIndex: number
     ) => {

@@ -22,7 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Action, ActionInContext, Step, Steps } from "@elastic/synthetics";
+import type { Action, Step, Steps } from "@elastic/synthetics";
+import { ActionContext } from "../common/types";
 
 /**
  * Creates an intermediate representation of the steps Playwright has recorded from
@@ -33,7 +34,7 @@ import type { Action, ActionInContext, Step, Steps } from "@elastic/synthetics";
  */
 export function generateIR(steps: Steps): Steps {
   const result: Steps = [];
-  const actions: ActionInContext[] = [];
+  const actions: ActionContext[] = [];
   for (const step of steps) {
     for (const actionContext of step.actions) {
       const { action, title } = actionContext;
@@ -114,7 +115,7 @@ export function generateMergedIR(prevSteps: Steps, pwInput: Steps): Steps {
   const mergedSteps: Steps = [];
   let pwActionCount = 0;
   for (const step of prevSteps) {
-    const actions: ActionInContext[] = [];
+    const actions: ActionContext[] = [];
     for (const action of step.actions) {
       if (action.action.name === "assert") {
         /**

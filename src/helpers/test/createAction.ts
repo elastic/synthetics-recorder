@@ -22,9 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ActionInContext, Step } from "@elastic/synthetics";
+import { Step } from "@elastic/synthetics";
+import { ActionContext } from "../../common/types";
 
-export const createAction = (name: string): ActionInContext => ({
+export const createAction = (name: string): ActionContext => ({
   action: {
     name,
     signals: [],
