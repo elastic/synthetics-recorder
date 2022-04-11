@@ -160,19 +160,7 @@ describe("useStepsContext", () => {
       const { steps } = result.current;
       expect(steps).toHaveLength(2);
       expect(steps[0]).toEqual(createStep(["first-step-1", "second-step-1"]));
-      expect(steps[1]).toEqual({
-        actions: [
-          {
-            action: {
-              name: "third-step-1",
-              signals: [],
-            },
-            frameUrl: "https://www.elastic.co",
-            isMainFrame: true,
-            pageAlias: "pageAlias",
-          },
-        ],
-      });
+      expect(steps[1]).toEqual(createStep(["third-step-1"]));
     });
   });
 
