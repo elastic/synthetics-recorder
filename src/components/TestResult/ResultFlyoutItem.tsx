@@ -29,6 +29,8 @@ import { ResultBody } from "./ResultBody";
 import { ResultErrorBody } from "./ResultErrorBody";
 import { ResultTitle } from "./ResultTitle";
 
+const MAX_RESULT_TITLE_LENGTH = 80;
+
 interface IResultFlyoutItem {
   code: string;
   step: JourneyStep;
@@ -45,7 +47,9 @@ export function ResultFlyoutItem({ code, step, stepIndex }: IResultFlyoutItem) {
   return (
     <ResultTitle
       durationElement={durationElement}
-      titleText={`Step ${stepIndex + 1}`}
+      maxTitleLength={MAX_RESULT_TITLE_LENGTH}
+      titleText={step.name}
+      stepIndex={stepIndex}
     >
       {error ? (
         <ResultErrorBody

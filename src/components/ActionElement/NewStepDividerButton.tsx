@@ -22,5 +22,42 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-export { createAction, createStep, createSteps } from "./createAction";
-export { render } from "./render";
+import styled from "styled-components";
+import { EuiButtonIcon } from "@elastic/eui";
+import React from "react";
+
+interface Props {
+  actionIndex: number;
+  stepIndex: number;
+  onClick: () => void;
+}
+
+interface StyleProps {
+  computedvisibility: string;
+}
+
+const AddStepDivider = styled(EuiButtonIcon)<StyleProps>`
+  background-color: ${({ theme }) => theme.colors.body};
+  position: relative;
+  left: 63px;
+  top: -8px;
+  visibility: ${({ computedvisibility }) => computedvisibility};
+  z-index: 1;
+`;
+
+export function NewStepDividerButton({
+  actionIndex,
+  stepIndex,
+  onClick,
+}: Props) {
+  return (
+    <AddStepDivider
+      aria-label="Insert a step between actions. Use this button to group actions into logical steps"
+      computedvisibility={actionIndex > 0 ? "visible" : "hidden"}
+      color="text"
+      iconType="plusInCircle"
+      id={`insert-divider-${stepIndex}-${actionIndex}`}
+      onClick={onClick}
+    />
+  );
+}

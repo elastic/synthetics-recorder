@@ -34,6 +34,7 @@ interface IAssertionSelect {
 export function AssertionSelect({ onChange, value }: IAssertionSelect) {
   return (
     <EuiSelect
+      aria-label="Assertion type select"
       options={COMMAND_SELECTOR_OPTIONS}
       onChange={onChange}
       value={value || COMMAND_SELECTOR_OPTIONS[0].value}

@@ -138,17 +138,17 @@ async function recordJourneys(data, browserWindow) {
 function addActionsToStepResult(steps, event) {
   const step = steps.find(
     s =>
-      s.length &&
-      s[0].title &&
+      s.actions.length &&
+      s.actions[0].title &&
       event?.data?.name &&
-      event.data.name === s[0].title
+      (event.data.name === s.actions[0].title || event.data.name === s.name)
   );
   if (!step) return { ...event, data: { ...event.data, actionTitles: [] } };
   return {
     ...event,
     data: {
       ...event.data,
-      actionTitles: step.map(
+      actionTitles: step.actions.map(
         (action, index) => action?.title ?? `Action ${index + 1}`
       ),
     },
@@ -299,8 +299,7 @@ async function onFileSave(code) {
 
 async function onTransformCode(data) {
   const generator = new SyntheticsGenerator(data.isSuite);
-  const code = generator.generateFromSteps(data.actions);
-  return code.join("\n");
+  return generator.generateFromSteps(data.actions);
 }
 
 async function onSetMode(mode) {

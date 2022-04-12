@@ -32,9 +32,9 @@ import {
   useState,
 } from "react";
 import { getCodeFromActions, getCodeForFailedResult } from "../common/shared";
-import { Result, TestEvent } from "../common/types";
-import { ITestContext } from "../contexts/TestContext";
 import { CommunicationContext } from "../contexts/CommunicationContext";
+import type { Result, TestEvent } from "../common/types";
+import type { ITestContext } from "../contexts/TestContext";
 import { resultReducer } from "../helpers/resultReducer";
 
 export function useSyntheticsTest(steps: Steps): ITestContext {
@@ -43,6 +43,23 @@ export function useSyntheticsTest(steps: Steps): ITestContext {
   const [codeBlocks, setCodeBlocks] = useState("");
   const [isTestInProgress, setIsTestInProgress] = useState(false);
   const { ipc } = useContext(CommunicationContext);
+
+  const setResult = useCallback((data: Result | undefined) => {
+    dispatch({
+      event: "override",
+      data,
+    });
+  }, []);
+
+  /**
+   * The absence of steps with a truthy result indicates the result value
+   * is stale, and should be destroyed.
+   */
+  useEffect(() => {
+    if (steps.length === 0 && result) {
+      setResult(undefined);
+    }
+  }, [steps.length, result, setResult]);
 
   const onTest = useCallback(
     async function () {
@@ -84,18 +101,6 @@ export function useSyntheticsTest(steps: Steps): ITestContext {
       );
     }
   }, [ipc, result?.journey, steps]);
-
-  /**
-   * This is needed to satisfy some tech debt where we reference a function by this
-   * name elsewhere in the application. This functionality is removed by a downstream branch,
-   * when it's merged we can delete this handler.
-   */
-  const setResult = useCallback((data: Result | undefined) => {
-    dispatch({
-      event: "override",
-      data,
-    });
-  }, []);
 
   return {
     codeBlocks,

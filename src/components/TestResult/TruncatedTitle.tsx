@@ -22,5 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-export { createAction, createStep, createSteps } from "./createAction";
-export { render } from "./render";
+import { EuiToolTip } from "@elastic/eui";
+import React from "react";
+import { Bold } from "./styles";
+
+interface ITruncatedTitle {
+  stepIndex: number;
+  text: string;
+  maxLength: number;
+}
+
+export function TruncatedTitle({
+  maxLength,
+  stepIndex,
+  text,
+}: ITruncatedTitle) {
+  let substr = text.substring(0, maxLength);
+  if (text.length > maxLength) substr += "…";
+  const textElement = <Bold>{`${stepIndex + 1}: ${substr}`}</Bold>;
+  if (text.length <= maxLength) {
+    return textElement;
+  }
+  return <EuiToolTip content={text}>{textElement}</EuiToolTip>;
+}

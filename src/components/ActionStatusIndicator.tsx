@@ -59,7 +59,7 @@ export function ActionStatusIndicator({
           style={{ fill: euiTheme.colors.lightShade, stroke: "none" }}
         />
       )}
-      <circle cx="25" cy="37" r="12" fill={euiTheme.colors.lightestShade} />
+      <circle cx="25" cy="37" r="12" fill={euiTheme.colors.emptyShade} />
       <circle
         cx="25"
         cy="37"

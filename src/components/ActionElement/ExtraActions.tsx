@@ -23,9 +23,8 @@ THE SOFTWARE.
 */
 
 import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
-import { ActionInContext } from "@elastic/synthetics";
 import React, { useContext, useState } from "react";
-import { RecordingStatus, Setter } from "../../common/types";
+import { ActionContext, RecordingStatus } from "../../common/types";
 import { RecordingContext } from "../../contexts/RecordingContext";
 import { StepsContext } from "../../contexts/StepsContext";
 import { ActionControlButton } from "./ControlButton";
@@ -36,8 +35,8 @@ interface IExtraActions {
   actionIndex: number;
   areControlsVisible: boolean;
   isOpen: boolean;
-  setIsOpen: Setter<boolean>;
-  step: ActionInContext;
+  setIsOpen: (isOpen: boolean) => void;
+  actionContext: ActionContext;
   stepIndex: number;
 }
 
@@ -46,7 +45,7 @@ export function ExtraActions({
   areControlsVisible,
   isOpen,
   setIsOpen,
-  step,
+  actionContext,
   stepIndex,
 }: IExtraActions) {
   const [isSettingsPopoverOpen, setIsSettingsPopoverOpen] = useState(false);
@@ -70,7 +69,7 @@ export function ExtraActions({
       justifyContent="spaceBetween"
     >
       <EuiFlexItem>
-        <HeadingText actionContext={step} />
+        <HeadingText actionContext={actionContext} />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <ActionControlButton
@@ -88,16 +87,17 @@ export function ExtraActions({
           onAddAssertion={settingsHandler(() => {
             onInsertAction(
               {
-                ...step,
+                ...actionContext,
                 action: {
-                  ...step.action,
+                  ...actionContext.action,
                   name: "assert",
-                  selector: step.action.selector || "",
+                  selector: actionContext.action.selector || "",
                   command: "isVisible",
-                  value: step.action.value || undefined,
+                  value: actionContext.action.value || undefined,
                   signals: [],
                   isAssert: true,
                 },
+                isOpen: true,
                 modified: false,
               },
               stepIndex,

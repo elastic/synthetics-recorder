@@ -22,6 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import { ActionInContext } from "@elastic/synthetics";
+
+export type ActionContext = ActionInContext & { isOpen?: boolean };
+
 export interface Result {
   failed: number;
   skipped: number;
@@ -48,6 +52,10 @@ export interface JourneyStep {
 }
 
 export type JourneyType = "suite" | "inline";
+
+export interface StepSeparatorDragDropDataTransfer {
+  initiatorIndex: number;
+}
 
 export type Setter<T> = React.Dispatch<React.SetStateAction<T>>;
 

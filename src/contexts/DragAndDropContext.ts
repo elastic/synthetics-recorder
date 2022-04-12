@@ -22,5 +22,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-export { createAction, createStep, createSteps } from "./createAction";
-export { render } from "./render";
+import { createContext } from "react";
+import { Setter } from "../common/types";
+
+export interface IDragAndDropContext {
+  dragIndex?: number;
+  setDragIndex: Setter<number | undefined>;
+}
+
+function notImplemented() {
+  throw Error("Not implemented");
+}
+
+export const DragAndDropContext = createContext<IDragAndDropContext>({
+  dragIndex: undefined,
+  setDragIndex: notImplemented,
+});

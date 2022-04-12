@@ -65,6 +65,9 @@ export const COMMAND_SELECTOR_OPTIONS = [
 export const SYNTHETICS_DISCUSS_FORUM_URL =
   "https://forms.gle/PzVtYoExfqQ9UMkY6";
 
+export const DRAG_AND_DROP_DATA_TRANSFER_TYPE =
+  "application/co.elastic.synthetics-recorder.step-drag";
+
 export const PLAYWRIGHT_ASSERTION_DOCS_LINK =
   "https://playwright.dev/docs/assertions/";
 

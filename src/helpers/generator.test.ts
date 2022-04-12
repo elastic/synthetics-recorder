@@ -22,7 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { ActionInContext, Step, Steps } from "@elastic/synthetics";
+import type { Step, Steps } from "@elastic/synthetics";
+import { ActionContext } from "../common/types";
 import { generateIR, generateMergedIR } from "./generator";
 
 describe("generator", () => {
@@ -477,7 +478,7 @@ describe("generator", () => {
       expect(generateMergedIR(prev, [])).toEqual([]);
     });
     it("picks up assertions", () => {
-      const assert: ActionInContext = {
+      const assert: ActionContext = {
         pageAlias: "page",
         isMainFrame: true,
         frameUrl: "https://vigneshh.in/",

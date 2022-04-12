@@ -24,9 +24,8 @@ THE SOFTWARE.
 import React, { useContext } from "react";
 import { useEffect, useState } from "react";
 import { EuiCode, EuiEmptyPrompt, EuiProvider } from "@elastic/eui";
+import type { Steps } from "@elastic/synthetics";
 import createCache from "@emotion/cache";
-import type { ActionInContext, Steps } from "@elastic/synthetics";
-import "./App.css";
 import "@elastic/eui/dist/eui_theme_light.css";
 import { Title } from "./components/Header/Title";
 import { HeaderControls } from "./components/Header/HeaderControls";
@@ -39,7 +38,6 @@ import { useSyntheticsTest } from "./hooks/useSyntheticsTest";
 import { generateIR, generateMergedIR } from "./helpers/generator";
 import { StepSeparator } from "./components/StepSeparator";
 
-import "./App.css";
 import { useStepsContext } from "./hooks/useStepsContext";
 import { TestResult } from "./components/TestResult";
 import { AppPageBody } from "./components/AppPageBody";
@@ -47,6 +45,9 @@ import { StyledComponentsEuiProvider } from "./contexts/StyledComponentsEuiProvi
 import { ExportScriptFlyout } from "./components/ExportScriptFlyout";
 import { useRecordingContext } from "./hooks/useRecordingContext";
 import { StartOverWarningModal } from "./components/StartOverWarningModal";
+import { DragAndDropContext } from "./contexts/DragAndDropContext";
+import { useDragAndDropContext } from "./hooks/useDragAndDropContext";
+import { ActionContext } from "./common/types";
 
 /**
  * This is the prescribed workaround to some internal EUI issues that occur
@@ -76,10 +77,11 @@ export default function App() {
   );
   const { isStartOverModalVisible, setIsStartOverModalVisible, startOver } =
     recordingContextUtils;
+  const dragAndDropContext = useDragAndDropContext();
 
   useEffect(() => {
     // `actions` here is a set of `ActionInContext`s that make up a `Step`
-    const listener = ({ actions }: { actions: ActionInContext[] }) => {
+    const listener = ({ actions }: { actions: ActionContext[] }) => {
       setSteps((prevSteps: Steps) => {
         const nextSteps: Steps = generateIR([{ actions }]);
         return generateMergedIR(prevSteps, nextSteps);
@@ -98,46 +100,47 @@ export default function App() {
           <RecordingContext.Provider value={recordingContextUtils}>
             <TestContext.Provider value={syntheticsTestUtils}>
               <UrlContext.Provider value={{ url, setUrl }}>
-                <Title />
-                <HeaderControls
-                  setIsCodeFlyoutVisible={setIsCodeFlyoutVisible}
-                />
-                <AppPageBody>
-                  {steps.length === 0 && (
-                    <EuiEmptyPrompt
-                      aria-label="This empty prompt indicates that you have not recorded any journey steps yet."
-                      hasBorder={false}
-                      title={<h3>No steps recorded yet</h3>}
-                      body={
-                        <p>
-                          Click on <EuiCode>Start recording</EuiCode> to get
-                          started with your script.
-                        </p>
-                      }
-                    />
-                  )}
-                  {steps.map((step, index) => (
-                    <StepSeparator
-                      index={index}
-                      key={`step-separator-${index + 1}`}
-                      step={step}
-                    />
-                  ))}
-                  <TestResult />
-                  {isCodeFlyoutVisible && (
-                    <ExportScriptFlyout
-                      setVisible={setIsCodeFlyoutVisible}
-                      steps={steps}
-                    />
-                  )}
-                  {isStartOverModalVisible && (
-                    <StartOverWarningModal
-                      startOver={startOver}
-                      setVisibility={setIsStartOverModalVisible}
-                      stepCount={steps.length}
-                    />
-                  )}
-                </AppPageBody>
+                <DragAndDropContext.Provider value={dragAndDropContext}>
+                  <Title />
+                  <HeaderControls
+                    setIsCodeFlyoutVisible={setIsCodeFlyoutVisible}
+                  />
+                  <AppPageBody>
+                    {steps.length === 0 && (
+                      <EuiEmptyPrompt
+                        hasBorder={false}
+                        title={<h3>No steps recorded yet</h3>}
+                        body={
+                          <p>
+                            Click on <EuiCode>Start recording</EuiCode> to get
+                            started with your script.
+                          </p>
+                        }
+                      />
+                    )}
+                    {steps.map((step, index) => (
+                      <StepSeparator
+                        index={index}
+                        key={`step-separator-${index + 1}`}
+                        step={step}
+                      />
+                    ))}
+                    <TestResult />
+                    {isCodeFlyoutVisible && (
+                      <ExportScriptFlyout
+                        setVisible={setIsCodeFlyoutVisible}
+                        steps={steps}
+                      />
+                    )}
+                    {isStartOverModalVisible && (
+                      <StartOverWarningModal
+                        startOver={startOver}
+                        setVisibility={setIsStartOverModalVisible}
+                        stepCount={steps.length}
+                      />
+                    )}
+                  </AppPageBody>
+                </DragAndDropContext.Provider>
               </UrlContext.Provider>
             </TestContext.Provider>
           </RecordingContext.Provider>

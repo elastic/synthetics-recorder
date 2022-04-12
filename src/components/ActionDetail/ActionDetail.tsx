@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { ActionInContext } from "@elastic/synthetics";
 import React, { useContext, useState } from "react";
 import {
   EuiButton,
@@ -35,11 +34,12 @@ import {
 } from "@elastic/eui";
 import { StepsContext } from "../../contexts/StepsContext";
 import { FormControl } from "./FormControl";
+import { ActionContext } from "../../common/types";
 
 function createUpdatedAction(
   field: string,
   value: string,
-  context: ActionInContext
+  context: ActionContext
 ) {
   return {
     ...context,
@@ -49,7 +49,7 @@ function createUpdatedAction(
 }
 
 interface IActionDetail {
-  actionContext: ActionInContext;
+  actionContext: ActionContext;
   actionIndex: number;
   stepIndex: number;
   close?: () => void;
@@ -63,13 +63,15 @@ export function ActionDetail({
 }: IActionDetail) {
   const { steps, onStepDetailChange } = useContext(StepsContext);
   const onActionContextChange = (
-    updatedAction: ActionInContext,
+    updatedAction: ActionContext,
     updatedActionIndex: number
   ) => {
     onStepDetailChange(
       {
         actions: steps[stepIndex].actions.map((actionToUpdate, index) =>
-          index === updatedActionIndex ? updatedAction : actionToUpdate
+          index === updatedActionIndex
+            ? { ...updatedAction, isOpen: false }
+            : actionToUpdate
         ),
         name: steps[stepIndex].name,
       },
@@ -120,6 +122,7 @@ export function ActionDetail({
         {url && (
           <EuiFlexItem>
             <FormControl
+              data-test-subj={`edit-url-${stepIndex}-${actionIndex}`}
               name={action.name}
               onChange={e => setUrl(e.target.value)}
               value={url}
@@ -129,6 +132,7 @@ export function ActionDetail({
         {selector && !action.isAssert && (
           <EuiFlexItem>
             <FormControl
+              data-test-subj={`edit-selector-${stepIndex}-${actionIndex}`}
               name={action.name}
               onChange={e => setSelector(e.target.value)}
               value={selector}
@@ -138,6 +142,7 @@ export function ActionDetail({
         {text && (
           <EuiFlexItem>
             <FormControl
+              data-test-subj={`edit-text-${stepIndex}-${actionIndex}`}
               label="Value"
               name={action.name}
               noPrepend
@@ -151,6 +156,7 @@ export function ActionDetail({
       <EuiFlexGroup>
         <EuiFlexItem grow={false}>
           <EuiButton
+            data-test-subj={`save-action-${stepIndex}-${actionIndex}`}
             onClick={() => {
               if (url) {
                 onURLChange(url);
@@ -158,9 +164,6 @@ export function ActionDetail({
                 onSelectorChange(selector);
               } else if (text) {
                 onTextChange(text);
-              }
-              if (close) {
-                close();
               }
             }}
           >

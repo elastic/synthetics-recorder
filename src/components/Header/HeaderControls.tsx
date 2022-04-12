@@ -36,7 +36,7 @@ import { RecordingStatusIndicator } from "./StatusIndicator";
 import { UrlField } from "./UrlField";
 
 const Header = styled(EuiFlexGroup)`
-  background-color: ${props => props.theme.colors.lightestShade};
+  background-color: ${props => props.theme.colors.emptyShade};
   border-bottom: ${props => props.theme.border.thin};
   margin: 0px;
   padding: 8px;
@@ -117,7 +117,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
           </ControlButton>
         </EuiFlexItem>
       )}
-      <EuiFlexItem grow={false}>
+      <EuiFlexItem grow={recordingStatus === RecordingStatus.Recording}>
         <RecordingStatusIndicator status={recordingStatus} />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
@@ -135,7 +135,6 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
           </TestButtonDivider>
           <EuiFlexItem>
             <ControlButton
-              aria-label="Export"
               isDisabled={steps.length === 0}
               iconType="exportAction"
               fill

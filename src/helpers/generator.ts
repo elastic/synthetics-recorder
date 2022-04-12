@@ -22,7 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Action, ActionInContext, Step, Steps } from "@elastic/synthetics";
+import type { Action, Step, Steps } from "@elastic/synthetics";
+import { ActionContext } from "../common/types";
 
 /**
  * Creates an intermediate representation of the steps Playwright has recorded from
@@ -33,7 +34,7 @@ import type { Action, ActionInContext, Step, Steps } from "@elastic/synthetics";
  */
 export function generateIR(steps: Steps): Steps {
   const result: Steps = [];
-  const actions: ActionInContext[] = [];
+  const actions: ActionContext[] = [];
   for (const step of steps) {
     for (const actionContext of step.actions) {
       const { action, title } = actionContext;
@@ -50,9 +51,7 @@ export function generateIR(steps: Steps): Steps {
   return result;
 }
 
-function actionTitle(
-  action: Action & { files?: string[]; options?: string[] }
-) {
+function actionTitle(action: Action) {
   switch (action.name) {
     case "openPage":
       return `Open new page`;
@@ -88,16 +87,26 @@ function actionTitle(
 
 const getActionCount = (prev: number, cur: Step) => prev + cur.actions.length;
 
+function isOpenOrCloseAction(name: string, pageAlias: string) {
+  return (name === "closePage" && pageAlias === "page") || name === "openPage";
+}
+
 /**
  * Works by taking the actions from the PW recorder and
  * the actions generated/modified by the UI and merges them
  * to display the correct modified actions on the UI
  */
-export function generateMergedIR(prevSteps: Steps, nextSteps: Steps): Steps {
+export function generateMergedIR(prevSteps: Steps, pwInput: Steps): Steps {
+  const nextSteps: Steps = pwInput.map(step => ({
+    ...step,
+    actions: step.actions.filter(
+      ({ action: { name }, pageAlias }) => !isOpenOrCloseAction(name, pageAlias)
+    ),
+  }));
   const prevLength = prevSteps.reduce(getActionCount, 0);
   const nextLength = nextSteps.reduce(getActionCount, 0);
   /**
-   * when recorder is started/resetted
+   * when recorder is started/reset
    */
   if (prevLength === 0 || nextLength === 0) {
     return nextSteps;
@@ -106,7 +115,7 @@ export function generateMergedIR(prevSteps: Steps, nextSteps: Steps): Steps {
   const mergedSteps: Steps = [];
   let pwActionCount = 0;
   for (const step of prevSteps) {
-    const actions: ActionInContext[] = [];
+    const actions: ActionContext[] = [];
     for (const action of step.actions) {
       if (action.action.name === "assert") {
         /**
