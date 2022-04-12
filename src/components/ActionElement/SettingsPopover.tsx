@@ -72,6 +72,7 @@ export function SettingsPopover({
                 onClick: onAddAssertion,
               },
               {
+                "data-test-subj": "edit-action",
                 disabled: isRecording,
                 icon: "pencil",
                 name: "Edit action",

@@ -41,13 +41,17 @@ export function useStepsContext(): IStepsContext {
     );
   }, []);
 
-  const onStepDetailChange = (updatedStep: Step, indexToUpdate: number) => {
-    setSteps(
-      steps.map((currentStep, iterIndex) =>
-        iterIndex === indexToUpdate ? updatedStep : currentStep
-      )
-    );
-  };
+  const onStepDetailChange = useCallback(
+    (updatedStep: Step, indexToUpdate: number) =>
+      setSteps(oldSteps =>
+        oldSteps.map((currentStep, iterIndex) =>
+          iterIndex === indexToUpdate
+            ? { ...currentStep, ...updatedStep }
+            : currentStep
+        )
+      ),
+    []
+  );
 
   return {
     steps,
@@ -174,11 +178,9 @@ export function useStepsContext(): IStepsContext {
       const step = steps[stepIndex];
       onStepDetailChange(
         {
-          actions: [
-            ...step.actions.slice(0, actionIndex),
-            action,
-            ...step.actions.slice(actionIndex + 1, step.actions.length),
-          ],
+          actions: step.actions.map((curAction, curIdx) =>
+            curIdx === actionIndex ? action : curAction
+          ),
           name: step.name,
         },
         stepIndex

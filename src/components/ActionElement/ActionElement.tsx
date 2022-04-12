@@ -96,7 +96,8 @@ function ActionComponent({
   stepIndex,
   testStatus,
 }: IActionElement) {
-  const { onDeleteAction, onSetActionIsOpen } = useContext(StepsContext);
+  const { onDeleteAction, onUpdateAction, onSetActionIsOpen } =
+    useContext(StepsContext);
   const isAssertion = actionContext.action.isAssert;
   const [areControlsVisible, setAreControlsVisible] = useState(false);
   const setIsOpen = useCallback(
@@ -169,10 +170,13 @@ function ActionComponent({
           )}
           {actionContext.action.isAssert && (
             <Assertion
-              actionContext={actionContext}
               actionIndex={actionIndex}
+              actionContext={actionContext}
               close={close}
               onDeleteAction={onDeleteAction}
+              saveAssertion={(updatedAction: ActionContext) => {
+                onUpdateAction(updatedAction, stepIndex, actionIndex);
+              }}
               stepIndex={stepIndex}
             />
           )}

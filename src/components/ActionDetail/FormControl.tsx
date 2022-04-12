@@ -26,6 +26,7 @@ import { EuiFormRow, EuiFieldText } from "@elastic/eui";
 import React, { ChangeEventHandler } from "react";
 
 interface IFormControl {
+  "data-test-subj"?: string;
   label?: string;
   name: string;
   noPrepend?: boolean;
@@ -39,6 +40,7 @@ export function FormControl({
   noPrepend,
   onChange,
   value,
+  ...rest
 }: IFormControl) {
   return (
     <EuiFormRow label={label ?? "Command"}>
@@ -46,6 +48,7 @@ export function FormControl({
         onChange={onChange}
         prepend={noPrepend === true ? undefined : name}
         value={value}
+        {...rest}
       />
     </EuiFormRow>
   );
