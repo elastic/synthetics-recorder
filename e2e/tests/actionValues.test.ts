@@ -78,9 +78,6 @@ describe("Assertion and Action values", () => {
     await editAssertion(electronWindow);
     await editAction(electronWindow);
 
-    // testing why this is failing on CI
-    await new Promise(r => setTimeout(r, 5000));
-
     // open export flyout
     await electronWindow.click("text=Export");
     // get inner text of code to export
