@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 import React from 'react';
 
-export interface ContextRenderer<ContextValue> {
+interface ContextRenderer<ContextValue> {
   defaults: ContextValue;
   Context: React.Context<ContextValue>;
   overrides?: Partial<ContextValue>;

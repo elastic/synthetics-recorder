@@ -220,6 +220,7 @@ async function onTest(data, browserWindow) {
      */
     synthCliProcess = fork(`${SYNTHETICS_CLI}`, args, {
       env: {
+        ...process.env,
         PLAYWRIGHT_BROWSERS_PATH,
       },
       cwd: isDev ? process.cwd() : process.resourcesPath,

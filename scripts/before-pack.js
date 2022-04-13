@@ -21,28 +21,34 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+const { spawn } = require('child_process');
+const { Arch } = require('electron-builder');
+const { downloadForPlatform } = require('./download-chromium');
 
-import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
-import React from 'react';
-import { Bold, ResultContainer, ResultHeader } from './styles';
-
-interface IResultHeader {
-  durationElement: JSX.Element;
-  titleText: string;
-}
-
-export const ResultTitle: React.FC<IResultHeader> = ({ children, durationElement, titleText }) => {
-  return (
-    <ResultContainer hasShadow={false}>
-      <ResultHeader>
-        <EuiFlexGroup>
-          <EuiFlexItem>
-            <Bold>{titleText}</Bold>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>{durationElement}</EuiFlexItem>
-        </EuiFlexGroup>
-      </ResultHeader>
-      {children}
-    </ResultContainer>
-  );
+exports.default = function beforePack(ctx) {
+  const arch = Arch[ctx.arch];
+  const platform = ctx.electronPlatformName;
+  return Promise.all([downloadForPlatform(platform), fixSharp(arch, platform)]);
 };
+
+function fixSharp(arch, platform) {
+  return new Promise((resolve, reject) => {
+    const npmInstall = spawn('npm', ['run', 'fix-sharp'], {
+      stdio: 'inherit',
+      shell: true,
+      env: {
+        ...process.env,
+        npm_config_arch: arch,
+        npm_config_platform: platform,
+      },
+    });
+    npmInstall.on('close', code => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error('process finished with error code ' + code));
+      }
+    });
+    npmInstall.on('error', reject);
+  });
+}

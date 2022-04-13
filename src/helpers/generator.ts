@@ -48,7 +48,7 @@ export function generateIR(steps: Steps): Steps {
   return result;
 }
 
-export function actionTitle(action: Action & { files?: string[]; options?: string[] }) {
+function actionTitle(action: Action & { files?: string[]; options?: string[] }) {
   switch (action.name) {
     case 'openPage':
       return `Open new page`;

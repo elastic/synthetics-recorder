@@ -21,28 +21,29 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+const { spawn } = require('child_process');
+const path = require('path');
 
-import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
-import React from 'react';
-import { Bold, ResultContainer, ResultHeader } from './styles';
-
-interface IResultHeader {
-  durationElement: JSX.Element;
-  titleText: string;
-}
-
-export const ResultTitle: React.FC<IResultHeader> = ({ children, durationElement, titleText }) => {
-  return (
-    <ResultContainer hasShadow={false}>
-      <ResultHeader>
-        <EuiFlexGroup>
-          <EuiFlexItem>
-            <Bold>{titleText}</Bold>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>{durationElement}</EuiFlexItem>
-        </EuiFlexGroup>
-      </ResultHeader>
-      {children}
-    </ResultContainer>
-  );
+exports.default = function afterPack(ctx) {
+  const platform = ctx.electronPlatformName;
+  if (platform === 'linux') {
+    const resourcesPath = path.join(ctx.appOutDir, 'resources');
+    return changePermission(resourcesPath);
+  }
 };
+
+function changePermission(resourcesPath) {
+  return new Promise((resolve, reject) => {
+    const ps = spawn('chmod', ['777', resourcesPath], {
+      shell: true,
+    });
+    ps.on('close', code => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error('process finished with error code ' + code));
+      }
+    });
+    ps.on('error', reject);
+  });
+}

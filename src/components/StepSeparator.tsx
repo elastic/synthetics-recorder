@@ -30,7 +30,7 @@ import { SMALL_SCREEN_BREAKPOINT } from '../common/shared';
 import { useStepResultStatus } from '../hooks/useTestResult';
 import { ActionElement } from './ActionElement';
 
-export const StepSeparatorTopBorder = styled(EuiFlexItem)`
+const StepSeparatorTopBorder = styled(EuiFlexItem)`
   border-top: ${props => props.theme.border.thin};
 
   && {
@@ -42,7 +42,7 @@ export const StepSeparatorTopBorder = styled(EuiFlexItem)`
   }
 `;
 
-export const StepSeparatorAccordion = styled(EuiAccordion)`
+const StepSeparatorAccordion = styled(EuiAccordion)`
   .euiAccordion__optionalAction {
     flex-grow: 1;
     flex-shrink: 1;
@@ -51,7 +51,7 @@ export const StepSeparatorAccordion = styled(EuiAccordion)`
   margin: 16px;
 `;
 
-export const StepSeparatorHeading = styled(EuiFlexItem)`
+const StepSeparatorHeading = styled(EuiFlexItem)`
   font-weight: bold;
 `;
 

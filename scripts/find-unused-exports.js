@@ -22,27 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
-import React from 'react';
-import { Bold, ResultContainer, ResultHeader } from './styles';
-
-interface IResultHeader {
-  durationElement: JSX.Element;
-  titleText: string;
+const unusedExports = require('ts-unused-exports');
+const result = unusedExports.default('./tsconfig.json');
+if (Object.keys(result).length) {
+  throw Error(`Unused exports detected\n${JSON.stringify(result, null, 2)}`);
 }
-
-export const ResultTitle: React.FC<IResultHeader> = ({ children, durationElement, titleText }) => {
-  return (
-    <ResultContainer hasShadow={false}>
-      <ResultHeader>
-        <EuiFlexGroup>
-          <EuiFlexItem>
-            <Bold>{titleText}</Bold>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>{durationElement}</EuiFlexItem>
-        </EuiFlexGroup>
-      </ResultHeader>
-      {children}
-    </ResultContainer>
-  );
-};
+// eslint-disable-next-line no-console
+console.log('No unused exports detected.');
