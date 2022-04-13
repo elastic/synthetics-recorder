@@ -11,6 +11,33 @@ You can find downloadable installers there for a variety of platforms.
 
 Download and unpack the appropriate installer for your platform, and install it.
 
+#### Possible install issues
+
+If you receive a set of error logs like those listed below, it is likely because your
+version of `npm` is higher than `v6`. Later versions of `npm` are stricter about peer
+dependency resolution, and thus it will refuse to install.
+
+```
+npm ERR! code ERESOLVE
+npm ERR! ERESOLVE unable to resolve dependency tree
+npm ERR!
+npm ERR! While resolving: synthetics-recorder@0.0.1-alpha.1
+npm ERR! Found: @types/react-dom@17.0.11
+npm ERR! node_modules/@types/react-dom
+npm ERR!   dev @types/react-dom@"^17.0.10" from the root project
+npm ERR!
+npm ERR! Could not resolve dependency:
+npm ERR! peer @types/react-dom@"^16.9.6" from @elastic/eui@37.7.0
+npm ERR! node_modules/@elastic/eui
+npm ERR!   @elastic/eui@"^37.0.0" from the root project
+npm ERR!
+npm ERR! Fix the upstream dependency conflict, or retry
+npm ERR! this command with --force, or --legacy-peer-deps
+npm ERR! to accept an incorrect (and potentially broken) dependency resolution.
+```
+
+You can get around this by using `npm` version 6 to install.
+
 #### Usage
 
 This section describes the basic usage of the Script Recorder.
@@ -57,32 +84,46 @@ Run the recorder app in dev mode.
 npm run dev
 ```
 
-#### Possible install issues
+### Troubleshooting
 
-If you receive a set of error logs like those listed below, it is likely because your
-version of `npm` is higher than `v6`. Later versions of `npm` are stricter about peer
-dependency resolution, and thus it will refuse to install.
+#### Page object is not defined
 
-```
-npm ERR! code ERESOLVE
-npm ERR! ERESOLVE unable to resolve dependency tree
-npm ERR!
-npm ERR! While resolving: synthetics-recorder@0.0.1-alpha.1
-npm ERR! Found: @types/react-dom@17.0.11
-npm ERR! node_modules/@types/react-dom
-npm ERR!   dev @types/react-dom@"^17.0.10" from the root project
-npm ERR!
-npm ERR! Could not resolve dependency:
-npm ERR! peer @types/react-dom@"^16.9.6" from @elastic/eui@37.7.0
-npm ERR! node_modules/@elastic/eui
-npm ERR!   @elastic/eui@"^37.0.0" from the root project
-npm ERR!
-npm ERR! Fix the upstream dependency conflict, or retry
-npm ERR! this command with --force, or --legacy-peer-deps
-npm ERR! to accept an incorrect (and potentially broken) dependency resolution.
+It is possible to define a series of steps that splits your recorded actions in a way that causes the required
+page object to be out of scope. You may be encountering this issue if, when testing or running your journey, you
+see an error message like:
+
+```javascript
+page1 is not defined
 ```
 
-You can get around this by using `npm` version 6 to install.
+You can verify the problem by clicking the `Export` button in the recorder and checking the code output. If your generated
+code is similar to the example below, you may need to rearrange your steps.
+
+```javascript
+step('Click text=Babel Minify', async () => {
+  // `page2` is defined here
+  const [page2] = await Promise.all([page.waitForEvent('popup'), page.click('text=Babel Minify')]);
+  await page2.click(':nth-match(a:has-text("babel-minify"), 3)');
+});
+step('Close page', async () => {
+  // referencing `page2`, which is now out of scope
+  await page2.close();
+});
+```
+
+By removing the second step divider in the Script Recorder UI, we will generate code that keeps the `page2` object
+in scope for all its references.
+
+```javascript
+step('Click text=Babel Minify', async () => {
+  // now all references to `page2` occur while it is still in scope
+  const [page2] = await Promise.all([page.waitForEvent('popup'), page.click('text=Babel Minify')]);
+  await page2.click(':nth-match(a:has-text("babel-minify"), 3)');
+  await page2.close();
+});
+```
+
+We are actively working on a solution to this issue, you can follow the progress [here](https://github.com/elastic/synthetics-recorder/issues/195).
 
 ### Build
 
