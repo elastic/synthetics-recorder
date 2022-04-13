@@ -62,14 +62,15 @@ npm run dev
 #### Page object is not defined
 
 It is possible to define a series of steps that splits your recorded actions in a way that causes the required
-page object to be out of scope. If you're seeing an error message like:
+page object to be out of scope. You may be encountering this issue if, when testing or running your journey, you
+see an error message like:
 
 ```javascript
 page1 is not defined
 ```
 
-You may be encountering this issue. You can verify it by clicking the `Export` button in the recorder and
-checking the code output. If your generated code is similar to this below, you may need to rearrange your steps.
+You can verify the problem by clicking the `Export` button in the recorder and checking the code output. If your generated
+code is similar to the example below, you may need to rearrange your steps.
 
 ```javascript
 step("Click text=Babel Minify", async () => {
@@ -86,7 +87,7 @@ step("Close page", async () => {
 });
 ```
 
-By removing the second step divider in the Script recorder UI, we will generate code that keeps the `page2` object
+By removing the second step divider in the Script Recorder UI, we will generate code that keeps the `page2` object
 in scope for all its references.
 
 ```javascript
