@@ -22,20 +22,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiButtonIcon, EuiFlexItem, EuiToolTip } from "@elastic/eui";
-import { Step } from "@elastic/synthetics";
-import React, { useContext, useState } from "react";
-import { DRAG_AND_DROP_DATA_TRANSFER_TYPE } from "../../common/shared";
-import { StepSeparatorDragDropDataTransfer } from "../../common/types";
-import { DragAndDropContext } from "../../contexts/DragAndDropContext";
-import { StepsContext } from "../../contexts/StepsContext";
-import { EditStepNameInput } from "./EditStepNameInput";
+import { EuiButtonIcon, EuiFlexItem, EuiToolTip } from '@elastic/eui';
+import { Step } from '@elastic/synthetics';
+import React, { useContext, useState } from 'react';
+import { DRAG_AND_DROP_DATA_TRANSFER_TYPE } from '../../common/shared';
+import { StepSeparatorDragDropDataTransfer } from '../../common/types';
+import { DragAndDropContext } from '../../contexts/DragAndDropContext';
+import { StepsContext } from '../../contexts/StepsContext';
+import { EditStepNameInput } from './EditStepNameInput';
 import {
   ControlsWrapper,
   DeleteButton,
   StepSeparatorHeading,
   StepSeparatorTopBorder,
-} from "./styles";
+} from './styles';
 
 interface ISeparatorActions {
   canDelete: boolean;
@@ -52,9 +52,7 @@ interface IDragProps {
   onDragEnd?: DragHandler;
 }
 
-function createStepSeparatorDragDropData(
-  stepIndex: number
-): StepSeparatorDragDropDataTransfer {
+function createStepSeparatorDragDropData(stepIndex: number): StepSeparatorDragDropDataTransfer {
   return { initiatorIndex: stepIndex };
 }
 
@@ -79,11 +77,9 @@ export function SeparatorActions({
       setDragIndex(index);
       setShowDeleteButton(false);
       setShowEditButton(false);
-      const dragDataString = JSON.stringify(
-        createStepSeparatorDragDropData(index)
-      );
+      const dragDataString = JSON.stringify(createStepSeparatorDragDropData(index));
       e.dataTransfer.setData(DRAG_AND_DROP_DATA_TRANSFER_TYPE, dragDataString);
-      e.dataTransfer.setData("text/plain", dragDataString);
+      e.dataTransfer.setData('text/plain', dragDataString);
     };
     dragParams.onDragEnd = () => {
       setShowDeleteButton(true);
@@ -123,10 +119,7 @@ export function SeparatorActions({
         />
       )}
       {showEditButton && (
-        <EuiFlexItem
-          grow={false}
-          style={{ visibility: showControls ? "visible" : "hidden" }}
-        >
+        <EuiFlexItem grow={false} style={{ visibility: showControls ? 'visible' : 'hidden' }}>
           <EuiToolTip content="Edit step name">
             <EuiButtonIcon
               aria-label="Rename step"

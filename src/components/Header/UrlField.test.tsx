@@ -22,15 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { fireEvent, render, waitFor } from "@testing-library/react";
-import React from "react";
-import { RecordingStatus } from "../../common/types";
-import { IUrlField, UrlField, URL_FIELD_LABEL } from "./UrlField";
+import { fireEvent, render, waitFor } from '@testing-library/react';
+import React from 'react';
+import { RecordingStatus } from '../../common/types';
+import { IUrlField, UrlField, URL_FIELD_LABEL } from './UrlField';
 
-describe("<UrlField />", () => {
+describe('<UrlField />', () => {
   let setUrlMock: jest.Mock;
   let toggleRecordingMock: jest.Mock;
-  const TEST_URL = "https://www.elastic.co";
+  const TEST_URL = 'https://www.elastic.co';
 
   beforeEach(() => {
     setUrlMock = jest.fn();
@@ -54,7 +54,7 @@ describe("<UrlField />", () => {
     );
   }
 
-  it("sets the url value", async () => {
+  it('sets the url value', async () => {
     const { getByLabelText } = render(<TestRender />);
 
     const urlField = getByLabelText(URL_FIELD_LABEL);
@@ -66,11 +66,11 @@ describe("<UrlField />", () => {
     });
   });
 
-  it("toggles recording when enter press received", async () => {
+  it('toggles recording when enter press received', async () => {
     const { getByLabelText } = render(<TestRender />);
     const urlField = getByLabelText(URL_FIELD_LABEL);
 
-    fireEvent.keyUp(urlField, { key: "Enter" });
+    fireEvent.keyUp(urlField, { key: 'Enter' });
 
     await waitFor(() => {
       expect(toggleRecordingMock).toHaveBeenCalledTimes(1);
@@ -78,12 +78,10 @@ describe("<UrlField />", () => {
   });
 
   it(`doesn't toggle recording if recording already in progress`, async () => {
-    const { getByLabelText } = render(
-      <TestRender recordingStatus={RecordingStatus.Recording} />
-    );
+    const { getByLabelText } = render(<TestRender recordingStatus={RecordingStatus.Recording} />);
     const urlField = getByLabelText(URL_FIELD_LABEL);
 
-    fireEvent.keyUp(urlField, { key: "Enter" });
+    fireEvent.keyUp(urlField, { key: 'Enter' });
     fireEvent.change(urlField, { target: { value: TEST_URL } });
 
     await waitFor(() => {

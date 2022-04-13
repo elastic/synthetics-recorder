@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React from "react";
+import React from 'react';
 import {
   EuiButton,
   EuiButtonEmpty,
@@ -31,8 +31,8 @@ import {
   EuiModalFooter,
   EuiModalHeader,
   EuiModalHeaderTitle,
-} from "@elastic/eui";
-import { Setter } from "../common/types";
+} from '@elastic/eui';
+import { Setter } from '../common/types';
 
 interface Props {
   setVisibility: Setter<boolean>;
@@ -41,15 +41,11 @@ interface Props {
 }
 
 function headerCopy(n: number) {
-  const stepCopy = n === 1 ? "step" : "steps";
+  const stepCopy = n === 1 ? 'step' : 'steps';
   return `Restart and delete ${n} ${stepCopy}?`;
 }
 
-export function StartOverWarningModal({
-  setVisibility,
-  startOver,
-  stepCount,
-}: Props) {
+export function StartOverWarningModal({ setVisibility, startOver, stepCount }: Props) {
   const close = () => setVisibility(false);
   return (
     <EuiModal onClose={close}>

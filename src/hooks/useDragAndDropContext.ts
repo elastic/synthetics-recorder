@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { useState } from "react";
-import { IDragAndDropContext } from "../contexts/DragAndDropContext";
+import { useState } from 'react';
+import { IDragAndDropContext } from '../contexts/DragAndDropContext';
 
 export function useDragAndDropContext(): IDragAndDropContext {
   const [dragIndex, setDragIndex] = useState<number | undefined>(undefined);

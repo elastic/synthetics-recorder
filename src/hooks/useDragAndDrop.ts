@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Steps } from "@elastic/synthetics";
-import { useContext } from "react";
-import { StepsContext } from "../contexts/StepsContext";
+import type { Steps } from '@elastic/synthetics';
+import { useContext } from 'react';
+import { StepsContext } from '../contexts/StepsContext';
 
 export function canDrag(stepIndex: number, steps: Steps): boolean | null {
   if (stepIndex === 0) return null;

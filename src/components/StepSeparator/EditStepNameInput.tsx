@@ -22,15 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import {
-  EuiButtonIcon,
-  EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiToolTip,
-} from "@elastic/eui";
-import React, { useState } from "react";
-import styled from "styled-components";
+import { EuiButtonIcon, EuiFieldText, EuiFlexGroup, EuiFlexItem, EuiToolTip } from '@elastic/eui';
+import React, { useState } from 'react';
+import styled from 'styled-components';
 
 const InputWrapper = styled(EuiFlexGroup)`
   marginleft: 4px;
@@ -49,12 +43,8 @@ interface IEditStepNameInput {
   placeholder: string;
 }
 
-export function EditStepNameInput({
-  defaultValue,
-  onComplete,
-  placeholder,
-}: IEditStepNameInput) {
-  const [editValue, setEditValue] = useState(defaultValue ?? "");
+export function EditStepNameInput({ defaultValue, onComplete, placeholder }: IEditStepNameInput) {
+  const [editValue, setEditValue] = useState(defaultValue ?? '');
   return (
     <InputWrapper alignItems="center" gutterSize="xs">
       <EuiFlexItem>
@@ -63,10 +53,10 @@ export function EditStepNameInput({
           onChange={e => setEditValue(e.target.value)}
           onKeyUp={e => {
             switch (e.key) {
-              case "Enter":
+              case 'Enter':
                 onComplete(editValue || undefined);
                 break;
-              case "Escape":
+              case 'Escape':
                 onComplete(null);
                 break;
             }

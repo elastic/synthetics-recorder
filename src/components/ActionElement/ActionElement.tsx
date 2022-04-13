@@ -22,19 +22,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem, EuiAccordion } from "@elastic/eui";
-import React, { useCallback, useContext, useState } from "react";
-import styled from "styled-components";
-import { SMALL_SCREEN_BREAKPOINT } from "../../common/shared";
-import { ActionContext, ResultCategory } from "../../common/types";
-import { StepsContext } from "../../contexts/StepsContext";
-import { useDrop } from "../../hooks/useDrop";
-import { ActionDetail } from "../ActionDetail";
-import { ActionStatusIndicator } from "../ActionStatusIndicator";
-import { Assertion } from "../Assertion";
-import { Behavior } from "./Behavior";
-import { ExtraActions } from "./ExtraActions";
-import { NewStepDividerButton } from "./NewStepDividerButton";
+import { EuiFlexGroup, EuiFlexItem, EuiAccordion } from '@elastic/eui';
+import React, { useCallback, useContext, useState } from 'react';
+import styled from 'styled-components';
+import { SMALL_SCREEN_BREAKPOINT } from '../../common/shared';
+import { ActionContext, ResultCategory } from '../../common/types';
+import { StepsContext } from '../../contexts/StepsContext';
+import { useDrop } from '../../hooks/useDrop';
+import { ActionDetail } from '../ActionDetail';
+import { ActionStatusIndicator } from '../ActionStatusIndicator';
+import { Assertion } from '../Assertion';
+import { Behavior } from './Behavior';
+import { ExtraActions } from './ExtraActions';
+import { NewStepDividerButton } from './NewStepDividerButton';
 
 const ActionAccordion = styled(EuiAccordion)<{ isDragOver: boolean }>`
   padding: 8px 0px;
@@ -47,9 +47,7 @@ const ActionAccordion = styled(EuiAccordion)<{ isDragOver: boolean }>`
   }
 
   border-bottom: ${({ isDragOver, theme }) =>
-    isDragOver
-      ? `${theme.border.width.thick} solid ${theme.colors.success}`
-      : "inherit"};
+    isDragOver ? `${theme.border.width.thick} solid ${theme.colors.success}` : 'inherit'};
 
   .euiAccordion__padding--m {
     background-color: ${props => props.theme.colors.emptyShade};
@@ -96,8 +94,7 @@ function ActionComponent({
   stepIndex,
   testStatus,
 }: IActionElement) {
-  const { onDeleteAction, onUpdateAction, onSetActionIsOpen } =
-    useContext(StepsContext);
+  const { onDeleteAction, onUpdateAction, onSetActionIsOpen } = useContext(StepsContext);
   const isAssertion = actionContext.action.isAssert;
   const [areControlsVisible, setAreControlsVisible] = useState(false);
   const setIsOpen = useCallback(
@@ -107,10 +104,7 @@ function ActionComponent({
     [actionIndex, stepIndex, onSetActionIsOpen]
   );
   const close = () => setIsOpen(false);
-  const { isDragOver, onDropActions, splitStepAtAction } = useDrop(
-    stepIndex,
-    actionIndex
-  );
+  const { isDragOver, onDropActions, splitStepAtAction } = useDrop(stepIndex, actionIndex);
 
   return (
     <Container
@@ -128,19 +122,17 @@ function ActionComponent({
         />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
-        {!isAssertion && (
-          <ActionStatusIndicator showRect={isLast} status={testStatus} />
-        )}
+        {!isAssertion && <ActionStatusIndicator showRect={isLast} status={testStatus} />}
       </EuiFlexItem>
       <Behavior isAssert={isAssertion} omitBorder={isLast}>
         <ActionAccordion
           isDragOver={isDragOver}
           arrowDisplay="none"
-          buttonProps={{ style: { display: "none" } }}
+          buttonProps={{ style: { display: 'none' } }}
           paddingSize="m"
           id={`step-accordion-${actionContext.title}`}
           initialIsOpen={actionContext.isOpen}
-          forceState={actionContext.isOpen ? "open" : "closed"}
+          forceState={actionContext.isOpen ? 'open' : 'closed'}
           onMouseOver={() => {
             if (!areControlsVisible) {
               setAreControlsVisible(true);

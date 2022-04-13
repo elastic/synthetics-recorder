@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import styled from "styled-components";
-import { EuiButtonIcon } from "@elastic/eui";
-import React from "react";
+import styled from 'styled-components';
+import { EuiButtonIcon } from '@elastic/eui';
+import React from 'react';
 
 interface Props {
   actionIndex: number;
@@ -45,15 +45,11 @@ const AddStepDivider = styled(EuiButtonIcon)<StyleProps>`
   z-index: 1;
 `;
 
-export function NewStepDividerButton({
-  actionIndex,
-  stepIndex,
-  onClick,
-}: Props) {
+export function NewStepDividerButton({ actionIndex, stepIndex, onClick }: Props) {
   return (
     <AddStepDivider
       aria-label="Insert a step between actions. Use this button to group actions into logical steps"
-      computedvisibility={actionIndex > 0 ? "visible" : "hidden"}
+      computedvisibility={actionIndex > 0 ? 'visible' : 'hidden'}
       color="text"
       iconType="plusInCircle"
       id={`insert-divider-${stepIndex}-${actionIndex}`}

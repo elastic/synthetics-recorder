@@ -22,15 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import {
-  EuiFlyoutFooter,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiButtonEmpty,
-} from "@elastic/eui";
-import React from "react";
-import type { JourneyType, Setter } from "../../common/types";
-import { SaveCodeButton } from "../SaveCodeButton";
+import { EuiFlyoutFooter, EuiFlexGroup, EuiFlexItem, EuiButtonEmpty } from '@elastic/eui';
+import React from 'react';
+import type { JourneyType, Setter } from '../../common/types';
+import { SaveCodeButton } from '../SaveCodeButton';
 
 interface IFlyoutFooter {
   setVisible: Setter<boolean>;
@@ -42,9 +37,7 @@ export function Footer({ setVisible, type }: IFlyoutFooter) {
     <EuiFlyoutFooter>
       <EuiFlexGroup justifyContent="spaceBetween">
         <EuiFlexItem grow={false}>
-          <EuiButtonEmpty onClick={() => setVisible(false)}>
-            Close
-          </EuiButtonEmpty>
+          <EuiButtonEmpty onClick={() => setVisible(false)}>Close</EuiButtonEmpty>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <SaveCodeButton type={type} />

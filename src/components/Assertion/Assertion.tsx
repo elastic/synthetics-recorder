@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   EuiButton,
   EuiButtonEmpty,
@@ -31,10 +31,10 @@ import {
   EuiFlexItem,
   EuiFormRow,
   EuiSpacer,
-} from "@elastic/eui";
-import { AssertionSelect } from "./Select";
-import { AssertionInfo } from "./AssertionInfo";
-import { ActionContext } from "../../common/types";
+} from '@elastic/eui';
+import { AssertionSelect } from './Select';
+import { AssertionInfo } from './AssertionInfo';
+import { ActionContext } from '../../common/types';
 
 interface IAssertion {
   actionContext: ActionContext;
@@ -68,9 +68,9 @@ export function Assertion({
 }: IAssertion) {
   const { action } = actionContext;
 
-  const [command, setCommand] = useState(action.command || "");
+  const [command, setCommand] = useState(action.command || '');
   const [selector, setSelector] = useState(action.selector);
-  const [value, setValue] = useState(action.value || "");
+  const [value, setValue] = useState(action.value || '');
 
   return (
     <>
@@ -89,10 +89,7 @@ export function Assertion({
       <EuiSpacer />
       <EuiFlexGroup direction="column">
         <EuiFlexItem>
-          <AssertionSelect
-            onChange={e => setCommand(e.target.value)}
-            value={command}
-          />
+          <AssertionSelect onChange={e => setCommand(e.target.value)} value={command} />
         </EuiFlexItem>
         <EuiFlexItem>
           <EuiFormRow label="Selector">
@@ -108,7 +105,7 @@ export function Assertion({
           <EuiFormRow label="Value">
             <EuiFieldText
               aria-label="Assertion value"
-              disabled={["innerText", "textContent"].indexOf(command) === -1}
+              disabled={['innerText', 'textContent'].indexOf(command) === -1}
               onChange={e => setValue(e.target.value)}
               value={value}
             />
@@ -121,9 +118,7 @@ export function Assertion({
           <EuiButton
             data-test-subj={`save-${stepIndex}-${actionIndex}`}
             onClick={() => {
-              saveAssertion(
-                updateAction(actionContext, command, selector, value)
-              );
+              saveAssertion(updateAction(actionContext, command, selector, value));
             }}
           >
             Save

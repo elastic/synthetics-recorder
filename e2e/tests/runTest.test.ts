@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ElectronServiceFactory, env } from "../services";
+import { ElectronServiceFactory, env } from '../services';
 
 const electronService = new ElectronServiceFactory();
 
@@ -30,8 +30,8 @@ afterEach(async () => {
   await electronService.terminate();
 });
 
-describe("Test Button", () => {
-  it("is disabled during a recording session", async () => {
+describe('Test Button', () => {
+  it('is disabled during a recording session', async () => {
     const electronWindow = await electronService.getWindow();
 
     await electronService.enterTestUrl(env.DEMO_APP_URL);

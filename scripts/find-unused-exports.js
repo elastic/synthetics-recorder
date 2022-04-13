@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-const unusedExports = require("ts-unused-exports");
-const result = unusedExports.default("./tsconfig.json");
+const unusedExports = require('ts-unused-exports');
+const result = unusedExports.default('./tsconfig.json');
 if (Object.keys(result).length) {
   throw Error(`Unused exports detected\n${JSON.stringify(result, null, 2)}\n`);
 }
 // eslint-disable-next-line no-console
-console.log("No unused exports detected.\n");
+console.log('No unused exports detected.\n');

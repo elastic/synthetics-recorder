@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { Step, Steps } from "@elastic/synthetics";
-import { Setter } from "../../common/types";
+import { Step, Steps } from '@elastic/synthetics';
+import { Setter } from '../../common/types';
 
 export const onDropStep =
   (steps: Steps, setSteps: Setter<Steps>) =>
@@ -34,9 +34,9 @@ export const onDropStep =
    */
   (targetIndex: number, initiatorIndex: number, actionIndex: number) => {
     if (targetIndex < 0 || targetIndex >= steps.length)
-      throw Error("Cannot drop step index because it does not exist");
+      throw Error('Cannot drop step index because it does not exist');
     if (initiatorIndex <= 0 || initiatorIndex >= steps.length)
-      throw Error("Cannot drag specified index because it does not exist");
+      throw Error('Cannot drag specified index because it does not exist');
 
     const targetStep = steps[targetIndex];
     const initiatorStep = steps[initiatorIndex];
@@ -131,7 +131,7 @@ const dropInSameStep = ({
   initiatorStep,
   setSteps,
   targetStep,
-}: Omit<DropHandlerProps, "targetIndex">): void =>
+}: Omit<DropHandlerProps, 'targetIndex'>): void =>
   setSteps(oldSteps => [
     ...oldSteps.slice(0, initiatorIndex - 1),
     {
@@ -142,10 +142,7 @@ const dropInSameStep = ({
       name: oldSteps[initiatorIndex - 1].name,
     },
     {
-      actions: targetStep.actions.slice(
-        actionIndex + 1,
-        targetStep.actions.length
-      ),
+      actions: targetStep.actions.slice(actionIndex + 1, targetStep.actions.length),
       name: initiatorStep.name,
     },
     ...oldSteps.slice(initiatorIndex + 1, oldSteps.length),
@@ -175,17 +172,11 @@ const dropInNextStep = ({
   setSteps(oldSteps => [
     ...oldSteps.slice(0, initiatorIndex),
     {
-      actions: [
-        ...initiatorStep.actions,
-        ...targetStep.actions.slice(0, actionIndex + 1),
-      ],
+      actions: [...initiatorStep.actions, ...targetStep.actions.slice(0, actionIndex + 1)],
       name: initiatorStep.name,
     },
     {
-      actions: targetStep.actions.slice(
-        actionIndex + 1,
-        targetStep.actions.length
-      ),
+      actions: targetStep.actions.slice(actionIndex + 1, targetStep.actions.length),
       name: targetStep.name,
     },
     ...oldSteps.slice(targetIndex + 1, oldSteps.length),

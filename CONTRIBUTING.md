@@ -6,7 +6,6 @@ Before starting to work on a particular piece of code, please first open an issu
 
 Please note that Elastic does have a [Code of Conduct](https://www.elastic.co/community/codeofconduct).
 
-
 # Creating an issue
 
 We expect contributors to fill our issue templates when creating new issues. It's important that contributors use those templates appropriately because doing so helps us triage issues more quickly, discuss them more efficiently, and respond to the issue's participants sooner.
@@ -14,7 +13,6 @@ We expect contributors to fill our issue templates when creating new issues. It'
 For bugs, for example, we expect contributors to provide clear instructions on how to reproduce the bug they've found, and, if possible a screenshot or GIF illustrating the problem. We also appreciate it when contributors can provide information about the bug's cause, even though that's not necessary for reporting a bug.
 
 Once contributors create an issue, this project's maintainers will review and triage it, and we'll aim to get back to the issue's creator as soon as we can, although we can't promise any particular dates.
-
 
 # Opening a pull-request
 

@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiToolTip } from "@elastic/eui";
-import React from "react";
-import { Bold } from "./styles";
+import { EuiToolTip } from '@elastic/eui';
+import React from 'react';
+import { Bold } from './styles';
 
 interface ITruncatedTitle {
   stepIndex: number;
@@ -32,13 +32,9 @@ interface ITruncatedTitle {
   maxLength: number;
 }
 
-export function TruncatedTitle({
-  maxLength,
-  stepIndex,
-  text,
-}: ITruncatedTitle) {
+export function TruncatedTitle({ maxLength, stepIndex, text }: ITruncatedTitle) {
   let substr = text.substring(0, maxLength);
-  if (text.length > maxLength) substr += "…";
+  if (text.length > maxLength) substr += '…';
   const textElement = <Bold>{`${stepIndex + 1}: ${substr}`}</Bold>;
   if (text.length <= maxLength) {
     return textElement;

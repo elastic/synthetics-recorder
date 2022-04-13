@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { useContext, useEffect, useState } from "react";
-import { ResultCategory } from "../common/types";
-import { TestContext } from "../contexts/TestContext";
+import { useContext, useEffect, useState } from 'react';
+import { ResultCategory } from '../common/types';
+import { TestContext } from '../contexts/TestContext';
 
 /**
  * Today test results are limited to the resolution of step-level.

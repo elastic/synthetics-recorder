@@ -22,61 +22,61 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Step, Steps } from "@elastic/synthetics";
-import { RendererProcessIpc } from "electron-better-ipc";
-import { getCodeForFailedResult, updateAction } from "./shared";
+import type { Step, Steps } from '@elastic/synthetics';
+import { RendererProcessIpc } from 'electron-better-ipc';
+import { getCodeForFailedResult, updateAction } from './shared';
 
-describe("shared", () => {
-  describe("updateAction", () => {
+describe('shared', () => {
+  describe('updateAction', () => {
     const steps: Steps = [
       {
         actions: [
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl: "http://localhost:12349/html",
+            frameUrl: 'http://localhost:12349/html',
             committed: true,
             action: {
-              name: "navigate",
-              url: "http://localhost:12349/html",
+              name: 'navigate',
+              url: 'http://localhost:12349/html',
               signals: [],
             },
-            title: "Go to http://localhost:12349/html",
+            title: 'Go to http://localhost:12349/html',
           },
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl: "http://localhost:12349/html",
+            frameUrl: 'http://localhost:12349/html',
             action: {
-              name: "click",
-              selector: "text=Hello world A link to google",
+              name: 'click',
+              selector: 'text=Hello world A link to google',
               signals: [],
-              button: "left",
+              button: 'left',
               modifiers: 0,
               clickCount: 1,
             },
-            title: "Click text=Hello world",
+            title: 'Click text=Hello world',
           },
           {
             action: {
-              name: "assert",
+              name: 'assert',
               isAssert: true,
-              selector: "text=Hello world",
-              command: "innerText",
+              selector: 'text=Hello world',
+              command: 'innerText',
               value: undefined,
               signals: [],
             },
-            frameUrl: "http://localhost:12349/html",
+            frameUrl: 'http://localhost:12349/html',
             modified: false,
             isMainFrame: true,
-            pageAlias: "page",
+            pageAlias: 'page',
           },
         ],
       },
     ];
 
-    it("updates the action at the specified index", () => {
-      const updatedSteps = updateAction(steps, "nextValue", 0, 2);
+    it('updates the action at the specified index', () => {
+      const updatedSteps = updateAction(steps, 'nextValue', 0, 2);
       expect(updatedSteps).toHaveLength(1);
       expect(updatedSteps[0].actions).toHaveLength(3);
       expect(JSON.stringify(updatedSteps[0].actions[0])).toEqual(
@@ -88,13 +88,13 @@ describe("shared", () => {
       expect(JSON.stringify(updatedSteps[0].actions[2])).toEqual(
         JSON.stringify({
           ...steps[0].actions[2],
-          action: { ...steps[0].actions[2].action, value: "nextValue" },
+          action: { ...steps[0].actions[2].action, value: 'nextValue' },
         })
       );
     });
   });
 
-  describe("getCodeForFailedResult", () => {
+  describe('getCodeForFailedResult', () => {
     let mockIpc: RendererProcessIpc;
 
     beforeEach(() => {
@@ -105,72 +105,72 @@ describe("shared", () => {
       mockIpc = mock as unknown as RendererProcessIpc;
     });
 
-    it("returns empty string for undefined journey", async () => {
-      expect(await getCodeForFailedResult(mockIpc, [])).toBe("");
+    it('returns empty string for undefined journey', async () => {
+      expect(await getCodeForFailedResult(mockIpc, [])).toBe('');
     });
 
-    it("returns an empty string if there are no failed steps in the journey", async () => {
+    it('returns an empty string if there are no failed steps in the journey', async () => {
       expect(
         await getCodeForFailedResult(mockIpc, [], {
-          status: "succeeded",
-          type: "inline",
+          status: 'succeeded',
+          type: 'inline',
           steps: [
             {
               duration: 10,
-              name: "I succeeded",
-              status: "succeeded",
+              name: 'I succeeded',
+              status: 'succeeded',
             },
           ],
         })
-      ).toBe("");
+      ).toBe('');
     });
 
-    it("returns an empty string if there is no step title matching journey name", async () => {
+    it('returns an empty string if there is no step title matching journey name', async () => {
       expect(
         await getCodeForFailedResult(mockIpc, [], {
-          status: "failed",
-          type: "inline",
+          status: 'failed',
+          type: 'inline',
           steps: [
             {
               duration: 10,
-              name: "I failed",
-              status: "failed",
+              name: 'I failed',
+              status: 'failed',
             },
           ],
         })
-      ).toBe("");
+      ).toBe('');
     });
 
-    it("calls `getCodeFromActions` when a matching step for the failed journey step is found", async () => {
+    it('calls `getCodeFromActions` when a matching step for the failed journey step is found', async () => {
       const failedStep: Step = {
         actions: [
           {
-            title: "I failed",
+            title: 'I failed',
             action: {
-              name: "click",
+              name: 'click',
               signals: [],
             },
             isMainFrame: true,
-            frameUrl: "https://www.elastic.co",
-            pageAlias: "page alias",
+            frameUrl: 'https://www.elastic.co',
+            pageAlias: 'page alias',
           },
         ],
       };
 
       await getCodeForFailedResult(mockIpc, [failedStep], {
-        status: "failed",
-        type: "inline",
+        status: 'failed',
+        type: 'inline',
         steps: [
           {
             duration: 10,
-            name: "I failed",
-            status: "failed",
+            name: 'I failed',
+            status: 'failed',
           },
         ],
       });
 
       expect(mockIpc.callMain).toHaveBeenCalledTimes(1);
-      expect(mockIpc.callMain).toHaveBeenCalledWith("actions-to-code", {
+      expect(mockIpc.callMain).toHaveBeenCalledWith('actions-to-code', {
         actions: [failedStep],
         isSuite: false,
       });

@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiThemeComputed, EuiThemeContext } from "@elastic/eui";
-import React, { useContext } from "react";
-import { ResultCategory } from "../common/types";
+import { EuiThemeComputed, EuiThemeContext } from '@elastic/eui';
+import React, { useContext } from 'react';
+import { ResultCategory } from '../common/types';
 
 interface IActionStatusIndicator {
   /**
@@ -38,49 +38,34 @@ interface IActionStatusIndicator {
   status?: ResultCategory;
 }
 
-export function ActionStatusIndicator({
-  showRect,
-  status,
-}: IActionStatusIndicator) {
+export function ActionStatusIndicator({ showRect, status }: IActionStatusIndicator) {
   const euiTheme = useContext(EuiThemeContext);
 
   return (
-    <svg
-      width="50"
-      height="62"
-      style={{ left: 26, top: 0, position: "relative" }}
-    >
+    <svg width="50" height="62" style={{ left: 26, top: 0, position: 'relative' }}>
       {!!showRect && (
         <rect
           x="24"
           width="2"
           height="40"
           y="0"
-          style={{ fill: euiTheme.colors.lightShade, stroke: "none" }}
+          style={{ fill: euiTheme.colors.lightShade, stroke: 'none' }}
         />
       )}
       <circle cx="25" cy="37" r="12" fill={euiTheme.colors.emptyShade} />
-      <circle
-        cx="25"
-        cy="37"
-        r="3"
-        fill={getColorForStatus(euiTheme, status)}
-      />
+      <circle cx="25" cy="37" r="3" fill={getColorForStatus(euiTheme, status)} />
     </svg>
   );
 }
 
-function getColorForStatus(
-  euiTheme: EuiThemeComputed,
-  status?: ResultCategory
-) {
+function getColorForStatus(euiTheme: EuiThemeComputed, status?: ResultCategory) {
   if (!status) return euiTheme.colors.darkestShade;
   switch (status) {
-    case "succeeded":
+    case 'succeeded':
       return euiTheme.colors.success;
-    case "skipped":
+    case 'skipped':
       return euiTheme.colors.warning;
-    case "failed":
+    case 'failed':
       return euiTheme.colors.danger;
     default:
       return euiTheme.colors.darkestShade;

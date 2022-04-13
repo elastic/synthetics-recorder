@@ -22,17 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { Step } from "@elastic/synthetics";
-import { ActionContext } from "../../common/types";
+import { Step } from '@elastic/synthetics';
+import { ActionContext } from '../../common/types';
 
 export const createAction = (name: string): ActionContext => ({
   action: {
     name,
     signals: [],
   },
-  frameUrl: "https://www.elastic.co",
+  frameUrl: 'https://www.elastic.co',
   isMainFrame: true,
-  pageAlias: "pageAlias",
+  pageAlias: 'pageAlias',
 });
 
 export const createStep = (actionNames: string[]): Step => ({

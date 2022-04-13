@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ActionInContext } from "@elastic/synthetics";
+import { ActionInContext } from '@elastic/synthetics';
 
 export type ActionContext = ActionInContext & { isOpen?: boolean };
 
@@ -39,9 +39,9 @@ export interface Journey {
   type: JourneyType;
 }
 
-export type StepStatus = "succeeded" | "failed" | "skipped";
+export type StepStatus = 'succeeded' | 'failed' | 'skipped';
 
-export type ResultCategory = StepStatus | "running";
+export type ResultCategory = StepStatus | 'running';
 
 export interface JourneyStep {
   duration: number;
@@ -51,7 +51,7 @@ export interface JourneyStep {
   status: StepStatus;
 }
 
-export type JourneyType = "suite" | "inline";
+export type JourneyType = 'suite' | 'inline';
 
 export interface StepSeparatorDragDropDataTransfer {
   initiatorIndex: number;
@@ -60,37 +60,33 @@ export interface StepSeparatorDragDropDataTransfer {
 export type Setter<T> = React.Dispatch<React.SetStateAction<T>>;
 
 export enum RecordingStatus {
-  NotRecording = "NOT_RECORDING",
-  Recording = "RECORDING",
-  Paused = "PAUSED",
+  NotRecording = 'NOT_RECORDING',
+  Recording = 'RECORDING',
+  Paused = 'PAUSED',
 }
 
 interface JourneyStartEvent {
-  event: "journey/start";
+  event: 'journey/start';
   data: {
     name: string;
   };
 }
 
 interface JourneyEndEvent {
-  event: "journey/end";
+  event: 'journey/end';
   data: {
     name: string;
-    status: "succeeded" | "failed";
+    status: 'succeeded' | 'failed';
   };
 }
 interface StepEndEvent {
-  event: "step/end";
+  event: 'step/end';
   data: JourneyStep;
 }
 
 interface ResultOverride {
-  event: "override";
+  event: 'override';
   data: Result | undefined;
 }
 
-export type TestEvent =
-  | JourneyStartEvent
-  | JourneyEndEvent
-  | StepEndEvent
-  | ResultOverride;
+export type TestEvent = JourneyStartEvent | JourneyEndEvent | StepEndEvent | ResultOverride;

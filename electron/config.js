@@ -22,12 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-const { join, dirname } = require("path");
-const isDev = require("electron-is-dev");
-const {
-  getExecutablePath,
-  getChromeVersion,
-} = require("../scripts/install-pw");
+const { join, dirname } = require('path');
+const isDev = require('electron-is-dev');
+const { getExecutablePath, getChromeVersion } = require('../scripts/install-pw');
 
 /**
  * Electron resources path where all the `extraResources`
@@ -40,17 +37,15 @@ const ROOT_DIR = dirname(__dirname);
  * Journey directory is for storing a dummy file to simulate
  * the suite tests
  */
-const JOURNEY_DIR = isDev
-  ? join(ROOT_DIR, "journeys")
-  : join(RESOURCES_PATH, "journeys");
+const JOURNEY_DIR = isDev ? join(ROOT_DIR, 'journeys') : join(RESOURCES_PATH, 'journeys');
 
 /**
  * Controls where the browser binaries are available
  * to use it for both recording and testing phase
  */
 const PLAYWRIGHT_BROWSERS_PATH = isDev
-  ? join(ROOT_DIR, "local-browsers")
-  : join(RESOURCES_PATH, "local-browsers");
+  ? join(ROOT_DIR, 'local-browsers')
+  : join(RESOURCES_PATH, 'local-browsers');
 
 const defaultExecutablePath = getExecutablePath();
 const installedVersion = getChromeVersion();

@@ -21,9 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-const { spawn } = require("child_process");
-const { Arch } = require("electron-builder");
-const { downloadForPlatform } = require("./download-chromium");
+const { spawn } = require('child_process');
+const { Arch } = require('electron-builder');
+const { downloadForPlatform } = require('./download-chromium');
 
 exports.default = function beforePack(ctx) {
   const arch = Arch[ctx.arch];
@@ -33,8 +33,8 @@ exports.default = function beforePack(ctx) {
 
 function fixSharp(arch, platform) {
   return new Promise((resolve, reject) => {
-    const npmInstall = spawn("npm", ["run", "fix-sharp"], {
-      stdio: "inherit",
+    const npmInstall = spawn('npm', ['run', 'fix-sharp'], {
+      stdio: 'inherit',
       shell: true,
       env: {
         ...process.env,
@@ -42,13 +42,13 @@ function fixSharp(arch, platform) {
         npm_config_platform: platform,
       },
     });
-    npmInstall.on("close", code => {
+    npmInstall.on('close', code => {
       if (code === 0) {
         resolve();
       } else {
-        reject(new Error("process finished with error code " + code));
+        reject(new Error('process finished with error code ' + code));
       }
     });
-    npmInstall.on("error", reject);
+    npmInstall.on('error', reject);
   });
 }

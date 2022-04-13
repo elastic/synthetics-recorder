@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { Page } from "playwright";
-import { ElectronServiceFactory, env } from "../services";
+import { Page } from 'playwright';
+import { ElectronServiceFactory, env } from '../services';
 
 const electronService = new ElectronServiceFactory();
 
@@ -31,10 +31,10 @@ afterEach(async () => {
   await electronService.terminate();
 });
 
-const ACTION_URL = "https://e2e-test-action-edit.org";
-const ACTION_OPTION = "innerText";
-const ASSERTION_SELECTOR = "test-assertion-selector";
-const ASSERTION_VALUE = "test-assertion-value";
+const ACTION_URL = 'https://e2e-test-action-edit.org';
+const ACTION_OPTION = 'innerText';
+const ASSERTION_SELECTOR = 'test-assertion-selector';
+const ASSERTION_VALUE = 'test-assertion-value';
 
 async function addAssertion() {
   await electronService.enterTestUrl(env.DEMO_APP_URL);
@@ -42,48 +42,40 @@ async function addAssertion() {
   await electronService.waitForPageToBeIdle();
   await electronService.clickStopRecording();
   await electronService.clickActionElementSettingsButton(
-    "id=action-element-0-0",
-    "text=Add assertion"
+    'id=action-element-0-0',
+    'text=Add assertion'
   );
 }
 
 async function editAssertion(electronWindow: Page) {
-  await electronWindow.click("id=action-element-0-1");
-  await electronWindow.hover("id=action-element-0-1");
-  await electronWindow.selectOption(
-    `[aria-label="Assertion type select"]`,
-    ACTION_OPTION
-  );
-  await electronWindow.fill(
-    `[aria-label="Assertion selector"]`,
-    ASSERTION_SELECTOR
-  );
+  await electronWindow.click('id=action-element-0-1');
+  await electronWindow.hover('id=action-element-0-1');
+  await electronWindow.selectOption(`[aria-label="Assertion type select"]`, ACTION_OPTION);
+  await electronWindow.fill(`[aria-label="Assertion selector"]`, ASSERTION_SELECTOR);
   await electronWindow.fill(`[aria-label="Assertion value"]`, ASSERTION_VALUE);
   await electronWindow.click(`[data-test-subj="save-0-1"]`);
 }
 
 async function editAction(electronWindow: Page) {
   await electronService.clickActionElementSettingsButton(
-    "id=action-element-0-0",
+    'id=action-element-0-0',
     `[data-test-subj="edit-action"]`
   );
   await electronWindow.fill(`[data-test-subj="edit-url-0-0"]`, ACTION_URL);
   await electronWindow.click(`[data-test-subj="save-action-0-0"]`);
 }
 
-describe("Assertion and Action values", () => {
-  it("includes updated action/assertion values in code output", async () => {
+describe('Assertion and Action values', () => {
+  it('includes updated action/assertion values in code output', async () => {
     const electronWindow = await electronService.getWindow();
     await addAssertion();
     await editAssertion(electronWindow);
     await editAction(electronWindow);
 
     // open export flyout
-    await electronWindow.click("text=Export");
+    await electronWindow.click('text=Export');
     // get inner text of code to export
-    const innerText = await (
-      await electronWindow.$("id=export-code-block")
-    ).innerText();
+    const innerText = await (await electronWindow.$('id=export-code-block')).innerText();
 
     /**
      * The outputted code should contain the updated values we have supplied in the edit steps above.

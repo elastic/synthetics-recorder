@@ -22,27 +22,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-const { chromium } = require("playwright");
-const { join, resolve } = require("path");
-const { existsSync } = require("fs");
-const { writeFile, rm, mkdir } = require("fs/promises");
-const { ipcMain: ipc } = require("electron-better-ipc");
-const { EventEmitter, once } = require("events");
-const { dialog, shell, BrowserWindow } = require("electron");
-const { fork } = require("child_process");
-const logger = require("electron-log");
-const isDev = require("electron-is-dev");
-const {
-  SyntheticsGenerator,
-} = require("@elastic/synthetics/dist/formatter/javascript");
-const SYNTHETICS_CLI = require.resolve("@elastic/synthetics/dist/cli");
-const {
-  JOURNEY_DIR,
-  PLAYWRIGHT_BROWSERS_PATH,
-  EXECUTABLE_PATH,
-} = require("./config");
+const { chromium } = require('playwright');
+const { join, resolve } = require('path');
+const { existsSync } = require('fs');
+const { writeFile, rm, mkdir } = require('fs/promises');
+const { ipcMain: ipc } = require('electron-better-ipc');
+const { EventEmitter, once } = require('events');
+const { dialog, shell, BrowserWindow } = require('electron');
+const { fork } = require('child_process');
+const logger = require('electron-log');
+const isDev = require('electron-is-dev');
+const { SyntheticsGenerator } = require('@elastic/synthetics/dist/formatter/javascript');
+const SYNTHETICS_CLI = require.resolve('@elastic/synthetics/dist/cli');
+const { JOURNEY_DIR, PLAYWRIGHT_BROWSERS_PATH, EXECUTABLE_PATH } = require('./config');
 
-const IS_TEST_ENV = process.env.NODE_ENV === "test";
+const IS_TEST_ENV = process.env.NODE_ENV === 'test';
 const CDP_TEST_PORT = parseInt(process.env.TEST_PORT ?? 61337) + 1;
 
 async function launchContext() {
@@ -61,12 +55,10 @@ async function launchContext() {
     await browser.close();
   }
 
-  context.on("page", page => {
-    page.on("dialog", () => {});
-    page.on("close", () => {
-      const hasPage = browser
-        .contexts()
-        .some(context => context.pages().length > 0);
+  context.on('page', page => {
+    page.on('dialog', () => {});
+    page.on('close', () => {
+      const hasPage = browser.contexts().some(context => context.pages().length > 0);
       if (hasPage) return;
       closeBrowser().catch(_e => null);
     });
@@ -77,13 +69,9 @@ async function launchContext() {
 async function openPage(context, url) {
   const page = await context.newPage();
   if (url) {
-    if (existsSync(url)) url = "file://" + resolve(url);
-    else if (
-      !url.startsWith("http") &&
-      !url.startsWith("file://") &&
-      !url.startsWith("about:")
-    )
-      url = "http://" + url;
+    if (existsSync(url)) url = 'file://' + resolve(url);
+    else if (!url.startsWith('http') && !url.startsWith('file://') && !url.startsWith('about:'))
+      url = 'http://' + url;
     await page.goto(url);
   }
   return page;
@@ -99,9 +87,9 @@ async function recordJourneys(data, browserWindow) {
     actionListener = new EventEmitter();
     // Listen to actions from Playwright recording session
     const actionsHandler = actions => {
-      ipc.callRenderer(browserWindow, "change", { actions });
+      ipc.callRenderer(browserWindow, 'change', { actions });
     };
-    actionListener.on("actions", actionsHandler);
+    actionListener.on('actions', actionsHandler);
 
     await context._enableRecorder({
       launchOptions: {},
@@ -114,13 +102,13 @@ async function recordJourneys(data, browserWindow) {
 
     const closeBrowser = async () => {
       browserContext = null;
-      actionListener.removeListener("actions", actionsHandler);
+      actionListener.removeListener('actions', actionsHandler);
       await browser.close().catch({});
     };
 
-    ipc.on("stop", closeBrowser);
+    ipc.on('stop', closeBrowser);
 
-    await once(browser, "disconnected");
+    await once(browser, 'disconnected');
   } catch (e) {
     logger.error(e);
   }
@@ -148,9 +136,7 @@ function addActionsToStepResult(steps, event) {
     ...event,
     data: {
       ...event.data,
-      actionTitles: step.actions.map(
-        (action, index) => action?.title ?? `Action ${index + 1}`
-      ),
+      actionTitles: step.actions.map((action, index) => action?.title ?? `Action ${index + 1}`),
     },
   };
 }
@@ -159,7 +145,7 @@ async function onTest(data, browserWindow) {
   const parseOrSkip = chunk => {
     // at times stdout ships multiple steps in one chunk, broken by newline,
     // so here we split on the newline
-    return chunk.split("\n").map(subChunk => {
+    return chunk.split('\n').map(subChunk => {
       try {
         return JSON.parse(subChunk);
       } catch (_) {
@@ -171,19 +157,19 @@ async function onTest(data, browserWindow) {
   // returns TestEvent interface defined in common/types.ts
   const constructEvent = parsed => {
     switch (parsed.type) {
-      case "journey/start": {
+      case 'journey/start': {
         const { journey } = parsed;
         return {
-          event: "journey/start",
+          event: 'journey/start',
           data: {
             name: journey.name,
           },
         };
       }
-      case "step/end": {
+      case 'step/end': {
         const { step, error } = parsed;
         return {
-          event: "step/end",
+          event: 'step/end',
           data: {
             name: step.name,
             status: step.status,
@@ -192,10 +178,10 @@ async function onTest(data, browserWindow) {
           },
         };
       }
-      case "journey/end": {
+      case 'journey/end': {
         const { journey } = parsed;
         return {
-          event: "journey/end",
+          event: 'journey/end',
           data: {
             name: journey.name,
             status: journey.status,
@@ -206,7 +192,7 @@ async function onTest(data, browserWindow) {
   };
 
   const sendTestEvent = event => {
-    browserWindow.webContents.send("test-event", event);
+    browserWindow.webContents.send('test-event', event);
   };
 
   const emitResult = chunk => {
@@ -214,9 +200,7 @@ async function onTest(data, browserWindow) {
       const event = constructEvent(parsed);
       if (event) {
         sendTestEvent(
-          event.event === "step/end"
-            ? addActionsToStepResult(data.steps, event)
-            : event
+          event.event === 'step/end' ? addActionsToStepResult(data.steps, event) : event
         );
       }
     });
@@ -225,15 +209,10 @@ async function onTest(data, browserWindow) {
   let synthCliProcess = null; // child process, define here to kill when finished
   try {
     const isSuite = data.isSuite;
-    const args = [
-      "--no-headless",
-      "--reporter=json",
-      "--screenshots=off",
-      "--no-throttling",
-    ];
-    const filePath = join(JOURNEY_DIR, "recorded.journey.js");
+    const args = ['--no-headless', '--reporter=json', '--screenshots=off', '--no-throttling'];
+    const filePath = join(JOURNEY_DIR, 'recorded.journey.js');
     if (!isSuite) {
-      args.push("--inline");
+      args.push('--inline');
     } else {
       await mkdir(JOURNEY_DIR).catch(() => {});
       await writeFile(filePath, data.code);
@@ -249,15 +228,15 @@ async function onTest(data, browserWindow) {
         PLAYWRIGHT_BROWSERS_PATH,
       },
       cwd: isDev ? process.cwd() : process.resourcesPath,
-      stdio: "pipe",
+      stdio: 'pipe',
     });
     const { stdout, stdin, stderr } = synthCliProcess;
     if (!isSuite) {
       stdin.write(data.code);
       stdin.end();
     }
-    stdout.setEncoding("utf-8");
-    stderr.setEncoding("utf-8");
+    stdout.setEncoding('utf-8');
+    stderr.setEncoding('utf-8');
     for await (const chunk of stdout) {
       emitResult(chunk);
     }
@@ -270,7 +249,7 @@ async function onTest(data, browserWindow) {
   } catch (error) {
     logger.error(error);
     sendTestEvent({
-      event: "journey/end",
+      event: 'journey/end',
       data: {
         error,
       },
@@ -283,12 +262,9 @@ async function onTest(data, browserWindow) {
 }
 
 async function onFileSave(code) {
-  const { filePath, canceled } = await dialog.showSaveDialog(
-    BrowserWindow.getFocusedWindow(),
-    {
-      defaultPath: "recorded.journey.js",
-    }
-  );
+  const { filePath, canceled } = await dialog.showSaveDialog(BrowserWindow.getFocusedWindow(), {
+    defaultPath: 'recorded.journey.js',
+  });
 
   if (!canceled) {
     await writeFile(filePath, code);
@@ -312,8 +288,8 @@ async function onSetMode(mode) {
     },
     [mode]
   );
-  if (mode !== "inspecting") return;
-  const [selector] = await once(actionListener, "selector");
+  if (mode !== 'inspecting') return;
+  const [selector] = await once(actionListener, 'selector');
   return selector;
 }
 
@@ -326,12 +302,12 @@ async function onLinkExternal(url) {
 }
 
 function setupListeners() {
-  ipc.answerRenderer("record-journey", recordJourneys);
-  ipc.answerRenderer("run-journey", onTest);
-  ipc.answerRenderer("save-file", onFileSave);
-  ipc.answerRenderer("actions-to-code", onTransformCode);
-  ipc.answerRenderer("set-mode", onSetMode);
-  ipc.answerRenderer("link-to-external", onLinkExternal);
+  ipc.answerRenderer('record-journey', recordJourneys);
+  ipc.answerRenderer('run-journey', onTest);
+  ipc.answerRenderer('save-file', onFileSave);
+  ipc.answerRenderer('actions-to-code', onTransformCode);
+  ipc.answerRenderer('set-mode', onSetMode);
+  ipc.answerRenderer('link-to-external', onLinkExternal);
 }
 
 module.exports = setupListeners;

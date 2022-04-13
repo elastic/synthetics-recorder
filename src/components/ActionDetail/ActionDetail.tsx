@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from 'react';
 import {
   EuiButton,
   EuiButtonEmpty,
@@ -31,16 +31,12 @@ import {
   EuiPanel,
   EuiSpacer,
   EuiText,
-} from "@elastic/eui";
-import { StepsContext } from "../../contexts/StepsContext";
-import { FormControl } from "./FormControl";
-import { ActionContext } from "../../common/types";
+} from '@elastic/eui';
+import { StepsContext } from '../../contexts/StepsContext';
+import { FormControl } from './FormControl';
+import { ActionContext } from '../../common/types';
 
-function createUpdatedAction(
-  field: string,
-  value: string,
-  context: ActionContext
-) {
+function createUpdatedAction(field: string, value: string, context: ActionContext) {
   return {
     ...context,
     action: { ...context.action, [field]: value },
@@ -55,23 +51,13 @@ interface IActionDetail {
   close?: () => void;
 }
 
-export function ActionDetail({
-  actionContext,
-  actionIndex,
-  close,
-  stepIndex,
-}: IActionDetail) {
+export function ActionDetail({ actionContext, actionIndex, close, stepIndex }: IActionDetail) {
   const { steps, onStepDetailChange } = useContext(StepsContext);
-  const onActionContextChange = (
-    updatedAction: ActionContext,
-    updatedActionIndex: number
-  ) => {
+  const onActionContextChange = (updatedAction: ActionContext, updatedActionIndex: number) => {
     onStepDetailChange(
       {
         actions: steps[stepIndex].actions.map((actionToUpdate, index) =>
-          index === updatedActionIndex
-            ? { ...updatedAction, isOpen: false }
-            : actionToUpdate
+          index === updatedActionIndex ? { ...updatedAction, isOpen: false } : actionToUpdate
         ),
         name: steps[stepIndex].name,
       },
@@ -79,36 +65,27 @@ export function ActionDetail({
     );
   };
   const { action } = actionContext;
-  const [selector, setSelector] = useState(action.selector || "");
-  const [text, setText] = useState(action.text || "");
-  const [url, setUrl] = useState(action.url || "");
+  const [selector, setSelector] = useState(action.selector || '');
+  const [text, setText] = useState(action.text || '');
+  const [url, setUrl] = useState(action.url || '');
 
   const onSelectorChange = (value: string) => {
     if (!value) return;
     setSelector(value);
-    onActionContextChange(
-      createUpdatedAction("selector", value, actionContext),
-      actionIndex
-    );
+    onActionContextChange(createUpdatedAction('selector', value, actionContext), actionIndex);
   };
   const onTextChange = (value: string) => {
     if (!value) return;
     setText(value);
-    onActionContextChange(
-      createUpdatedAction("text", value, actionContext),
-      actionIndex
-    );
+    onActionContextChange(createUpdatedAction('text', value, actionContext), actionIndex);
   };
   const onURLChange = (value: string) => {
     if (!value) return;
     setUrl(value);
-    onActionContextChange(
-      createUpdatedAction("url", value, actionContext),
-      actionIndex
-    );
+    onActionContextChange(createUpdatedAction('url', value, actionContext), actionIndex);
   };
 
-  if (action.text !== text && typeof action.text !== "undefined") {
+  if (action.text !== text && typeof action.text !== 'undefined') {
     setText(action.text);
   }
 

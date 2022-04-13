@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
-import React from "react";
-import { ResultContainer, ResultHeader } from "./styles";
-import { TruncatedTitle } from "./TruncatedTitle";
+import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import React from 'react';
+import { ResultContainer, ResultHeader } from './styles';
+import { TruncatedTitle } from './TruncatedTitle';
 
 interface IResultHeader {
   durationElement?: JSX.Element;
@@ -46,11 +46,7 @@ export const ResultTitle: React.FC<IResultHeader> = ({
       <ResultHeader>
         <EuiFlexGroup>
           <EuiFlexItem>
-            <TruncatedTitle
-              maxLength={maxTitleLength}
-              stepIndex={stepIndex}
-              text={titleText}
-            />
+            <TruncatedTitle maxLength={maxTitleLength} stepIndex={stepIndex} text={titleText} />
           </EuiFlexItem>
           <EuiFlexItem grow={false}>{durationElement}</EuiFlexItem>
         </EuiFlexGroup>

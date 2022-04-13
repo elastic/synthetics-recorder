@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { _electron, ElectronApplication, Page } from "playwright";
-import { TestBrowserService } from "./browser";
-import path from "path";
-import { env } from ".";
+import { _electron, ElectronApplication, Page } from 'playwright';
+import { TestBrowserService } from './browser';
+import path from 'path';
+import { env } from '.';
 
 export class ElectronServiceFactory {
   #instance: ElectronApplication;
@@ -37,14 +37,14 @@ export class ElectronServiceFactory {
     try {
       this.#instance = await _electron.launch({
         args: [
-          path.join(__dirname, "../..", "electron", "electron.js"),
-          "--no-sandbox",
-          "--enable-logging",
+          path.join(__dirname, '../..', 'electron', 'electron.js'),
+          '--no-sandbox',
+          '--enable-logging',
         ],
         env: {
           DISPLAY: env.DISPLAY,
           TEST_PORT: env.TEST_PORT,
-          PW_DEBUG: "console",
+          PW_DEBUG: 'console',
           NODE_ENV: process.env.NODE_ENV,
         },
       });
@@ -70,17 +70,13 @@ export class ElectronServiceFactory {
 
   async enterTestUrl(testUrl: string) {
     const electronWindow = await this.getWindow();
-    return await electronWindow.type(
-      '[placeholder="Enter a starting URL"]',
-      testUrl
-    );
+    return await electronWindow.type('[placeholder="Enter a starting URL"]', testUrl);
   }
 
   async clickStartRecording() {
     const electronWindow = await this.getWindow();
-    await electronWindow.click("text=Start");
-    this.#recordingBrowserPage =
-      await TestBrowserService.getRemoteBrowserPage();
+    await electronWindow.click('text=Start');
+    this.#recordingBrowserPage = await TestBrowserService.getRemoteBrowserPage();
     return this.#recordingBrowserPage;
   }
 
@@ -91,28 +87,23 @@ export class ElectronServiceFactory {
 
   async clickRunTest() {
     const electronWindow = await this.getWindow();
-    await electronWindow.click("text=Test");
+    await electronWindow.click('text=Test');
   }
 
   async clickStopRecording() {
     const electronWindow = await this.getWindow();
-    await electronWindow.click("text=Stop");
+    await electronWindow.click('text=Stop');
   }
 
-  async clickActionElementSettingsButton(
-    elementSelector: string,
-    buttonSelector: string
-  ) {
+  async clickActionElementSettingsButton(elementSelector: string, buttonSelector: string) {
     const electronWindow = await this.getWindow();
     await electronWindow.hover(elementSelector);
-    await electronWindow.click(
-      `[aria-label="Expand the settings menu for this action"]`
-    );
+    await electronWindow.click(`[aria-label="Expand the settings menu for this action"]`);
     return electronWindow.click(buttonSelector);
   }
 
   async waitForPageToBeIdle(timeout = 45000) {
-    await this.#recordingBrowserPage.waitForLoadState("networkidle", {
+    await this.#recordingBrowserPage.waitForLoadState('networkidle', {
       timeout,
     });
   }
@@ -120,7 +111,7 @@ export class ElectronServiceFactory {
   async navigateRecordingBrowser(url, timeout = 4500) {
     await this.#recordingBrowserPage.goto(url, {
       timeout,
-      waitUntil: "networkidle",
+      waitUntil: 'networkidle',
     });
   }
 

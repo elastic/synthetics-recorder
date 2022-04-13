@@ -21,29 +21,29 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-const { spawn } = require("child_process");
-const path = require("path");
+const { spawn } = require('child_process');
+const path = require('path');
 
 exports.default = function afterPack(ctx) {
   const platform = ctx.electronPlatformName;
-  if (platform === "linux") {
-    const resourcesPath = path.join(ctx.appOutDir, "resources");
+  if (platform === 'linux') {
+    const resourcesPath = path.join(ctx.appOutDir, 'resources');
     return changePermission(resourcesPath);
   }
 };
 
 function changePermission(resourcesPath) {
   return new Promise((resolve, reject) => {
-    const ps = spawn("chmod", ["777", resourcesPath], {
+    const ps = spawn('chmod', ['777', resourcesPath], {
       shell: true,
     });
-    ps.on("close", code => {
+    ps.on('close', code => {
       if (code === 0) {
         resolve();
       } else {
-        reject(new Error("process finished with error code " + code));
+        reject(new Error('process finished with error code ' + code));
       }
     });
-    ps.on("error", reject);
+    ps.on('error', reject);
   });
 }
