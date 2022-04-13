@@ -65,6 +65,45 @@ async function editAction(electronWindow: Page) {
   await electronWindow.click(`[data-test-subj="save-action-0-0"]`);
 }
 
+/**
+ * Utility that allows us to retry a step that may take some time after a previous action
+ * before it will be ready.
+ * @param assertionFunction the function that makes the assertions
+ * @param resetFunction an optional function to reset the UI state to a position ready for testing
+ * @param maxRetries the maximum number of times to retry before throwing an error
+ * @param sleepDuration the duration in ms to wait before trying the assertion function again
+ */
+async function retryAssertion(
+  assertionFunction: () => Promise<void>,
+  resetFunction?: () => Promise<void>,
+  maxRetries = 5,
+  sleepDuration = 1000
+) {
+  for (let i = 1; i <= maxRetries; i++) {
+    try {
+      await assertionFunction();
+    } catch (e) {
+      if (i === maxRetries) throw e;
+
+      console.log(
+        `Encountered assertion error, awaiting ${
+          sleepDuration / 1000
+        }s before retry. This is retry ${i + 1} of ${maxRetries}.`
+      );
+
+      // give time for state to change
+      await new Promise(r => setTimeout(r, sleepDuration));
+
+      // perform any necessary action to re-create the test state
+      if (resetFunction) await resetFunction();
+
+      // try again
+      continue;
+    }
+    break;
+  }
+}
+
 describe('Assertion and Action values', () => {
   it('includes updated action/assertion values in code output', async () => {
     const electronWindow = await electronService.getWindow();
@@ -72,17 +111,22 @@ describe('Assertion and Action values', () => {
     await editAssertion(electronWindow);
     await editAction(electronWindow);
 
-    // open export flyout
-    await electronWindow.click('text=Export');
-    // get inner text of code to export
-    const innerText = await (await electronWindow.$('id=export-code-block')).innerText();
+    await retryAssertion(
+      async () => {
+        // open export flyout
+        await electronWindow.click('text=Export');
+        // get inner text of code to export
+        const innerText = await (await electronWindow.$('id=export-code-block')).innerText();
 
-    /**
-     * The outputted code should contain the updated values we have supplied in the edit steps above.
-     */
-    expect(innerText).toContain(
-      `expect(await page.${ACTION_OPTION}('${ASSERTION_SELECTOR}')).toMatch('${ASSERTION_VALUE}');`
+        /**
+         * The outputted code should contain the updated values we have supplied in the edit steps above.
+         */
+        expect(innerText).toContain(
+          `expect(await page.${ACTION_OPTION}('${ASSERTION_SELECTOR}')).toMatch('${ASSERTION_VALUE}');`
+        );
+        expect(innerText).toContain(`await page.goto('${ACTION_URL}');`);
+      },
+      async () => electronWindow.click('text=Close')
     );
-    expect(innerText).toContain(`await page.goto('${ACTION_URL}');`);
   });
 });
