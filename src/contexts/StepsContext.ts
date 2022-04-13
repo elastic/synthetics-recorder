@@ -22,12 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Step, Steps } from "@elastic/synthetics";
-import { createContext } from "react";
-import type { ActionContext, Setter } from "../common/types";
+import type { Step, Steps } from '@elastic/synthetics';
+import { createContext } from 'react';
+import type { ActionContext, Setter } from '../common/types';
 
 function notImplemented() {
-  throw Error("Step context not initialized");
+  throw Error('Step context not initialized');
 }
 
 export interface IStepsContext {
@@ -54,19 +54,11 @@ export interface IStepsContext {
   /**
    * Inserts the `action` to the given step at `actionIndex`.
    */
-  onInsertAction: (
-    action: ActionContext,
-    stepIndex: number,
-    actionIndex: number
-  ) => void;
+  onInsertAction: (action: ActionContext, stepIndex: number, actionIndex: number) => void;
   /**
    * Handles the mutation on a drag/drop.
    */
-  onDropStep: (
-    targetIndex: number,
-    initiatorIndex: number,
-    actionIndex: number
-  ) => void;
+  onDropStep: (targetIndex: number, initiatorIndex: number, actionIndex: number) => void;
   /**
    * Merges two steps and replaces the first index with the merged result.
    */
@@ -78,11 +70,7 @@ export interface IStepsContext {
   /**
    * Used to set the state of an action open/closed in the UI.
    */
-  onSetActionIsOpen: (
-    stepIndex: number,
-    actionIndex: number,
-    isOpen: boolean
-  ) => void;
+  onSetActionIsOpen: (stepIndex: number, actionIndex: number, isOpen: boolean) => void;
   /**
    * Creates a new step, composed of the previous step's actions starting at the given index.
    */
@@ -90,11 +78,7 @@ export interface IStepsContext {
   /**
    * Overwrites the action at the given step -> action index.
    */
-  onUpdateAction: (
-    action: ActionContext,
-    stepIndex: number,
-    actionIndex: number
-  ) => void;
+  onUpdateAction: (action: ActionContext, stepIndex: number, actionIndex: number) => void;
   /**
    * Overwrites the step at `stepIndex` with `step`.
    */

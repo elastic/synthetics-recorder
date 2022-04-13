@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { createContext } from "react";
-import { Setter } from "../common/types";
+import { createContext } from 'react';
+import { Setter } from '../common/types';
 
 export interface IDragAndDropContext {
   dragIndex?: number;
@@ -31,7 +31,7 @@ export interface IDragAndDropContext {
 }
 
 function notImplemented() {
-  throw Error("Not implemented");
+  throw Error('Not implemented');
 }
 
 export const DragAndDropContext = createContext<IDragAndDropContext>({

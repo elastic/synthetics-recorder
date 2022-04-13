@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem, EuiText } from "@elastic/eui";
-import React from "react";
-import type { StepStatus } from "../../common/types";
-import { ResultContentWrapper, symbols } from "./styles";
+import { EuiFlexGroup, EuiFlexItem, EuiText } from '@elastic/eui';
+import React from 'react';
+import type { StepStatus } from '../../common/types';
+import { ResultContentWrapper, symbols } from './styles';
 
 interface IResultBody {
   actionTitles: string[];
@@ -36,11 +36,7 @@ export function ResultBody({ actionTitles, resultCategory }: IResultBody) {
   return (
     <EuiFlexGroup direction="column" gutterSize="none">
       {actionTitles.map((name, index) => (
-        <ResultContentWrapper
-          alignItems="center"
-          key={name + index}
-          gutterSize="xs"
-        >
+        <ResultContentWrapper alignItems="center" key={name + index} gutterSize="xs">
           <EuiFlexItem grow={false}>{symbols[resultCategory]}</EuiFlexItem>
           <EuiFlexItem>
             <EuiText size="s">{name}</EuiText>

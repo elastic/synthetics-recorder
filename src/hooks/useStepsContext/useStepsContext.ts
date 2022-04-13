@@ -22,11 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Step, Steps } from "@elastic/synthetics";
-import { useCallback, useState } from "react";
-import { ActionContext } from "../../common/types";
-import type { IStepsContext } from "../../contexts/StepsContext";
-import { onDropStep } from "./onDropStep";
+import type { Step, Steps } from '@elastic/synthetics';
+import { useCallback, useState } from 'react';
+import { ActionContext } from '../../common/types';
+import type { IStepsContext } from '../../contexts/StepsContext';
+import { onDropStep } from './onDropStep';
 
 export function useStepsContext(): IStepsContext {
   const [steps, setSteps] = useState<Steps>([]);
@@ -45,9 +45,7 @@ export function useStepsContext(): IStepsContext {
     (updatedStep: Step, indexToUpdate: number) =>
       setSteps(oldSteps =>
         oldSteps.map((currentStep, iterIndex) =>
-          iterIndex === indexToUpdate
-            ? { ...currentStep, ...updatedStep }
-            : currentStep
+          iterIndex === indexToUpdate ? { ...currentStep, ...updatedStep } : currentStep
         )
       ),
     []
@@ -99,10 +97,7 @@ export function useStepsContext(): IStepsContext {
         ...oldSteps.slice(0, indexToInsert),
         {
           name: oldSteps[indexToInsert].name ?? undefined,
-          actions: [
-            ...steps[indexToInsert].actions,
-            ...steps[indexToRemove].actions,
-          ],
+          actions: [...steps[indexToInsert].actions, ...steps[indexToRemove].actions],
         },
         ...oldSteps.slice(indexToRemove + 1, oldSteps.length),
       ]),
@@ -153,11 +148,11 @@ export function useStepsContext(): IStepsContext {
         throw Error(`Cannot remove all actions from a step.`);
       }
       if (steps.length <= stepIndex) {
-        throw Error("Step index cannot exceed steps length.");
+        throw Error('Step index cannot exceed steps length.');
       }
       const stepToSplit = steps[stepIndex];
       if (stepToSplit.actions.length <= 1) {
-        throw Error("Cannot split step with only one action.");
+        throw Error('Cannot split step with only one action.');
       }
       const reducedStepActions = stepToSplit.actions.slice(0, actionIndex);
       const insertedStepActions = stepToSplit.actions.slice(actionIndex);
@@ -170,11 +165,7 @@ export function useStepsContext(): IStepsContext {
       ]);
     },
     onStepDetailChange,
-    onUpdateAction: (
-      action: ActionContext,
-      stepIndex: number,
-      actionIndex: number
-    ) => {
+    onUpdateAction: (action: ActionContext, stepIndex: number, actionIndex: number) => {
       const step = steps[stepIndex];
       onStepDetailChange(
         {

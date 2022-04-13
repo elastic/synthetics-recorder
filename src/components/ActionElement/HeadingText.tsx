@@ -22,12 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
-import React from "react";
-import styled from "styled-components";
-import { ActionContext } from "../../common/types";
-import { AssertionHeadingText } from "./AssertionHeadingText";
-import { Bold } from "./styles";
+import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import React from 'react';
+import styled from 'styled-components';
+import { ActionContext } from '../../common/types';
+import { AssertionHeadingText } from './AssertionHeadingText';
+import { Bold } from './styles';
 
 interface IHeadingText {
   actionContext: ActionContext;
@@ -46,11 +46,8 @@ export function HeadingText({ actionContext }: IHeadingText) {
       <Bold grow={false}>{actionContext.action.name}</Bold>
       <WrapText>
         &nbsp;
-        {actionContext.action.name !== "navigate" &&
-          actionContext.action.selector}
-        {actionContext.action.name === "navigate"
-          ? actionContext.frameUrl
-          : null}
+        {actionContext.action.name !== 'navigate' && actionContext.action.selector}
+        {actionContext.action.name === 'navigate' ? actionContext.frameUrl : null}
       </WrapText>
     </EuiFlexGroup>
   );

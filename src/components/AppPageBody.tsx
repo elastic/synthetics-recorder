@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiPageBody } from "@elastic/eui";
-import React from "react";
-import styled from "styled-components";
+import { EuiPageBody } from '@elastic/eui';
+import React from 'react';
+import styled from 'styled-components';
 
 const PageBody = styled(EuiPageBody)`
   padding: 0px 0px 0px 40px;

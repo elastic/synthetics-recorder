@@ -22,12 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { Steps } from "@elastic/synthetics";
-import { useCallback, useContext, useState } from "react";
-import { DRAG_AND_DROP_DATA_TRANSFER_TYPE } from "../common/shared";
-import { StepSeparatorDragDropDataTransfer } from "../common/types";
-import { DragAndDropContext } from "../contexts/DragAndDropContext";
-import { StepsContext } from "../contexts/StepsContext";
+import { Steps } from '@elastic/synthetics';
+import { useCallback, useContext, useState } from 'react';
+import { DRAG_AND_DROP_DATA_TRANSFER_TYPE } from '../common/shared';
+import { StepSeparatorDragDropDataTransfer } from '../common/types';
+import { DragAndDropContext } from '../contexts/DragAndDropContext';
+import { StepsContext } from '../contexts/StepsContext';
 
 export const computeIsDroppable = (
   stepIndex: number,
@@ -56,20 +56,13 @@ export function useDrop(stepIndex: number, actionIndex: number) {
   const { dragIndex } = useContext(DragAndDropContext);
   const { steps, onDropStep, onSplitStep } = useContext(StepsContext);
   const [dropzoneOver, setDropzeonOver] = useState(false);
-  const [enterTarget, setEnterTarget] = useState<EventTarget | undefined>(
-    undefined
-  );
+  const [enterTarget, setEnterTarget] = useState<EventTarget | undefined>(undefined);
 
   const splitStepAtAction = useCallback(() => {
     onSplitStep(stepIndex, actionIndex);
   }, [actionIndex, onSplitStep, stepIndex]);
 
-  const isDroppable = computeIsDroppable(
-    stepIndex,
-    actionIndex,
-    steps,
-    dragIndex
-  );
+  const isDroppable = computeIsDroppable(stepIndex, actionIndex, steps, dragIndex);
 
   const onDropActions: DropProps = {};
   if (isDroppable) {

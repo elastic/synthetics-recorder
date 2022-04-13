@@ -22,31 +22,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-const { spawn } = require("child_process");
+const { spawn } = require('child_process');
 
 const buildFiles = async () => {
   return new Promise((resolve, reject) => {
     if (process.env.IS_RUNNER) return;
-    const ls = spawn("npm", ["run", "react:build"], {
+    const ls = spawn('npm', ['run', 'react:build'], {
       env: {
         PATH: process.env.PATH,
-        BROWSER: "none",
+        BROWSER: 'none',
       },
       shell: true,
       detached: true,
     });
 
-    ls.on("close", resolve);
+    ls.on('close', resolve);
 
-    ls.stdout.setEncoding("utf8");
-    ls.stderr.setEncoding("utf8");
+    ls.stdout.setEncoding('utf8');
+    ls.stderr.setEncoding('utf8');
 
-    ls.stdout.on("data", data => {
+    ls.stdout.on('data', data => {
       // eslint-disable-next-line no-console
       console.log(data);
     });
 
-    ls.stderr.on("data", data => {
+    ls.stderr.on('data', data => {
       // eslint-disable-next-line no-console
       console.error(data);
       reject();

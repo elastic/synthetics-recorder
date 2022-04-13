@@ -22,14 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import {
-  EuiAccordion,
-  EuiButtonIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
-} from "@elastic/eui";
-import styled from "styled-components";
-import { SMALL_SCREEN_BREAKPOINT } from "../../common/shared";
+import { EuiAccordion, EuiButtonIcon, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import styled from 'styled-components';
+import { SMALL_SCREEN_BREAKPOINT } from '../../common/shared';
 
 interface IControlsWrapper {
   isGrabbing: boolean | null;
@@ -37,7 +32,7 @@ interface IControlsWrapper {
 
 export const ControlsWrapper = styled(EuiFlexGroup)<IControlsWrapper>`
   cursor: ${({ isGrabbing }) =>
-    isGrabbing === null ? "default" : isGrabbing ? "grabbing" : "grab"};
+    isGrabbing === null ? 'default' : isGrabbing ? 'grabbing' : 'grab'};
 `;
 
 export const StepSeparatorTopBorder = styled(EuiFlexItem)`
@@ -59,7 +54,7 @@ export const StepSeparatorAccordion = styled(EuiAccordion)`
     flex-shrink: 1;
   }
 
-  div[id^="step-separator-"] {
+  div[id^='step-separator-'] {
     overflow: visible;
   }
 
@@ -75,5 +70,5 @@ interface IDeleteButtonProps {
 }
 
 export const DeleteButton = styled(EuiButtonIcon)<IDeleteButtonProps>`
-  visibility: ${props => (props.isVisible ? "visible" : "hidden")};
+  visibility: ${props => (props.isVisible ? 'visible' : 'hidden')};
 `;

@@ -22,16 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import {
-  EuiAccordion,
-  EuiFlexGroup,
-  EuiIcon,
-  EuiPanel,
-  EuiText,
-} from "@elastic/eui";
-import React from "react";
-import styled from "styled-components";
-import type { StepStatus } from "../../common/types";
+import { EuiAccordion, EuiFlexGroup, EuiIcon, EuiPanel, EuiText } from '@elastic/eui';
+import React from 'react';
+import styled from 'styled-components';
+import type { StepStatus } from '../../common/types';
 
 export const ResultContainer = styled(EuiPanel)`
   && {

@@ -22,13 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { resultReducer } from "./resultReducer";
+import { resultReducer } from './resultReducer';
 
-describe("result reducer", () => {
-  it.each(["inline", "suite"])("initializes result on journey start", type => {
+describe('result reducer', () => {
+  it.each(['inline', 'suite'])('initializes result on journey start', type => {
     expect(
       resultReducer(undefined, {
-        event: "journey/start",
+        event: 'journey/start',
         data: { name: type },
       })
     ).toEqual({
@@ -36,23 +36,21 @@ describe("result reducer", () => {
       skipped: 0,
       succeeded: 0,
       journey: {
-        status: "running",
+        status: 'running',
         type: type,
         steps: [],
       },
     });
   });
 
-  it("adds success step to result", () => {
+  it('adds success step to result', () => {
     expect(
       resultReducer(undefined, {
-        event: "step/end",
+        event: 'step/end',
         data: {
-          actionTitles: [
-            "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-          ],
-          name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-          status: "succeeded",
+          actionTitles: ['Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program'],
+          name: 'Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
+          status: 'succeeded',
           duration: 491,
         },
       })
@@ -61,32 +59,28 @@ describe("result reducer", () => {
       skipped: 0,
       succeeded: 1,
       journey: {
-        status: "running",
-        type: "inline",
+        status: 'running',
+        type: 'inline',
         steps: [
           {
-            actionTitles: [
-              "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-            ],
+            actionTitles: ['Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program'],
             duration: 491,
-            name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-            status: "succeeded",
+            name: 'Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
+            status: 'succeeded',
           },
         ],
       },
     });
   });
 
-  it("adds failed step to result", () => {
+  it('adds failed step to result', () => {
     expect(
       resultReducer(undefined, {
-        event: "step/end",
+        event: 'step/end',
         data: {
-          actionTitles: [
-            "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-          ],
-          name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-          status: "failed",
+          actionTitles: ['Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program'],
+          name: 'Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
+          status: 'failed',
           duration: 9000,
         },
       })
@@ -95,32 +89,28 @@ describe("result reducer", () => {
       skipped: 0,
       succeeded: 0,
       journey: {
-        status: "running",
-        type: "inline",
+        status: 'running',
+        type: 'inline',
         steps: [
           {
-            actionTitles: [
-              "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-            ],
+            actionTitles: ['Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program'],
             duration: 9000,
-            name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-            status: "failed",
+            name: 'Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
+            status: 'failed',
           },
         ],
       },
     });
   });
 
-  it("adds skipped step to result", () => {
+  it('adds skipped step to result', () => {
     expect(
       resultReducer(undefined, {
-        event: "step/end",
+        event: 'step/end',
         data: {
-          actionTitles: [
-            "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-          ],
-          name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-          status: "skipped",
+          actionTitles: ['Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program'],
+          name: 'Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
+          status: 'skipped',
           duration: 0,
         },
       })
@@ -129,23 +119,21 @@ describe("result reducer", () => {
       skipped: 1,
       succeeded: 0,
       journey: {
-        status: "running",
-        type: "inline",
+        status: 'running',
+        type: 'inline',
         steps: [
           {
-            actionTitles: [
-              "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-            ],
+            actionTitles: ['Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program'],
             duration: 0,
-            name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-            status: "skipped",
+            name: 'Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
+            status: 'skipped',
           },
         ],
       },
     });
   });
 
-  it("updates the result to the final state from journey/end", () => {
+  it('updates the result to the final state from journey/end', () => {
     expect(
       resultReducer(
         {
@@ -153,21 +141,21 @@ describe("result reducer", () => {
           skipped: 0,
           succeeded: 1,
           journey: {
-            status: "running",
-            type: "inline",
+            status: 'running',
+            type: 'inline',
             steps: [
               {
-                actionTitles: ["Go to https://www.elastic.co"],
+                actionTitles: ['Go to https://www.elastic.co'],
                 duration: 100,
-                name: "Go to https://www.elastic.co",
-                status: "succeeded",
+                name: 'Go to https://www.elastic.co',
+                status: 'succeeded',
               },
             ],
           },
         },
         {
-          event: "journey/end",
-          data: { name: "inline", status: "succeeded" },
+          event: 'journey/end',
+          data: { name: 'inline', status: 'succeeded' },
         }
       )
     ).toEqual({
@@ -175,102 +163,94 @@ describe("result reducer", () => {
       skipped: 0,
       succeeded: 1,
       journey: {
-        status: "succeeded",
+        status: 'succeeded',
         steps: [
           {
-            actionTitles: ["Go to https://www.elastic.co"],
+            actionTitles: ['Go to https://www.elastic.co'],
             duration: 100,
-            name: "Go to https://www.elastic.co",
-            status: "succeeded",
+            name: 'Go to https://www.elastic.co',
+            status: 'succeeded',
           },
         ],
-        type: "inline",
+        type: 'inline',
       },
     });
   });
 
-  it("constructs expected result for multiple calls", () => {
+  it('constructs expected result for multiple calls', () => {
     const a = resultReducer(undefined, {
-      event: "journey/start",
-      data: { name: "inline" },
+      event: 'journey/start',
+      data: { name: 'inline' },
     });
     const b = resultReducer(a, {
-      event: "step/end",
+      event: 'step/end',
       data: {
-        actionTitles: [
-          "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-        ],
-        name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-        status: "succeeded",
+        actionTitles: ['Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program'],
+        name: 'Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
+        status: 'succeeded',
         duration: 491,
       },
     });
     const c = resultReducer(b, {
-      event: "step/end",
+      event: 'step/end',
       data: {
-        actionTitles: [
-          "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-        ],
-        name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-        status: "failed",
+        actionTitles: ['Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program'],
+        name: 'Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
+        status: 'failed',
         duration: 9000,
       },
     });
     const d = resultReducer(c, {
-      event: "step/end",
+      event: 'step/end',
       data: {
         actionTitles: [
-          "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-          "A second action",
+          'Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
+          'A second action',
         ],
-        name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-        status: "skipped",
+        name: 'Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
+        status: 'skipped',
         duration: 0,
       },
     });
     const e = resultReducer(d, {
-      event: "journey/end",
-      data: { name: "inline", status: "failed" },
+      event: 'journey/end',
+      data: { name: 'inline', status: 'failed' },
     });
     expect(e).toEqual({
       failed: 1,
       skipped: 1,
       succeeded: 1,
       journey: {
-        status: "failed",
-        type: "inline",
+        status: 'failed',
+        type: 'inline',
         steps: [
           {
-            actionTitles: [
-              "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-            ],
-            name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-            status: "succeeded",
+            actionTitles: ['Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program'],
+            name: 'Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
+            status: 'succeeded',
             duration: 491,
           },
           {
-            actionTitles: [
-              "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-            ],
-            name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-            status: "failed",
+            actionTitles: ['Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program'],
+            name: 'Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
+            status: 'failed',
             duration: 9000,
           },
           {
             actionTitles: [
-              "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-              "A second action",
+              'Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
+              'A second action',
             ],
             duration: 0,
-            name: "Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
-            status: "skipped",
+            name: 'Go to https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
+            status: 'skipped',
           },
         ],
       },
     });
   });
 
-  it("handles override actions", () => {
+  it('handles override actions', () => {
     expect(
       resultReducer(
         {
@@ -278,12 +258,12 @@ describe("result reducer", () => {
           skipped: 1,
           succeeded: 1,
           journey: {
-            status: "failed",
-            type: "inline",
+            status: 'failed',
+            type: 'inline',
             steps: [],
           },
         },
-        { event: "override", data: undefined }
+        { event: 'override', data: undefined }
       )
     ).toBeUndefined();
   });

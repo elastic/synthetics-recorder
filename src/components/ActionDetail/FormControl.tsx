@@ -22,11 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFormRow, EuiFieldText } from "@elastic/eui";
-import React, { ChangeEventHandler } from "react";
+import { EuiFormRow, EuiFieldText } from '@elastic/eui';
+import React, { ChangeEventHandler } from 'react';
 
 interface IFormControl {
-  "data-test-subj"?: string;
+  'data-test-subj'?: string;
   label?: string;
   name: string;
   noPrepend?: boolean;
@@ -34,16 +34,9 @@ interface IFormControl {
   value: string;
 }
 
-export function FormControl({
-  label,
-  name,
-  noPrepend,
-  onChange,
-  value,
-  ...rest
-}: IFormControl) {
+export function FormControl({ label, name, noPrepend, onChange, value, ...rest }: IFormControl) {
   return (
-    <EuiFormRow label={label ?? "Command"}>
+    <EuiFormRow label={label ?? 'Command'}>
       <EuiFieldText
         onChange={onChange}
         prepend={noPrepend === true ? undefined : name}

@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Action, Step, Steps } from "@elastic/synthetics";
-import { ActionContext } from "../common/types";
+import type { Action, Step, Steps } from '@elastic/synthetics';
+import { ActionContext } from '../common/types';
 
 /**
  * Creates an intermediate representation of the steps Playwright has recorded from
@@ -39,9 +39,7 @@ export function generateIR(steps: Steps): Steps {
     for (const actionContext of step.actions) {
       const { action, title } = actionContext;
       // Add title to all actionContexts
-      actions.push(
-        title ? actionContext : { ...actionContext, title: actionTitle(action) }
-      );
+      actions.push(title ? actionContext : { ...actionContext, title: actionTitle(action) });
     }
     if (actions.length > 0) {
       result.push({ actions, name: step.name });
@@ -53,34 +51,32 @@ export function generateIR(steps: Steps): Steps {
 
 function actionTitle(action: Action) {
   switch (action.name) {
-    case "openPage":
+    case 'openPage':
       return `Open new page`;
-    case "closePage":
+    case 'closePage':
       return `Close page`;
-    case "check":
+    case 'check':
       return `Check ${action.selector}`;
-    case "uncheck":
+    case 'uncheck':
       return `Uncheck ${action.selector}`;
-    case "click": {
+    case 'click': {
       if (action.clickCount === 1) return `Click ${action.selector}`;
       if (action.clickCount === 2) return `Double click ${action.selector}`;
       if (action.clickCount === 3) return `Triple click ${action.selector}`;
       return `${action.clickCount}× click`;
     }
-    case "fill":
+    case 'fill':
       return `Fill ${action.selector}`;
-    case "setInputFiles":
+    case 'setInputFiles':
       if (action.files?.length === 0) return `Clear selected files`;
-      else return `Upload ${action.files?.join(", ")}`;
-    case "navigate":
+      else return `Upload ${action.files?.join(', ')}`;
+    case 'navigate':
       return `Go to ${action.url}`;
-    case "press":
-      return (
-        `Press ${action.key}` + (action.modifiers ? " with modifiers" : "")
-      );
-    case "select":
-      return `Select ${action.options?.join(", ")}`;
-    case "assert":
+    case 'press':
+      return `Press ${action.key}` + (action.modifiers ? ' with modifiers' : '');
+    case 'select':
+      return `Select ${action.options?.join(', ')}`;
+    case 'assert':
       return `Assert`;
   }
 }
@@ -88,7 +84,7 @@ function actionTitle(action: Action) {
 const getActionCount = (prev: number, cur: Step) => prev + cur.actions.length;
 
 function isOpenOrCloseAction(name: string, pageAlias: string) {
-  return (name === "closePage" && pageAlias === "page") || name === "openPage";
+  return (name === 'closePage' && pageAlias === 'page') || name === 'openPage';
 }
 
 /**
@@ -117,7 +113,7 @@ export function generateMergedIR(prevSteps: Steps, pwInput: Steps): Steps {
   for (const step of prevSteps) {
     const actions: ActionContext[] = [];
     for (const action of step.actions) {
-      if (action.action.name === "assert") {
+      if (action.action.name === 'assert') {
         /**
          * Keep adding all the assertions added by user as PW
          * does not have any assertion built in
@@ -132,9 +128,7 @@ export function generateMergedIR(prevSteps: Steps, pwInput: Steps): Steps {
          *
          * Any modified state in the UI is the final state
          */
-        const item = action?.modified
-          ? action
-          : nextSteps[0].actions[pwActionCount];
+        const item = action?.modified ? action : nextSteps[0].actions[pwActionCount];
         actions.push(item);
         pwActionCount++;
       }

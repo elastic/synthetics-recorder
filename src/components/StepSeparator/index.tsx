@@ -22,13 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Step } from "@elastic/synthetics";
-import React, { useState } from "react";
-import { useDragAndDrop } from "../../hooks/useDragAndDrop";
-import { useStepResultStatus } from "../../hooks/useTestResult";
-import { ActionElement } from "../ActionElement";
-import { SeparatorActions } from "./SeparatorActions";
-import { StepSeparatorAccordion } from "./styles";
+import type { Step } from '@elastic/synthetics';
+import React, { useState } from 'react';
+import { useDragAndDrop } from '../../hooks/useDragAndDrop';
+import { useStepResultStatus } from '../../hooks/useTestResult';
+import { ActionElement } from '../ActionElement';
+import { SeparatorActions } from './SeparatorActions';
+import { StepSeparatorAccordion } from './styles';
 
 interface IStepSeparator {
   index: number;
@@ -45,10 +45,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
   const { isDraggable } = useDragAndDrop(index);
 
   return (
-    <div
-      onMouseEnter={() => setShowControls(true)}
-      onMouseLeave={() => setShowControls(false)}
-    >
+    <div onMouseEnter={() => setShowControls(true)} onMouseLeave={() => setShowControls(false)}>
       <StepSeparatorAccordion
         extraAction={
           <SeparatorActions

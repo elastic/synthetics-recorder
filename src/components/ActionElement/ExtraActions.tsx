@@ -22,14 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
-import React, { useContext, useState } from "react";
-import { ActionContext, RecordingStatus } from "../../common/types";
-import { RecordingContext } from "../../contexts/RecordingContext";
-import { StepsContext } from "../../contexts/StepsContext";
-import { ActionControlButton } from "./ControlButton";
-import { HeadingText } from "./HeadingText";
-import { SettingsPopover } from "./SettingsPopover";
+import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import React, { useContext, useState } from 'react';
+import { ActionContext, RecordingStatus } from '../../common/types';
+import { RecordingContext } from '../../contexts/RecordingContext';
+import { StepsContext } from '../../contexts/StepsContext';
+import { ActionControlButton } from './ControlButton';
+import { HeadingText } from './HeadingText';
+import { SettingsPopover } from './SettingsPopover';
 
 interface IExtraActions {
   actionIndex: number;
@@ -63,11 +63,7 @@ export function ExtraActions({
     setIsOpen(!isOpen);
   });
   return (
-    <EuiFlexGroup
-      alignItems="center"
-      gutterSize="xs"
-      justifyContent="spaceBetween"
-    >
+    <EuiFlexGroup alignItems="center" gutterSize="xs" justifyContent="spaceBetween">
       <EuiFlexItem>
         <HeadingText actionContext={actionContext} />
       </EuiFlexItem>
@@ -90,9 +86,9 @@ export function ExtraActions({
                 ...actionContext,
                 action: {
                   ...actionContext.action,
-                  name: "assert",
-                  selector: actionContext.action.selector || "",
-                  command: "isVisible",
+                  name: 'assert',
+                  selector: actionContext.action.selector || '',
+                  command: 'isVisible',
                   value: actionContext.action.value || undefined,
                   signals: [],
                   isAssert: true,

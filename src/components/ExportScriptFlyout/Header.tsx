@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlyoutHeader, EuiTitle } from "@elastic/eui";
-import React from "react";
+import { EuiFlyoutHeader, EuiTitle } from '@elastic/eui';
+import React from 'react';
 
 interface IFlyoutHeader {
   id: string;

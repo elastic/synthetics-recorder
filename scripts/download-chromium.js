@@ -22,43 +22,36 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-require("dotenv").config();
+require('dotenv').config();
 
-const util = require("util");
-const path = require("path");
-const {
-  downloadBrowserWithProgressBar,
-} = require("playwright/lib/utils/browserFetcher");
-const { getChromeVersion } = require("./install-pw");
+const util = require('util');
+const path = require('path');
+const { downloadBrowserWithProgressBar } = require('playwright/lib/utils/browserFetcher');
+const { getChromeVersion } = require('./install-pw');
 
 const EXECUTABLE_PATHS = {
-  linux: ["chrome-linux", "chrome"],
-  mac: ["chrome-mac", "Chromium.app", "Contents", "MacOS", "Chromium"],
-  win: ["chrome-win", "chrome.exe"],
+  linux: ['chrome-linux', 'chrome'],
+  mac: ['chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium'],
+  win: ['chrome-win', 'chrome.exe'],
 };
 
 const DOWNLOAD_URLS = {
-  linux: "%s/builds/chromium/%s/chromium-linux.zip",
-  mac: "%s/builds/chromium/%s/chromium-mac.zip",
-  win: "%s/builds/chromium/%s/chromium-win64.zip",
+  linux: '%s/builds/chromium/%s/chromium-linux.zip',
+  mac: '%s/builds/chromium/%s/chromium-mac.zip',
+  win: '%s/builds/chromium/%s/chromium-win64.zip',
   // 'mac-arm64': '%s/builds/chromium/%s/chromium-mac-arm64.zip',
 };
 
 async function download(platform, revision, directory) {
   const executablePath = findExecutablePath(directory, platform);
   const downloadHost =
-    process.env["PLAYWRIGHT_DOWNLOAD_HOST"] ||
-    "https://playwright.azureedge.net";
-  const downloadURL = util.format(
-    DOWNLOAD_URLS[platform],
-    downloadHost,
-    revision
-  );
+    process.env['PLAYWRIGHT_DOWNLOAD_HOST'] || 'https://playwright.azureedge.net';
+  const downloadURL = util.format(DOWNLOAD_URLS[platform], downloadHost, revision);
   const title = `chromium v${revision} for ${platform}`;
   const downloadFileName = `playwright-download-chromium-${platform}-${revision}.zip`;
   try {
     // eslint-disable-next-line no-console
-    console.info("Downloading browser ", title);
+    console.info('Downloading browser ', title);
     await downloadBrowserWithProgressBar(
       title,
       directory,
@@ -78,10 +71,10 @@ function findExecutablePath(dir, platform) {
 
 function translatePlatform(platform) {
   switch (platform) {
-    case "win32":
-      return "win";
-    case "darwin":
-      return "mac";
+    case 'win32':
+      return 'win';
+    case 'darwin':
+      return 'mac';
     default:
       return platform;
   }
@@ -89,11 +82,11 @@ function translatePlatform(platform) {
 
 exports.downloadForPlatform = async function downloadForPlatform(platform) {
   platform = translatePlatform(platform);
-  const [, revision] = getChromeVersion().split("-");
+  const [, revision] = getChromeVersion().split('-');
   const directory = path.join(
     process.cwd(),
-    "local-browsers",
-    "_releases",
+    'local-browsers',
+    '_releases',
     platform,
     getChromeVersion()
   );
