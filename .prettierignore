@@ -2,3 +2,4 @@ build
 dist
 demo-app
 local-browsers
+*.yml
