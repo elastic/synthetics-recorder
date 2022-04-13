@@ -57,6 +57,52 @@ Run the recorder app in dev mode.
 npm run dev
 ```
 
+### Troubleshooting
+
+#### Page object is not defined
+
+It is possible to define a series of steps that splits your recorded actions in a way that causes the required
+page object to be out of scope. If you're seeing an error message like:
+
+```javascript
+page1 is not defined
+```
+
+You may be encountering this issue. You can verify it by clicking the `Export` button in the recorder and
+checking the code output. If your generated code is similar to this below, you may need to rearrange your steps.
+
+```javascript
+step("Click text=Babel Minify", async () => {
+  // `page2` is defined here
+  const [page2] = await Promise.all([
+    page.waitForEvent("popup"),
+    page.click("text=Babel Minify"),
+  ]);
+  await page2.click(':nth-match(a:has-text("babel-minify"), 3)');
+});
+step("Close page", async () => {
+  // referencing `page2`, which is now out of scope
+  await page2.close();
+});
+```
+
+By removing the second step divider in the Script recorder UI, we will generate code that keeps the `page2` object
+in scope for all its references.
+
+```javascript
+step("Click text=Babel Minify", async () => {
+  // now all references to `page2` occur while it is still in scope
+  const [page2] = await Promise.all([
+    page.waitForEvent("popup"),
+    page.click("text=Babel Minify"),
+  ]);
+  await page2.click(':nth-match(a:has-text("babel-minify"), 3)');
+  await page2.close();
+});
+```
+
+We are actively working on a solution to this issue, you can follow the progress [here](https://github.com/elastic/synthetics-recorder/issues/195).
+
 #### Possible install issues
 
 If you receive a set of error logs like those listed below, it is likely because your
