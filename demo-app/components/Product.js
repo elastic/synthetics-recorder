@@ -1,7 +1,7 @@
 import React from "react";
 import Price from "../components/Price";
 
-const Product = prop => {
+const Product = (prop) => {
   return (
     <div className="col-md-4">
       <div className="card mb-4 box-shadow">

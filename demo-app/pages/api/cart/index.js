@@ -9,7 +9,7 @@ export default async function handler(req, res) {
       recommendations,
     });
   }
-  const items = itemsInSession.map(item => ({
+  const items = itemsInSession.map((item) => ({
     ...getProduct(item.id),
     quantity: item.quantity,
   }));

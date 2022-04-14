@@ -6,7 +6,7 @@
   "scripts": {
     "install:pw": "node scripts/install-pw.js",
     "preinstall": "npx npm-force-resolutions@0.0.10",
-    "postinstall": "npm run install:pw && electron-builder install-app-deps && npm run prepare-demo-app && tsc",
+    "postinstall": "npm run install:pw && electron-builder install-app-deps && npm run prepare-demo-app",
     "prepare-demo-app": "npm install --prefix demo-app && npm run build --prefix demo-app",
     "react:start": "react-scripts start",
     "react:build": "react-scripts build",

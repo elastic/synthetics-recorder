@@ -1,7 +1,6 @@
 coverage
 dist
 build
-out
 node_modules
 journeys/*.js
 
@@ -12,3 +11,4 @@ react-app-env.d.ts
 eslint-junit.xml
 .idea
 .DS_Store
+tsconfig.tsbuildinfo
