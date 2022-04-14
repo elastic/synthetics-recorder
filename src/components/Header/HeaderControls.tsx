@@ -22,21 +22,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
-import React, { useCallback, useContext } from "react";
-import styled from "styled-components";
-import { RecordingStatus, Setter } from "../../common/types";
-import { RecordingContext } from "../../contexts/RecordingContext";
-import { StepsContext } from "../../contexts/StepsContext";
-import { TestContext } from "../../contexts/TestContext";
-import { UrlContext } from "../../contexts/UrlContext";
-import { ControlButton } from "../ControlButton";
-import { TestButton } from "../TestButton";
-import { RecordingStatusIndicator } from "./StatusIndicator";
-import { UrlField } from "./UrlField";
+import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import React, { useCallback, useContext } from 'react';
+import styled from 'styled-components';
+import { RecordingStatus, Setter } from '../../common/types';
+import { RecordingContext } from '../../contexts/RecordingContext';
+import { StepsContext } from '../../contexts/StepsContext';
+import { TestContext } from '../../contexts/TestContext';
+import { UrlContext } from '../../contexts/UrlContext';
+import { ControlButton } from '../ControlButton';
+import { TestButton } from '../TestButton';
+import { RecordingStatusIndicator } from './StatusIndicator';
+import { UrlField } from './UrlField';
 
 const Header = styled(EuiFlexGroup)`
-  background-color: ${props => props.theme.colors.lightestShade};
+  background-color: ${props => props.theme.colors.emptyShade};
   border-bottom: ${props => props.theme.border.thin};
   margin: 0px;
   padding: 8px;
@@ -47,13 +47,12 @@ const TestButtonDivider = styled(EuiFlexItem)`
   padding-right: 16px;
 `;
 
-export interface IHeaderControls {
+interface IHeaderControls {
   setIsCodeFlyoutVisible: Setter<boolean>;
 }
 
 export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
-  const { recordingStatus, togglePause, toggleRecording } =
-    useContext(RecordingContext);
+  const { recordingStatus, togglePause, toggleRecording } = useContext(RecordingContext);
 
   const { url, setUrl } = useContext(UrlContext);
 
@@ -89,15 +88,9 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
           aria-label={getPlayControlCopy(recordingStatus, steps.length)}
           color="primary"
           isDisabled={isTestInProgress}
-          iconType={
-            recordingStatus === RecordingStatus.Recording ? "pause" : "play"
-          }
+          iconType={recordingStatus === RecordingStatus.Recording ? 'pause' : 'play'}
           fill
-          onClick={
-            recordingStatus === RecordingStatus.NotRecording
-              ? toggleRecording
-              : togglePause
-          }
+          onClick={recordingStatus === RecordingStatus.NotRecording ? toggleRecording : togglePause}
         >
           {getPlayControlCopy(recordingStatus, steps.length)}
         </ControlButton>
@@ -117,7 +110,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
           </ControlButton>
         </EuiFlexItem>
       )}
-      <EuiFlexItem grow={false}>
+      <EuiFlexItem grow={recordingStatus === RecordingStatus.Recording}>
         <RecordingStatusIndicator status={recordingStatus} />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
@@ -135,7 +128,6 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
           </TestButtonDivider>
           <EuiFlexItem>
             <ControlButton
-              aria-label="Export"
               isDisabled={steps.length === 0}
               iconType="exportAction"
               fill
@@ -152,16 +144,16 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
 
 function getPlayControlCopy(status: RecordingStatus, stepCount: number) {
   if (status === RecordingStatus.NotRecording && stepCount > 0) {
-    return "Start over";
+    return 'Start over';
   }
   switch (status) {
     case RecordingStatus.NotRecording:
-      return "Start";
+      return 'Start';
     case RecordingStatus.Recording:
-      return "Pause";
+      return 'Pause';
     case RecordingStatus.Paused:
-      return "Resume";
+      return 'Resume';
     default:
-      return "";
+      return '';
   }
 }

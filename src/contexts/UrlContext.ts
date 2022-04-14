@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { createContext } from "react";
-import { Setter } from "../common/types";
+import { createContext } from 'react';
+import { Setter } from '../common/types';
 
 export interface IUrlContext {
   setUrl: Setter<string>;
@@ -31,8 +31,8 @@ export interface IUrlContext {
 }
 
 export const UrlContext = createContext<IUrlContext>({
-  url: "",
+  url: '',
   setUrl: () => {
-    throw Error("not implemented");
+    throw Error('not implemented');
   },
 });

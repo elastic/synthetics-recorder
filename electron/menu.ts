@@ -22,49 +22,49 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { MenuItemConstructorOptions } from "electron";
+import { MenuItemConstructorOptions } from 'electron';
 
 export function buildMenu(appName: string): MenuItemConstructorOptions[] {
   return [
     {
       label: appName,
       submenu: [
-        { role: "about" },
-        { type: "separator" },
-        { role: "services", submenu: [] },
-        { type: "separator" },
-        { role: "hide" },
-        { role: "hideOthers" },
-        { role: "unhide" },
-        { type: "separator" },
-        { role: "quit" },
+        { role: 'about' },
+        { type: 'separator' },
+        { role: 'services', submenu: [] },
+        { type: 'separator' },
+        { role: 'hide' },
+        { role: 'hideothers' },
+        { role: 'unhide' },
+        { type: 'separator' },
+        { role: 'quit' },
       ],
     },
     {
-      label: "Edit",
+      label: 'Edit',
       submenu: [
-        { role: "undo" },
-        { role: "redo" },
-        { type: "separator" },
-        { role: "cut" },
-        { role: "copy" },
-        { role: "paste" },
-        { role: "delete" },
-        { role: "selectAll" },
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+        { role: 'delete' },
+        { role: 'selectAll' },
       ],
     },
     {
-      label: "View",
-      submenu: [{ role: "reload" }, { role: "forceReload" }],
+      label: 'View',
+      submenu: [{ role: 'reload' }, { role: 'forceReload' }],
     },
     {
-      role: "window",
+      role: 'window',
       submenu: [
-        { role: "close" },
-        { role: "minimize" },
-        { role: "zoom" },
-        { type: "separator" },
-        { role: "front" },
+        { role: 'close' },
+        { role: 'minimize' },
+        { role: 'zoom' },
+        { type: 'separator' },
+        { role: 'front' },
       ],
     },
   ];

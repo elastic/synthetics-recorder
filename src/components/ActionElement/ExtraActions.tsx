@@ -22,22 +22,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem } from "@elastic/eui";
-import { ActionInContext } from "@elastic/synthetics";
-import React, { useContext, useState } from "react";
-import { RecordingStatus, Setter } from "../../common/types";
-import { RecordingContext } from "../../contexts/RecordingContext";
-import { StepsContext } from "../../contexts/StepsContext";
-import { ActionControlButton } from "./ControlButton";
-import { HeadingText } from "./HeadingText";
-import { SettingsPopover } from "./SettingsPopover";
+import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import React, { useContext, useState } from 'react';
+import { ActionContext, RecordingStatus } from '../../common/types';
+import { RecordingContext } from '../../contexts/RecordingContext';
+import { StepsContext } from '../../contexts/StepsContext';
+import { ActionControlButton } from './ControlButton';
+import { HeadingText } from './HeadingText';
+import { SettingsPopover } from './SettingsPopover';
 
 interface IExtraActions {
   actionIndex: number;
   areControlsVisible: boolean;
   isOpen: boolean;
-  setIsOpen: Setter<boolean>;
-  step: ActionInContext;
+  setIsOpen: (isOpen: boolean) => void;
+  actionContext: ActionContext;
   stepIndex: number;
 }
 
@@ -46,7 +45,7 @@ export function ExtraActions({
   areControlsVisible,
   isOpen,
   setIsOpen,
-  step,
+  actionContext,
   stepIndex,
 }: IExtraActions) {
   const [isSettingsPopoverOpen, setIsSettingsPopoverOpen] = useState(false);
@@ -64,13 +63,9 @@ export function ExtraActions({
     setIsOpen(!isOpen);
   });
   return (
-    <EuiFlexGroup
-      alignItems="center"
-      gutterSize="xs"
-      justifyContent="spaceBetween"
-    >
+    <EuiFlexGroup alignItems="center" gutterSize="xs" justifyContent="spaceBetween">
       <EuiFlexItem>
-        <HeadingText actionContext={step} />
+        <HeadingText actionContext={actionContext} />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <ActionControlButton
@@ -88,16 +83,17 @@ export function ExtraActions({
           onAddAssertion={settingsHandler(() => {
             onInsertAction(
               {
-                ...step,
+                ...actionContext,
                 action: {
-                  ...step.action,
-                  name: "assert",
-                  selector: step.action.selector || "",
-                  command: "isVisible",
-                  value: step.action.value || undefined,
+                  ...actionContext.action,
+                  name: 'assert',
+                  selector: actionContext.action.selector || '',
+                  command: 'isVisible',
+                  value: actionContext.action.value || undefined,
                   signals: [],
                   isAssert: true,
                 },
+                isOpen: true,
                 modified: false,
               },
               stepIndex,

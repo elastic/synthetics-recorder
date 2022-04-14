@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexItem } from "@elastic/eui";
-import styled from "styled-components";
+import { EuiFlexItem } from '@elastic/eui';
+import styled from 'styled-components';
 
 export const Bold = styled(EuiFlexItem)`
   font-weight: bold;

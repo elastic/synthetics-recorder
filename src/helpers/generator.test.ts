@@ -22,158 +22,158 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { ActionInContext, Step, Steps } from "@elastic/synthetics";
-import { generateIR, generateMergedIR } from "./generator";
+import type { Step, Steps } from '@elastic/synthetics';
+import { ActionContext } from '../common/types';
+import { generateIR, generateMergedIR } from './generator';
 
-describe("generator", () => {
-  describe("generateIR", () => {
+describe('generator', () => {
+  describe('generateIR', () => {
     let step: Step;
     beforeEach(() => {
       step = {
         actions: [
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl: "about:blank",
+            frameUrl: 'about:blank',
             committed: true,
             action: {
-              name: "openPage",
-              url: "about:blank",
+              name: 'openPage',
+              url: 'about:blank',
               signals: [],
             },
           },
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl: "https://vigneshh.in/",
+            frameUrl: 'https://vigneshh.in/',
             committed: true,
             action: {
-              name: "navigate",
-              url: "https://vigneshh.in/",
+              name: 'navigate',
+              url: 'https://vigneshh.in/',
               signals: [],
             },
           },
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl: "https://vigneshh.in/",
+            frameUrl: 'https://vigneshh.in/',
             action: {
-              name: "click",
-              selector:
-                "text=I Enjoy evangelizing the magic of web performance.",
+              name: 'click',
+              selector: 'text=I Enjoy evangelizing the magic of web performance.',
               signals: [],
-              button: "left",
+              button: 'left',
               modifiers: 0,
               clickCount: 1,
             },
             committed: true,
           },
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl: "https://vigneshh.in/",
+            frameUrl: 'https://vigneshh.in/',
             action: {
-              name: "assert",
+              name: 'assert',
               isAssert: true,
-              command: "textContent",
-              selector: "text=Babel Minify",
-              value: "babel",
+              command: 'textContent',
+              selector: 'text=Babel Minify',
+              value: 'babel',
               signals: [],
             },
           },
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl: "https://vigneshh.in/",
+            frameUrl: 'https://vigneshh.in/',
             action: {
-              name: "click",
-              selector: "text=Babel Minify",
+              name: 'click',
+              selector: 'text=Babel Minify',
               signals: [
                 {
-                  name: "popup",
-                  popupAlias: "page1",
+                  name: 'popup',
+                  popupAlias: 'page1',
                   isAsync: true,
                 },
               ],
-              button: "left",
+              button: 'left',
               modifiers: 0,
               clickCount: 1,
             },
             committed: true,
           },
           {
-            pageAlias: "page1",
+            pageAlias: 'page1',
             isMainFrame: true,
-            frameUrl: "https://github.com/babel/minify",
+            frameUrl: 'https://github.com/babel/minify',
             action: {
-              name: "click",
+              name: 'click',
               selector: 'a:has-text("smoke")',
               signals: [
                 {
-                  name: "navigation",
-                  url: "https://github.com/babel/minify",
+                  name: 'navigation',
+                  url: 'https://github.com/babel/minify',
                 },
                 {
-                  name: "navigation",
-                  url: "https://github.com/babel/minify/tree/master/smoke",
+                  name: 'navigation',
+                  url: 'https://github.com/babel/minify/tree/master/smoke',
                 },
                 {
-                  name: "navigation",
-                  url: "https://github.com/babel/minify/tree/master/smoke",
+                  name: 'navigation',
+                  url: 'https://github.com/babel/minify/tree/master/smoke',
                   isAsync: true,
                 },
                 {
-                  name: "navigation",
-                  url: "https://github.com/babel/minify",
+                  name: 'navigation',
+                  url: 'https://github.com/babel/minify',
                   isAsync: true,
                 },
               ],
-              button: "left",
+              button: 'left',
               modifiers: 0,
               clickCount: 1,
             },
           },
           {
-            pageAlias: "page1",
+            pageAlias: 'page1',
             isMainFrame: true,
-            frameUrl: "https://github.com/babel/minify",
+            frameUrl: 'https://github.com/babel/minify',
             committed: true,
             action: {
-              name: "closePage",
+              name: 'closePage',
               signals: [],
             },
           },
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl: "https://vigneshh.in/",
+            frameUrl: 'https://vigneshh.in/',
             committed: true,
             action: {
-              name: "closePage",
+              name: 'closePage',
               signals: [],
             },
           },
         ],
       };
     });
-    it("creates an enhanced IR", () => {
+    it('creates an enhanced IR', () => {
       const ir = generateIR([step]);
 
       expect(ir).toHaveLength(1);
       expect(ir[0].actions).toHaveLength(8);
     });
-    it("keeps actions that already have a title", () => {
+    it('keeps actions that already have a title', () => {
       const actionWithTitle = {
-        pageAlias: "page",
+        pageAlias: 'page',
         isMainFrame: true,
-        frameUrl: "https://vigneshh.in/",
-        title: "A custom title",
+        frameUrl: 'https://vigneshh.in/',
+        title: 'A custom title',
         action: {
-          name: "assert",
+          name: 'assert',
           isAssert: true,
-          command: "textContent",
-          selector: "text=Babel Minify",
-          value: "babel",
+          command: 'textContent',
+          selector: 'text=Babel Minify',
+          value: 'babel',
           signals: [],
         },
       };
@@ -184,48 +184,48 @@ describe("generator", () => {
       expect(ir[0].actions[length - 1]).toEqual(actionWithTitle);
     });
   });
-  describe("generateMergedIR", () => {
+  describe('generateMergedIR', () => {
     const prev: Steps = [
       {
         actions: [
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl: "https://news.google.com",
+            frameUrl: 'https://news.google.com',
             committed: true,
             action: {
-              name: "navigate",
-              url: "https://news.google.com",
+              name: 'navigate',
+              url: 'https://news.google.com',
               signals: [],
             },
             modified: true,
-            title: "https://news.google.com",
+            title: 'https://news.google.com',
           },
         ],
       },
       {
         actions: [
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl: "https://www.google.com/",
+            frameUrl: 'https://www.google.com/',
             committed: true,
             action: {
-              name: "navigate",
-              url: "https://www.google.com/",
+              name: 'navigate',
+              url: 'https://www.google.com/',
               signals: [],
             },
-            title: "Go to https://www.google.com/",
+            title: 'Go to https://www.google.com/',
           },
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl: "https://www.google.com/",
+            frameUrl: 'https://www.google.com/',
             action: {
-              name: "click",
+              name: 'click',
               selector: '[aria-label="Search"]',
               signals: [],
-              button: "left",
+              button: 'left',
               modifiers: 0,
               clickCount: 1,
             },
@@ -233,57 +233,57 @@ describe("generator", () => {
             title: 'Click [aria-label="Search"]',
           },
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl: "https://www.google.com/",
+            frameUrl: 'https://www.google.com/',
             action: {
-              name: "fill",
+              name: 'fill',
               selector: '[aria-label="Search"]',
               signals: [],
-              text: "hello world",
+              text: 'hello world',
             },
             committed: true,
             title: 'Fill [aria-label="Search"]',
           },
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl: "https://www.google.com/",
+            frameUrl: 'https://www.google.com/',
             action: {
-              name: "press",
+              name: 'press',
               selector: '[aria-label="Search"]',
               signals: [
                 {
-                  name: "navigation",
-                  url: "https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz",
+                  name: 'navigation',
+                  url: 'https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz',
                 },
                 {
-                  name: "navigation",
-                  url: "https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz",
+                  name: 'navigation',
+                  url: 'https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz',
                   isAsync: true,
                 },
               ],
-              key: "Enter",
+              key: 'Enter',
               modifiers: 0,
             },
             committed: true,
-            title: "Press Enter",
+            title: 'Press Enter',
           },
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
             frameUrl:
-              "https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz",
+              'https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz',
             action: {
-              name: "click",
+              name: 'click',
               selector: 'text=/.*"Hello, World!" program - Wikipedia.*/',
               signals: [
                 {
-                  name: "navigation",
-                  url: "https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
+                  name: 'navigation',
+                  url: 'https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
                 },
               ],
-              button: "left",
+              button: 'left',
               modifiers: 0,
               clickCount: 1,
             },
@@ -291,43 +291,40 @@ describe("generator", () => {
             title: 'Click text=/.*"Hello, World!" program - Wikipedia.*/',
           },
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl:
-              "https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
+            frameUrl: 'https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
             action: {
-              name: "click",
-              selector: "text=Main page",
+              name: 'click',
+              selector: 'text=Main page',
               signals: [
                 {
-                  name: "navigation",
-                  url: "https://en.wikipedia.org/wiki/Main_Page",
+                  name: 'navigation',
+                  url: 'https://en.wikipedia.org/wiki/Main_Page',
                 },
               ],
-              button: "left",
+              button: 'left',
               modifiers: 0,
               clickCount: 1,
             },
             committed: true,
-            title: "Click text=Main page",
+            title: 'Click text=Main page',
           },
         ],
       },
       {
         actions: [
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl:
-              "https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en",
+            frameUrl: 'https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en',
             committed: true,
             action: {
-              name: "navigate",
-              url: "https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en",
+              name: 'navigate',
+              url: 'https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en',
               signals: [],
             },
-            title:
-              "Go to https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en",
+            title: 'Go to https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en',
           },
         ],
       },
@@ -336,38 +333,38 @@ describe("generator", () => {
       {
         actions: [
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl: "https://www.google.com/?gws_rd=ssl",
+            frameUrl: 'https://www.google.com/?gws_rd=ssl',
             committed: true,
             action: {
-              name: "navigate",
-              url: "https://www.google.com/?gws_rd=ssl",
+              name: 'navigate',
+              url: 'https://www.google.com/?gws_rd=ssl',
               signals: [],
             },
-            title: "Go to https://www.google.com/?gws_rd=ssl",
+            title: 'Go to https://www.google.com/?gws_rd=ssl',
           },
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl: "https://www.google.com/",
+            frameUrl: 'https://www.google.com/',
             committed: true,
             action: {
-              name: "navigate",
-              url: "https://www.google.com/",
+              name: 'navigate',
+              url: 'https://www.google.com/',
               signals: [],
             },
-            title: "Go to https://www.google.com/",
+            title: 'Go to https://www.google.com/',
           },
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl: "https://www.google.com/",
+            frameUrl: 'https://www.google.com/',
             action: {
-              name: "click",
+              name: 'click',
               selector: '[aria-label="Search"]',
               signals: [],
-              button: "left",
+              button: 'left',
               modifiers: 0,
               clickCount: 1,
             },
@@ -375,57 +372,57 @@ describe("generator", () => {
             title: 'Click [aria-label="Search"]',
           },
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl: "https://www.google.com/",
+            frameUrl: 'https://www.google.com/',
             action: {
-              name: "fill",
+              name: 'fill',
               selector: '[aria-label="Search"]',
               signals: [],
-              text: "hello world",
+              text: 'hello world',
             },
             committed: true,
             title: 'Fill [aria-label="Search"]',
           },
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl: "https://www.google.com/",
+            frameUrl: 'https://www.google.com/',
             action: {
-              name: "press",
+              name: 'press',
               selector: '[aria-label="Search"]',
               signals: [
                 {
-                  name: "navigation",
-                  url: "https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz",
+                  name: 'navigation',
+                  url: 'https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz',
                 },
                 {
-                  name: "navigation",
-                  url: "https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz",
+                  name: 'navigation',
+                  url: 'https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz',
                   isAsync: true,
                 },
               ],
-              key: "Enter",
+              key: 'Enter',
               modifiers: 0,
             },
             committed: true,
-            title: "Press Enter",
+            title: 'Press Enter',
           },
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
             frameUrl:
-              "https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz",
+              'https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz',
             action: {
-              name: "click",
+              name: 'click',
               selector: 'text=/.*"Hello, World!" program - Wikipedia.*/',
               signals: [
                 {
-                  name: "navigation",
-                  url: "https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
+                  name: 'navigation',
+                  url: 'https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
                 },
               ],
-              button: "left",
+              button: 'left',
               modifiers: 0,
               clickCount: 1,
             },
@@ -433,59 +430,56 @@ describe("generator", () => {
             title: 'Click text=/.*"Hello, World!" program - Wikipedia.*/',
           },
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl:
-              "https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
+            frameUrl: 'https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
             action: {
-              name: "click",
-              selector: "text=Main page",
+              name: 'click',
+              selector: 'text=Main page',
               signals: [
                 {
-                  name: "navigation",
-                  url: "https://en.wikipedia.org/wiki/Main_Page",
+                  name: 'navigation',
+                  url: 'https://en.wikipedia.org/wiki/Main_Page',
                 },
               ],
-              button: "left",
+              button: 'left',
               modifiers: 0,
               clickCount: 1,
             },
             committed: true,
-            title: "Click text=Main page",
+            title: 'Click text=Main page',
           },
           {
-            pageAlias: "page",
+            pageAlias: 'page',
             isMainFrame: true,
-            frameUrl:
-              "https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en",
+            frameUrl: 'https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en',
             committed: true,
             action: {
-              name: "navigate",
-              url: "https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en",
+              name: 'navigate',
+              url: 'https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en',
               signals: [],
             },
-            title:
-              "Go to https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en",
+            title: 'Go to https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en',
           },
         ],
       },
     ];
-    it("returns next PW actions if no previous steps", () => {
+    it('returns next PW actions if no previous steps', () => {
       expect(generateMergedIR([], cur)).toEqual(cur);
     });
-    it("returns empty set if PW actions are empty", () => {
+    it('returns empty set if PW actions are empty', () => {
       expect(generateMergedIR(prev, [])).toEqual([]);
     });
-    it("picks up assertions", () => {
-      const assert: ActionInContext = {
-        pageAlias: "page",
+    it('picks up assertions', () => {
+      const assert: ActionContext = {
+        pageAlias: 'page',
         isMainFrame: true,
-        frameUrl: "https://vigneshh.in/",
+        frameUrl: 'https://vigneshh.in/',
         action: {
           isAssert: true,
-          name: "assert",
-          command: "visible",
-          selector: "text=Babel Minify",
+          name: 'assert',
+          command: 'visible',
+          selector: 'text=Babel Minify',
           signals: [],
           modifiers: 0,
           clickCount: 1,
@@ -505,22 +499,22 @@ describe("generator", () => {
       const { length } = r.actions;
       expect(r.actions[length - 1]).toEqual(assert);
     });
-    it("merges updated actions with modified UI actions", () => {
+    it('merges updated actions with modified UI actions', () => {
       expect(generateMergedIR(prev, cur)).toEqual([
         {
           actions: [
             {
               action: {
-                name: "navigate",
+                name: 'navigate',
                 signals: [],
-                url: "https://news.google.com",
+                url: 'https://news.google.com',
               },
               committed: true,
-              frameUrl: "https://news.google.com",
+              frameUrl: 'https://news.google.com',
               isMainFrame: true,
               modified: true,
-              pageAlias: "page",
-              title: "https://news.google.com",
+              pageAlias: 'page',
+              title: 'https://news.google.com',
             },
           ],
         },
@@ -528,109 +522,108 @@ describe("generator", () => {
           actions: [
             {
               action: {
-                name: "navigate",
+                name: 'navigate',
                 signals: [],
-                url: "https://www.google.com/",
+                url: 'https://www.google.com/',
               },
               committed: true,
-              frameUrl: "https://www.google.com/",
+              frameUrl: 'https://www.google.com/',
               isMainFrame: true,
-              pageAlias: "page",
-              title: "Go to https://www.google.com/",
+              pageAlias: 'page',
+              title: 'Go to https://www.google.com/',
             },
             {
               action: {
-                button: "left",
+                button: 'left',
                 clickCount: 1,
                 modifiers: 0,
-                name: "click",
+                name: 'click',
                 selector: '[aria-label="Search"]',
                 signals: [],
               },
               committed: true,
-              frameUrl: "https://www.google.com/",
+              frameUrl: 'https://www.google.com/',
               isMainFrame: true,
-              pageAlias: "page",
+              pageAlias: 'page',
               title: 'Click [aria-label="Search"]',
             },
             {
               action: {
-                name: "fill",
+                name: 'fill',
                 selector: '[aria-label="Search"]',
                 signals: [],
-                text: "hello world",
+                text: 'hello world',
               },
               committed: true,
-              frameUrl: "https://www.google.com/",
+              frameUrl: 'https://www.google.com/',
               isMainFrame: true,
-              pageAlias: "page",
+              pageAlias: 'page',
               title: 'Fill [aria-label="Search"]',
             },
             {
               action: {
-                key: "Enter",
+                key: 'Enter',
                 modifiers: 0,
-                name: "press",
+                name: 'press',
                 selector: '[aria-label="Search"]',
                 signals: [
                   {
-                    name: "navigation",
-                    url: "https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz",
+                    name: 'navigation',
+                    url: 'https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz',
                   },
                   {
                     isAsync: true,
-                    name: "navigation",
-                    url: "https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz",
+                    name: 'navigation',
+                    url: 'https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz',
                   },
                 ],
               },
               committed: true,
-              frameUrl: "https://www.google.com/",
+              frameUrl: 'https://www.google.com/',
               isMainFrame: true,
-              pageAlias: "page",
-              title: "Press Enter",
+              pageAlias: 'page',
+              title: 'Press Enter',
             },
             {
               action: {
-                button: "left",
+                button: 'left',
                 clickCount: 1,
                 modifiers: 0,
-                name: "click",
+                name: 'click',
                 selector: 'text=/.*"Hello, World!" program - Wikipedia.*/',
                 signals: [
                   {
-                    name: "navigation",
-                    url: "https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
+                    name: 'navigation',
+                    url: 'https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
                   },
                 ],
               },
               committed: true,
               frameUrl:
-                "https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz",
+                'https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz',
               isMainFrame: true,
-              pageAlias: "page",
+              pageAlias: 'page',
               title: 'Click text=/.*"Hello, World!" program - Wikipedia.*/',
             },
             {
               action: {
-                button: "left",
+                button: 'left',
                 clickCount: 1,
                 modifiers: 0,
-                name: "click",
-                selector: "text=Main page",
+                name: 'click',
+                selector: 'text=Main page',
                 signals: [
                   {
-                    name: "navigation",
-                    url: "https://en.wikipedia.org/wiki/Main_Page",
+                    name: 'navigation',
+                    url: 'https://en.wikipedia.org/wiki/Main_Page',
                   },
                 ],
               },
               committed: true,
-              frameUrl:
-                "https://en.wikipedia.org/wiki/%22Hello,_World!%22_program",
+              frameUrl: 'https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
               isMainFrame: true,
-              pageAlias: "page",
-              title: "Click text=Main page",
+              pageAlias: 'page',
+              title: 'Click text=Main page',
             },
           ],
         },
@@ -638,23 +631,21 @@ describe("generator", () => {
           actions: [
             {
               action: {
-                name: "navigate",
+                name: 'navigate',
                 signals: [],
-                url: "https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en",
+                url: 'https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en',
               },
               committed: true,
-              frameUrl:
-                "https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en",
+              frameUrl: 'https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en',
               isMainFrame: true,
-              pageAlias: "page",
-              title:
-                "Go to https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en",
+              pageAlias: 'page',
+              title: 'Go to https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en',
             },
           ],
         },
       ]);
     });
-    it("picks up new actions", () => {
+    it('picks up new actions', () => {
       expect(
         generateMergedIR(
           [
@@ -662,16 +653,15 @@ describe("generator", () => {
               actions: [
                 {
                   action: {
-                    name: "navigate",
+                    name: 'navigate',
                     signals: [],
-                    url: "https://news.google.com",
+                    url: 'https://news.google.com',
                   },
                   committed: true,
-                  frameUrl: "https://news.google.com",
+                  frameUrl: 'https://news.google.com',
                   isMainFrame: true,
-                  pageAlias: "page",
-                  title:
-                    "Go to https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en",
+                  pageAlias: 'page',
+                  title: 'Go to https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en',
                 },
               ],
             },
@@ -681,26 +671,25 @@ describe("generator", () => {
               actions: [
                 {
                   action: {
-                    name: "navigate",
+                    name: 'navigate',
                     signals: [],
-                    url: "https://news.google.com",
+                    url: 'https://news.google.com',
                   },
                   committed: true,
-                  frameUrl: "https://news.google.com",
+                  frameUrl: 'https://news.google.com',
                   isMainFrame: true,
-                  pageAlias: "page",
-                  title:
-                    "Go to https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en",
+                  pageAlias: 'page',
+                  title: 'Go to https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en',
                 },
                 {
-                  pageAlias: "page",
+                  pageAlias: 'page',
                   isMainFrame: true,
-                  frameUrl: "https://www.google.com/",
+                  frameUrl: 'https://www.google.com/',
                   action: {
-                    name: "click",
+                    name: 'click',
                     selector: '[aria-label="Search"]',
                     signals: [],
-                    button: "left",
+                    button: 'left',
                     modifiers: 0,
                     clickCount: 1,
                   },
@@ -716,26 +705,25 @@ describe("generator", () => {
           actions: [
             {
               action: {
-                name: "navigate",
+                name: 'navigate',
                 signals: [],
-                url: "https://news.google.com",
+                url: 'https://news.google.com',
               },
               committed: true,
-              frameUrl: "https://news.google.com",
+              frameUrl: 'https://news.google.com',
               isMainFrame: true,
-              pageAlias: "page",
-              title:
-                "Go to https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en",
+              pageAlias: 'page',
+              title: 'Go to https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en',
             },
             {
-              pageAlias: "page",
+              pageAlias: 'page',
               isMainFrame: true,
-              frameUrl: "https://www.google.com/",
+              frameUrl: 'https://www.google.com/',
               action: {
-                name: "click",
+                name: 'click',
                 selector: '[aria-label="Search"]',
                 signals: [],
-                button: "left",
+                button: 'left',
                 modifiers: 0,
                 clickCount: 1,
               },

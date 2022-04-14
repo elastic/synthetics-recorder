@@ -22,23 +22,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { join } from "path";
-import { app, BrowserWindow, Menu } from "electron";
-import isDev from "electron-is-dev";
-import unhandled from "electron-unhandled";
-import debug from "electron-debug";
-import logger from "electron-log";
-import setupListeners from "./execution";
-import { buildMenu } from "./menu";
+import { join } from 'path';
+import { app, BrowserWindow, Menu } from 'electron';
+import isDev from 'electron-is-dev';
+import unhandled from 'electron-unhandled';
+import debug from 'electron-debug';
+import logger from 'electron-log';
+import setupListeners from './execution';
+import { buildMenu } from './menu';
 // For dev
 unhandled({ logger: err => logger.error(err) });
 debug({ isEnabled: true, showDevTools: false });
 
-const BUILD_DIR = join(__dirname, "..", "build");
-console.log("HI");
+const BUILD_DIR = join(__dirname, '..', 'build');
+
 // We can't read from the `env` file within `services` here
 // so we must access the process env directly
-const IS_TEST = process.env.NODE_ENV === "test";
+const IS_TEST = process.env.NODE_ENV === 'test';
 const TEST_PORT = process.env.TEST_PORT;
 
 async function createWindow() {
@@ -56,11 +56,11 @@ async function createWindow() {
   });
 
   if (isDev && !IS_TEST) {
-    win.loadURL("http://localhost:3000");
+    win.loadURL('http://localhost:3000');
   } else if (IS_TEST && TEST_PORT) {
     win.loadURL(`http://localhost:${TEST_PORT}`);
   } else {
-    win.loadFile(join(BUILD_DIR, "index.html"));
+    win.loadFile(join(BUILD_DIR, 'index.html'));
   }
 }
 
@@ -74,13 +74,13 @@ app.whenReady().then(() => {
   setupListeners();
   createMenu();
 
-  app.on("activate", function () {
+  app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
 
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
     app.quit();
   }
 });

@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-const { stopDemoApp } = require("./demo_app");
+const { stopDemoApp } = require('./demo_app');
 
 module.exports = async () => {
   await stopDemoApp();

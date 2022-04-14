@@ -22,32 +22,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { join } from "path";
-import isDev from "electron-is-dev";
-import { getExecutablePath, getChromeVersion } from "../scripts/install-pw";
+import { join } from 'path';
+import * as isDev from 'electron-is-dev';
+import { getExecutablePath, getChromeVersion } from '../scripts/install-pw';
 
 /**
  * Electron resources path where all the `extraResources`
  * mentioned in build are copied to on all platforms
  */
-export const RESOURCES_PATH = process.resourcesPath;
-const ROOT_DIR = process.cwd(); // dirname(process.cwd());
+const RESOURCES_PATH = process.resourcesPath;
+const ROOT_DIR = process.cwd();
 
 /**
  * Journey directory is for storing a dummy file to simulate
  * the suite tests
  */
-export const JOURNEY_DIR = isDev
-  ? join(ROOT_DIR, "journeys")
-  : join(RESOURCES_PATH, "journeys");
+export const JOURNEY_DIR = isDev ? join(ROOT_DIR, 'journeys') : join(RESOURCES_PATH, 'journeys');
 
 /**
  * Controls where the browser binaries are available
  * to use it for both recording and testing phase
  */
-export const PLAYWRIGHT_BROWSERS_PATH = isDev
-  ? join(ROOT_DIR, "local-browsers")
-  : join(RESOURCES_PATH, "local-browsers");
+const PLAYWRIGHT_BROWSERS_PATH = isDev
+  ? join(ROOT_DIR, 'local-browsers')
+  : join(RESOURCES_PATH, 'local-browsers');
+
 const defaultExecutablePath = getExecutablePath();
 const installedVersion = getChromeVersion();
 

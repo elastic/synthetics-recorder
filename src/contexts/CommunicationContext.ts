@@ -22,12 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { RendererProcessIpc } from "electron-better-ipc";
-import { createContext } from "react";
+import { RendererProcessIpc } from 'electron-better-ipc';
+import { createContext } from 'react';
 
-const { ipcRenderer } = window.require("electron-better-ipc");
+const { ipcRenderer } = window.require('electron-better-ipc');
 
-export interface ICommunicationContext {
+interface ICommunicationContext {
   ipc: RendererProcessIpc;
 }
 

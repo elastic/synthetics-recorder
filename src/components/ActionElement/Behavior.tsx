@@ -21,9 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import { EuiFlexItem } from "@elastic/eui";
-import React from "react";
-import styled from "styled-components";
+import { EuiFlexItem } from '@elastic/eui';
+import React from 'react';
+import styled from 'styled-components';
 
 const AssertItem = styled(EuiFlexItem)`
   border-left: ${props => props.theme.border.thick};
@@ -42,18 +42,10 @@ interface IActionWrapper {
   omitBorder?: boolean;
 }
 
-export const Behavior: React.FC<IActionWrapper> = ({
-  children,
-  isAssert,
-  omitBorder,
-}) => {
+export const Behavior: React.FC<IActionWrapper> = ({ children, isAssert, omitBorder }) => {
   if (isAssert) return <AssertItem>{children}</AssertItem>;
   if (omitBorder) {
-    return (
-      <ActionItem style={{ borderLeft: "none", marginLeft: 2 }}>
-        {children}
-      </ActionItem>
-    );
+    return <ActionItem style={{ borderLeft: 'none', marginLeft: 2 }}>{children}</ActionItem>;
   }
 
   return <ActionItem>{children}</ActionItem>;

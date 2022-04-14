@@ -61,6 +61,13 @@ pipeline {
             }
           }
         }
+        withGithubNotify(context: "Unused exports") {
+          withNodeJSEnv() {
+            dir("${BASE_DIR}"){
+              sh(label: 'npm unused-exports', script: 'npm run unused-exports')
+            }
+          }
+        }
       }
       post {
         always {

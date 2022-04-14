@@ -22,13 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-const http = require("http");
-const url = require("url");
-const path = require("path");
-const next = require("../../demo-app/node_modules/next");
-const { env } = require("../services");
+const http = require('http');
+const url = require('url');
+const path = require('path');
+const next = require('../../demo-app/node_modules/next');
+const { env } = require('../services');
 
-const NEXT_DIR = path.join(__dirname, "../..", "demo-app");
+const NEXT_DIR = path.join(__dirname, '../..', 'demo-app');
 
 const startServer = async () => {
   const app = next({ dev: false, dir: NEXT_DIR });

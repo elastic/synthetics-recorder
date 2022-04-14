@@ -22,14 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import {
-  EuiButtonIcon,
-  EuiButtonIconPropsForButton,
-  EuiToolTip,
-} from "@elastic/eui";
-import React from "react";
+import { EuiButtonIcon, EuiButtonIconPropsForButton, EuiToolTip } from '@elastic/eui';
+import React from 'react';
 
-const DEFAULT_DISABLED_TOOLTIP_CONTENT = "Cannot edit actions while recording.";
+const DEFAULT_DISABLED_TOOLTIP_CONTENT = 'Cannot edit actions while recording.';
 interface IActionControlButton {
   disabledToolTipContent?: string;
   // when disabled, display a tooltip explaining why
@@ -55,7 +51,7 @@ export function ActionControlButton({
       isDisabled={isDisabled}
       onClick={onClick}
       style={{
-        visibility: isVisible ? "visible" : "hidden",
+        visibility: isVisible ? 'visible' : 'hidden',
       }}
       {...rest}
     />
@@ -63,9 +59,7 @@ export function ActionControlButton({
 
   if (isDisabled && !hideToolTipWhenDisabled) {
     return (
-      <EuiToolTip
-        content={disabledToolTipContent || DEFAULT_DISABLED_TOOLTIP_CONTENT}
-      >
+      <EuiToolTip content={disabledToolTipContent || DEFAULT_DISABLED_TOOLTIP_CONTENT}>
         {button}
       </EuiToolTip>
     );

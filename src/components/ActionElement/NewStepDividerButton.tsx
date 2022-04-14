@@ -22,45 +22,38 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React, { useContext } from "react";
-import { EuiCode, EuiEmptyPrompt, EuiSpacer, EuiTitle } from "@elastic/eui";
+import styled from 'styled-components';
+import { EuiButtonIcon } from '@elastic/eui';
+import React from 'react';
 
-import { StepAccordions } from "./StepList/StepDetails";
-import { StepsContext } from "../contexts/StepsContext";
+interface Props {
+  actionIndex: number;
+  stepIndex: number;
+  onClick: () => void;
+}
 
-export function Steps() {
-  const { steps, onStepDetailChange, onDeleteStep } = useContext(StepsContext);
+interface StyleProps {
+  computedvisibility: string;
+}
 
-  if (steps.length === 0) {
-    return (
-      <EuiEmptyPrompt
-        aria-label="This empty prompt indicates that you have not recorded any journey steps yet."
-        title={<h3>No steps recorded yet</h3>}
-        hasBorder={false}
-        body={
-          <p>
-            Click on <EuiCode>Start recording</EuiCode> to get started with your
-            script.
-          </p>
-        }
-      />
-    );
-  }
+const AddStepDivider = styled(EuiButtonIcon)<StyleProps>`
+  background-color: ${({ theme }) => theme.colors.body};
+  position: relative;
+  left: 63px;
+  top: -8px;
+  visibility: ${({ computedvisibility }) => computedvisibility};
+  z-index: 1;
+`;
 
+export function NewStepDividerButton({ actionIndex, stepIndex, onClick }: Props) {
   return (
-    <>
-      <EuiTitle size="s">
-        <h2>
-          {steps.length}&nbsp;
-          {steps.length === 1 ? "step recorded" : "steps recorded"}
-        </h2>
-      </EuiTitle>
-      <EuiSpacer />
-      <StepAccordions
-        steps={steps}
-        onStepDetailChange={onStepDetailChange}
-        onStepDelete={onDeleteStep}
-      />
-    </>
+    <AddStepDivider
+      aria-label="Insert a step between actions. Use this button to group actions into logical steps"
+      computedvisibility={actionIndex > 0 ? 'visible' : 'hidden'}
+      color="text"
+      iconType="plusInCircle"
+      id={`insert-divider-${stepIndex}-${actionIndex}`}
+      onClick={onClick}
+    />
   );
 }

@@ -30,13 +30,10 @@ import {
   EuiIcon,
   EuiPageHeader,
   EuiThemeContext,
-} from "@elastic/eui";
-import React, { useContext } from "react";
-import {
-  createExternalLinkHandler,
-  SYNTHETICS_DISCUSS_FORUM_URL,
-} from "../../common/shared";
-import { CommunicationContext } from "../../contexts/CommunicationContext";
+} from '@elastic/eui';
+import React, { useContext } from 'react';
+import { createExternalLinkHandler, SYNTHETICS_DISCUSS_FORUM_URL } from '../../common/shared';
+import { CommunicationContext } from '../../contexts/CommunicationContext';
 
 export function Title() {
   const { ipc } = useContext(CommunicationContext);
@@ -51,19 +48,15 @@ export function Title() {
       }}
       bottomBorder
     >
-      <EuiFlexGroup
-        alignItems="center"
-        gutterSize="s"
-        justifyContent="spaceBetween"
-      >
+      <EuiFlexGroup alignItems="center" gutterSize="s" justifyContent="spaceBetween">
         <EuiFlexItem grow={false}>
           <EuiIcon size="l" type="logoElastic" />
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <h1
             style={{
-              fontSize: "16px",
-              fontWeight: "bold",
+              fontSize: '16px',
+              fontWeight: 'bold',
             }}
           >
             Elastic Synthetics Recorder
@@ -79,10 +72,7 @@ export function Title() {
             iconSide="left"
             iconType="popout"
             key="link-to-synthetics-help"
-            onClick={createExternalLinkHandler(
-              ipc,
-              SYNTHETICS_DISCUSS_FORUM_URL
-            )}
+            onClick={createExternalLinkHandler(ipc, SYNTHETICS_DISCUSS_FORUM_URL)}
           >
             Send feedback
           </EuiButtonEmpty>

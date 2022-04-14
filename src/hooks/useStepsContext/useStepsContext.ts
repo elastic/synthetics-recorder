@@ -22,23 +22,39 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { ActionInContext, Step, Steps } from "@elastic/synthetics";
-import { useState } from "react";
-import type { IStepsContext } from "../contexts/StepsContext";
+import type { Step, Steps } from '@elastic/synthetics';
+import { useCallback, useState } from 'react';
+import { ActionContext } from '../../common/types';
+import type { IStepsContext } from '../../contexts/StepsContext';
+import { onDropStep } from './onDropStep';
 
 export function useStepsContext(): IStepsContext {
   const [steps, setSteps] = useState<Steps>([]);
-  const onStepDetailChange = (updatedStep: Step, indexToUpdate: number) => {
-    setSteps(
-      steps.map((currentStep, iterIndex) =>
-        // if the `currentStep` is at the `indexToUpdate`, return `updatedStep` instead of stale object
-        iterIndex === indexToUpdate ? updatedStep : currentStep
-      )
+
+  const setStepName = useCallback((idx: number, name?: string) => {
+    setSteps(oldSteps =>
+      oldSteps.map((step, i) => {
+        if (idx !== i) return step;
+        step.name = name;
+        return step;
+      })
     );
-  };
+  }, []);
+
+  const onStepDetailChange = useCallback(
+    (updatedStep: Step, indexToUpdate: number) =>
+      setSteps(oldSteps =>
+        oldSteps.map((currentStep, iterIndex) =>
+          iterIndex === indexToUpdate ? { ...currentStep, ...updatedStep } : currentStep
+        )
+      ),
+    []
+  );
+
   return {
     steps,
     setSteps,
+    setStepName,
     onDeleteAction: (targetStepIdx, indexToDelete) => {
       setSteps(steps =>
         steps.map((step, currentStepIndex) => {
@@ -64,22 +80,27 @@ export function useStepsContext(): IStepsContext {
         })
       );
     },
-    onMergeSteps: (indexToInsert, indexToRemove) => {
-      setSteps(oldSteps => {
-        oldSteps[indexToInsert] = {
-          name:
-            oldSteps[indexToInsert].name ??
-            oldSteps[indexToRemove].name ??
-            undefined,
-          actions: [
-            ...steps[indexToInsert].actions,
-            ...steps[indexToRemove].actions,
-          ],
-        };
-        oldSteps.splice(indexToRemove, 1);
-        return oldSteps;
-      });
+    onSetActionIsOpen: (stepIndex, actionIndex, isOpen) => {
+      setSteps(
+        steps.map((step, currentStepIndex) => {
+          if (currentStepIndex !== stepIndex) return step;
+          const actions = step.actions.map((action, currentActionIndex) => {
+            if (currentActionIndex !== actionIndex) return action;
+            return { ...action, isOpen };
+          });
+          return { name: step.name, actions };
+        })
+      );
     },
+    onMergeSteps: (indexToInsert, indexToRemove) =>
+      setSteps(oldSteps => [
+        ...oldSteps.slice(0, indexToInsert),
+        {
+          name: oldSteps[indexToInsert].name ?? undefined,
+          actions: [...steps[indexToInsert].actions, ...steps[indexToRemove].actions],
+        },
+        ...oldSteps.slice(indexToRemove + 1, oldSteps.length),
+      ]),
     onRearrangeSteps: (indexA, indexB) => {
       setSteps(oldSteps => {
         const placeholder = steps[indexA];
@@ -88,16 +109,50 @@ export function useStepsContext(): IStepsContext {
         return oldSteps;
       });
     },
+    /**
+     * Used in conjunction with the drag/drop functionality for
+     * moving a step separator in the UI to reorganize the bucketing
+     * of actions.
+     *
+     * @example
+     * The examples below depend on this array:
+     *
+     * [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+     *
+     *
+     * Example 1:
+     * Target index: 0
+     * Initiator index: 1
+     * Action index: 1
+     * Output: [[1, 2], [3, 4, 5, 6], [7, 8, 9]]
+     *
+     * Slice step 0 at idx 1, results in [1, 2]
+     * Slice step 0, starting at idx 2...length, results in [3]
+     * Merge [3] with step idx 1, [4, 5, 6]
+     *
+     * Example 2:
+     * Target index: 1
+     * Initiator index: 1
+     * Action index: 0
+     * Output: [[1, 2, 3, 4], [5, 6], [7, 8, 9]]
+     *
+     * Example 3:
+     * Target index: 2
+     * Initiator index: 1
+     * Action index: 0
+     * Output: [[1, 2, 3], [4, 5], [6, 7, 8, 9]]
+     */
+    onDropStep: onDropStep(steps, setSteps),
     onSplitStep: (stepIndex, actionIndex) => {
       if (actionIndex === 0) {
         throw Error(`Cannot remove all actions from a step.`);
       }
       if (steps.length <= stepIndex) {
-        throw Error("Step index cannot exceed steps length.");
+        throw Error('Step index cannot exceed steps length.');
       }
       const stepToSplit = steps[stepIndex];
       if (stepToSplit.actions.length <= 1) {
-        throw Error("Cannot split step with only one action.");
+        throw Error('Cannot split step with only one action.');
       }
       const reducedStepActions = stepToSplit.actions.slice(0, actionIndex);
       const insertedStepActions = stepToSplit.actions.slice(actionIndex);
@@ -110,19 +165,13 @@ export function useStepsContext(): IStepsContext {
       ]);
     },
     onStepDetailChange,
-    onUpdateAction: (
-      action: ActionInContext,
-      stepIndex: number,
-      actionIndex: number
-    ) => {
+    onUpdateAction: (action: ActionContext, stepIndex: number, actionIndex: number) => {
       const step = steps[stepIndex];
       onStepDetailChange(
         {
-          actions: [
-            ...step.actions.slice(0, actionIndex),
-            action,
-            ...step.actions.slice(actionIndex + 1, step.actions.length),
-          ],
+          actions: step.actions.map((curAction, curIdx) =>
+            curIdx === actionIndex ? action : curAction
+          ),
           name: step.name,
         },
         stepIndex

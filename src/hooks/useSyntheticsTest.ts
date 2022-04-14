@@ -22,42 +22,53 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Steps } from "@elastic/synthetics";
-import { IpcRendererEvent } from "electron";
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useReducer,
-  useState,
-} from "react";
-import { getCodeFromActions, getCodeForFailedResult } from "../common/shared";
-import { Result, TestEvent } from "../common/types";
-import { ITestContext } from "../contexts/TestContext";
-import { CommunicationContext } from "../contexts/CommunicationContext";
-import { resultReducer } from "../helpers/resultReducer";
+import type { Steps } from '@elastic/synthetics';
+import { IpcRendererEvent } from 'electron';
+import { useCallback, useContext, useEffect, useReducer, useState } from 'react';
+import { getCodeFromActions, getCodeForFailedResult } from '../common/shared';
+import { CommunicationContext } from '../contexts/CommunicationContext';
+import type { Result, TestEvent } from '../common/types';
+import type { ITestContext } from '../contexts/TestContext';
+import { resultReducer } from '../helpers/resultReducer';
 
 export function useSyntheticsTest(steps: Steps): ITestContext {
   const [result, dispatch] = useReducer(resultReducer, undefined);
   const [isResultFlyoutVisible, setIsResultFlyoutVisible] = useState(false);
-  const [codeBlocks, setCodeBlocks] = useState("");
+  const [codeBlocks, setCodeBlocks] = useState('');
   const [isTestInProgress, setIsTestInProgress] = useState(false);
   const { ipc } = useContext(CommunicationContext);
 
+  const setResult = useCallback((data: Result | undefined) => {
+    dispatch({
+      event: 'override',
+      data,
+    });
+  }, []);
+
+  /**
+   * The absence of steps with a truthy result indicates the result value
+   * is stale, and should be destroyed.
+   */
+  useEffect(() => {
+    if (steps.length === 0 && result) {
+      setResult(undefined);
+    }
+  }, [steps.length, result, setResult]);
+
   const onTest = useCallback(
     async function () {
-      const code = await getCodeFromActions(ipc, steps, "inline");
+      const code = await getCodeFromActions(ipc, steps, 'inline');
       if (!isTestInProgress) {
         // destroy stale state
-        dispatch({ data: undefined, event: "override" });
+        dispatch({ data: undefined, event: 'override' });
         const onTestEvent = (_event: IpcRendererEvent, data: TestEvent) => {
           dispatch(data);
         };
 
-        ipc.on("test-event", onTestEvent);
+        ipc.on('test-event', onTestEvent);
 
         try {
-          const promise = ipc.callMain("run-journey", {
+          const promise = ipc.callMain('run-journey', {
             steps,
             code,
             isSuite: false,
@@ -69,7 +80,7 @@ export function useSyntheticsTest(steps: Steps): ITestContext {
           // eslint-disable-next-line no-console
           console.error(e);
         } finally {
-          ipc.removeListener("test-event", onTestEvent);
+          ipc.removeListener('test-event', onTestEvent);
           setIsTestInProgress(false);
         }
       }
@@ -78,24 +89,10 @@ export function useSyntheticsTest(steps: Steps): ITestContext {
   );
 
   useEffect(() => {
-    if (result?.journey.status === "failed") {
-      getCodeForFailedResult(ipc, steps, result?.journey).then(code =>
-        setCodeBlocks(code)
-      );
+    if (result?.journey.status === 'failed') {
+      getCodeForFailedResult(ipc, steps, result?.journey).then(code => setCodeBlocks(code));
     }
   }, [ipc, result?.journey, steps]);
-
-  /**
-   * This is needed to satisfy some tech debt where we reference a function by this
-   * name elsewhere in the application. This functionality is removed by a downstream branch,
-   * when it's merged we can delete this handler.
-   */
-  const setResult = useCallback((data: Result | undefined) => {
-    dispatch({
-      event: "override",
-      data,
-    });
-  }, []);
 
   return {
     codeBlocks,

@@ -22,17 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem, EuiText, EuiCodeBlock } from "@elastic/eui";
-import React from "react";
-import type { StepStatus } from "../../common/types";
-import { ResultContentWrapper, ResultErrorAccordion, symbols } from "./styles";
+import { EuiFlexGroup, EuiFlexItem, EuiText, EuiCodeBlock } from '@elastic/eui';
+import React from 'react';
+import type { StepStatus } from '../../common/types';
+import { ResultContentWrapper, ResultErrorAccordion, symbols } from './styles';
 
-function removeColorCodes(str = "") {
+function removeColorCodes(str = '') {
   // eslint-disable-next-line no-control-regex
-  return str.replace(/\u001b\[.*?m/g, "");
+  return str.replace(/\u001b\[.*?m/g, '');
 }
 
-export interface IResultErrorBody {
+interface IResultErrorBody {
   code: string;
   errorMessage?: string;
   actionTitles: string[];
@@ -53,11 +53,7 @@ export function ResultErrorBody({
     <>
       <EuiFlexGroup direction="column" gutterSize="none">
         {actionTitles.map((name, index) => (
-          <ResultContentWrapper
-            alignItems="center"
-            gutterSize="xs"
-            key={name + index}
-          >
+          <ResultContentWrapper alignItems="center" gutterSize="xs" key={name + index}>
             <EuiFlexItem grow={false}>{symbols[resultCategory]}</EuiFlexItem>
             <EuiFlexItem>
               <EuiText size="s">{name}</EuiText>
@@ -78,9 +74,7 @@ export function ResultErrorBody({
             <EuiCodeBlock language="js" paddingSize="m" whiteSpace="pre">
               {code}
             </EuiCodeBlock>
-            <EuiCodeBlock paddingSize="m">
-              {removeColorCodes(errorMessage)}
-            </EuiCodeBlock>
+            <EuiCodeBlock paddingSize="m">{removeColorCodes(errorMessage)}</EuiCodeBlock>
           </>
         )}
       </ResultErrorAccordion>
