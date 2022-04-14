@@ -88,6 +88,4 @@ describe('Assertion and Action values', () => {
     );
     expect(innerText).toContain(`await page.goto('${ACTION_URL}');`);
   });
-  //   async () => electronWindow.click('text=Close')
-  // );
 });
