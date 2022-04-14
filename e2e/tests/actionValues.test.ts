@@ -118,7 +118,7 @@ describe('Assertion and Action values', () => {
     // get inner text of code to export
     const innerText = await (await electronWindow.$('id=export-code-block')).innerText();
 
-    await new Promise(r => setTimeout(r, 5000));
+    // await new Promise(r => setTimeout(r, 5000));
     /**
      * The outputted code should contain the updated values we have supplied in the edit steps above.
      */
