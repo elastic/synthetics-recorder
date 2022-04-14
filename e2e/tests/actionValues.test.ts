@@ -111,22 +111,22 @@ describe('Assertion and Action values', () => {
     await editAssertion(electronWindow);
     await editAction(electronWindow);
 
-    await retryAssertion(
-      async () => {
-        // open export flyout
-        await electronWindow.click('text=Export');
-        // get inner text of code to export
-        const innerText = await (await electronWindow.$('id=export-code-block')).innerText();
+    // await retryAssertion(
+    //   async () => {
+    // open export flyout
+    await electronWindow.click('text=Export');
+    // get inner text of code to export
+    const innerText = await (await electronWindow.$('id=export-code-block')).innerText();
 
-        /**
-         * The outputted code should contain the updated values we have supplied in the edit steps above.
-         */
-        expect(innerText).toContain(
-          `expect(await page.${ACTION_OPTION}('${ASSERTION_SELECTOR}')).toMatch('${ASSERTION_VALUE}');`
-        );
-        expect(innerText).toContain(`await page.goto('${ACTION_URL}');`);
-      },
-      async () => electronWindow.click('text=Close')
+    await new Promise(r => setTimeout(r, 5000));
+    /**
+     * The outputted code should contain the updated values we have supplied in the edit steps above.
+     */
+    expect(innerText).toContain(
+      `expect(await page.${ACTION_OPTION}('${ASSERTION_SELECTOR}')).toMatch('${ASSERTION_VALUE}');`
     );
+    expect(innerText).toContain(`await page.goto('${ACTION_URL}');`);
   });
+  //   async () => electronWindow.click('text=Close')
+  // );
 });
