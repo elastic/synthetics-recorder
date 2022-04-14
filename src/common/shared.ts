@@ -73,7 +73,7 @@ export const SMALL_SCREEN_BREAKPOINT = 850;
 
 export async function getCodeFromActions(
   ipc: RendererProcessIpc,
-  steps: Steps,
+  actions: Steps,
   type: JourneyType
 ): Promise<string> {
   return await ipc.callMain('actions-to-code', {

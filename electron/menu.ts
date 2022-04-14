@@ -34,7 +34,7 @@ export function buildMenu(appName: string): MenuItemConstructorOptions[] {
         { role: 'services', submenu: [] },
         { type: 'separator' },
         { role: 'hide' },
-        { role: 'hideothers' },
+        { role: 'hideOthers' },
         { role: 'unhide' },
         { type: 'separator' },
         { role: 'quit' },

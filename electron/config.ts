@@ -43,7 +43,7 @@ export const JOURNEY_DIR = isDev ? join(ROOT_DIR, 'journeys') : join(RESOURCES_P
  * Controls where the browser binaries are available
  * to use it for both recording and testing phase
  */
-const PLAYWRIGHT_BROWSERS_PATH = isDev
+export const PLAYWRIGHT_BROWSERS_PATH = isDev
   ? join(ROOT_DIR, 'local-browsers')
   : join(RESOURCES_PATH, 'local-browsers');
 

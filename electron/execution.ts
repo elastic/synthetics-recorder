@@ -128,9 +128,9 @@ async function recordJourneys(data: { url: string }, browserWindow: BrowserWindo
  * @param {*} event the result data from Playwright
  * @returns the event data combined with action titles in a new object
  */
-function addActionsToStepResult(steps: any, event: any) {
+function addActionsToStepResult(steps: any[], event: any) {
   const step = steps.find(
-    s =>
+    (s: any) =>
       s.actions.length &&
       s.actions[0].title &&
       event?.data?.name &&
@@ -243,9 +243,9 @@ async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
       stdin!.write(data.code);
       stdin!.end();
     }
-    stdout.setEncoding('utf-8');
-    stderr.setEncoding('utf-8');
-    for await (const chunk of stdout) {
+    stdout!.setEncoding('utf-8');
+    stderr!.setEncoding('utf-8');
+    for await (const chunk of stdout!) {
       emitResult(chunk);
     }
     for await (const chunk of stderr!) {
@@ -283,7 +283,7 @@ async function onFileSave(code: string) {
   return false;
 }
 
-async function onTransformCode(data: { isSuite: boolean; steps: Steps }) {
+async function onTransformCode(data: { isSuite: boolean; actions: Steps }) {
   const generator = new SyntheticsGenerator(data.isSuite);
   return generator.generateFromSteps(data.actions);
 }
@@ -315,7 +315,7 @@ export default function setupListeners() {
   ipc.answerRenderer<{ url: string }>('record-journey', recordJourneys);
   ipc.answerRenderer<RunJourneyOptions>('run-journey', onTest);
   ipc.answerRenderer('save-file', onFileSave);
-  ipc.answerRenderer('actions-to-code', onTransformCode);
+  ipc.answerRenderer<{ actions: Steps; isSuite: boolean }>('actions-to-code', onTransformCode);
   ipc.answerRenderer('set-mode', onSetMode);
   ipc.answerRenderer('link-to-external', onLinkExternal);
 }
