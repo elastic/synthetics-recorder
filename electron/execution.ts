@@ -94,6 +94,7 @@ async function recordJourneys(data: { url: string }, browserWindow: BrowserWindo
     };
     actionListener.on('actions', actionsHandler);
 
+    /* _enableRecorder is private method, not defined in BrowserContext type */
     await (context as any)._enableRecorder({
       launchOptions: {},
       contextOptions: {},
@@ -128,9 +129,9 @@ async function recordJourneys(data: { url: string }, browserWindow: BrowserWindo
  * @param {*} event the result data from Playwright
  * @returns the event data combined with action titles in a new object
  */
-function addActionsToStepResult(steps: any[], event: any) {
+function addActionsToStepResult(steps: Steps, event: any) {
   const step = steps.find(
-    (s: any) =>
+    s =>
       s.actions.length &&
       s.actions[0].title &&
       event?.data?.name &&
@@ -162,8 +163,8 @@ async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
   };
 
   // returns TestEvent interface defined in common/types.ts
-  const constructEvent = (parsed: any) => {
-    switch (parsed.type) {
+  const constructEvent: (data: Record<string, any>) => TestEvent | undefined = data => {
+    switch (data.type) {
       case 'journey/start': {
         const { journey } = parsed;
         return {
@@ -240,11 +241,11 @@ async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
     });
     const { stdout, stdin, stderr } = synthCliProcess as ChildProcess;
     if (!isSuite) {
-      stdin!.write(data.code);
-      stdin!.end();
+      stdin?.write(data.code);
+      stdin?.end();
     }
-    stdout!.setEncoding('utf-8');
-    stderr!.setEncoding('utf-8');
+    stdout?.setEncoding('utf-8');
+    stderr?.setEncoding('utf-8');
     for await (const chunk of stdout!) {
       emitResult(chunk);
     }
@@ -316,6 +317,6 @@ export default function setupListeners() {
   ipc.answerRenderer<RunJourneyOptions>('run-journey', onTest);
   ipc.answerRenderer('save-file', onFileSave);
   ipc.answerRenderer<{ actions: Steps; isSuite: boolean }>('actions-to-code', onTransformCode);
-  ipc.answerRenderer('set-mode', onSetMode);
-  ipc.answerRenderer('link-to-external', onLinkExternal);
+  ipc.answerRenderer<string>('set-mode', onSetMode);
+  ipc.answerRenderer<string>('link-to-external', onLinkExternal);
 }

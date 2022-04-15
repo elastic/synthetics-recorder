@@ -1,7 +1,7 @@
 name: Bug 🐛
 description: Something is not behaving as expected.
-title: "[Bug] "
-labels: ["bug"]
+title: '[Bug] '
+labels: ['bug']
 body:
   - type: markdown
     attributes:

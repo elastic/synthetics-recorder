@@ -1,7 +1,7 @@
 name: Enhancement 🚀
 description: Propose a new feature or enhancement.
-title: "[Enhancement] "
-labels: ["enhancement"]
+title: '[Enhancement] '
+labels: ['enhancement']
 body:
   - type: textarea
     id: feature_summary
