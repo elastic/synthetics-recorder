@@ -8,7 +8,7 @@ files:
 publish:
   - provider: github
 extraMetadata:
-  main: build/electron.js
+  main: build/electron/electron.js
 protocols:
   - name: elastic-synthetics-recorder
     schemes:

@@ -34,7 +34,7 @@ import { buildMenu } from './menu';
 unhandled({ logger: err => logger.error(err) });
 debug({ isEnabled: true, showDevTools: false });
 
-const BUILD_DIR = join(__dirname, '..', 'build');
+const BUILD_DIR = join(__dirname, '..', '..', 'build');
 
 // We can't read from the `env` file within `services` here
 // so we must access the process env directly

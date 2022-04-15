@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 import { join } from 'path';
-import * as isDev from 'electron-is-dev';
+import isDev from 'electron-is-dev';
 import { getExecutablePath, getChromeVersion } from '../scripts/install-pw';
 
 /**
