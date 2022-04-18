@@ -72,7 +72,8 @@ describe('Assertion and Action values', () => {
     await editAssertion(electronWindow);
     await editAction(electronWindow);
 
-    await new Promise(r => setTimeout(r, 5000));
+    // test fails without waiting for state to update
+    await new Promise(r => setTimeout(r, 1000));
 
     // open export flyout
     await electronWindow.click('text=Export');
