@@ -120,7 +120,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
               isDisabled={
                 isTestInProgress ||
                 steps.length === 0 ||
-                recordingStatus === RecordingStatus.Recording
+                recordingStatus !== RecordingStatus.NotRecording
               }
               showTooltip={steps.length === 0}
               onTest={onTest}
