@@ -163,8 +163,8 @@ async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
   };
 
   // returns TestEvent interface defined in common/types.ts
-  const constructEvent: (data: Record<string, any>) => TestEvent | undefined = data => {
-    switch (data.type) {
+  const constructEvent: (parsed: Record<string, any>) => TestEvent | undefined = parsed => {
+    switch (parsed.type) {
       case 'journey/start': {
         const { journey } = parsed;
         return {
