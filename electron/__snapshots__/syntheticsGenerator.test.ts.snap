@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Synthetics JavaScript formatter accepts custom step organization 1`] = `
+"const { journey, step, expect } = require('@elastic/synthetics');
+
+journey('Recorded journey', async ({ page, context }) => {
+  let page1;
+  step('Open new page', async () => {
+    await page.goto('https://vigneshh.in/');
+  });
+  step('Assert text=Babel Minify isVisible', async () => {
+    expect(await page.isVisible('text=Babel Minify')).toBeTruthy();
+    expect(await page.isEditable('text=Babel Minify')).toBeTruthy();
+  });
+  step('Assert text=Babel Minify textContent', async () => {
+    expect(await page.textContent('text=Babel Minify')).toMatch('Babel');
+    page1 = await Promise.all([
+      page.waitForEvent('popup'),
+      page.click('text=Babel Minify')
+    ])[0];
+    await Promise.all([
+      page1.waitForNavigation(/*{ url: 'https://github.com/babel/minify' }*/),
+      page1.click('a:has-text(\\"smoke\\")')
+    ]);
+  });
+  step('Close page', async () => {
+    await page1.close();
+  });
+});"
+`;
+
+exports[`Synthetics JavaScript formatter hoists page objects toe prevent undefined references 1`] = `
+"let page1;
+let page2;
+step('Go to https://vigneshh.in/', async () => {
+  await page.goto('https://vigneshh.in/');
+  page1 = await Promise.all([
+    page.waitForEvent('popup'),
+    page.click('text=Tailor')
+  ])[0];
+  await page1.click('text=Packages 0');
+  expect(page1.url()).toBe('https://github.com/orgs/zalando/packages?repo_name=tailor');
+});
+step('Close page', async () => {
+  await page1.close();
+});
+step('Click text=Babel Minify', async () => {
+  page2 = await Promise.all([
+    page.waitForEvent('popup'),
+    page.click('text=Babel Minify')
+  ])[0];
+  await page2.click(':nth-match(a:has-text(\\"babel-minify\\"), 3)');
+  expect(page2.url()).toBe('https://github.com/topics/babel-minify');
+});
+step('Close page', async () => {
+  await page2.close();
+});"
+`;
+
+exports[`Synthetics JavaScript formatter uses custom step names 1`] = `
+"step('test-name', async () => {
+  await page.goto('https://vigneshh.in/');
+  expect(await page.isVisible('text=Babel Minify')).toBeTruthy();
+  expect(await page.isEditable('text=Babel Minify')).toBeTruthy();
+});"
+`;
