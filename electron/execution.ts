@@ -36,8 +36,13 @@ import { SyntheticsGenerator } from '@elastic/synthetics/dist/formatter/javascri
 import { JOURNEY_DIR, PLAYWRIGHT_BROWSERS_PATH, EXECUTABLE_PATH } from './config';
 import { BrowserContext } from 'playwright';
 import type { ActionInContext, Steps } from '@elastic/synthetics';
-import { TestEvent } from '../src/common/types';
-import { RunJourneyOptions } from '../src/hooks/useSyntheticsTest';
+import {
+  GenerateCodeOptions,
+  RunJourneyOptions,
+  RecordJourneyOptions,
+  StepEndEvent,
+  TestEvent,
+} from '../src/common/types';
 const SYNTHETICS_CLI = require.resolve('@elastic/synthetics/dist/cli');
 const IS_TEST_ENV = process.env.NODE_ENV === 'test';
 const CDP_TEST_PORT = parseInt(process.env.TEST_PORT ?? '61337') + 1;
@@ -83,7 +88,7 @@ async function openPage(context: BrowserContext, url: string) {
 let browserContext: BrowserContext | null = null;
 let actionListener = new EventEmitter();
 
-async function recordJourneys(data: { url: string }, browserWindow: BrowserWindow) {
+async function onRecordJourneys(data: { url: string }, browserWindow: BrowserWindow) {
   try {
     const { browser, context } = await launchContext();
     browserContext = context;
@@ -94,7 +99,7 @@ async function recordJourneys(data: { url: string }, browserWindow: BrowserWindo
     };
     actionListener.on('actions', actionsHandler);
 
-    /* _enableRecorder is private method, not defined in BrowserContext type */
+    // _enableRecorder is private method, not defined in BrowserContext type
     await (context as any)._enableRecorder({
       launchOptions: {},
       contextOptions: {},
@@ -107,9 +112,11 @@ async function recordJourneys(data: { url: string }, browserWindow: BrowserWindo
     const closeBrowser = async () => {
       browserContext = null;
       actionListener.removeListener('actions', actionsHandler);
-      await browser.close().catch(err => {
-        console.warn('Browser close threw an error', err);
-      });
+      try {
+        await browser.close();
+      } catch (e) {
+        logger.error('Browser close threw an error', e);
+      }
     };
 
     ipc.on('stop', closeBrowser);
@@ -129,12 +136,11 @@ async function recordJourneys(data: { url: string }, browserWindow: BrowserWindo
  * @param {*} event the result data from Playwright
  * @returns the event data combined with action titles in a new object
  */
-function addActionsToStepResult(steps: Steps, event: any) {
+function addActionsToStepResult(steps: Steps, event: StepEndEvent): TestEvent {
   const step = steps.find(
     s =>
       s.actions.length &&
       s.actions[0].title &&
-      event?.data?.name &&
       (event.data.name === s.actions[0].title || event.data.name === s.name)
   );
   if (!step) return { ...event, data: { ...event.data, actionTitles: [] } };
@@ -203,7 +209,7 @@ async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
     browserWindow.webContents.send('test-event', event);
   };
 
-  const emitResult = (chunk: any) => {
+  const emitResult = (chunk: string) => {
     parseOrSkip(chunk).forEach(parsed => {
       const event = constructEvent(parsed);
       if (event) {
@@ -222,7 +228,6 @@ async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
     if (!isSuite) {
       args.push('--inline');
     } else {
-      // es-lint ignore
       await mkdir(JOURNEY_DIR, { recursive: true });
       await writeFile(filePath, data.code);
       args.unshift(filePath);
@@ -255,13 +260,13 @@ async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
     if (isSuite) {
       await rm(filePath, { recursive: true, force: true });
     }
-  } catch (error: any) {
+  } catch (error) {
     logger.error(error);
     sendTestEvent({
       event: 'journey/end',
       data: {
         status: 'failed',
-        error,
+        error: error as Error,
       },
     });
   } finally {
@@ -284,7 +289,7 @@ async function onFileSave(code: string) {
   return false;
 }
 
-async function onTransformCode(data: { isSuite: boolean; actions: Steps }) {
+async function onGenerateCode(data: { isSuite: boolean; actions: Steps }) {
   const generator = new SyntheticsGenerator(data.isSuite);
   return generator.generateFromSteps(data.actions);
 }
@@ -295,6 +300,7 @@ async function onSetMode(mode: string) {
   if (!page) return;
   await page.mainFrame().evaluate(
     ([mode]) => {
+      // `_playwrightSetMode` is a private function
       (window as any)._playwrightSetMode(mode);
     },
     [mode]
@@ -313,10 +319,10 @@ async function onLinkExternal(url: string) {
 }
 
 export default function setupListeners() {
-  ipc.answerRenderer<{ url: string }>('record-journey', recordJourneys);
+  ipc.answerRenderer<RecordJourneyOptions>('record-journey', onRecordJourneys);
   ipc.answerRenderer<RunJourneyOptions>('run-journey', onTest);
-  ipc.answerRenderer('save-file', onFileSave);
-  ipc.answerRenderer<{ actions: Steps; isSuite: boolean }>('actions-to-code', onTransformCode);
+  ipc.answerRenderer<GenerateCodeOptions>('actions-to-code', onGenerateCode);
+  ipc.answerRenderer<string>('save-file', onFileSave);
   ipc.answerRenderer<string>('set-mode', onSetMode);
   ipc.answerRenderer<string>('link-to-external', onLinkExternal);
 }

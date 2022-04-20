@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ActionInContext } from '@elastic/synthetics';
+import { ActionInContext, Steps } from '@elastic/synthetics';
 
 export type ActionContext = ActionInContext & { isOpen?: boolean };
 
@@ -80,7 +80,7 @@ interface JourneyEndEvent {
     error?: Error;
   };
 }
-interface StepEndEvent {
+export interface StepEndEvent {
   event: 'step/end';
   data: JourneyStep;
 }
@@ -91,3 +91,13 @@ interface ResultOverride {
 }
 
 export type TestEvent = JourneyStartEvent | JourneyEndEvent | StepEndEvent | ResultOverride;
+export type RecordJourneyOptions = { url: string };
+export type RunJourneyOptions = {
+  steps: Steps;
+  code: string;
+  isSuite: boolean;
+};
+export type GenerateCodeOptions = {
+  actions: Steps;
+  isSuite: boolean;
+};
