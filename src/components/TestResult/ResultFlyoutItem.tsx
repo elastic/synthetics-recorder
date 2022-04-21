@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 import { EuiText } from '@elastic/eui';
 import React from 'react';
-import type { JourneyStep } from '../../common/types';
+import type { JourneyStep } from '../../../shared/types';
 import { ResultBody } from './ResultBody';
 import { ResultErrorBody } from './ResultErrorBody';
 import { ResultTitle } from './ResultTitle';

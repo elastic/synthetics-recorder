@@ -22,36 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ActionInContext, Steps } from '@elastic/synthetics';
+import type { ActionInContext } from '@elastic/synthetics';
+import type { StepStatus } from '../../shared/types';
 
 export type ActionContext = ActionInContext & { isOpen?: boolean };
-
-export interface Result {
-  failed: number;
-  skipped: number;
-  succeeded: number;
-  journey: Journey;
-}
-
-export interface Journey {
-  status: string;
-  steps: Array<JourneyStep>;
-  type: JourneyType;
-}
-
-export type StepStatus = 'succeeded' | 'failed' | 'skipped';
-
 export type ResultCategory = StepStatus | 'running';
-
-export interface JourneyStep {
-  duration: number;
-  error?: Error;
-  actionTitles?: string[];
-  name: string;
-  status: StepStatus;
-}
-
-export type JourneyType = 'suite' | 'inline';
 
 export interface StepSeparatorDragDropDataTransfer {
   initiatorIndex: number;
@@ -64,40 +39,3 @@ export enum RecordingStatus {
   Recording = 'RECORDING',
   Paused = 'PAUSED',
 }
-
-interface JourneyStartEvent {
-  event: 'journey/start';
-  data: {
-    name: string;
-  };
-}
-
-interface JourneyEndEvent {
-  event: 'journey/end';
-  data: {
-    name?: string;
-    status: 'succeeded' | 'failed';
-    error?: Error;
-  };
-}
-export interface StepEndEvent {
-  event: 'step/end';
-  data: JourneyStep;
-}
-
-interface ResultOverride {
-  event: 'override';
-  data: Result | undefined;
-}
-
-export type TestEvent = JourneyStartEvent | JourneyEndEvent | StepEndEvent | ResultOverride;
-export type RecordJourneyOptions = { url: string };
-export type RunJourneyOptions = {
-  steps: Steps;
-  code: string;
-  isSuite: boolean;
-};
-export type GenerateCodeOptions = {
-  actions: Steps;
-  isSuite: boolean;
-};
