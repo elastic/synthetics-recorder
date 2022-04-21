@@ -54,7 +54,10 @@ export function StartOverWarningModal({ setVisibility, startOver, stepCount }: P
           <h3>{headerCopy(stepCount)}</h3>
         </EuiModalHeaderTitle>
       </EuiModalHeader>
-      <EuiModalBody>This action cannot be undone.</EuiModalBody>
+      <EuiModalBody>
+        By starting over, the script and all related steps will be permanently deleted. Are you sure
+        you wish to proceed?
+      </EuiModalBody>
       <EuiModalFooter>
         <EuiButtonEmpty onClick={close}>Cancel</EuiButtonEmpty>
         <EuiButton
