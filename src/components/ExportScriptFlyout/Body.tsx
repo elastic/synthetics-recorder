@@ -22,7 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiCheckbox, EuiCodeBlock, EuiFlyoutBody, EuiSpacer } from '@elastic/eui';
+import {
+  EuiCheckbox,
+  EuiCodeBlock,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiFlyoutBody,
+  EuiIcon,
+  EuiSpacer,
+  EuiToolTip,
+} from '@elastic/eui';
 import React from 'react';
 import type { Setter } from '../../common/types';
 
@@ -35,12 +44,21 @@ interface Props {
 export function Body({ code, exportAsSuite, setExportAsSuite }: Props) {
   return (
     <EuiFlyoutBody>
-      <EuiCheckbox
-        id="export-as-suite-checkbox"
-        label="Export as suite"
-        checked={exportAsSuite}
-        onChange={() => setExportAsSuite(!exportAsSuite)}
-      />
+      <EuiFlexGroup alignItems="center" gutterSize="s">
+        <EuiFlexItem grow={false}>
+          <EuiCheckbox
+            id="export-as-suite-checkbox"
+            label="Export as suite"
+            checked={exportAsSuite}
+            onChange={() => setExportAsSuite(!exportAsSuite)}
+          />
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          <EuiToolTip content="Export your script as a full suite or an inline journey.">
+            <EuiIcon type="iInCircle" />
+          </EuiToolTip>
+        </EuiFlexItem>
+      </EuiFlexGroup>
       <EuiSpacer />
       <EuiCodeBlock
         id="export-code-block"
