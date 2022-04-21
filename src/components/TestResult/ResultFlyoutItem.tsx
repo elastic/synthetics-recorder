@@ -40,11 +40,13 @@ interface IResultFlyoutItem {
 export function ResultFlyoutItem({ code, step, stepIndex }: IResultFlyoutItem) {
   const { actionTitles, status, error, duration } = step;
 
-  const durationElement = <EuiText size="s">{Math.round(duration / 1000)}s</EuiText>;
-
   return (
     <ResultTitle
-      durationElement={durationElement}
+      durationElement={
+        status !== 'skipped' ? (
+          <EuiText size="s">{Math.round(duration / 1000)}s</EuiText>
+        ) : undefined
+      }
       maxTitleLength={MAX_RESULT_TITLE_LENGTH}
       titleText={step.name}
       stepIndex={stepIndex}
