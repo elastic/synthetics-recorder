@@ -54,7 +54,7 @@ async function editAssertion(electronWindow: Page) {
   await electronWindow.fill(`[aria-label="Assertion selector"]`, ASSERTION_SELECTOR);
   await electronWindow.fill(`[aria-label="Assertion value"]`, ASSERTION_VALUE);
   await electronWindow.click(`[data-test-subj="save-0-1"]`);
-  // make sure state has been updated by checking the ation header's content
+  // make sure state has been updated by checking the action header's content
   await electronWindow.waitForSelector(`#action-element-0-1 >> div:has-text("Inner Text")`, {
     timeout: 2000,
   });
