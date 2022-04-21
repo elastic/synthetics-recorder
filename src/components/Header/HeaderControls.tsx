@@ -87,7 +87,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
         <ControlButton
           aria-label={getPlayControlCopy(recordingStatus, steps.length)}
           color="primary"
-          isDisabled={isTestInProgress}
+          isDisabled={isTestInProgress || !url}
           iconType={recordingStatus === RecordingStatus.Recording ? 'pause' : 'play'}
           fill
           onClick={recordingStatus === RecordingStatus.NotRecording ? toggleRecording : togglePause}
