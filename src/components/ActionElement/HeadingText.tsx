@@ -47,7 +47,7 @@ export function HeadingText({ actionContext }: IHeadingText) {
       <WrapText>
         &nbsp;
         {actionContext.action.name !== 'navigate' && actionContext.action.selector}
-        {actionContext.action.name === 'navigate' ? actionContext.frameUrl : null}
+        {actionContext.action.name === 'navigate' ? actionContext.action.url : null}
       </WrapText>
     </EuiFlexGroup>
   );
