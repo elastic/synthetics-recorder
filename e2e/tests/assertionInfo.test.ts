@@ -41,9 +41,6 @@ describe('Assertion Info Popover', () => {
       'id=action-element-0-0',
       'text=Add assertion'
     );
-    await electronWindow.click('id=action-element-0-1');
-    await electronWindow.hover('id=action-element-0-1');
-    await electronWindow.click(`[aria-label="Begin editing this action"] >> nth=1`);
     await electronWindow.click(
       `[aria-label="Shows a popover with more information about Playwright assertions."]`
     );
