@@ -95,7 +95,13 @@ pipeline {
         stage('Test'){
           steps {
             withGithubNotify(context: "Test") {
-              runTestAndReportJunit()
+              sh(label: 'run tests', script: "${DOCKER_BASE_DIR}/.ci/scripts/run-test.sh")
+            }
+          }
+          post {
+            always {
+              sh(label: 'debug', script: "ls -l $BASE_DIR")
+              junit(allowEmptyResults: true, keepLongStdio: true, testResults: "$BASE_DIR/*-junit.xml")
             }
           }
         }
@@ -165,14 +171,4 @@ def notifyStatus(def args = [:]) {
                       to: "${env.NOTIFY_TO}",
                       subject: args.subject,
                       body: args.body)
-}
-
-// It runs in a docker agent but workspace is not available in the post-build stage
-// Let's use the try/finally to report the test failures.
-def runTestAndReportJunit() {
-  try {
-    sh(label: 'run tests', script: "${DOCKER_BASE_DIR}/.ci/scripts/run-test.sh")
-  } finally {
-    junit(allowEmptyResults: true, keepLongStdio: true, testResults: "*-junit.xml")
-  }
 }
