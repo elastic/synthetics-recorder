@@ -155,7 +155,7 @@ function addActionsToStepResult(steps: Steps, event: StepEndEvent): TestEvent {
 }
 
 async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
-  const parseOrSkip = (chunk: string) => {
+  const parseOrSkip = (chunk: string): Array<Record<string, any>> => {
     // at times stdout ships multiple steps in one chunk, broken by newline,
     // so here we split on the newline
     return chunk.split('\n').map(subChunk => {
@@ -167,40 +167,51 @@ async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
     });
   };
 
-  // returns TestEvent interface defined in common/types.ts
-  const constructEvent: (parsed: Record<string, any>) => TestEvent | undefined = parsed => {
+  const constructEvent = (parsed: Record<string, any>): TestEvent | null => {
     switch (parsed.type) {
       case 'journey/start': {
         const { journey } = parsed;
-        return {
-          event: 'journey/start',
-          data: {
-            name: journey.name,
-          },
-        };
+        return journey?.name
+          ? {
+              event: 'journey/start',
+              data: {
+                name: journey.name,
+              },
+            }
+          : null;
       }
       case 'step/end': {
         const { step, error } = parsed;
-        return {
-          event: 'step/end',
-          data: {
-            name: step.name,
-            status: step.status,
-            error,
-            duration: Math.ceil(step.duration.us / 1000),
-          },
-        };
+        const isValid =
+          step?.name &&
+          ['succeeded', 'failed', 'skipped'].includes(step?.status) &&
+          typeof step?.duration?.us === 'number';
+        return isValid
+          ? {
+              event: 'step/end',
+              data: {
+                name: step.name,
+                status: step.status,
+                error,
+                duration: Math.ceil(step.duration.us / 1000),
+              },
+            }
+          : null;
       }
       case 'journey/end': {
         const { journey } = parsed;
-        return {
-          event: 'journey/end',
-          data: {
-            name: journey.name,
-            status: journey.status,
-          },
-        };
+        return ['succeeded', 'failed'].includes(journey?.status)
+          ? {
+              event: 'journey/end',
+              data: {
+                name: journey.name,
+                status: journey.status,
+              },
+            }
+          : null;
       }
+      default:
+        return null;
     }
   };
 
