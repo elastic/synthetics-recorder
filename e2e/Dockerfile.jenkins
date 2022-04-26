@@ -36,14 +36,15 @@ ADD $BASE_DIR $DOCKER_BASE_DIR
 ENV DOCKER_BASE_DIR $DOCKER_BASE_DIR
 ENV DISPLAY $DISPLAY
 
+WORKDIR $DOCKER_BASE_DIR
+
 # Installing NVM
 ENV NVM_DIR /root
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 RUN source $NVM_DIR/nvm.sh \
   && source /root/.bashrc \
   && ( \
-    cd $DOCKER_BASE_DIR \
-    && nvm install \
+    nvm install \
     && nvm use \
     # We must install dependencies again so
     # that they're compatible with Ubuntu
