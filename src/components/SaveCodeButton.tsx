@@ -44,6 +44,7 @@ export function SaveCodeButton({ type }: ISaveCodeButton) {
     sendToast({
       id: `file-export-${new Date().valueOf()}`,
       title: 'Script export successful',
+      color: 'success',
     });
   };
   return (
