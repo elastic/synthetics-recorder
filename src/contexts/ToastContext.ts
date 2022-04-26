@@ -22,33 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
-import React from 'react';
-import styled from 'styled-components';
-import { ActionContext } from '../../common/types';
-import { AssertionHeadingText } from './AssertionHeadingText';
-import { Bold } from './styles';
+import { Toast } from '@elastic/eui/src/components/toast/global_toast_list';
+import { createContext } from 'react';
+import { Setter } from '../common/types';
 
-interface IHeadingText {
-  actionContext: ActionContext;
+export interface IToastContext {
+  sendToast: (toast: Toast) => void;
+  dismissToast: (toast: Toast) => void;
+  toasts: Toast[];
+  toastLifeTimeMs: number;
+  setToastLifeTimeMs: Setter<number>;
 }
 
-const WrapText = styled(EuiFlexItem)`
-  overflow-wrap: anywhere;
-`;
-
-export function HeadingText({ actionContext }: IHeadingText) {
-  if (actionContext.action.isAssert) {
-    return <AssertionHeadingText actionContext={actionContext} />;
-  }
-  return (
-    <EuiFlexGroup gutterSize="xs">
-      <Bold grow={false}>{actionContext.action.name}</Bold>
-      <WrapText>
-        &nbsp;
-        {actionContext.action.name !== 'navigate' && actionContext.action.selector}
-        {actionContext.action.name === 'navigate' ? actionContext.action.url : null}
-      </WrapText>
-    </EuiFlexGroup>
-  );
+function notInitialized() {
+  throw Error('not initialized');
 }
+
+export const ToastContext = createContext<IToastContext>({
+  dismissToast: notInitialized,
+  sendToast: notInitialized,
+  setToastLifeTimeMs: notInitialized,
+  toasts: [],
+  toastLifeTimeMs: -1,
+});

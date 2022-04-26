@@ -87,7 +87,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
         <ControlButton
           aria-label={getPlayControlCopy(recordingStatus, steps.length)}
           color="primary"
-          isDisabled={isTestInProgress}
+          isDisabled={isTestInProgress || !url}
           iconType={recordingStatus === RecordingStatus.Recording ? 'pause' : 'play'}
           fill
           onClick={recordingStatus === RecordingStatus.NotRecording ? toggleRecording : togglePause}
@@ -110,7 +110,12 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
           </ControlButton>
         </EuiFlexItem>
       )}
-      <EuiFlexItem grow={recordingStatus === RecordingStatus.Recording}>
+      <EuiFlexItem
+        grow={
+          recordingStatus === RecordingStatus.Recording ||
+          recordingStatus === RecordingStatus.Paused
+        }
+      >
         <RecordingStatusIndicator status={recordingStatus} />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
@@ -120,7 +125,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
               isDisabled={
                 isTestInProgress ||
                 steps.length === 0 ||
-                recordingStatus === RecordingStatus.Recording
+                recordingStatus !== RecordingStatus.NotRecording
               }
               showTooltip={steps.length === 0}
               onTest={onTest}

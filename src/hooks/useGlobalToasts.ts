@@ -22,33 +22,33 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
-import React from 'react';
-import styled from 'styled-components';
-import { ActionContext } from '../../common/types';
-import { AssertionHeadingText } from './AssertionHeadingText';
-import { Bold } from './styles';
+import { Toast } from '@elastic/eui/src/components/toast/global_toast_list';
+import { useCallback, useState } from 'react';
+import { IToastContext } from '../contexts/ToastContext';
 
-interface IHeadingText {
-  actionContext: ActionContext;
-}
+export function useGlobalToasts(): IToastContext {
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [toastLifeTimeMs, setToastLifeTimeMs] = useState<number>(5000);
 
-const WrapText = styled(EuiFlexItem)`
-  overflow-wrap: anywhere;
-`;
-
-export function HeadingText({ actionContext }: IHeadingText) {
-  if (actionContext.action.isAssert) {
-    return <AssertionHeadingText actionContext={actionContext} />;
-  }
-  return (
-    <EuiFlexGroup gutterSize="xs">
-      <Bold grow={false}>{actionContext.action.name}</Bold>
-      <WrapText>
-        &nbsp;
-        {actionContext.action.name !== 'navigate' && actionContext.action.selector}
-        {actionContext.action.name === 'navigate' ? actionContext.action.url : null}
-      </WrapText>
-    </EuiFlexGroup>
+  const dismissToast = useCallback(
+    (toast: Toast) => {
+      setToasts(toasts => toasts.filter(t => t !== toast));
+    },
+    [setToasts]
   );
+
+  const sendToast = useCallback(
+    (toast: Toast) => {
+      setToasts(toasts => [...toasts, toast]);
+    },
+    [setToasts]
+  );
+
+  return {
+    dismissToast,
+    sendToast,
+    setToastLifeTimeMs,
+    toasts,
+    toastLifeTimeMs,
+  };
 }
