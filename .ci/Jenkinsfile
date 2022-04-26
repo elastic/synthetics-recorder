@@ -100,8 +100,8 @@ pipeline {
           }
           post {
             always {
-              sh(label: 'debug', script: "cat *-junit.xml || true")
-              junit(allowEmptyResults: true, keepLongStdio: true, testResults: "*-junit.xml")
+              sh(label: 'debug', script: "ls -l $BASE_DIR")
+              junit(allowEmptyResults: true, keepLongStdio: true, testResults: "$BASE_DIR/*-junit.xml")
             }
           }
         }
