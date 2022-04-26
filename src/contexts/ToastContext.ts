@@ -22,34 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiButton } from '@elastic/eui';
-import React, { useContext } from 'react';
-import { getCodeFromActions } from '../common/shared';
-import type { JourneyType } from '../common/types';
-import { CommunicationContext } from '../contexts/CommunicationContext';
-import { StepsContext } from '../contexts/StepsContext';
-import { ToastContext } from '../contexts/ToastContext';
+import { Toast } from '@elastic/eui/src/components/toast/global_toast_list';
+import { createContext } from 'react';
+import { Setter } from '../common/types';
 
-interface ISaveCodeButton {
-  type: JourneyType;
+export interface IToastContext {
+  sendToast: (toast: Toast) => void;
+  dismissToast: (toast: Toast) => void;
+  toasts: Toast[];
+  toastLifeTimeMs: number;
+  setToastLifeTimeMs: Setter<number>;
 }
 
-export function SaveCodeButton({ type }: ISaveCodeButton) {
-  const { ipc } = useContext(CommunicationContext);
-  const { steps } = useContext(StepsContext);
-  const { sendToast } = useContext(ToastContext);
-  const onSave = async () => {
-    const codeFromActions = await getCodeFromActions(ipc, steps, type);
-    await ipc.callMain('save-file', codeFromActions);
-    sendToast({
-      id: `file-export-${new Date().valueOf()}`,
-      title: 'Script export successful',
-      color: 'success',
-    });
-  };
-  return (
-    <EuiButton fill color="primary" iconType="exportAction" onClick={onSave}>
-      Export
-    </EuiButton>
-  );
+function notInitialized() {
+  throw Error('not initialized');
 }
+
+export const ToastContext = createContext<IToastContext>({
+  dismissToast: notInitialized,
+  sendToast: notInitialized,
+  setToastLifeTimeMs: notInitialized,
+  toasts: [],
+  toastLifeTimeMs: -1,
+});
