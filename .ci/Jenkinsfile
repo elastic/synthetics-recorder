@@ -173,6 +173,6 @@ def runTestAndReportJunit() {
   try {
     sh(label: 'run tests', script: "${DOCKER_BASE_DIR}/.ci/scripts/run-test.sh")
   } finally {
-    junit(allowEmptyResults: true, keepLongStdio: true, testResults: "*-junit.xml")
+    junit(allowEmptyResults: true, keepLongStdio: true, testResults: "${DOCKER_BASE_DIR}/*-junit.xml")
   }
 }
