@@ -68,7 +68,7 @@ export function StartOverWarningModal({ setVisibility, startOver, stepCount }: P
             setVisibility(false);
           }}
         >
-          Delete and start over
+          Start over
         </EuiButton>
       </EuiModalFooter>
     </EuiModal>
