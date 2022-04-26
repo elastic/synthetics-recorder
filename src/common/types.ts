@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 import type { ActionInContext } from '@elastic/synthetics';
-import type { StepStatus } from '../../shared/types';
+import type { StepStatus } from '../../common/types';
 
 export type ActionContext = ActionInContext & { isOpen?: boolean };
 export type ResultCategory = StepStatus | 'running';

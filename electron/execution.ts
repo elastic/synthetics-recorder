@@ -42,7 +42,7 @@ import {
   RecordJourneyOptions,
   StepEndEvent,
   TestEvent,
-} from '../shared/types';
+} from '../common/types';
 const SYNTHETICS_CLI = require.resolve('@elastic/synthetics/dist/cli');
 const IS_TEST_ENV = process.env.NODE_ENV === 'test';
 const CDP_TEST_PORT = parseInt(process.env.TEST_PORT ?? '61337') + 1;

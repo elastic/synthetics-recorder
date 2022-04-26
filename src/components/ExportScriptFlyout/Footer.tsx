@@ -25,7 +25,7 @@ THE SOFTWARE.
 import { EuiFlyoutFooter, EuiFlexGroup, EuiFlexItem, EuiButtonEmpty } from '@elastic/eui';
 import React from 'react';
 import type { Setter } from '../../common/types';
-import type { JourneyType } from '../../../shared/types';
+import type { JourneyType } from '../../../common/types';
 import { SaveCodeButton } from '../SaveCodeButton';
 
 interface IFlyoutFooter {

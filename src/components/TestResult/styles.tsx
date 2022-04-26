@@ -25,7 +25,7 @@ THE SOFTWARE.
 import { EuiAccordion, EuiFlexGroup, EuiIcon, EuiPanel, EuiText } from '@elastic/eui';
 import React from 'react';
 import styled from 'styled-components';
-import type { StepStatus } from '../../../shared/types';
+import type { StepStatus } from '../../../common/types';
 
 export const ResultContainer = styled(EuiPanel)`
   && {

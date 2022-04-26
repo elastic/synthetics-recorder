@@ -27,7 +27,7 @@ import type { Steps } from '@elastic/synthetics';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { getCodeFromActions } from '../../common/shared';
 import type { Setter } from '../../common/types';
-import type { JourneyType } from '../../../shared/types';
+import type { JourneyType } from '../../../common/types';
 import { CommunicationContext } from '../../contexts/CommunicationContext';
 import { Body } from './Body';
 import { Footer } from './Footer';

@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { TestEvent, Result, JourneyType } from '../../shared/types';
+import type { TestEvent, Result, JourneyType } from '../../common/types';
 
 /**
  * Use this function to incrementally build the result object for a test result

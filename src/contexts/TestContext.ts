@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 import { createContext } from 'react';
 import { Setter } from '../common/types';
-import { Result } from '../../shared/types';
+import { Result } from '../../common/types';
 
 function notImplemented() {
   throw Error('Test context not initialized');

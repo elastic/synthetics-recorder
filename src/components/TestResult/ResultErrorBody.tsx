@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 import { EuiFlexGroup, EuiFlexItem, EuiText, EuiCodeBlock } from '@elastic/eui';
 import React from 'react';
-import type { StepStatus } from '../../../shared/types';
+import type { StepStatus } from '../../../common/types';
 import { ResultContentWrapper, ResultErrorAccordion, symbols } from './styles';
 
 function removeColorCodes(str = '') {
