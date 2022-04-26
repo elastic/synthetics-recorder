@@ -26,5 +26,5 @@ module.exports = {
   preset: 'ts-jest',
   testPathIgnorePatterns: [`node_modules`, `\\.cache`, `e2e`],
   setupFilesAfterEnv: ['./jest.unit.setup.js'],
-  reporters: ['default', 'jest-junit'],
+  reporters: ['default', ['jest-junit', { outputName: 'unit-junit.xml' }]],
 };

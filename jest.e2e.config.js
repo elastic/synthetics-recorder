@@ -48,6 +48,5 @@ module.exports = {
   },
 
   testTimeout: 60000,
-
-  reporters: ['default', 'jest-junit'],
+  reporters: ['default', ['jest-junit', { outputName: 'e2e-junit.xml' }]],
 };
