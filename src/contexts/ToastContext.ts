@@ -34,14 +34,14 @@ export interface IToastContext {
   setToastLifeTimeMs: Setter<number>;
 }
 
-function notImplemented() {
-  throw Error('not implemented');
+function notInitialized() {
+  throw Error('not initialized');
 }
 
 export const ToastContext = createContext<IToastContext>({
-  dismissToast: notImplemented,
-  sendToast: notImplemented,
-  setToastLifeTimeMs: notImplemented,
+  dismissToast: notInitialized,
+  sendToast: notInitialized,
+  setToastLifeTimeMs: notInitialized,
   toasts: [],
   toastLifeTimeMs: -1,
 });
