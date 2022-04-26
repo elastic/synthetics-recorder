@@ -22,14 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import {
-  EuiCheckbox,
-  EuiCodeBlock,
-  EuiFlyoutBody,
-  EuiSpacer,
-} from "@elastic/eui";
-import React from "react";
-import type { Setter } from "../../common/types";
+import { EuiCheckbox, EuiCodeBlock, EuiFlyoutBody, EuiSpacer } from '@elastic/eui';
+import React from 'react';
+import type { Setter } from '../../common/types';
 
 interface Props {
   code: string;
@@ -47,7 +42,13 @@ export function Body({ code, exportAsSuite, setExportAsSuite }: Props) {
         onChange={() => setExportAsSuite(!exportAsSuite)}
       />
       <EuiSpacer />
-      <EuiCodeBlock isCopyable language="js" paddingSize="m" whiteSpace="pre">
+      <EuiCodeBlock
+        id="export-code-block"
+        isCopyable
+        language="js"
+        paddingSize="m"
+        whiteSpace="pre"
+      >
         {code}
       </EuiCodeBlock>
     </EuiFlyoutBody>

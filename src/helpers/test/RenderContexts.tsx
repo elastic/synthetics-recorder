@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React from "react";
+import React from 'react';
 
-export interface ContextRenderer<ContextValue> {
+interface ContextRenderer<ContextValue> {
   defaults: ContextValue;
   Context: React.Context<ContextValue>;
   overrides?: Partial<ContextValue>;
@@ -49,7 +49,7 @@ export const RenderContexts = ({
   children?: React.ReactNode;
 }) => {
   const context = contexts.shift();
-  if (typeof context === "undefined") {
+  if (typeof context === 'undefined') {
     return <>{children}</>;
   }
   const { defaults, Context, overrides } = context;

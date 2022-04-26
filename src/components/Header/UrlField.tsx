@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFieldText } from "@elastic/eui";
-import React from "react";
-import type { Setter } from "../../common/types";
-import { RecordingStatus } from "../../common/types";
+import { EuiFieldText } from '@elastic/eui';
+import React from 'react';
+import type { Setter } from '../../common/types';
+import { RecordingStatus } from '../../common/types';
 
 export interface IUrlField {
   recordingStatus: RecordingStatus;
@@ -34,26 +34,18 @@ export interface IUrlField {
   url: string;
 }
 
-export const URL_FIELD_LABEL =
-  "Set the starting point for your synthetic journey";
+export const URL_FIELD_LABEL = 'Set the starting point for your synthetic journey';
 
-export function UrlField({
-  recordingStatus,
-  setUrl,
-  toggleRecording,
-  url,
-}: IUrlField) {
+export function UrlField({ recordingStatus, setUrl, toggleRecording, url }: IUrlField) {
   return (
     <EuiFieldText
       aria-label={URL_FIELD_LABEL}
+      fullWidth
       onChange={e => {
         setUrl(e.target.value);
       }}
       onKeyUp={e => {
-        if (
-          e.key === "Enter" &&
-          recordingStatus === RecordingStatus.NotRecording
-        ) {
+        if (e.key === 'Enter' && recordingStatus === RecordingStatus.NotRecording) {
           toggleRecording();
         }
       }}

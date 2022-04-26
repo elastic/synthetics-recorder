@@ -23,31 +23,31 @@ THE SOFTWARE.
 */
 
 module.exports = {
-  preset: "ts-jest",
+  preset: 'ts-jest',
   bail: true,
 
   // The paths to modules that run some code to configure or set up the testing environment before each test
   // setupFiles: [],
 
-  globalSetup: "<rootDir>/e2e/setup",
-  globalTeardown: "<rootDir>/e2e/teardown",
+  globalSetup: '<rootDir>/e2e/setup',
+  globalTeardown: '<rootDir>/e2e/teardown',
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
   setupFilesAfterEnv: [],
 
-  testEnvironment: "node",
+  testEnvironment: 'node',
 
-  testPathIgnorePatterns: [`node_modules`, `\\.cache`, "./e2e/setup"],
+  testPathIgnorePatterns: [`node_modules`, `\\.cache`, './e2e/setup'],
 
   // This option sets the URL for the jsdom environment. It is reflected in properties such as location.href
   // testURL: "http://localhost",
   globals: {
-    "ts-jest": {
+    'ts-jest': {
       isolatedModules: true,
     },
   },
 
   testTimeout: 60000,
 
-  reporters: ["default", "jest-junit"],
+  reporters: ['default', 'jest-junit'],
 };

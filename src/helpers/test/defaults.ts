@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { RecordingStatus } from "../../common/types";
-import { IRecordingContext } from "../../contexts/RecordingContext";
-import { IStepsContext } from "../../contexts/StepsContext";
-import { IUrlContext } from "../../contexts/UrlContext";
+import { RecordingStatus } from '../../common/types';
+import { IRecordingContext } from '../../contexts/RecordingContext';
+import { IStepsContext } from '../../contexts/StepsContext';
+import { IUrlContext } from '../../contexts/UrlContext';
 
 export const getRecordingContextDefaults = (): IRecordingContext => ({
   startOver: jest.fn(),
@@ -38,17 +38,20 @@ export const getRecordingContextDefaults = (): IRecordingContext => ({
 
 export const getUrlContextDefaults = (): IUrlContext => ({
   setUrl: jest.fn(),
-  url: "https://www.elastic.co",
+  url: 'https://www.elastic.co',
 });
 
 export const getStepsContextDefaults = (): IStepsContext => ({
   steps: [],
   setSteps: jest.fn(),
+  setStepName: jest.fn(),
   onDeleteAction: jest.fn(),
   onDeleteStep: jest.fn(),
   onInsertAction: jest.fn(),
+  onDropStep: jest.fn(),
   onMergeSteps: jest.fn(),
   onRearrangeSteps: jest.fn(),
+  onSetActionIsOpen: jest.fn(),
   onSplitStep: jest.fn(),
   onStepDetailChange: jest.fn(),
   onUpdateAction: jest.fn(),

@@ -22,30 +22,40 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiAccordion, EuiFlexItem, EuiFlexGroup } from "@elastic/eui";
-import React from "react";
-import styled from "styled-components";
-import { SMALL_SCREEN_BREAKPOINT } from "../common/shared";
-import { Step } from "../common/types";
-import { useStepResultStatus } from "../hooks/useTestResult";
-import { ActionElement } from "./ActionElement";
+import { EuiAccordion, EuiButtonIcon, EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import styled from 'styled-components';
+import { SMALL_SCREEN_BREAKPOINT } from '../../common/shared';
+
+interface IControlsWrapper {
+  isGrabbing: boolean | null;
+}
+
+export const ControlsWrapper = styled(EuiFlexGroup)<IControlsWrapper>`
+  cursor: ${({ isGrabbing }) =>
+    isGrabbing === null ? 'default' : isGrabbing ? 'grabbing' : 'grab'};
+`;
 
 export const StepSeparatorTopBorder = styled(EuiFlexItem)`
   border-top: ${props => props.theme.border.thin};
 
-  && {
-    margin-top: 20px;
-  }
-
   @media (max-width: ${SMALL_SCREEN_BREAKPOINT}px) {
-    max-width: 586px;
+    max-width: 566px;
   }
 `;
 
 export const StepSeparatorAccordion = styled(EuiAccordion)`
+  .euiAccordion__button {
+    width: auto;
+    flex-grow: 0;
+  }
+
   .euiAccordion__optionalAction {
     flex-grow: 1;
     flex-shrink: 1;
+  }
+
+  div[id^='step-separator-'] {
+    overflow: visible;
   }
 
   margin: 16px;
@@ -55,40 +65,10 @@ export const StepSeparatorHeading = styled(EuiFlexItem)`
   font-weight: bold;
 `;
 
-interface IStepSeparator {
-  index: number;
-  step: Step;
+interface IDeleteButtonProps {
+  isVisible: boolean;
 }
 
-export function StepSeparator({ index, step }: IStepSeparator) {
-  const testStatus = useStepResultStatus(
-    step.length ? step[0].title : undefined
-  );
-
-  return (
-    <StepSeparatorAccordion
-      buttonProps={{ style: { width: "auto", flexGrow: 0 } }}
-      extraAction={
-        <EuiFlexGroup>
-          <StepSeparatorHeading grow={false}>
-            Step {index + 1}
-          </StepSeparatorHeading>
-          <StepSeparatorTopBorder />
-        </EuiFlexGroup>
-      }
-      id={`step-separator-${index}`}
-      initialIsOpen
-    >
-      {step.map((s, actionIndex) => (
-        <ActionElement
-          key={`action-${actionIndex}-for-step-${index}`}
-          step={s}
-          actionIndex={actionIndex}
-          stepIndex={index}
-          testStatus={testStatus}
-          isLast={actionIndex === step.length - 1}
-        />
-      ))}
-    </StepSeparatorAccordion>
-  );
-}
+export const DeleteButton = styled(EuiButtonIcon)<IDeleteButtonProps>`
+  visibility: ${props => (props.isVisible ? 'visible' : 'hidden')};
+`;

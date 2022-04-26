@@ -22,6 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-export * from "./electron";
-export * from "./browser";
-export * as env from "./env";
+export * from './electron';
+export * from './browser';
+export * as env from './env';

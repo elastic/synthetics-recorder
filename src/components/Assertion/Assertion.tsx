@@ -22,8 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ActionInContext } from "@elastic/synthetics";
-import React, { useContext, useState } from "react";
+import React, { useState } from 'react';
 import {
   EuiButton,
   EuiButtonEmpty,
@@ -32,55 +31,46 @@ import {
   EuiFlexItem,
   EuiFormRow,
   EuiSpacer,
-} from "@elastic/eui";
-import type { Action } from "../../common/types";
-import { StepsContext } from "../../contexts/StepsContext";
-import { AssertionSelect } from "./Select";
-import { AssertionInfo } from "./AssertionInfo";
+} from '@elastic/eui';
+import { AssertionSelect } from './Select';
+import { AssertionInfo } from './AssertionInfo';
+import { ActionContext } from '../../common/types';
 
 interface IAssertion {
-  action: Action;
-  actionContext: ActionInContext;
+  actionContext: ActionContext;
   actionIndex: number;
   close?: () => void;
   onDeleteAction: (stepIndex: number, actionIndex: number) => void;
+  saveAssertion: (updatedAction: ActionContext) => void;
   stepIndex: number;
 }
 
 function updateAction(
-  oldAction: ActionInContext,
+  oldAction: ActionContext,
   command?: string,
   selector?: string,
   value?: string
-): ActionInContext {
+): ActionContext {
   const { action } = oldAction;
   return {
     ...oldAction,
     action: { ...action, command, selector, value },
+    isOpen: false,
   };
 }
 
 export function Assertion({
-  action,
   actionContext,
   actionIndex,
   close,
+  saveAssertion,
   stepIndex,
 }: IAssertion) {
-  const { onUpdateAction } = useContext(StepsContext);
+  const { action } = actionContext;
 
-  const [command, setCommand] = useState(action.command || "");
+  const [command, setCommand] = useState(action.command || '');
   const [selector, setSelector] = useState(action.selector);
-  const [value, setValue] = useState(action.value || "");
-
-  const saveAssertion = () => {
-    onUpdateAction(
-      updateAction(actionContext, command, selector, value),
-      stepIndex,
-      actionIndex
-    );
-    if (close) close();
-  };
+  const [value, setValue] = useState(action.value || '');
 
   return (
     <>
@@ -99,14 +89,13 @@ export function Assertion({
       <EuiSpacer />
       <EuiFlexGroup direction="column">
         <EuiFlexItem>
-          <AssertionSelect
-            onChange={e => setCommand(e.target.value)}
-            value={command}
-          />
+          <AssertionSelect onChange={e => setCommand(e.target.value)} value={command} />
         </EuiFlexItem>
         <EuiFlexItem>
           <EuiFormRow label="Selector">
             <EuiFieldText
+              aria-label="Assertion selector"
+              id={`assert-selector-${stepIndex}-${actionIndex}`}
               onChange={e => setSelector(e.target.value)}
               value={selector}
             />
@@ -115,7 +104,8 @@ export function Assertion({
         <EuiFlexItem>
           <EuiFormRow label="Value">
             <EuiFieldText
-              disabled={["innerText", "textContent"].indexOf(command) === -1}
+              aria-label="Assertion value"
+              disabled={['innerText', 'textContent'].indexOf(command) === -1}
               onChange={e => setValue(e.target.value)}
               value={value}
             />
@@ -125,7 +115,14 @@ export function Assertion({
       <EuiSpacer />
       <EuiFlexGroup>
         <EuiFlexItem grow={false}>
-          <EuiButton onClick={saveAssertion}>Save</EuiButton>
+          <EuiButton
+            data-test-subj={`save-${stepIndex}-${actionIndex}`}
+            onClick={() => {
+              saveAssertion(updateAction(actionContext, command, selector, value));
+            }}
+          >
+            Save
+          </EuiButton>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiButtonEmpty color="danger" onClick={close}>

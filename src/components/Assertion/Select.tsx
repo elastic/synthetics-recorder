@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiSelect } from "@elastic/eui";
-import React, { ChangeEventHandler } from "react";
-import { COMMAND_SELECTOR_OPTIONS } from "../../common/shared";
+import { EuiSelect } from '@elastic/eui';
+import React, { ChangeEventHandler } from 'react';
+import { COMMAND_SELECTOR_OPTIONS } from '../../common/shared';
 
 interface IAssertionSelect {
   onChange: ChangeEventHandler<HTMLSelectElement>;
@@ -34,6 +34,7 @@ interface IAssertionSelect {
 export function AssertionSelect({ onChange, value }: IAssertionSelect) {
   return (
     <EuiSelect
+      aria-label="Assertion type select"
       options={COMMAND_SELECTOR_OPTIONS}
       onChange={onChange}
       value={value || COMMAND_SELECTOR_OPTIONS[0].value}

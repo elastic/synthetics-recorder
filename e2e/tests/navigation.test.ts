@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Server } from "http";
-import { ElectronServiceFactory, env } from "../services";
-import { createTestHttpServer } from "./testServer";
+import type { Server } from 'http';
+import { ElectronServiceFactory, env } from '../services';
+import { createTestHttpServer } from './testServer';
 
 const electronService = new ElectronServiceFactory();
 
@@ -46,7 +46,7 @@ afterEach(async () => {
   server.close();
 });
 
-describe("Navigation", () => {
+describe('Navigation', () => {
   it("records chromium's opened pages", async () => {
     const electronWindow = await electronService.getWindow();
 
@@ -56,11 +56,8 @@ describe("Navigation", () => {
     await electronService.waitForPageToBeIdle();
     await electronService.navigateRecordingBrowser(url);
 
-    expect(await electronWindow.$("text=Step 1")).toBeTruthy();
-    expect(await electronWindow.$("text=Step 2")).toBeTruthy();
-    expect(
-      await electronWindow.$(`text=navigate ${env.DEMO_APP_URL}`)
-    ).toBeTruthy();
+    expect(await electronWindow.$('text=Step 1')).toBeTruthy();
+    expect(await electronWindow.$(`text=navigate ${env.DEMO_APP_URL}`)).toBeTruthy();
     expect(await electronWindow.$(`text=navigate ${url}`)).toBeTruthy();
   });
 });

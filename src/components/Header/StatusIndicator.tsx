@@ -22,17 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiHealth } from "@elastic/eui";
-import React from "react";
-import { RecordingStatus } from "../../common/types";
+import { EuiHealth } from '@elastic/eui';
+import React from 'react';
+import { RecordingStatus } from '../../common/types';
 
 interface IRecordingHealth {
   status: RecordingStatus;
 }
 
 export function RecordingStatusIndicator({ status }: IRecordingHealth) {
-  if (status === RecordingStatus.Recording)
-    return <EuiHealth color="danger">Recording</EuiHealth>;
+  if (status === RecordingStatus.Recording) return <EuiHealth color="danger">Recording</EuiHealth>;
   if (status === RecordingStatus.Paused)
     return <EuiHealth color="warning">Recording paused</EuiHealth>;
   return <EuiHealth color="subdued">Not recording</EuiHealth>;

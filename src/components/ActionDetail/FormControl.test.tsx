@@ -22,40 +22,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { fireEvent } from "@testing-library/react";
-import React from "react";
-import { render } from "../../helpers/test";
-import { FormControl } from "./FormControl";
+import { fireEvent } from '@testing-library/react';
+import React from 'react';
+import { render } from '../../helpers/test';
+import { FormControl } from './FormControl';
 
-describe("<FormControl />", () => {
-  it("Displays the label", () => {
+describe('<FormControl />', () => {
+  it('Displays the label', () => {
     const { getByText } = render(
-      <FormControl
-        label="Test label"
-        name="Test name"
-        onChange={jest.fn()}
-        value="Test value"
-      />
+      <FormControl label="Test label" name="Test name" onChange={jest.fn()} value="Test value" />
     );
 
-    expect(getByText("Test label"));
-    expect(getByText("Test name"));
+    expect(getByText('Test label'));
+    expect(getByText('Test name'));
   });
 
-  it("handles `onChange`", async () => {
+  it('handles `onChange`', async () => {
     const onChange = jest.fn();
     const { getByRole } = render(
-      <FormControl
-        label="Test label"
-        name="Test name"
-        onChange={onChange}
-        value="Test value"
-      />
+      <FormControl label="Test label" name="Test name" onChange={onChange} value="Test value" />
     );
 
-    const textElement = getByRole("textbox");
+    const textElement = getByRole('textbox');
 
-    fireEvent.change(textElement, { target: { value: "updated value" } });
+    fireEvent.change(textElement, { target: { value: 'updated value' } });
 
     expect(onChange).toHaveBeenCalled();
   });

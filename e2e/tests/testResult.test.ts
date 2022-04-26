@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ElectronServiceFactory, env } from "../services";
+import { ElectronServiceFactory, env } from '../services';
 
 const electronService = new ElectronServiceFactory();
 
@@ -30,8 +30,8 @@ afterEach(async () => {
   await electronService.terminate();
 });
 
-describe("Steps", () => {
-  it("has the right number of step results", async () => {
+describe('Steps', () => {
+  it('has the right number of step results', async () => {
     const electronWindow = await electronService.getWindow();
 
     await electronService.enterTestUrl(env.DEMO_APP_URL);
@@ -41,7 +41,7 @@ describe("Steps", () => {
     await electronService.clickStopRecording();
     await electronService.clickRunTest();
 
-    expect(await electronWindow.$("text=1 success"));
+    expect(await electronWindow.$('text=1 success'));
     expect(await electronWindow.$(`text=Go to http://${env.DEMO_APP_URL}`));
   });
 });

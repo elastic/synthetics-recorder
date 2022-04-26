@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { TestEvent, Result, JourneyType } from "../common/types";
+import type { TestEvent, Result, JourneyType } from '../common/types';
 
 /**
  * Use this function to incrementally build the result object for a test result
@@ -37,15 +37,15 @@ export function resultReducer(
     skipped: 0,
     succeeded: 0,
     journey: {
-      status: "running",
-      type: "inline",
+      status: 'running',
+      type: 'inline',
       steps: [],
     },
   },
   action: TestEvent
 ): Result | undefined {
   switch (action.event) {
-    case "step/end": {
+    case 'step/end': {
       const nextState: Result = {
         ...state,
         journey: {
@@ -56,7 +56,7 @@ export function resultReducer(
       nextState[action.data.status] += 1;
       return nextState;
     }
-    case "journey/end": {
+    case 'journey/end': {
       return {
         ...state,
         journey: {
@@ -65,7 +65,7 @@ export function resultReducer(
         },
       };
     }
-    case "journey/start": {
+    case 'journey/start': {
       return {
         ...state,
         journey: {
@@ -74,7 +74,7 @@ export function resultReducer(
         },
       };
     }
-    case "override": {
+    case 'override': {
       return action.data;
     }
   }

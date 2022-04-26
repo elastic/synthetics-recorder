@@ -22,11 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { createContext } from "react";
-import { RecordingStatus } from "../common/types";
-import type { Setter } from "../common/types";
+import { createContext } from 'react';
+import { RecordingStatus } from '../common/types';
+import type { Setter } from '../common/types';
 
-const UNINITIALIZED_MSG = "Recording context not initialized";
+const UNINITIALIZED_MSG = 'Recording context not initialized';
 
 async function notImplementedAsync() {
   throw Error(UNINITIALIZED_MSG);
@@ -74,7 +74,7 @@ export const RecordingContext = createContext<IRecordingContext>({
   startOver: notImplementedAsync,
   isStartOverModalVisible: false,
   setIsStartOverModalVisible: () => {
-    throw Error("not implemented");
+    throw Error('not implemented');
   },
   recordingStatus: RecordingStatus.NotRecording,
   togglePause: notImplemented,

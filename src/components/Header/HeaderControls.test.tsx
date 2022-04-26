@@ -22,21 +22,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React from "react";
-import { RecordingStatus } from "../../common/types";
-import { HeaderControls } from "./HeaderControls";
-import { render } from "../../helpers/test";
+import React from 'react';
+import { RecordingStatus } from '../../common/types';
+import { HeaderControls } from './HeaderControls';
+import { render } from '../../helpers/test';
 
-describe("<HeaderControls />", () => {
-  it("displays start text when not recording", async () => {
-    const { getByLabelText } = render(
-      <HeaderControls setIsCodeFlyoutVisible={jest.fn()} />
-    );
+describe('<HeaderControls />', () => {
+  it('displays start text when not recording', async () => {
+    const { getByLabelText } = render(<HeaderControls setIsCodeFlyoutVisible={jest.fn()} />);
 
-    expect(getByLabelText("Start")).toBeTruthy();
+    expect(getByLabelText('Start')).toBeTruthy();
   });
 
-  it("displays pause text when recording", () => {
+  it('displays pause text when recording', () => {
     const { getByLabelText } = render(
       <HeaderControls setIsCodeFlyoutVisible={jest.fn()} />,
       undefined,
@@ -47,10 +45,10 @@ describe("<HeaderControls />", () => {
       }
     );
 
-    expect(getByLabelText("Pause")).toBeTruthy();
+    expect(getByLabelText('Pause')).toBeTruthy();
   });
 
-  it("displays resume text when paused", () => {
+  it('displays resume text when paused', () => {
     const { getByLabelText } = render(
       <HeaderControls setIsCodeFlyoutVisible={jest.fn()} />,
       undefined,
@@ -61,6 +59,6 @@ describe("<HeaderControls />", () => {
       }
     );
 
-    expect(getByLabelText("Resume")).toBeTruthy();
+    expect(getByLabelText('Resume')).toBeTruthy();
   });
 });

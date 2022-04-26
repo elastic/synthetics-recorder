@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { useCallback, useState } from "react";
-import { RecordingStatus } from "../common/types";
-import { RendererProcessIpc } from "electron-better-ipc";
-import { IRecordingContext } from "../contexts/RecordingContext";
+import { useCallback, useState } from 'react';
+import { RecordingStatus } from '../common/types';
+import { RendererProcessIpc } from 'electron-better-ipc';
+import { IRecordingContext } from '../contexts/RecordingContext';
 
 /**
  * Initializes recording state and defines handler functions to manipulate recording.
@@ -42,19 +42,17 @@ export function useRecordingContext(
   setResult: (data: undefined) => void
 ): IRecordingContext {
   const [isStartOverModalVisible, setIsStartOverModalVisible] = useState(false);
-  const [recordingStatus, setRecordingStatus] = useState(
-    RecordingStatus.NotRecording
-  );
+  const [recordingStatus, setRecordingStatus] = useState(RecordingStatus.NotRecording);
   const toggleRecording = useCallback(async () => {
     if (recordingStatus === RecordingStatus.NotRecording && stepCount > 0) {
       setIsStartOverModalVisible(true);
     } else if (recordingStatus === RecordingStatus.Recording) {
       setRecordingStatus(RecordingStatus.NotRecording);
       // Stop browser process
-      ipc.send("stop");
+      ipc.send('stop');
     } else {
       setRecordingStatus(RecordingStatus.Recording);
-      await ipc.callMain("record-journey", { url });
+      await ipc.callMain('record-journey', { url });
       setRecordingStatus(RecordingStatus.NotRecording);
     }
   }, [ipc, recordingStatus, stepCount, url]);
@@ -65,7 +63,7 @@ export function useRecordingContext(
       // Depends on the results context, because when we overwrite
       // a previous journey we need to discard its result status
       setResult(undefined);
-      await ipc.callMain("record-journey", { url });
+      await ipc.callMain('record-journey', { url });
       setRecordingStatus(RecordingStatus.NotRecording);
     }
   }, [ipc, recordingStatus, setResult, url]);
@@ -74,9 +72,9 @@ export function useRecordingContext(
     if (recordingStatus === RecordingStatus.NotRecording) return;
     if (recordingStatus !== RecordingStatus.Paused) {
       setRecordingStatus(RecordingStatus.Paused);
-      await ipc.callMain("set-mode", "none");
+      await ipc.callMain('set-mode', 'none');
     } else {
-      await ipc.callMain("set-mode", "recording");
+      await ipc.callMain('set-mode', 'recording');
       setRecordingStatus(RecordingStatus.Recording);
     }
   };

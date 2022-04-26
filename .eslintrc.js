@@ -22,39 +22,39 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-const { readFileSync } = require("fs");
-const LICENSE = readFileSync("./LICENSE", "utf-8");
-const LICENSE_HEADER = "\n" + LICENSE;
+const { readFileSync } = require('fs');
+const LICENSE = readFileSync('./LICENSE', 'utf-8');
+const LICENSE_HEADER = '\n' + LICENSE;
 
 module.exports = {
   env: {
     es2021: true,
   },
-  plugins: ["header", "prettier"],
-  extends: ["react-app", "plugin:react/recommended", "prettier"],
-  ignorePatterns: ["build", "local-browsers"],
+  plugins: ['header', 'prettier'],
+  extends: ['react-app', 'plugin:react/recommended', 'prettier'],
+  ignorePatterns: ['build', 'local-browsers'],
   overrides: [
     {
-      extends: ["eslint:recommended"],
-      files: ["*.js", "*.jsx"],
+      extends: ['eslint:recommended'],
+      files: ['*.js', '*.jsx'],
     },
     {
       extends: [
-        "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/eslint-recommended",
+        'plugin:@typescript-eslint/recommended',
+        'plugin:@typescript-eslint/eslint-recommended',
       ],
-      files: ["*.ts", "*.tsx"],
-      plugins: ["@typescript-eslint"],
+      files: ['*.ts', '*.tsx'],
+      plugins: ['@typescript-eslint'],
       rules: {
-        "@typescript-eslint/explicit-module-boundary-types": 0,
-        "@typescript-eslint/no-non-null-assertion": 0,
+        '@typescript-eslint/explicit-module-boundary-types': 0,
+        '@typescript-eslint/no-non-null-assertion': 0,
       },
     },
   ],
   rules: {
-    "default-case": 0,
-    "header/header": [2, "block", LICENSE_HEADER],
-    "no-console": 1,
-    "prettier/prettier": 2,
+    'default-case': 0,
+    'header/header': [2, 'block', LICENSE_HEADER],
+    'no-console': 1,
+    'prettier/prettier': 2,
   },
 };
