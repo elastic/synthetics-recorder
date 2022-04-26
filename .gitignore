@@ -10,5 +10,5 @@ react-app-env.d.ts
 
 eslint-junit.xml
 .idea
-junit.xml
+*-junit.xml
 .DS_Store
