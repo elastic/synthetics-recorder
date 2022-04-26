@@ -11,3 +11,4 @@ source $NVM_DIR/nvm.sh
 cd $DOCKER_BASE_DIR
 nvm use
 NPM_CONFIG_LOGLEVEL=verbose npm test
+ls -ltra .
