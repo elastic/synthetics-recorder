@@ -57,7 +57,8 @@ pipeline {
         withGithubNotify(context: "Lint") {
           withNodeJSEnv() {
             dir("${BASE_DIR}"){
-              sh(label: 'npm lint', script: 'npm run lint')
+              // lint-ci runs the lint one with the eslint-formatter-multiple to report in JUnit format too
+              sh(label: 'npm lint-ci', script: 'npm run lint-ci')
             }
           }
         }
