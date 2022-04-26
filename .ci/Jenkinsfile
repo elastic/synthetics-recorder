@@ -8,6 +8,8 @@ pipeline {
     REPO = "synthetics-recorder"
     BASE_DIR = "src/github.com/elastic/${env.REPO}"
     DOCKER_BASE_DIR = "/${env.REPO}"
+    DOCKER_REGISTRY = 'docker.elastic.co'
+    DOCKER_ELASTIC_SECRET = 'secret/observability-team/ci/docker-registry/prod'
     JOB_GIT_CREDENTIALS = "f6c7695a-671e-4f4f-a331-acdce44ff9ba"
     PIPELINE_LOG_LEVEL = "INFO"
     DISPLAY= ":99"
@@ -34,7 +36,10 @@ pipeline {
         pipelineManager([ cancelPreviousRunningBuilds: [ when: 'PR' ] ])
         deleteDir()
         gitCheckout(basedir: "${BASE_DIR}", githubNotifyFirstTimeContributor: true)
-        stash allowEmpty: true, name: 'source', useDefaultExcludes: false
+        stash(allowEmpty: true, name: 'source', useDefaultExcludes: false)
+        dir("${BASE_DIR}") {
+          setEnvVar('DOCKER_CHANGES', isGitRegionMatch(patterns: [ '^e2e/Dockerfile.jenkins' ], shouldMatchAll: false).toString())
+        }
       }
     }
     stage('Install'){
@@ -76,28 +81,43 @@ pipeline {
         }
       }
     }
-    stage('Docker test setup') {
+    stage('Docker build') {
+      options { skipDefaultCheckout() }
+      when {
+        beforeAgent true
+        allOf {
+          expression { return !isTag() }
+          expression { env.DOCKER_CHANGES == 'true' }
+        }
+      }
+      steps {
+        withGithubNotify(context: 'Docker Build') {
+          dir("${BASE_DIR}"){
+            dockerLogin(secret: "${DOCKER_ELASTIC_SECRET}", registry: "${DOCKER_REGISTRY}")
+            retryWithSleep(retries: 3, seconds: 5, backoff: true){
+              sh(label: 'docker build-push', script: ".ci/scripts/docker-build-push.sh")
+            }
+          }
+        }
+      }
+    }
+    stage('Test'){
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
         expression { return !isTag() }
       }
       agent {
-        dockerfile {
+        docker {
           reuseNode true
-            dir "$BASE_DIR"
-            filename './e2e/Dockerfile.jenkins'
-            additionalBuildArgs  "--build-arg BASE_DIR=\".\" --build-arg DOCKER_BASE_DIR=\"${DOCKER_BASE_DIR}\" --build-arg DISPLAY=\"${DISPLAY}\""
-            args "-u 0:0"
+          customWorkspace "$BASE_DIR"
+          image 'docker.elastic.co/observability/synthetics-recorder:latest'
+          args "-u 0:0"
         }
       }
-      stages {
-        stage('Test'){
-          steps {
-            withGithubNotify(context: "Test") {
-              sh(label: 'run tests', script: "${DOCKER_BASE_DIR}/.ci/scripts/run-test.sh")
-            }
-          }
+      steps {
+        withGithubNotify(context: "Test") {
+          sh(label: 'run tests', script: "${DOCKER_BASE_DIR}/.ci/scripts/run-test.sh")
         }
       }
     }
