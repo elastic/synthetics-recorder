@@ -73,7 +73,8 @@ export default function App() {
     ipc,
     url,
     steps.length,
-    syntheticsTestUtils.setResult
+    syntheticsTestUtils.setResult,
+    setSteps
   );
   const { isStartOverModalVisible, setIsStartOverModalVisible, startOver } = recordingContextUtils;
   const dragAndDropContext = useDragAndDropContext();
