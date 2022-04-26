@@ -35,13 +35,14 @@ import isDev from 'electron-is-dev';
 import { SyntheticsGenerator } from '@elastic/synthetics/dist/formatter/javascript';
 import { JOURNEY_DIR, PLAYWRIGHT_BROWSERS_PATH, EXECUTABLE_PATH } from './config';
 import { BrowserContext } from 'playwright';
-import type { ActionInContext, Steps } from '@elastic/synthetics';
+import { ActionInContext, Steps } from '@elastic/synthetics';
 import {
   GenerateCodeOptions,
   RunJourneyOptions,
   RecordJourneyOptions,
   StepEndEvent,
   TestEvent,
+  StepStatus,
 } from '../common/types';
 const SYNTHETICS_CLI = require.resolve('@elastic/synthetics/dist/cli');
 const IS_TEST_ENV = process.env.NODE_ENV === 'test';
@@ -166,53 +167,58 @@ async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
       }
     });
   };
+  const isJourneyStart = (event: any): event is { journey: { name: string } } => {
+    return event.type === 'journey/start' && !!event.journey.name;
+  };
+
+  const isStepEnd = (
+    event: any
+  ): event is {
+    step: { duration: { us: number }; name: string; status: StepStatus };
+    error?: Error;
+  } => {
+    return (
+      event.type === 'step/end' &&
+      ['succeeded', 'failed', 'skipped'].includes(event.step?.status) &&
+      typeof event.step?.duration?.us === 'number'
+    );
+  };
+
+  const isJourneyEnd = (
+    event: any
+  ): event is { journey: { name: string; status: 'succeeded' | 'failed' } } => {
+    return event.type === 'journey/end' && ['succeeded', 'failed'].includes(event.journey?.status);
+  };
 
   const constructEvent = (parsed: Record<string, any>): TestEvent | null => {
-    switch (parsed.type) {
-      case 'journey/start': {
-        const { journey } = parsed;
-        return journey?.name
-          ? {
-              event: 'journey/start',
-              data: {
-                name: journey.name,
-              },
-            }
-          : null;
-      }
-      case 'step/end': {
-        const { step, error } = parsed;
-        const isValid =
-          step?.name &&
-          ['succeeded', 'failed', 'skipped'].includes(step?.status) &&
-          typeof step?.duration?.us === 'number';
-        return isValid
-          ? {
-              event: 'step/end',
-              data: {
-                name: step.name,
-                status: step.status,
-                error,
-                duration: Math.ceil(step.duration.us / 1000),
-              },
-            }
-          : null;
-      }
-      case 'journey/end': {
-        const { journey } = parsed;
-        return ['succeeded', 'failed'].includes(journey?.status)
-          ? {
-              event: 'journey/end',
-              data: {
-                name: journey.name,
-                status: journey.status,
-              },
-            }
-          : null;
-      }
-      default:
-        return null;
+    if (isJourneyStart(parsed)) {
+      return {
+        event: 'journey/start',
+        data: {
+          name: parsed.journey.name,
+        },
+      };
     }
+    if (isStepEnd(parsed)) {
+      return {
+        event: 'step/end',
+        data: {
+          name: parsed.step.name,
+          status: parsed.step.status,
+          duration: Math.ceil(parsed.step.duration.us / 1000),
+        },
+      };
+    }
+    if (isJourneyEnd(parsed)) {
+      return {
+        event: 'journey/end',
+        data: {
+          name: parsed.journey.name,
+          status: parsed.journey.status,
+        },
+      };
+    }
+    return null;
   };
 
   const sendTestEvent = (event: TestEvent) => {
