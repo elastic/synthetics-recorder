@@ -64,7 +64,6 @@ async function launchContext() {
   }
 
   context.on('page', page => {
-    // page.on('dialog', () => {});
     page.on('close', () => {
       const hasPage = browser.contexts().some(context => context.pages().length > 0);
       if (hasPage) return;
