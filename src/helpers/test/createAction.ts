@@ -30,13 +30,16 @@ type ActionWithName = Partial<Action> & { name: string };
 type CreateStepActionOverride = Partial<Omit<ActionContext, 'action'>> & { action: ActionWithName };
 type ActionContextOverride = Partial<Omit<ActionContext, 'action'>> & { action?: ActionOverride };
 
-export const createAction = (name: string, overrides?: ActionContextOverride): ActionContext =>
-  overrides
+export const createAction = (name: string, overrides?: ActionContextOverride): ActionContext => {
+  const baseAction = {
+    frameUrl: 'https://www.elastic.co',
+    isMainFrame: true,
+    committed: true,
+    pageAlias: 'pageAlias',
+  };
+  return overrides
     ? {
-        frameUrl: 'https://www.elastic.co',
-        isMainFrame: true,
-        committed: true,
-        pageAlias: 'pageAlias',
+        ...baseAction,
         ...overrides,
         action: {
           name,
@@ -46,15 +49,13 @@ export const createAction = (name: string, overrides?: ActionContextOverride): A
         },
       }
     : {
+        ...baseAction,
         action: {
           name,
           signals: [],
         },
-        frameUrl: 'https://www.elastic.co',
-        isMainFrame: true,
-        committed: true,
-        pageAlias: 'pageAlias',
       };
+};
 
 export const createStepWithOverrides = (
   actions: CreateStepActionOverride[],
