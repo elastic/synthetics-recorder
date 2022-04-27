@@ -29,6 +29,30 @@ journey('Recorded journey', async ({ page, context }) => {
 });"
 `;
 
+exports[`Synthetics JavaScript formatter hoist accounts for popup alias 1`] = `
+"let page1;
+let page2;
+step('Go to https://vigneshh.in/', async () => {
+  await page.goto('https://vigneshh.in/');
+  page1 = await Promise.all([
+    page.waitForEvent('popup'),
+    page.click('text=Tailor')
+  ])[0];
+  await page1.click('text=Packages 0');
+  expect(page1.url()).toBe('https://github.com/orgs/zalando/packages?repo_name=tailor');
+});
+step('Close page', async () => {
+  await page1.close();
+  page2 = await Promise.all([
+    page.waitForEvent('popup'),
+    page.click('text=Babel Minify')
+  ])[0];
+});
+step('Close page', async () => {
+  await page2.close();
+});"
+`;
+
 exports[`Synthetics JavaScript formatter hoists page objects to prevent undefined references 1`] = `
 "let page1;
 let page2;
