@@ -128,13 +128,7 @@ pipeline {
       }
       post {
         always {
-          // dockerfile should be refactored for vary reasons:
-          // 1. it runs in the CI controller
-          // 2. it always builds the docker image, therefore increases the build time
-          // 3. it cannot be reproduced locally
-          // 4. it uses absolute path and produce issues with the junit step.
-          sh(label: 'copy xml files', script: 'cp -f ${DOCKER_BASE_DIR}/*-junit.xml .', returnStatus: true)
-          junit(allowEmptyResults: true, keepLongStdio: true, testResults: "*junit.xml")
+          junit(allowEmptyResults: true, keepLongStdio: true, testResults: "${BASE_DIR}/*junit.xml")
         }
       }
     }
