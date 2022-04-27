@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eox pipefail
 
-TAG=${BRANCH_NAME:-'latest'}
+TAG='latest'
 
 DOCKER_IMAGE=docker.elastic.co/observability-ci/synthetics-recorder:$TAG
 if [[ "$(docker images -q $DOCKER_IMAGE 2> /dev/null)" == "" ]]; then

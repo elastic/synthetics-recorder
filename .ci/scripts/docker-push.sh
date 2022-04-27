@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eox pipefail
 
-TAG=${BRANCH_NAME:-'latest'}
+TAG='latest'
 
 docker \
   push \

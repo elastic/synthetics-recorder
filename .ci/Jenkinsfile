@@ -36,7 +36,7 @@ pipeline {
         gitCheckout(basedir: "${BASE_DIR}", githubNotifyFirstTimeContributor: true)
         stash(allowEmpty: true, name: 'source', useDefaultExcludes: false)
         dir("${BASE_DIR}") {
-          setEnvVar('DOCKER_CHANGES', isGitRegionMatch(patterns: [ '^e2e/Dockerfile.jenkins' ], shouldMatchAll: false).toString())
+          setEnvVar('DOCKER_CHANGES', 'false').toString())
         }
       }
     }
