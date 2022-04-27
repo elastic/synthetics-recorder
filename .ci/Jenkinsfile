@@ -25,7 +25,7 @@ pipeline {
     quietPeriod(10)
   }
   triggers {
-    issueCommentTrigger("${obltGitHubComments()}")
+    issueCommentTrigger("(${obltGitHubComments()}|^/test all)")
   }
   stages {
     stage('Checkout') {
@@ -83,7 +83,10 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        expression { env.DOCKER_CHANGES == 'true' }
+        anyOf {
+          expression { env.DOCKER_CHANGES == 'true' }
+          expression { return env.GITHUB_COMMENT?.contains('all') }
+        }
       }
       steps {
         withGithubNotify(context: 'Docker Build') {
