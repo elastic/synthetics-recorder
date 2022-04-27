@@ -23,21 +23,22 @@ THE SOFTWARE.
 */
 
 import type { Step, Steps } from '@elastic/synthetics';
-import { act, renderHook, RenderHookResult } from '@testing-library/react-hooks';
+import { act, renderHook, RenderHookResult } from '@testing-library/react';
 import { ActionContext } from '../../common/types';
 import { IStepsContext } from '../../contexts/StepsContext';
 import { createAction, createStep, createSteps } from '../../helpers/test';
 import { useStepsContext } from './useStepsContext';
 
+type StepsContextRenderHookResult = RenderHookResult<IStepsContext, unknown>;
+
 describe('useStepsContext', () => {
-  let defaultResult: RenderHookResult<unknown, IStepsContext>;
+  let defaultResult: StepsContextRenderHookResult;
   let defaultSteps: Steps;
 
   beforeEach(async () => {
     defaultSteps = createSteps([['first-step-1'], ['first-step-2', 'second-step-2']]);
 
     defaultResult = renderHook(() => useStepsContext());
-
     act(() => {
       defaultResult.result.current.setSteps(defaultSteps);
     });
