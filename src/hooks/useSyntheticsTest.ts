@@ -27,7 +27,7 @@ import { IpcRendererEvent } from 'electron';
 import { useCallback, useContext, useEffect, useReducer, useState } from 'react';
 import { getCodeFromActions, getCodeForFailedResult } from '../common/shared';
 import { CommunicationContext } from '../contexts/CommunicationContext';
-import type { Result, TestEvent } from '../common/types';
+import type { Result, TestEvent } from '../../common/types';
 import type { ITestContext } from '../contexts/TestContext';
 import { resultReducer } from '../helpers/resultReducer';
 
@@ -106,9 +106,3 @@ export function useSyntheticsTest(steps: Steps): ITestContext {
     setResult,
   };
 }
-
-export type RunJourneyOptions = {
-  steps: Steps;
-  code: string;
-  isSuite: boolean;
-};

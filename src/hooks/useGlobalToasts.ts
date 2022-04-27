@@ -22,20 +22,33 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { ActionInContext } from '@elastic/synthetics';
-import type { StepStatus } from '../../common/types';
+import { Toast } from '@elastic/eui/src/components/toast/global_toast_list';
+import { useCallback, useState } from 'react';
+import { IToastContext } from '../contexts/ToastContext';
 
-export type ActionContext = ActionInContext & { isOpen?: boolean };
-export type ResultCategory = StepStatus | 'running';
+export function useGlobalToasts(): IToastContext {
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [toastLifeTimeMs, setToastLifeTimeMs] = useState<number>(5000);
 
-export interface StepSeparatorDragDropDataTransfer {
-  initiatorIndex: number;
-}
+  const dismissToast = useCallback(
+    (toast: Toast) => {
+      setToasts(toasts => toasts.filter(t => t !== toast));
+    },
+    [setToasts]
+  );
 
-export type Setter<T> = React.Dispatch<React.SetStateAction<T>>;
+  const sendToast = useCallback(
+    (toast: Toast) => {
+      setToasts(toasts => [...toasts, toast]);
+    },
+    [setToasts]
+  );
 
-export enum RecordingStatus {
-  NotRecording = 'NOT_RECORDING',
-  Recording = 'RECORDING',
-  Paused = 'PAUSED',
+  return {
+    dismissToast,
+    sendToast,
+    setToastLifeTimeMs,
+    toasts,
+    toastLifeTimeMs,
+  };
 }

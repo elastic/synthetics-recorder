@@ -22,20 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { ActionInContext } from '@elastic/synthetics';
-import type { StepStatus } from '../../common/types';
+import { Toast } from '@elastic/eui/src/components/toast/global_toast_list';
+import { createContext } from 'react';
+import { Setter } from '../common/types';
 
-export type ActionContext = ActionInContext & { isOpen?: boolean };
-export type ResultCategory = StepStatus | 'running';
-
-export interface StepSeparatorDragDropDataTransfer {
-  initiatorIndex: number;
+export interface IToastContext {
+  sendToast: (toast: Toast) => void;
+  dismissToast: (toast: Toast) => void;
+  toasts: Toast[];
+  toastLifeTimeMs: number;
+  setToastLifeTimeMs: Setter<number>;
 }
 
-export type Setter<T> = React.Dispatch<React.SetStateAction<T>>;
-
-export enum RecordingStatus {
-  NotRecording = 'NOT_RECORDING',
-  Recording = 'RECORDING',
-  Paused = 'PAUSED',
+function notInitialized() {
+  throw Error('not initialized');
 }
+
+export const ToastContext = createContext<IToastContext>({
+  dismissToast: notInitialized,
+  sendToast: notInitialized,
+  setToastLifeTimeMs: notInitialized,
+  toasts: [],
+  toastLifeTimeMs: -1,
+});

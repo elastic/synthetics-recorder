@@ -22,8 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import { Steps } from '@elastic/synthetics';
 import { useCallback, useState } from 'react';
-import { RecordingStatus } from '../common/types';
+import { RecordingStatus, Setter } from '../common/types';
 import { RendererProcessIpc } from 'electron-better-ipc';
 import { IRecordingContext } from '../contexts/RecordingContext';
 
@@ -39,7 +40,8 @@ export function useRecordingContext(
   ipc: RendererProcessIpc,
   url: string,
   stepCount: number,
-  setResult: (data: undefined) => void
+  setResult: (data: undefined) => void,
+  setSteps: Setter<Steps>
 ): IRecordingContext {
   const [isStartOverModalVisible, setIsStartOverModalVisible] = useState(false);
   const [recordingStatus, setRecordingStatus] = useState(RecordingStatus.NotRecording);
@@ -58,6 +60,7 @@ export function useRecordingContext(
   }, [ipc, recordingStatus, stepCount, url]);
 
   const startOver = useCallback(async () => {
+    setSteps([]);
     if (recordingStatus === RecordingStatus.NotRecording) {
       setRecordingStatus(RecordingStatus.Recording);
       // Depends on the results context, because when we overwrite
@@ -66,7 +69,7 @@ export function useRecordingContext(
       await ipc.callMain('record-journey', { url });
       setRecordingStatus(RecordingStatus.NotRecording);
     }
-  }, [ipc, recordingStatus, setResult, url]);
+  }, [ipc, recordingStatus, setResult, setSteps, url]);
 
   const togglePause = async () => {
     if (recordingStatus === RecordingStatus.NotRecording) return;

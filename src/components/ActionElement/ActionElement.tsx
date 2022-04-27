@@ -122,7 +122,7 @@ function ActionComponent({
         />
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
-        {!isAssertion && <ActionStatusIndicator showRect={isLast} status={testStatus} />}
+        <ActionStatusIndicator showRect={isLast} status={testStatus} />
       </EuiFlexItem>
       <Behavior isAssert={isAssertion} omitBorder={isLast}>
         <ActionAccordion
@@ -152,7 +152,7 @@ function ActionComponent({
             />
           }
         >
-          {!actionContext.action.isAssert && (
+          {!actionContext.action.isAssert && actionContext.isOpen && (
             <ActionDetail
               actionContext={actionContext}
               actionIndex={actionIndex}
@@ -160,7 +160,7 @@ function ActionComponent({
               stepIndex={stepIndex}
             />
           )}
-          {actionContext.action.isAssert && (
+          {actionContext.action.isAssert && actionContext.isOpen && (
             <Assertion
               actionIndex={actionIndex}
               actionContext={actionContext}

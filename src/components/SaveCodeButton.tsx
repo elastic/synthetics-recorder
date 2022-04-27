@@ -25,9 +25,10 @@ THE SOFTWARE.
 import { EuiButton } from '@elastic/eui';
 import React, { useContext } from 'react';
 import { getCodeFromActions } from '../common/shared';
-import type { JourneyType } from '../common/types';
+import type { JourneyType } from '../../common/types';
 import { CommunicationContext } from '../contexts/CommunicationContext';
 import { StepsContext } from '../contexts/StepsContext';
+import { ToastContext } from '../contexts/ToastContext';
 
 interface ISaveCodeButton {
   type: JourneyType;
@@ -36,9 +37,15 @@ interface ISaveCodeButton {
 export function SaveCodeButton({ type }: ISaveCodeButton) {
   const { ipc } = useContext(CommunicationContext);
   const { steps } = useContext(StepsContext);
+  const { sendToast } = useContext(ToastContext);
   const onSave = async () => {
     const codeFromActions = await getCodeFromActions(ipc, steps, type);
     await ipc.callMain('save-file', codeFromActions);
+    sendToast({
+      id: `file-export-${new Date().valueOf()}`,
+      title: 'Script export successful',
+      color: 'success',
+    });
   };
   return (
     <EuiButton fill color="primary" iconType="exportAction" onClick={onSave}>

@@ -33,10 +33,16 @@ import { fork, ChildProcess } from 'child_process';
 import logger from 'electron-log';
 import isDev from 'electron-is-dev';
 import { JOURNEY_DIR, PLAYWRIGHT_BROWSERS_PATH, EXECUTABLE_PATH } from './config';
-import { BrowserContext } from 'playwright';
+import type { BrowserContext } from 'playwright';
 import type { ActionInContext, Steps } from '@elastic/synthetics';
-import { TestEvent } from '../src/common/types';
-import { RunJourneyOptions } from '../src/hooks/useSyntheticsTest';
+import type {
+  GenerateCodeOptions,
+  RecordJourneyOptions,
+  RunJourneyOptions,
+  StepEndEvent,
+  StepStatus,
+  TestEvent,
+} from '../common/types';
 import { SyntheticsGenerator } from './syntheticsGenerator';
 const SYNTHETICS_CLI = require.resolve('@elastic/synthetics/dist/cli');
 const IS_TEST_ENV = process.env.NODE_ENV === 'test';
@@ -59,7 +65,6 @@ async function launchContext() {
   }
 
   context.on('page', page => {
-    // page.on('dialog', () => {});
     page.on('close', () => {
       const hasPage = browser.contexts().some(context => context.pages().length > 0);
       if (hasPage) return;
@@ -83,7 +88,7 @@ async function openPage(context: BrowserContext, url: string) {
 let browserContext: BrowserContext | null = null;
 let actionListener = new EventEmitter();
 
-async function recordJourneys(data: { url: string }, browserWindow: BrowserWindow) {
+async function onRecordJourneys(data: { url: string }, browserWindow: BrowserWindow) {
   try {
     const { browser, context } = await launchContext();
     browserContext = context;
@@ -94,7 +99,7 @@ async function recordJourneys(data: { url: string }, browserWindow: BrowserWindo
     };
     actionListener.on('actions', actionsHandler);
 
-    /* _enableRecorder is private method, not defined in BrowserContext type */
+    // _enableRecorder is private method, not defined in BrowserContext type
     await (context as any)._enableRecorder({
       launchOptions: {},
       contextOptions: {},
@@ -107,9 +112,11 @@ async function recordJourneys(data: { url: string }, browserWindow: BrowserWindo
     const closeBrowser = async () => {
       browserContext = null;
       actionListener.removeListener('actions', actionsHandler);
-      await browser.close().catch(err => {
-        console.warn('Browser close threw an error', err);
-      });
+      try {
+        await browser.close();
+      } catch (e) {
+        logger.error('Browser close threw an error', e);
+      }
     };
 
     ipc.on('stop', closeBrowser);
@@ -129,12 +136,11 @@ async function recordJourneys(data: { url: string }, browserWindow: BrowserWindo
  * @param {*} event the result data from Playwright
  * @returns the event data combined with action titles in a new object
  */
-function addActionsToStepResult(steps: Steps, event: any) {
+function addActionsToStepResult(steps: Steps, event: StepEndEvent): TestEvent {
   const step = steps.find(
     s =>
       s.actions.length &&
       s.actions[0].title &&
-      event?.data?.name &&
       (event.data.name === s.actions[0].title || event.data.name === s.name)
   );
   if (!step) return { ...event, data: { ...event.data, actionTitles: [] } };
@@ -150,7 +156,7 @@ function addActionsToStepResult(steps: Steps, event: any) {
 }
 
 async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
-  const parseOrSkip = (chunk: string) => {
+  const parseOrSkip = (chunk: string): Array<Record<string, any>> => {
     // at times stdout ships multiple steps in one chunk, broken by newline,
     // so here we split on the newline
     return chunk.split('\n').map(subChunk => {
@@ -161,49 +167,65 @@ async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
       }
     });
   };
+  const isJourneyStart = (event: any): event is { journey: { name: string } } => {
+    return event.type === 'journey/start' && !!event.journey.name;
+  };
 
-  // returns TestEvent interface defined in common/types.ts
-  const constructEvent: (parsed: Record<string, any>) => TestEvent | undefined = parsed => {
-    switch (parsed.type) {
-      case 'journey/start': {
-        const { journey } = parsed;
-        return {
-          event: 'journey/start',
-          data: {
-            name: journey.name,
-          },
-        };
-      }
-      case 'step/end': {
-        const { step, error } = parsed;
-        return {
-          event: 'step/end',
-          data: {
-            name: step.name,
-            status: step.status,
-            error,
-            duration: Math.ceil(step.duration.us / 1000),
-          },
-        };
-      }
-      case 'journey/end': {
-        const { journey } = parsed;
-        return {
-          event: 'journey/end',
-          data: {
-            name: journey.name,
-            status: journey.status,
-          },
-        };
-      }
+  const isStepEnd = (
+    event: any
+  ): event is {
+    step: { duration: { us: number }; name: string; status: StepStatus };
+    error?: Error;
+  } => {
+    return (
+      event.type === 'step/end' &&
+      ['succeeded', 'failed', 'skipped'].includes(event.step?.status) &&
+      typeof event.step?.duration?.us === 'number'
+    );
+  };
+
+  const isJourneyEnd = (
+    event: any
+  ): event is { journey: { name: string; status: 'succeeded' | 'failed' } } => {
+    return event.type === 'journey/end' && ['succeeded', 'failed'].includes(event.journey?.status);
+  };
+
+  const constructEvent = (parsed: Record<string, any>): TestEvent | null => {
+    if (isJourneyStart(parsed)) {
+      return {
+        event: 'journey/start',
+        data: {
+          name: parsed.journey.name,
+        },
+      };
     }
+    if (isStepEnd(parsed)) {
+      return {
+        event: 'step/end',
+        data: {
+          name: parsed.step.name,
+          status: parsed.step.status,
+          duration: Math.ceil(parsed.step.duration.us / 1000),
+        },
+      };
+    }
+    if (isJourneyEnd(parsed)) {
+      return {
+        event: 'journey/end',
+        data: {
+          name: parsed.journey.name,
+          status: parsed.journey.status,
+        },
+      };
+    }
+    return null;
   };
 
   const sendTestEvent = (event: TestEvent) => {
     browserWindow.webContents.send('test-event', event);
   };
 
-  const emitResult = (chunk: any) => {
+  const emitResult = (chunk: string) => {
     parseOrSkip(chunk).forEach(parsed => {
       const event = constructEvent(parsed);
       if (event) {
@@ -222,7 +244,6 @@ async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
     if (!isSuite) {
       args.push('--inline');
     } else {
-      // es-lint ignore
       await mkdir(JOURNEY_DIR, { recursive: true });
       await writeFile(filePath, data.code);
       args.unshift(filePath);
@@ -261,7 +282,7 @@ async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
       event: 'journey/end',
       data: {
         status: 'failed',
-        error,
+        error: error as Error,
       },
     });
   } finally {
@@ -284,7 +305,7 @@ async function onFileSave(code: string) {
   return false;
 }
 
-async function onTransformCode(data: { isSuite: boolean; actions: Steps }) {
+async function onGenerateCode(data: { isSuite: boolean; actions: Steps }) {
   const generator = new SyntheticsGenerator(data.isSuite);
   return generator.generateFromSteps(data.actions);
 }
@@ -295,6 +316,7 @@ async function onSetMode(mode: string) {
   if (!page) return;
   await page.mainFrame().evaluate(
     ([mode]) => {
+      // `_playwrightSetMode` is a private function
       (window as any)._playwrightSetMode(mode);
     },
     [mode]
@@ -313,10 +335,10 @@ async function onLinkExternal(url: string) {
 }
 
 export default function setupListeners() {
-  ipc.answerRenderer<{ url: string }>('record-journey', recordJourneys);
+  ipc.answerRenderer<RecordJourneyOptions>('record-journey', onRecordJourneys);
   ipc.answerRenderer<RunJourneyOptions>('run-journey', onTest);
-  ipc.answerRenderer('save-file', onFileSave);
-  ipc.answerRenderer<{ actions: Steps; isSuite: boolean }>('actions-to-code', onTransformCode);
+  ipc.answerRenderer<GenerateCodeOptions>('actions-to-code', onGenerateCode);
+  ipc.answerRenderer<string>('save-file', onFileSave);
   ipc.answerRenderer<string>('set-mode', onSetMode);
   ipc.answerRenderer<string>('link-to-external', onLinkExternal);
 }

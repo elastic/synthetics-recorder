@@ -22,7 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 import { createContext } from 'react';
-import { Result, Setter } from '../common/types';
+import { Setter } from '../common/types';
+import { Result } from '../../common/types';
 
 function notImplemented() {
   throw Error('Test context not initialized');
