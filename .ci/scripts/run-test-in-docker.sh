@@ -10,6 +10,6 @@ docker run \
   --rm \
   -ti \
   -u '0:0' \
-  -w "/synthetics-recorder" \
+  -v "$(pwd):/synthetics-recorder" \
   $DOCKER_IMAGE \
   .ci/scripts/run-test.sh
