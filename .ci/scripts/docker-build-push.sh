@@ -7,3 +7,7 @@ docker \
   --build-arg BASE_DIR="." \
   --build-arg DOCKER_BASE_DIR="/synthetics-recorder" \
   --build-arg DISPLAY=":99" .
+
+docker \
+  push \
+  docker.elastic.co/observability-ci/synthetics-recorder:latest
