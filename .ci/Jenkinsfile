@@ -7,10 +7,10 @@ pipeline {
   environment {
     REPO = "synthetics-recorder"
     BASE_DIR = "src/github.com/elastic/${env.REPO}"
-    DOCKER_BASE_DIR = "/${env.REPO}"
+    DOCKER_REGISTRY = 'docker.elastic.co'
+    DOCKER_ELASTIC_SECRET = 'secret/observability-team/ci/docker-registry/prod'
     JOB_GIT_CREDENTIALS = "f6c7695a-671e-4f4f-a331-acdce44ff9ba"
     PIPELINE_LOG_LEVEL = "INFO"
-    DISPLAY= ":99"
     RELEASE_URL_MESSAGE = "(<https://github.com/elastic/${env.REPO}/releases/tag/${env.TAG_NAME}|${env.TAG_NAME}>)"
     NOTIFY_TO = 'synthrum+synthetics-recorder@elastic.co'
   }
@@ -25,7 +25,7 @@ pipeline {
     quietPeriod(10)
   }
   triggers {
-    issueCommentTrigger("${obltGitHubComments()}")
+    issueCommentTrigger("(${obltGitHubComments()}|^/test all)")
   }
   stages {
     stage('Checkout') {
@@ -34,7 +34,10 @@ pipeline {
         pipelineManager([ cancelPreviousRunningBuilds: [ when: 'PR' ] ])
         deleteDir()
         gitCheckout(basedir: "${BASE_DIR}", githubNotifyFirstTimeContributor: true)
-        stash allowEmpty: true, name: 'source', useDefaultExcludes: false
+        stash(allowEmpty: true, name: 'source', useDefaultExcludes: false)
+        dir("${BASE_DIR}") {
+          setEnvVar('DOCKER_CHANGES', isGitRegionMatch(patterns: [ '^e2e/Dockerfile.jenkins' ], shouldMatchAll: false).toString())
+        }
       }
     }
     stage('Install'){
@@ -76,42 +79,6 @@ pipeline {
         }
       }
     }
-    stage('Docker test setup') {
-      options { skipDefaultCheckout() }
-      when {
-        beforeAgent true
-        expression { return !isTag() }
-      }
-      agent {
-        dockerfile {
-          reuseNode true
-            dir "$BASE_DIR"
-            filename './e2e/Dockerfile.jenkins'
-            additionalBuildArgs  "--build-arg BASE_DIR=\".\" --build-arg DOCKER_BASE_DIR=\"${DOCKER_BASE_DIR}\" --build-arg DISPLAY=\"${DISPLAY}\""
-            args "-u 0:0"
-        }
-      }
-      stages {
-        stage('Test'){
-          steps {
-            withGithubNotify(context: "Test") {
-              sh(label: 'run tests', script: "${DOCKER_BASE_DIR}/.ci/scripts/run-test.sh")
-            }
-          }
-          post {
-            always {
-              // dockerfile should be refactored for vary reasons:
-              // 1. it runs in the CI controller
-              // 2. it always builds the docker image, therefore increases the build time
-              // 3. it cannot be reproduced locally
-              // 4. it uses absolute path and produce issues with the junit step.
-              sh(label: 'copy xml files', script: 'cp -f ${DOCKER_BASE_DIR}/*-junit.xml .', returnStatus: true)
-              junit(allowEmptyResults: true, keepLongStdio: true, testResults: "*junit.xml")
-            }
-          }
-        }
-      }
-    }
     stage('Build'){
       options { skipDefaultCheckout() }
       when { expression { return !isTag() } }
@@ -122,6 +89,47 @@ pipeline {
               sh(label: 'npm build', script: 'npm run build')
             }
           }
+        }
+      }
+    }
+    stage('Docker build') {
+      options { skipDefaultCheckout() }
+      when {
+        beforeAgent true
+        anyOf {
+          expression { env.DOCKER_CHANGES == 'true' }
+          expression { return env.GITHUB_COMMENT?.contains('all') }
+        }
+      }
+      steps {
+        withGithubNotify(context: 'Docker Build') {
+          dir("${BASE_DIR}"){
+            sh(label: 'docker build', script: ".ci/scripts/docker-build.sh")
+            dockerLogin(secret: "${DOCKER_ELASTIC_SECRET}", registry: "${DOCKER_REGISTRY}")
+            retryWithSleep(retries: 3, seconds: 5, backoff: true){
+              sh(label: 'docker push', script: ".ci/scripts/docker-push.sh")
+            }
+          }
+        }
+      }
+    }
+    stage('Test'){
+      options { skipDefaultCheckout() }
+      when {
+        beforeAgent true
+        expression { return !isTag() }
+      }
+      steps {
+        withGithubNotify(context: "Test") {
+          dir("${BASE_DIR}"){
+            // NOTE: It uses the current workspace that was configured with npm ci
+            sh(label: 'run tests', script: '.ci/scripts/run-test-in-docker.sh')
+          }
+        }
+      }
+      post {
+        always {
+          junit(allowEmptyResults: true, keepLongStdio: true, testResults: "${BASE_DIR}/*junit.xml")
         }
       }
     }

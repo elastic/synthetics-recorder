@@ -3,10 +3,6 @@ FROM ubuntu:20.04
 # Setting bash as the default shell
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
-# Set directories we'll copy things from and to (respectively)
-ARG BASE_DIR
-ARG DOCKER_BASE_DIR
-
 # Get desired XVFB display
 ARG DISPLAY
 
@@ -29,23 +25,17 @@ RUN apt-get -y -qq install xvfb \
     --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 
-# Copying repo directory
-ADD $BASE_DIR $DOCKER_BASE_DIR
-
 # Make relevant environment variables available for tests
-ENV DOCKER_BASE_DIR $DOCKER_BASE_DIR
 ENV DISPLAY $DISPLAY
+ENV NPM_COMMAND ci
+
+WORKDIR /synthetics-recorder
+
+# Copy .nvmrc as long as you run the script in .ci/scripts/docker-build.sh
+ADD .nvmrc /synthetics-recorder/.nvmrc
 
 # Installing NVM
 ENV NVM_DIR /root
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-RUN source $NVM_DIR/nvm.sh \
-  && source /root/.bashrc \
-  && ( \
-    cd $DOCKER_BASE_DIR \
-    && nvm install \
-    && nvm use \
-    # We must install dependencies again so
-    # that they're compatible with Ubuntu
-    && npm ci --prefix $DOCKER_BASE_DIR \
-  )
+RUN source "${NVM_DIR}/nvm.sh" --install \
+  && nvm use
