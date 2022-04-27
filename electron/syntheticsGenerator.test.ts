@@ -305,7 +305,7 @@ describe('Synthetics JavaScript formatter', () => {
     expect(generator.findVarsToHoist(steps)).toEqual(['page1', 'page2']);
   });
 
-  it('hoists page objects toe prevent undefined references', () => {
+  it('hoists page objects to prevent undefined references', () => {
     const generator = new SyntheticsGenerator(false);
     const steps: Steps = [
       {
