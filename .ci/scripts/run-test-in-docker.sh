@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 set -eox pipefail
 
-DOCKER_IMAGE=docker.elastic.co/observability-ci/synthetics-recorder:latest
+TAG=${BRANCH_NAME:-'latest'}
+
+DOCKER_IMAGE=docker.elastic.co/observability-ci/synthetics-recorder:$TAG
 if [[ "$(docker images -q $DOCKER_IMAGE 2> /dev/null)" == "" ]]; then
   docker pull $DOCKER_IMAGE
 fi
 
 docker run \
   --rm \
-  -ti \
   -u '0:0' \
   -v "$(pwd):/synthetics-recorder" \
   $DOCKER_IMAGE \
