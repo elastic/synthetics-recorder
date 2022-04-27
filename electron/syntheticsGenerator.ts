@@ -345,18 +345,24 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
     return this.isSuite ? 2 : 0;
   }
 
+  /**
+   * We need to hoist any page or popup alias that appears in more than one step.
+   * @param steps the step IR to evaluate
+   * @returns an array that contains the names of all variables that need to be hoisted
+   */
   findVarsToHoist(steps: Steps): string[] {
     const pageAliasCounts = steps.reduce((acc, step) => {
-      const pageAliases = new Set(
-        step.actions.map(action => action.pageAlias).filter(pageAlias => pageAlias !== 'page')
-      );
-      pageAliases.forEach(pageAlias => {
-        if (!acc[pageAlias]) {
-          acc[pageAlias] = 1;
-        } else {
-          acc[pageAlias]++;
-        }
+      const aliases = new Set<string>();
+      step.actions.forEach(({ action: { signals }, pageAlias }) => {
+        const popups = signals.filter(({ name }) => name === 'popup');
+        aliases.add(pageAlias);
+        popups.forEach(({ popupAlias }) => (popupAlias ? aliases.add(popupAlias) : null));
       });
+      for (const alias of aliases) {
+        if (alias === 'page' || !alias) continue;
+        if (acc[alias]) acc[alias] += 1;
+        else acc[alias] = 1;
+      }
       return acc;
     }, {} as Record<string, number>);
     return Object.keys(pageAliasCounts).filter(pageAlias => pageAliasCounts[pageAlias] > 1);
