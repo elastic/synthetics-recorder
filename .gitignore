@@ -10,4 +10,6 @@ react-app-env.d.ts
 
 eslint-junit.xml
 .idea
+*-junit.xml
 .DS_Store
+tsconfig.tsbuildinfo

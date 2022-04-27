@@ -25,7 +25,7 @@ THE SOFTWARE.
 import { EuiButton } from '@elastic/eui';
 import React, { useContext } from 'react';
 import { getCodeFromActions } from '../common/shared';
-import type { JourneyType } from '../common/types';
+import type { JourneyType } from '../../common/types';
 import { CommunicationContext } from '../contexts/CommunicationContext';
 import { StepsContext } from '../contexts/StepsContext';
 import { ToastContext } from '../contexts/ToastContext';

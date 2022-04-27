@@ -22,7 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-function buildMenu(appName) {
+import type { MenuItemConstructorOptions } from 'electron';
+
+export function buildMenu(appName: string): MenuItemConstructorOptions[] {
   return [
     {
       label: appName,
@@ -32,7 +34,7 @@ function buildMenu(appName) {
         { role: 'services', submenu: [] },
         { type: 'separator' },
         { role: 'hide' },
-        { role: 'hideothers' },
+        { role: 'hideOthers' },
         { role: 'unhide' },
         { type: 'separator' },
         { role: 'quit' },
@@ -48,12 +50,12 @@ function buildMenu(appName) {
         { role: 'copy' },
         { role: 'paste' },
         { role: 'delete' },
-        { role: 'selectall' },
+        { role: 'selectAll' },
       ],
     },
     {
       label: 'View',
-      submenu: [{ role: 'reload' }, { role: 'forcereload' }],
+      submenu: [{ role: 'reload' }, { role: 'forceReload' }],
     },
     {
       role: 'window',
@@ -67,5 +69,3 @@ function buildMenu(appName) {
     },
   ];
 }
-
-module.exports = buildMenu;
