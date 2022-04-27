@@ -101,6 +101,9 @@ pipeline {
           post {
             always {
               junit(allowEmptyResults: true, keepLongStdio: true, testResults: "${BASE_DIR}/*junit.xml")
+              sh(label: 'debug0', script: 'env | sort')
+              sh(label: 'debug1', script: "ls -l ${BASE_DIR} || true")
+              sh(label: 'debug2', script: "ls -l ${DOCKER_BASE_DIR} || true")
             }
           }
         }
