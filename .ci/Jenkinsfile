@@ -83,17 +83,15 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        allOf {
-          expression { return !isTag() }
-          expression { env.DOCKER_CHANGES == 'true' }
-        }
+        expression { env.DOCKER_CHANGES == 'true' }
       }
       steps {
         withGithubNotify(context: 'Docker Build') {
           dir("${BASE_DIR}"){
+            sh(label: 'docker build', script: ".ci/scripts/docker-build.sh")
             dockerLogin(secret: "${DOCKER_ELASTIC_SECRET}", registry: "${DOCKER_REGISTRY}")
             retryWithSleep(retries: 3, seconds: 5, backoff: true){
-              sh(label: 'docker build-push', script: ".ci/scripts/docker-build-push.sh")
+              sh(label: 'docker push', script: ".ci/scripts/docker-push.sh")
             }
           }
         }
