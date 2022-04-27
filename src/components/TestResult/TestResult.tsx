@@ -25,7 +25,7 @@ THE SOFTWARE.
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { EuiFlyout, EuiFlyoutBody } from '@elastic/eui';
 import { StepsContext } from '../../contexts/StepsContext';
-import type { JourneyStep, Result } from '../../common/types';
+import type { JourneyStep, Result } from '../../../common/types';
 import { TestContext } from '../../contexts/TestContext';
 import { getCodeFromActions } from '../../common/shared';
 import { ResultFlyoutItem } from './ResultFlyoutItem';
