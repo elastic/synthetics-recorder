@@ -5,7 +5,11 @@ TAG=${BRANCH_NAME:-'latest'}
 
 DOCKER_IMAGE=docker.elastic.co/observability-ci/synthetics-recorder:$TAG
 if [[ "$(docker images -q $DOCKER_IMAGE 2> /dev/null)" == "" ]]; then
-  docker pull $DOCKER_IMAGE
+  if ! docker pull $DOCKER_IMAGE ; then
+    # pull the docker image from the target branch
+    DOCKER_IMAGE=docker.elastic.co/observability-ci/synthetics-recorder:$CHANGE_TARGET
+    docker pull $DOCKER_IMAGE
+  fi
 fi
 
 DOCKER_RUN_OPTIONS="-i --rm"
