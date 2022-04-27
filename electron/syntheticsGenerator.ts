@@ -233,15 +233,10 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
       formatter.add(`${prefix}${subject}.${actionCall}${suffix}`);
 
       if (emitPromiseAll) {
-        formatter.add(
-          `])${
-            signals.popup?.popupAlias
-              ? this.isVarHoisted(signals.popup?.popupAlias)
-                ? '[0]'
-                : ''
-              : ''
-          };`
-        );
+        const base = '])';
+        const popupAlias = signals.popup?.popupAlias;
+        const accessor = popupAlias && this.isVarHoisted(popupAlias) ? '[0]' : '';
+        formatter.add(base + accessor + ';');
       } else if (signals.assertNavigation) {
         formatter.add(
           `  expect(${pageAlias}.url()).toBe(${quote(signals.assertNavigation.url ?? '')});`
