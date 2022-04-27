@@ -276,7 +276,7 @@ async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
     if (isSuite) {
       await rm(filePath, { recursive: true, force: true });
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error(error);
     sendTestEvent({
       event: 'journey/end',
