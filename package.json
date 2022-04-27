@@ -24,7 +24,7 @@
     "prepare": "husky install",
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "jest --config ./jest.unit.config.js .",
-    "test:unit:watch": "npm run test:unit -- --coverage --watch --collectCoverageFrom=src/**/*.{js,jsx,ts,tsx} --collectCoverageFrom=electron/**/*.{js,ts}",
+    "test:unit:watch": "npm run test:unit -- --coverage --watch --collectCoverageFrom={src,electron}/**/*.{js,jsx,ts,tsx}",
     "test:e2e": "jest --runInBand --config ./jest.e2e.config.js ./e2e/tests",
     "test:e2e:server": "BROWSER=NONE PORT=61337 react-scripts start",
     "test:e2e:runner": "IS_RUNNER=true TEST_PORT=61337 jest --config ./jest.e2e.config.js ./e2e/tests",
