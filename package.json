@@ -8,8 +8,8 @@
     "preinstall": "npx npm-force-resolutions@0.0.10",
     "postinstall": "npm run install:pw && electron-builder install-app-deps && npm run prepare-demo-app",
     "prepare-demo-app": "npm install --prefix demo-app && npm run build --prefix demo-app",
-    "react:start": "react-scripts start",
-    "react:build": "react-scripts build",
+    "react:start": "node scripts/start.js",
+    "react:build": "node scripts/build.js",
     "dev": "concurrently -k \"BROWSER=none npm run react:start\" \"npm run tsc-electron -- -w\" \"wait-on tcp:3000 && nodemon --exec electron build/electron/electron.js\"",
     "build": "npm run clean && npm run react:build && npm run tsc-electron",
     "tsc-electron": "tsc -p tsconfig.node.json",
@@ -26,7 +26,7 @@
     "test:unit": "jest --config ./jest.unit.config.js ./src",
     "test:unit:watch": "npm run test:unit -- --coverage --watch",
     "test:e2e": "jest --runInBand --config ./jest.e2e.config.js ./e2e/tests",
-    "test:e2e:server": "BROWSER=NONE PORT=61337 react-scripts start",
+    "test:e2e:server": "BROWSER=NONE PORT=61337 node scripts/start.js",
     "test:e2e:runner": "IS_RUNNER=true TEST_PORT=61337 jest --config ./jest.e2e.config.js ./e2e/tests",
     "update-demo-app": "git subtree pull --prefix demo-app git@github.com:vigneshshanmugam/synthetics-ecommerce-demo.git main --squash"
   },
@@ -69,7 +69,6 @@
     "lint-staged": "^12.3.7",
     "nodemon": "^2.0.15",
     "prettier": "2.5.1",
-    "react-scripts": "5.0.0",
     "react-test-renderer": "^17.0.2",
     "ts-jest": "^26.5.6",
     "typescript": "^4.5.5",
@@ -77,22 +76,68 @@
     "wait-on": "^6.0.1"
   },
   "dependencies": {
+    "@babel/core": "^7.16.0",
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "^55.0.1",
     "@elastic/synthetics": "=1.0.0-beta.23",
     "@emotion/cache": "^11.7.1",
     "@emotion/react": "^11.8.2",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
+    "@svgr/webpack": "^5.5.0",
+    "babel-jest": "^27.4.2",
+    "babel-loader": "^8.2.3",
+    "babel-plugin-named-asset-import": "^0.3.8",
+    "babel-preset-react-app": "^10.0.1",
+    "bfj": "^7.0.2",
+    "browserslist": "^4.18.1",
+    "camelcase": "^6.2.1",
+    "case-sensitive-paths-webpack-plugin": "^2.4.0",
+    "css-loader": "^6.5.1",
+    "css-minimizer-webpack-plugin": "^3.2.0",
     "dotenv": "^10.0.0",
+    "dotenv-expand": "^5.1.0",
     "electron-better-ipc": "^2.0.1",
     "electron-debug": "^3.2.0",
     "electron-is-dev": "^2.0.0",
     "electron-log": "^4.4.6",
     "electron-unhandled": "^3.0.2",
+    "eslint": "^8.3.0",
+    "eslint-config-react-app": "^7.0.0",
+    "eslint-webpack-plugin": "^3.1.1",
+    "file-loader": "^6.2.0",
+    "fs-extra": "^10.0.0",
+    "html-webpack-plugin": "^5.5.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^27.4.3",
+    "jest-resolve": "^27.4.2",
+    "jest-watch-typeahead": "^1.0.0",
+    "mini-css-extract-plugin": "^2.4.5",
     "moment": "^2.29.1",
     "playwright": "git+https://github.com/elastic/playwright.git#separate-recorder",
+    "postcss": "^8.4.4",
+    "postcss-flexbugs-fixes": "^5.0.2",
+    "postcss-loader": "^6.2.1",
+    "postcss-normalize": "^10.0.1",
+    "postcss-preset-env": "^7.0.1",
+    "prompts": "^2.4.2",
     "react": "^17.0.1",
+    "react-app-polyfill": "^3.0.0",
+    "react-dev-utils": "^12.0.0",
     "react-dom": "^17.0.1",
-    "styled-components": "^5.3.5"
+    "react-refresh": "^0.11.0",
+    "resolve": "^1.20.0",
+    "resolve-url-loader": "^4.0.0",
+    "sass-loader": "^12.3.0",
+    "semver": "^7.3.5",
+    "source-map-loader": "^3.0.0",
+    "style-loader": "^3.3.1",
+    "styled-components": "^5.3.5",
+    "tailwindcss": "^3.0.2",
+    "terser-webpack-plugin": "^5.2.5",
+    "webpack": "^5.64.4",
+    "webpack-dev-server": "^4.6.0",
+    "webpack-manifest-plugin": "^4.0.2",
+    "workbox-webpack-plugin": "^6.4.1"
   },
   "resolutions": {
     "trim": "0.0.3"
@@ -103,5 +148,62 @@
   "engines": {
     "node": ">14.14.0",
     "npm": "6"
+  },
+  "jest": {
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!src/**/*.d.ts"
+    ],
+    "setupFiles": [
+      "react-app-polyfill/jsdom"
+    ],
+    "setupFilesAfterEnv": [],
+    "testMatch": [
+      "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
+      "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
+    ],
+    "testEnvironment": "jsdom",
+    "transform": {
+      "^.+\\.(js|jsx|mjs|cjs|ts|tsx)$": "<rootDir>/config/jest/babelTransform.js",
+      "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
+      "^(?!.*\\.(js|jsx|mjs|cjs|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
+    },
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$",
+      "^.+\\.module\\.(css|sass|scss)$"
+    ],
+    "modulePaths": [],
+    "moduleNameMapper": {
+      "^react-native$": "react-native-web",
+      "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
+    },
+    "moduleFileExtensions": [
+      "web.js",
+      "js",
+      "web.ts",
+      "ts",
+      "web.tsx",
+      "tsx",
+      "json",
+      "web.jsx",
+      "jsx",
+      "node"
+    ],
+    "watchPlugins": [
+      "jest-watch-typeahead/filename",
+      "jest-watch-typeahead/testname"
+    ],
+    "resetMocks": true
+  },
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
+  },
+  "eslintConfig": {
+    "extends": "react-app"
   }
 }
