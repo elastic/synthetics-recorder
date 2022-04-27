@@ -36,7 +36,5 @@ ADD .nvmrc /synthetics-recorder/.nvmrc
 # Installing NVM
 ENV NVM_DIR /root
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-RUN source $NVM_DIR/nvm.sh || true \
-  && source /root/.bashrc \
-  && nvm install \
+RUN source "${NVM_DIR}/nvm.sh" --install \
   && nvm use
