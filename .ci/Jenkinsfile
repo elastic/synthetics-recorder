@@ -79,6 +79,19 @@ pipeline {
         }
       }
     }
+    stage('Build'){
+      options { skipDefaultCheckout() }
+      when { expression { return !isTag() } }
+      steps {
+        withGithubNotify(context: "Build") {
+          withNodeJSEnv() {
+            dir("${BASE_DIR}"){
+              sh(label: 'npm build', script: 'npm run build')
+            }
+          }
+        }
+      }
+    }
     stage('Docker build') {
       options { skipDefaultCheckout() }
       when {
@@ -110,19 +123,6 @@ pipeline {
         withGithubNotify(context: "Test") {
           dir("${BASE_DIR}"){
             sh(label: 'run tests', script: ".ci/scripts/run-test-in-docker.sh")
-          }
-        }
-      }
-    }
-    stage('Build'){
-      options { skipDefaultCheckout() }
-      when { expression { return !isTag() } }
-      steps {
-        withGithubNotify(context: "Build") {
-          withNodeJSEnv() {
-            dir("${BASE_DIR}"){
-              sh(label: 'npm build', script: 'npm run build')
-            }
           }
         }
       }
