@@ -11,11 +11,3 @@ source $NVM_DIR/nvm.sh
 cd $DOCKER_BASE_DIR
 nvm use
 NPM_CONFIG_LOGLEVEL=verbose npm test
-
-## DEBUG
-pwd
-ls -lt *.xml
-cd -
-pwd
-ls -lt *.xml
-## END DEBUG
