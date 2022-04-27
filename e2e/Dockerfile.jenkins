@@ -30,8 +30,8 @@ ENV DISPLAY $DISPLAY
 
 WORKDIR /synthetics-recorder
 
-# Copy .nvmrc
-ADD ../.nvmrc /synthetics-recorder/.nvmrc
+# Copy .nvmrc as long as you run the script in .ci/scripts/docker-build.sh
+ADD .nvmrc /synthetics-recorder/.nvmrc
 
 # Installing NVM
 ENV NVM_DIR /root
