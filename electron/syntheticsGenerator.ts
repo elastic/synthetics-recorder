@@ -86,7 +86,7 @@ function isFormattable(value: unknown): value is Formattable {
   );
 }
 
-function formatObject(value: string | string[] | Record<string, unknown>, indent = '  '): string {
+function formatObject(value: Formattable, indent = '  '): string {
   if (typeof value === 'string') return quote(value);
   if (Array.isArray(value)) return `[${value.map(o => formatObject(o)).join(', ')}]`;
   if (typeof value === 'object') {
