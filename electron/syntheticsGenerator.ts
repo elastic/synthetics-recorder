@@ -81,8 +81,7 @@ type Formattable = string | string[] | Record<string, unknown>;
 function isFormattable(value: unknown): value is Formattable {
   return (
     typeof value === 'string' ||
-    (Array.isArray(value) &&
-      value.reduce<boolean>((prev, cur) => prev && typeof cur === 'string', true)) ||
+    (Array.isArray(value) && value.every(v => typeof v === 'string')) ||
     typeof value === 'object'
   );
 }
