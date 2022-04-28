@@ -183,6 +183,7 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
 
     const signals = toSignalMap(action);
 
+    const isVarHoisted = signals.popup?.popupAlias && this.isVarHoisted(signals.popup.popupAlias);
     if (signals.dialog) {
       formatter.add(`  ${pageAlias}.once('dialog', dialog => {
     console.log(\`Dialog message: $\{dialog.message()}\`);
@@ -195,18 +196,15 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
       // Generate either await Promise.all([]) or
       // const [popup1] = await Promise.all([]).
       let leftHandSide = '';
-      if (
-        signals.popup &&
-        signals.popup.popupAlias &&
-        !this.isVarHoisted(signals.popup.popupAlias)
-      ) {
+      if (signals.popup && signals.popup.popupAlias && !isVarHoisted) {
         leftHandSide = `const [${signals.popup.popupAlias}] = `;
-      } else if (this.isVarHoisted(signals.popup?.popupAlias ?? '')) {
+      } else if (isVarHoisted) {
         leftHandSide = `${signals.popup?.popupAlias} = `;
       } else if (signals.download) {
         leftHandSide = `const [download] = `;
       }
-      formatter.add(`${leftHandSide}await Promise.all([`);
+      const rightHandSide = isVarHoisted ? `(await Promise.all([` : `await Promise.all([`;
+      formatter.add(`${leftHandSide}${rightHandSide}`);
     }
 
     // Popup signals.
@@ -233,7 +231,7 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
       formatter.add(`${prefix}${subject}.${actionCall}${suffix}`);
 
       if (emitPromiseAll) {
-        const base = '])';
+        const base = isVarHoisted ? ']))' : '])';
         const popupAlias = signals.popup?.popupAlias;
         const accessor = popupAlias && this.isVarHoisted(popupAlias) ? '[0]' : '';
         formatter.add(base + accessor + ';');

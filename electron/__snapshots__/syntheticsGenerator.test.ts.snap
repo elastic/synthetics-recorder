@@ -14,10 +14,10 @@ journey('Recorded journey', async ({ page, context }) => {
   });
   step('Assert text=Babel Minify textContent', async () => {
     expect(await page.textContent('text=Babel Minify')).toMatch('Babel');
-    page1 = await Promise.all([
+    page1 = (await Promise.all([
       page.waitForEvent('popup'),
       page.click('text=Babel Minify')
-    ])[0];
+    ]))[0];
     await Promise.all([
       page1.waitForNavigation(/*{ url: 'https://github.com/babel/minify' }*/),
       page1.click('a:has-text(\\"smoke\\")')
@@ -29,24 +29,42 @@ journey('Recorded journey', async ({ page, context }) => {
 });"
 `;
 
+exports[`Synthetics JavaScript formatter does not hoist when all accesses are in one step 1`] = `
+"step('Go to https://vigneshh.in/', async () => {
+  await page.goto('https://vigneshh.in/');
+  const [page1] = await Promise.all([
+    page.waitForEvent('popup'),
+    page.click('text=Tailor')
+  ]);
+  await page1.click('text=Packages 0');
+  expect(page1.url()).toBe('https://github.com/orgs/zalando/packages?repo_name=tailor');
+  await page1.close();
+  const [page2] = await Promise.all([
+    page.waitForEvent('popup'),
+    page.click('text=Babel Minify')
+  ]);
+  await page2.close();
+});"
+`;
+
 exports[`Synthetics JavaScript formatter hoist accounts for popup alias 1`] = `
 "let page1;
 let page2;
 step('Go to https://vigneshh.in/', async () => {
   await page.goto('https://vigneshh.in/');
-  page1 = await Promise.all([
+  page1 = (await Promise.all([
     page.waitForEvent('popup'),
     page.click('text=Tailor')
-  ])[0];
+  ]))[0];
   await page1.click('text=Packages 0');
   expect(page1.url()).toBe('https://github.com/orgs/zalando/packages?repo_name=tailor');
 });
 step('Close page', async () => {
   await page1.close();
-  page2 = await Promise.all([
+  page2 = (await Promise.all([
     page.waitForEvent('popup'),
     page.click('text=Babel Minify')
-  ])[0];
+  ]))[0];
 });
 step('Close page', async () => {
   await page2.close();
@@ -58,10 +76,10 @@ exports[`Synthetics JavaScript formatter hoists page objects to prevent undefine
 let page2;
 step('Go to https://vigneshh.in/', async () => {
   await page.goto('https://vigneshh.in/');
-  page1 = await Promise.all([
+  page1 = (await Promise.all([
     page.waitForEvent('popup'),
     page.click('text=Tailor')
-  ])[0];
+  ]))[0];
   await page1.click('text=Packages 0');
   expect(page1.url()).toBe('https://github.com/orgs/zalando/packages?repo_name=tailor');
 });
@@ -69,10 +87,10 @@ step('Close page', async () => {
   await page1.close();
 });
 step('Click text=Babel Minify', async () => {
-  page2 = await Promise.all([
+  page2 = (await Promise.all([
     page.waitForEvent('popup'),
     page.click('text=Babel Minify')
-  ])[0];
+  ]))[0];
   await page2.click(':nth-match(a:has-text(\\"babel-minify\\"), 3)');
   expect(page2.url()).toBe('https://github.com/topics/babel-minify');
 });

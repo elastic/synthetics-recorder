@@ -305,6 +305,91 @@ describe('Synthetics JavaScript formatter', () => {
     expect(generator.findVarsToHoist(steps)).toEqual(['page1', 'page2']);
   });
 
+  it('does not hoist when all accesses are in one step', () => {
+    expect(
+      new SyntheticsGenerator(false).generateFromSteps([
+        {
+          actions: [
+            {
+              pageAlias: 'page',
+              isMainFrame: true,
+              frameUrl: 'https://vigneshh.in/',
+              committed: true,
+              action: { name: 'navigate', url: 'https://vigneshh.in/', signals: [] },
+              title: 'Go to https://vigneshh.in/',
+            },
+            {
+              pageAlias: 'page',
+              isMainFrame: true,
+              frameUrl: 'https://vigneshh.in/',
+              action: {
+                name: 'click',
+                selector: 'text=Tailor',
+                signals: [{ name: 'popup', popupAlias: 'page1', isAsync: true }],
+                button: 'left',
+                modifiers: 0,
+                clickCount: 1,
+              },
+              committed: true,
+              title: 'Click text=Tailor',
+            },
+            {
+              pageAlias: 'page1',
+              isMainFrame: true,
+              frameUrl: 'https://github.com/zalando/tailor',
+              action: {
+                name: 'click',
+                selector: 'text=Packages 0',
+                signals: [
+                  {
+                    name: 'navigation',
+                    url: 'https://github.com/orgs/zalando/packages?repo_name=tailor',
+                  },
+                ],
+                button: 'left',
+                modifiers: 0,
+                clickCount: 1,
+              },
+              committed: true,
+              title: 'Click text=Packages 0',
+            },
+            {
+              pageAlias: 'page1',
+              isMainFrame: true,
+              frameUrl: 'https://github.com/orgs/zalando/packages?repo_name=tailor',
+              committed: true,
+              action: { name: 'closePage', signals: [] },
+              title: 'Close page',
+            },
+            {
+              pageAlias: 'page',
+              isMainFrame: true,
+              frameUrl: 'https://vigneshh.in/',
+              action: {
+                name: 'click',
+                selector: 'text=Babel Minify',
+                signals: [{ name: 'popup', popupAlias: 'page2', isAsync: true }],
+                button: 'left',
+                modifiers: 0,
+                clickCount: 1,
+              },
+              committed: true,
+              title: 'Click text=Babel Minify',
+            },
+            {
+              pageAlias: 'page2',
+              isMainFrame: true,
+              frameUrl: 'https://github.com/babel/minify',
+              committed: true,
+              action: { name: 'closePage', signals: [] },
+              title: 'Close page',
+            },
+          ],
+        },
+      ])
+    ).toMatchSnapshot();
+  });
+
   it('hoist accounts for popup alias', () => {
     const generator = new SyntheticsGenerator(false);
     const steps: Steps = [
