@@ -32,7 +32,6 @@ import {
 const recorderStep = createStepWithOverrides([
   {
     frameUrl: 'about:blank',
-    pageAlias: 'page',
     action: {
       name: 'openPage',
       url: 'about:blank',
@@ -40,7 +39,6 @@ const recorderStep = createStepWithOverrides([
   },
   {
     frameUrl: 'https://vigneshh.in/',
-    pageAlias: 'page',
     action: {
       name: 'navigate',
       url: 'https://vigneshh.in/',
@@ -48,7 +46,6 @@ const recorderStep = createStepWithOverrides([
   },
   {
     frameUrl: 'https://vignesh.in/',
-    pageAlias: 'page',
     action: {
       name: 'assert',
       isAssert: true,
@@ -58,7 +55,6 @@ const recorderStep = createStepWithOverrides([
   },
   {
     frameUrl: 'https://vigneshh.in/',
-    pageAlias: 'page',
     action: {
       name: 'assert',
       isAssert: true,
@@ -67,7 +63,6 @@ const recorderStep = createStepWithOverrides([
     },
   },
   {
-    pageAlias: 'page',
     frameUrl: 'https://vigneshh.in/',
     action: {
       name: 'assert',
@@ -78,7 +73,6 @@ const recorderStep = createStepWithOverrides([
     },
   },
   {
-    pageAlias: 'page',
     frameUrl: 'https://vigneshh.in/',
     action: {
       name: 'click',
@@ -134,7 +128,6 @@ const recorderStep = createStepWithOverrides([
     },
   },
   {
-    pageAlias: 'page',
     frameUrl: 'https://vigneshh.in/',
     action: {
       name: 'closePage',
@@ -180,7 +173,6 @@ describe('Synthetics JavaScript formatter', () => {
     const steps = createStepsWithOverrides([
       [
         {
-          pageAlias: 'page',
           frameUrl: 'https://vigneshh.in',
           action: {
             name: 'navigate',
@@ -189,7 +181,6 @@ describe('Synthetics JavaScript formatter', () => {
           title: 'Go to https://vigneshh.in/',
         },
         {
-          pageAlias: 'page',
           frameUrl: 'https://vigneshh.in/',
           action: {
             name: 'click',
@@ -230,7 +221,6 @@ describe('Synthetics JavaScript formatter', () => {
       ],
       [
         {
-          pageAlias: 'page',
           frameUrl: 'https://vigneshh.in/',
           action: {
             name: 'click',
@@ -274,13 +264,11 @@ describe('Synthetics JavaScript formatter', () => {
         createStepsWithOverrides([
           [
             {
-              pageAlias: 'page',
               frameUrl: 'https://vigneshh.in/',
               action: { name: 'navigate', url: 'https://vigneshh.in/', signals: [] },
               title: 'Go to https://vigneshh.in/',
             },
             {
-              pageAlias: 'page',
               frameUrl: 'https://vigneshh.in/',
               action: {
                 name: 'click',
@@ -317,7 +305,6 @@ describe('Synthetics JavaScript formatter', () => {
               title: 'Close page',
             },
             {
-              pageAlias: 'page',
               frameUrl: 'https://vigneshh.in/',
               action: {
                 name: 'click',
@@ -348,13 +335,11 @@ describe('Synthetics JavaScript formatter', () => {
         createStepsWithOverrides([
           [
             {
-              pageAlias: 'page',
               frameUrl: 'https://vigneshh.in/',
               action: { name: 'navigate', url: 'https://vigneshh.in/', signals: [] },
               title: 'Go to https://vigneshh.in/',
             },
             {
-              pageAlias: 'page',
               frameUrl: 'https://vigneshh.in/',
               action: {
                 name: 'click',
@@ -393,7 +378,6 @@ describe('Synthetics JavaScript formatter', () => {
               title: 'Close page',
             },
             {
-              pageAlias: 'page',
               frameUrl: 'https://vigneshh.in/',
               action: {
                 name: 'click',
@@ -425,13 +409,11 @@ describe('Synthetics JavaScript formatter', () => {
         createStepsWithOverrides([
           [
             {
-              pageAlias: 'page',
               frameUrl: 'https://vigneshh.in/',
               action: { name: 'navigate', url: 'https://vigneshh.in/', signals: [] },
               title: 'Go to https://vigneshh.in/',
             },
             {
-              pageAlias: 'page',
               frameUrl: 'https://vigneshh.in/',
               action: {
                 name: 'click',
@@ -472,7 +454,6 @@ describe('Synthetics JavaScript formatter', () => {
           ],
           [
             {
-              pageAlias: 'page',
               frameUrl: 'https://vigneshh.in/',
               action: {
                 name: 'click',
