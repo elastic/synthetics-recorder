@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 import { Action, Step, Steps } from '@elastic/synthetics';
-import { ActionContext } from '../../common/types';
+import { ActionContext } from '../../types';
 
 type ActionOverride = Partial<Action>;
 type ActionWithName = Partial<Action> & { name: string };

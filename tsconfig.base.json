@@ -15,8 +15,6 @@
     "isolatedModules": true,
     "outDir": "build"
   },
-  "references": [
-    { "path": "./shared" }
-  ],
+  "references": [{ "path": "./common" }],
   "exclude": ["node_modules"]
 }
