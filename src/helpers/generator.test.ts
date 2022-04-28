@@ -29,7 +29,7 @@ import {
   createAction,
   createStepWithOverrides,
   createStepsWithOverrides,
-} from '../../common/helper';
+} from '../../common/helper/test/createAction';
 
 describe('generator', () => {
   describe('generateIR', () => {
