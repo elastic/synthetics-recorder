@@ -26,7 +26,7 @@ import type { Step, Steps } from '@elastic/synthetics';
 import { act, renderHook, RenderHookResult } from '@testing-library/react-hooks';
 import { ActionContext } from '../../common/types';
 import { IStepsContext } from '../../contexts/StepsContext';
-import { createAction, createStep, createSteps } from '../../helpers/test';
+import { createAction, createStep, createSteps } from '../../../common/helper';
 import { useStepsContext } from './useStepsContext';
 
 describe('useStepsContext', () => {
