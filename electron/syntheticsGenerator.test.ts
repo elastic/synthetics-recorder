@@ -178,7 +178,6 @@ describe('Synthetics JavaScript formatter', () => {
             name: 'navigate',
             url: 'https://vigneshh.in/',
           },
-          title: 'Go to https://vigneshh.in/',
         },
         {
           frameUrl: 'https://vigneshh.in/',
@@ -190,7 +189,6 @@ describe('Synthetics JavaScript formatter', () => {
             modifiers: 0,
             clickCount: 1,
           },
-          title: 'Click text=Tailor',
         },
         {
           pageAlias: 'page1',
@@ -208,15 +206,13 @@ describe('Synthetics JavaScript formatter', () => {
             modifiers: 0,
             clickCount: 1,
           },
-          title: 'Click text=Packages 0',
         },
       ],
       [
         {
           pageAlias: 'page1',
           frameUrl: 'https://github.com/orgs/zalando/packages?repo_name=tailor',
-          action: { name: 'closePage', signals: [] },
-          title: 'Close page',
+          action: { name: 'closePage' },
         },
       ],
       [
@@ -230,7 +226,6 @@ describe('Synthetics JavaScript formatter', () => {
             modifiers: 0,
             clickCount: 1,
           },
-          title: 'Click text=Babel Minify',
         },
         {
           pageAlias: 'page2',
@@ -243,15 +238,13 @@ describe('Synthetics JavaScript formatter', () => {
             modifiers: 0,
             clickCount: 1,
           },
-          title: 'Click :nth-match(a:has-text("babel-minify"), 3)',
         },
       ],
       [
         {
           pageAlias: 'page2',
           frameUrl: 'https://github.com/topics/babel-minify',
-          action: { name: 'closePage', signals: [] },
-          title: 'Close page',
+          action: { name: 'closePage' },
         },
       ],
     ]);
@@ -265,8 +258,7 @@ describe('Synthetics JavaScript formatter', () => {
           [
             {
               frameUrl: 'https://vigneshh.in/',
-              action: { name: 'navigate', url: 'https://vigneshh.in/', signals: [] },
-              title: 'Go to https://vigneshh.in/',
+              action: { name: 'navigate', url: 'https://vigneshh.in/' },
             },
             {
               frameUrl: 'https://vigneshh.in/',
@@ -278,7 +270,6 @@ describe('Synthetics JavaScript formatter', () => {
                 modifiers: 0,
                 clickCount: 1,
               },
-              title: 'Click text=Tailor',
             },
             {
               pageAlias: 'page1',
@@ -296,13 +287,11 @@ describe('Synthetics JavaScript formatter', () => {
                 modifiers: 0,
                 clickCount: 1,
               },
-              title: 'Click text=Packages 0',
             },
             {
               pageAlias: 'page1',
               frameUrl: 'https://github.com/orgs/zalando/packages?repo_name=tailor',
-              action: { name: 'closePage', signals: [] },
-              title: 'Close page',
+              action: { name: 'closePage' },
             },
             {
               frameUrl: 'https://vigneshh.in/',
@@ -314,14 +303,11 @@ describe('Synthetics JavaScript formatter', () => {
                 modifiers: 0,
                 clickCount: 1,
               },
-              committed: true,
-              title: 'Click text=Babel Minify',
             },
             {
               pageAlias: 'page2',
               frameUrl: 'https://github.com/babel/minify',
-              action: { name: 'closePage', signals: [] },
-              title: 'Close page',
+              action: { name: 'closePage' },
             },
           ],
         ])
@@ -336,8 +322,7 @@ describe('Synthetics JavaScript formatter', () => {
           [
             {
               frameUrl: 'https://vigneshh.in/',
-              action: { name: 'navigate', url: 'https://vigneshh.in/', signals: [] },
-              title: 'Go to https://vigneshh.in/',
+              action: { name: 'navigate', url: 'https://vigneshh.in/' },
             },
             {
               frameUrl: 'https://vigneshh.in/',
@@ -349,7 +334,6 @@ describe('Synthetics JavaScript formatter', () => {
                 modifiers: 0,
                 clickCount: 1,
               },
-              title: 'Click text=Tailor',
             },
             {
               pageAlias: 'page1',
@@ -367,15 +351,13 @@ describe('Synthetics JavaScript formatter', () => {
                 modifiers: 0,
                 clickCount: 1,
               },
-              title: 'Click text=Packages 0',
             },
           ],
           [
             {
               pageAlias: 'page1',
               frameUrl: 'https://github.com/orgs/zalando/packages?repo_name=tailor',
-              action: { name: 'closePage', signals: [] },
-              title: 'Close page',
+              action: { name: 'closePage' },
             },
             {
               frameUrl: 'https://vigneshh.in/',
@@ -387,15 +369,13 @@ describe('Synthetics JavaScript formatter', () => {
                 modifiers: 0,
                 clickCount: 1,
               },
-              title: 'Click text=Babel Minify',
             },
           ],
           [
             {
               pageAlias: 'page2',
               frameUrl: 'https://github.com/babel/minify',
-              action: { name: 'closePage', signals: [] },
-              title: 'Close page',
+              action: { name: 'closePage' },
             },
           ],
         ])
@@ -410,8 +390,7 @@ describe('Synthetics JavaScript formatter', () => {
           [
             {
               frameUrl: 'https://vigneshh.in/',
-              action: { name: 'navigate', url: 'https://vigneshh.in/', signals: [] },
-              title: 'Go to https://vigneshh.in/',
+              action: { name: 'navigate', url: 'https://vigneshh.in/' },
             },
             {
               frameUrl: 'https://vigneshh.in/',
@@ -423,7 +402,6 @@ describe('Synthetics JavaScript formatter', () => {
                 modifiers: 0,
                 clickCount: 1,
               },
-              title: 'Click text=Tailor',
             },
             {
               pageAlias: 'page1',
@@ -441,15 +419,13 @@ describe('Synthetics JavaScript formatter', () => {
                 modifiers: 0,
                 clickCount: 1,
               },
-              title: 'Click text=Packages 0',
             },
           ],
           [
             {
               pageAlias: 'page1',
               frameUrl: 'https://github.com/orgs/zalando/packages?repo_name=tailor',
-              action: { name: 'closePage', signals: [] },
-              title: 'Close page',
+              action: { name: 'closePage' },
             },
           ],
           [
@@ -463,7 +439,6 @@ describe('Synthetics JavaScript formatter', () => {
                 modifiers: 0,
                 clickCount: 1,
               },
-              title: 'Click text=Babel Minify',
             },
             {
               pageAlias: 'page2',
@@ -476,15 +451,13 @@ describe('Synthetics JavaScript formatter', () => {
                 modifiers: 0,
                 clickCount: 1,
               },
-              title: 'Click :nth-match(a:has-text("babel-minify"), 3)',
             },
           ],
           [
             {
               pageAlias: 'page2',
               frameUrl: 'https://github.com/topics/babel-minify',
-              action: { name: 'closePage', signals: [] },
-              title: 'Close page',
+              action: { name: 'closePage' },
             },
           ],
         ])
