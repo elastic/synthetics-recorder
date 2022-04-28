@@ -23,7 +23,9 @@ THE SOFTWARE.
 */
 
 import { Action, ActionInContext, Signal, Steps } from '@elastic/synthetics';
-const PlaywrightGenerator = require('playwright/lib/server/supplements/recorder/javascript');
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore unit tests won't run without this ignore because there is no type declaration for `PlaywrightGenerator`
+import * as PlaywrightGenerator from 'playwright/lib/server/supplements/recorder/javascript';
 
 function toAssertCall(pageAlias: string, action: Action) {
   const { command, selector, value } = action;
