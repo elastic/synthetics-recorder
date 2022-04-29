@@ -200,12 +200,11 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
       if (signals.popup && signals.popup.popupAlias && !isVarHoisted) {
         leftHandSide = `const [${signals.popup.popupAlias}] = `;
       } else if (isVarHoisted) {
-        leftHandSide = `${signals.popup?.popupAlias} = `;
+        leftHandSide = `[${signals.popup?.popupAlias}] = `;
       } else if (signals.download) {
         leftHandSide = `const [download] = `;
       }
-      const rightHandSide = isVarHoisted ? `(await Promise.all([` : `await Promise.all([`;
-      formatter.add(`${leftHandSide}${rightHandSide}`);
+      formatter.add(`${leftHandSide}await Promise.all([`);
     }
 
     // Popup signals.
@@ -232,10 +231,7 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
       formatter.add(`${prefix}${subject}.${actionCall}${suffix}`);
 
       if (emitPromiseAll) {
-        const base = isVarHoisted ? ']))' : '])';
-        const popupAlias = signals.popup?.popupAlias;
-        const accessor = popupAlias && this.isVarHoisted(popupAlias) ? '[0]' : '';
-        formatter.add(base + accessor + ';');
+        formatter.add(']);');
       } else if (signals.assertNavigation) {
         formatter.add(
           `  expect(${pageAlias}.url()).toBe(${quote(signals.assertNavigation.url ?? '')});`
