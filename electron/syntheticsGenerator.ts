@@ -184,7 +184,6 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
 
     const signals = toSignalMap(action);
 
-    const isVarHoisted = signals.popup?.popupAlias && this.isVarHoisted(signals.popup.popupAlias);
     if (signals.dialog) {
       formatter.add(`  ${pageAlias}.once('dialog', dialog => {
     console.log(\`Dialog message: $\{dialog.message()}\`);
@@ -194,6 +193,7 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
 
     const emitPromiseAll = signals.waitForNavigation || signals.popup || signals.download;
     if (emitPromiseAll) {
+      const isVarHoisted = signals.popup?.popupAlias && this.isVarHoisted(signals.popup.popupAlias);
       // Generate either await Promise.all([]) or
       // const [popup1] = await Promise.all([]).
       let leftHandSide = '';
