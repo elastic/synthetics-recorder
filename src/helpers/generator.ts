@@ -22,7 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Action, Step, Steps } from '@elastic/synthetics';
+import type { Step, Steps } from '@elastic/synthetics';
+import { actionTitle } from '../common/shared';
 import { ActionContext } from '../common/types';
 
 /**
@@ -47,38 +48,6 @@ export function generateIR(steps: Steps): Steps {
   }
 
   return result;
-}
-
-function actionTitle(action: Action) {
-  switch (action.name) {
-    case 'openPage':
-      return `Open new page`;
-    case 'closePage':
-      return `Close page`;
-    case 'check':
-      return `Check ${action.selector}`;
-    case 'uncheck':
-      return `Uncheck ${action.selector}`;
-    case 'click': {
-      if (action.clickCount === 1) return `Click ${action.selector}`;
-      if (action.clickCount === 2) return `Double click ${action.selector}`;
-      if (action.clickCount === 3) return `Triple click ${action.selector}`;
-      return `${action.clickCount}× click`;
-    }
-    case 'fill':
-      return `Fill ${action.selector}`;
-    case 'setInputFiles':
-      if (action.files?.length === 0) return `Clear selected files`;
-      else return `Upload ${action.files?.join(', ')}`;
-    case 'navigate':
-      return `Go to ${action.url}`;
-    case 'press':
-      return `Press ${action.key}` + (action.modifiers ? ' with modifiers' : '');
-    case 'select':
-      return `Select ${action.options?.join(', ')}`;
-    case 'assert':
-      return `Assert`;
-  }
 }
 
 const getActionCount = (prev: number, cur: Step) => prev + cur.actions.length;
