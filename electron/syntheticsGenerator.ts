@@ -341,20 +341,15 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
    * @returns an array that contains the names of all variables that need to be hoisted
    */
   findVarsToHoist(steps: Steps): string[] {
-    const pageAliasCounts = steps.reduce((acc, step) => {
-      const aliases = new Set<string>();
-      step.actions.forEach(({ action: { signals }, pageAlias }) => {
-        const popups = signals.filter(({ name }) => name === 'popup');
-        aliases.add(pageAlias);
-        popups.forEach(({ popupAlias }) => (popupAlias ? aliases.add(popupAlias) : null));
-      });
-      for (const alias of aliases) {
-        if (alias === 'page' || !alias) continue;
-        if (acc[alias]) acc[alias] += 1;
-        else acc[alias] = 1;
+    const aliasSet = new Set<string>();
+    for (const step of steps) {
+      for (const actionContext of step.actions) {
+        actionContext.action.signals
+          .filter(({ name, popupAlias }) => name === 'popup' && popupAlias)
+          .forEach(({ popupAlias }) => aliasSet.add(popupAlias as string));
+        aliasSet.add(actionContext.pageAlias);
       }
-      return acc;
-    }, {} as Record<string, number>);
-    return Object.keys(pageAliasCounts).filter(pageAlias => pageAliasCounts[pageAlias] > 1);
+    }
+    return Array.from(aliasSet).filter(alias => alias !== 'page');
   }
 }
