@@ -261,7 +261,7 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
 
   generateStepStart(name: string) {
     this.insideStep = true;
-    const formatter = new PlaywrightGenerator.JavaScriptFormatter(this.getDefaultFormatterOffset());
+    const formatter = new PlaywrightGenerator.JavaScriptFormatter(this.getDefaultOffset());
     formatter.add(`step(${quote(name)}, async () => {`);
     return formatter.format();
   }
@@ -271,7 +271,7 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
       return '';
     }
     this.insideStep = false;
-    const formatter = new PlaywrightGenerator.JavaScriptFormatter(this.getDefaultFormatterOffset());
+    const formatter = new PlaywrightGenerator.JavaScriptFormatter(this.getDefaultOffset());
     formatter.add(`});`);
     return formatter.format();
   }
@@ -324,7 +324,7 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
   }
 
   generateHoistedVars() {
-    const formatter = new PlaywrightGenerator.JavaScriptFormatter(this.getDefaultFormatterOffset());
+    const formatter = new PlaywrightGenerator.JavaScriptFormatter(this.getDefaultOffset());
     for (const varName of this.varsToHoist) {
       formatter.add(`let ${varName};`);
     }
@@ -335,7 +335,7 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
     return this.varsToHoist.indexOf(varName) >= 0;
   }
 
-  getDefaultFormatterOffset() {
+  getDefaultOffset() {
     return this.isSuite ? 2 : 0;
   }
 
