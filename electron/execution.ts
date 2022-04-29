@@ -206,6 +206,7 @@ async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
           name: parsed.step.name,
           status: parsed.step.status,
           duration: Math.ceil(parsed.step.duration.us / 1000),
+          error: parsed.error,
         },
       };
     }
