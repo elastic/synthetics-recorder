@@ -32,18 +32,18 @@ import { dialog, shell, BrowserWindow } from 'electron';
 import { fork, ChildProcess } from 'child_process';
 import logger from 'electron-log';
 import isDev from 'electron-is-dev';
-import { SyntheticsGenerator } from '@elastic/synthetics/dist/formatter/javascript';
 import { JOURNEY_DIR, PLAYWRIGHT_BROWSERS_PATH, EXECUTABLE_PATH } from './config';
-import { BrowserContext } from 'playwright';
-import { ActionInContext, Steps } from '@elastic/synthetics';
-import {
+import type { BrowserContext } from 'playwright';
+import type { ActionInContext, Steps } from '@elastic/synthetics';
+import type {
   GenerateCodeOptions,
-  RunJourneyOptions,
   RecordJourneyOptions,
+  RunJourneyOptions,
   StepEndEvent,
-  TestEvent,
   StepStatus,
+  TestEvent,
 } from '../common/types';
+import { SyntheticsGenerator } from './syntheticsGenerator';
 const SYNTHETICS_CLI = require.resolve('@elastic/synthetics/dist/cli');
 const IS_TEST_ENV = process.env.NODE_ENV === 'test';
 const CDP_TEST_PORT = parseInt(process.env.TEST_PORT ?? '61337') + 1;
@@ -277,7 +277,7 @@ async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
     if (isSuite) {
       await rm(filePath, { recursive: true, force: true });
     }
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error(error);
     sendTestEvent({
       event: 'journey/end',

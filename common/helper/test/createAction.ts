@@ -35,7 +35,7 @@ export const createAction = (name: string, overrides?: ActionContextOverride): A
     frameUrl: 'https://www.elastic.co',
     isMainFrame: true,
     committed: true,
-    pageAlias: 'pageAlias',
+    pageAlias: 'page',
   };
   return overrides
     ? {
