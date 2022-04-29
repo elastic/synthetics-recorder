@@ -35,6 +35,7 @@ import {
 import { AssertionSelect } from './Select';
 import { AssertionInfo } from './AssertionInfo';
 import { ActionContext } from '../../common/types';
+import { actionTitle } from '../../common/shared';
 
 interface IAssertion {
   actionContext: ActionContext;
@@ -52,10 +53,12 @@ function updateAction(
   value?: string
 ): ActionContext {
   const { action } = oldAction;
+  const title = actionTitle(action);
   return {
     ...oldAction,
     action: { ...action, command, selector, value },
     isOpen: false,
+    title: title ? title : oldAction?.title,
   };
 }
 
