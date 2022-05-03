@@ -31,6 +31,9 @@ pipeline {
     stage('Checkout') {
       options { skipDefaultCheckout() }
       steps {
+        whenTrue(isInternalCI() && isTag()) {
+          notifyStatus(slackStatus: 'good', subject: "[${env.REPO}] Build for the release tag *${env.TAG_NAME}* has been triggered", body: "Build: (<${env.RUN_DISPLAY_URL}|here>) for further details.")
+        }
         pipelineManager([ cancelPreviousRunningBuilds: [ when: 'PR' ] ])
         deleteDir()
         gitCheckout(basedir: "${BASE_DIR}", githubNotifyFirstTimeContributor: true)
@@ -42,7 +45,10 @@ pipeline {
     }
     stage('Install'){
       options { skipDefaultCheckout() }
-      when { expression { return !isTag() } }
+      when {
+        beforeAgent true
+        not { expression { return isInternalCI() && isTag() } }
+      }
       steps {
         withGithubNotify(context: "Install") {
           withNodeJSEnv() {
@@ -55,7 +61,10 @@ pipeline {
     }
     stage('Lint'){
       options { skipDefaultCheckout() }
-      when { expression { return !isTag() } }
+      when {
+        beforeAgent true
+        not { expression { return isInternalCI() && isTag() } }
+      }
       steps {
         withGithubNotify(context: "Lint") {
           withNodeJSEnv() {
@@ -81,7 +90,10 @@ pipeline {
     }
     stage('Build'){
       options { skipDefaultCheckout() }
-      when { expression { return !isTag() } }
+      when {
+        beforeAgent true
+        not { expression { return isInternalCI() && isTag() } }
+      }
       steps {
         withGithubNotify(context: "Build") {
           withNodeJSEnv() {
@@ -117,7 +129,7 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        expression { return !isTag() }
+        not { expression { return isInternalCI() && isTag() } }
       }
       steps {
         withGithubNotify(context: "Test") {
@@ -137,11 +149,26 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        tag pattern: 'v\\d+\\.\\d+.*', comparator: 'REGEXP'
+        allOf {
+          tag pattern: 'v\\d+\\.\\d+.*', comparator: 'REGEXP'
+          expression { isInternalCI() }
+        }
       }
+      environment {
+        BUCKET_NAME = 'internal-ci-artifacts'
+        BUCKET_SUBFOLDER = "${env.REPO}/${env.TAG_NAME}"
+        BUCKET_PATH = "gs://${env.BUCKET_NAME}/${env.BUCKET_SUBFOLDER}"
+        BUCKET_CREDENTIALS = 'internal-ci-gcs-plugin'
+        SIGNED_ARTIFACTS = 'signed-artifacts'
+        BUCKET_SUBFOLDER_SIGNED_ARTIFACTS = "${env.BUCKET_SUBFOLDER}/${env.SIGNED_ARTIFACTS}"
+        BUCKET_SIGNED_ARTIFACTS_PATH = "gs://${env.BUCKET_NAME}/${env.BUCKET_SUBFOLDER_SIGNED_ARTIFACTS}"
+        RELEASE_URL_MESSAGE = "(<https://github.com/elastic/${env.REPO}/releases/tag/${env.TAG_NAME}|${env.TAG_NAME}>)"
+      }
+      // QUESTION: It's possible to be all the packages on Linux?
       agent { label 'macosx' }
       stages {
         stage('Dist') {
+          options { skipDefaultCheckout() }
           steps {
             deleteDir()
             unstash 'source'
@@ -152,6 +179,43 @@ pipeline {
                   sh(label: 'npm release', script: 'npm run release')
                 }
               }
+            }
+          }
+        }
+        stage('Signing CI') {
+          options { skipDefaultCheckout() }
+          steps {
+            dir("${BASE_DIR}") {
+              // TODO: what artifacts to be uploaded
+              googleStorageUpload(bucket: env.BUCKET_PATH,
+                  credentialsId: env.BUCKET_CREDENTIALS,
+                  pathPrefix: 'build/packages/',
+                  pattern: 'build/packages/**/*',
+                  sharedPublicly: false,
+                  showInline: true)
+              build(wait: true, propagate: true, job: 'elastic+unified-release+master+sign-artifacts-with-gpg', parameters: [string(name: 'gcs_input_path', value: "${env.BUCKET_PATH}")])
+            }
+          }
+        }
+        stage('Download signed artifacts') {
+          options { skipDefaultCheckout() }
+          steps {
+            dir("${SIGNED_ARTIFACTS}") {
+              // TODO: what artifacts to be downloaded
+              googleStorageDownload(bucketUri: "${env.BUCKET_SIGNED_ARTIFACTS_PATH}/*",
+                    credentialsId: env.BUCKET_CREDENTIALS,
+                    localDirectory: 'build/packages/',
+                    pathPrefix: "${env.BUCKET_SUBFOLDER_SIGNED_ARTIFACTS}")
+            }
+            archiveArtifacts(allowEmptyArchive: true, artifacts: "${SIGNED_ARTIFACTS}/**/*")
+          }
+        }
+        stage('Publish GitHub Release') {
+          options { skipDefaultCheckout() }
+          steps {
+            withGhEnv(version: '2.4.0') {
+              // TODO: create GitHub release and upload the signed artifacts.
+              echo 'TBD'
             }
           }
         }
@@ -171,11 +235,14 @@ pipeline {
   }
   post {
     cleanup {
-      notifyBuildResult(prComment: true)
+      // Reporting disables in the `internal-ci` since credentials are not in place
+      // OTOH it avoids duplicated notifications
+      whenFalse(isInternalCI()){
+        notifyBuildResult(prComment: true)
+      }
     }
   }
 }
-
 
 def notifyStatus(def args = [:]) {
   releaseNotification(slackChannel: "${env.SLACK_CHANNEL}",
