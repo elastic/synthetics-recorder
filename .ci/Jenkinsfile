@@ -47,7 +47,7 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        not { expression { return isInternalCI() && isTag() } }
+        expression { return !isTag() }
       }
       steps {
         withGithubNotify(context: "Install") {
@@ -63,7 +63,7 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        not { expression { return isInternalCI() && isTag() } }
+        expression { return !isTag() }
       }
       steps {
         withGithubNotify(context: "Lint") {
@@ -92,7 +92,7 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        not { expression { return isInternalCI() && isTag() } }
+        expression { return !isTag() }
       }
       steps {
         withGithubNotify(context: "Build") {
@@ -129,7 +129,7 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        not { expression { return isInternalCI() && isTag() } }
+        expression { return !isTag() }
       }
       steps {
         withGithubNotify(context: "Test") {
