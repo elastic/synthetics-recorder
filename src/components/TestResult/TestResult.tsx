@@ -57,7 +57,7 @@ export function TestResult() {
     }
 
     // skip procedure when there are no failed steps
-    if (steps.length && result?.failed) {
+    if (isResultFlyoutVisible && steps.length && result?.failed) {
       fetchCodeForFailure(result);
     }
   }, [ipc, result, setResult, steps]);
