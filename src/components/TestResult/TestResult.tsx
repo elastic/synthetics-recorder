@@ -62,7 +62,7 @@ export function TestResult() {
     if (isResultFlyoutVisible && steps.length && result?.failed) {
       fetchCodeForFailure(result);
     }
-  }, [ipc, result, setResult]);
+  }, [ipc, result, setResult, steps, isResultFlyoutVisible]);
 
   const maxLineLength = useMemo(
     () => stepCodeToDisplay.split('\n').reduce((prev, cur) => Math.max(prev, cur.length), 0),
