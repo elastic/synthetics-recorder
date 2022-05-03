@@ -47,12 +47,14 @@ export function TestResult() {
    */
   useEffect(() => {
     async function fetchCodeForFailure(r: Result) {
-      const failedCode = await getCodeFromActions(
-        ipc,
-        // index of failed step will equal number of successful items
-        [steps[r.succeeded]],
-        'inline'
-      );
+      // index of failed step will equal number of successful items
+      const failedStep = steps[r.succeeded];
+      if (failedStep == null) {
+        setStepCodeToDisplay('');
+        return;
+      }
+
+      const failedCode = await getCodeFromActions(ipc, [failedStep], 'inline');
       setStepCodeToDisplay(failedCode);
     }
 
@@ -60,7 +62,7 @@ export function TestResult() {
     if (isResultFlyoutVisible && steps.length && result?.failed) {
       fetchCodeForFailure(result);
     }
-  }, [ipc, result, setResult, steps]);
+  }, [ipc, result, setResult]);
 
   const maxLineLength = useMemo(
     () => stepCodeToDisplay.split('\n').reduce((prev, cur) => Math.max(prev, cur.length), 0),
