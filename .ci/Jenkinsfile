@@ -47,7 +47,8 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        expression { return !isTag() }
+        //expression { return !isTag() }
+        not { changeRequest () }
       }
       steps {
         withGithubNotify(context: "Install") {
@@ -63,7 +64,8 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        expression { return !isTag() }
+        //expression { return !isTag() }
+        not { changeRequest () }
       }
       steps {
         withGithubNotify(context: "Lint") {
@@ -92,7 +94,8 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        expression { return !isTag() }
+        //expression { return !isTag() }
+        not { changeRequest () }
       }
       steps {
         withGithubNotify(context: "Build") {
@@ -129,7 +132,8 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        expression { return !isTag() }
+        //expression { return !isTag() }
+        not { changeRequest () }
       }
       steps {
         withGithubNotify(context: "Test") {
@@ -174,12 +178,13 @@ pipeline {
             deleteDir()
             unstash 'source'
             withNodeJSEnv() {
-              withCredentials([string(credentialsId: "2a9602aa-ab9f-4e52-baf3-b71ca88469c7", variable: 'GITHUB_TOKEN')]) {
+              // TODO: disable for the time being since we don't wanna mess up with the github release yet
+              //withCredentials([string(credentialsId: "2a9602aa-ab9f-4e52-baf3-b71ca88469c7", variable: 'GITHUB_TOKEN')]) {
                 dir("${BASE_DIR}"){
                   sh(label: 'npm ci', script: 'npm ci')
-                  //sh(label: 'npm release', script: 'npm run release')
+                  sh(label: 'npm release', script: 'npm run release')
                 }
-              }
+              //}
             }
           }
         }
