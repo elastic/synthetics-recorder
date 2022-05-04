@@ -150,7 +150,8 @@ pipeline {
       when {
         beforeAgent true
         allOf {
-          tag pattern: 'v\\d+\\.\\d+.*', comparator: 'REGEXP'
+          //tag pattern: 'v\\d+\\.\\d+.*', comparator: 'REGEXP'
+          expression { env.CHANGE_ID ==~ /.*238/ }
           expression { isInternalCI() }
         }
       }
@@ -176,7 +177,7 @@ pipeline {
               withCredentials([string(credentialsId: "2a9602aa-ab9f-4e52-baf3-b71ca88469c7", variable: 'GITHUB_TOKEN')]) {
                 dir("${BASE_DIR}"){
                   sh(label: 'npm ci', script: 'npm ci')
-                  sh(label: 'npm release', script: 'npm run release')
+                  //sh(label: 'npm release', script: 'npm run release')
                 }
               }
             }
