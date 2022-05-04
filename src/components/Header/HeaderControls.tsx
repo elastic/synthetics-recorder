@@ -72,7 +72,6 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
 
   useEffect(() => {
     const listener = (request: ClientBrowserRequest) => {
-      console.log('hi from listener!', request);
       if (isTestInProgress && isTestJourneyRequest(request)) {
         setIsTestInProgress(false);
         setResult(undefined);

@@ -143,8 +143,6 @@ export async function getCodeForFailedResult(
   return getCodeFromActions(ipc, [failedStep], journey.type);
 }
 
-export const isRecordJourneyRequest = (req: any): req is RecordJourneyRequest => !!req?.data?.url;
-
 export const isTestJourneyRequest = (req: any): req is TestJourneyRequest =>
   Array.isArray(req?.data?.steps) &&
   typeof req?.data?.code === 'string' &&
