@@ -36,7 +36,6 @@ import { JOURNEY_DIR, PLAYWRIGHT_BROWSERS_PATH, EXECUTABLE_PATH } from './config
 import type { BrowserContext } from 'playwright';
 import type { ActionInContext, Steps } from '@elastic/synthetics';
 import type {
-  ClientBrowserRequest,
   GenerateCodeOptions,
   RecordJourneyOptions,
   RunJourneyOptions,
@@ -45,56 +44,10 @@ import type {
   TestEvent,
 } from '../common/types';
 import { SyntheticsGenerator } from './syntheticsGenerator';
-import { isRecordJourneyRequest, isTestJourneyRequest } from '../src/common/shared';
+import { BrowserRequestController } from './BrowserRequestController';
 const SYNTHETICS_CLI = require.resolve('@elastic/synthetics/dist/cli');
 const IS_TEST_ENV = process.env.NODE_ENV === 'test';
 const CDP_TEST_PORT = parseInt(process.env.TEST_PORT ?? '61337') + 1;
-
-class BrowserRequestController {
-  private buffer: ClientBrowserRequest | null;
-
-  constructor() {
-    this.buffer = null;
-  }
-
-  public async executeRequest<T>(
-    req: ClientBrowserRequest,
-    browserWindow: BrowserWindow,
-    execution: (req: ClientBrowserRequest, browserWindow: BrowserWindow) => Promise<T>
-  ): Promise<T> {
-    const isRecordingRequest = isRecordJourneyRequest(req);
-    const isTestRequest = isTestJourneyRequest(req);
-    if (!this.canRunRequest()) {
-      if (isRecordingRequest) {
-        logger.warn(
-          'Cannot start recording a journey, a browser operation is already in progress.'
-        );
-      } else if (isTestRequest) {
-        logger.warn('Cannot start testing a journey, a browser operation is already in progress.');
-      }
-      // drop any requests we receive while a browser is running
-      return ipc.callRenderer(browserWindow, 'browser-request-failure', req);
-    }
-
-    this.buffer = req;
-
-    try {
-      return await execution(req, browserWindow);
-    } catch (e) {
-      logger.error(e);
-    } finally {
-      this.clearBuffer();
-    }
-  }
-
-  public canRunRequest() {
-    return this.buffer === null;
-  }
-
-  public clearBuffer() {
-    this.buffer = null;
-  }
-}
 
 const requestController = new BrowserRequestController();
 
