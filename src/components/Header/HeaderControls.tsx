@@ -23,9 +23,10 @@ THE SOFTWARE.
 */
 
 import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import { RecordingStatus, Setter } from '../../common/types';
+import { CommunicationContext } from '../../contexts/CommunicationContext';
 import { RecordingContext } from '../../contexts/RecordingContext';
 import { StepsContext } from '../../contexts/StepsContext';
 import { TestContext } from '../../contexts/TestContext';
@@ -34,6 +35,8 @@ import { ControlButton } from '../ControlButton';
 import { TestButton } from '../TestButton';
 import { RecordingStatusIndicator } from './StatusIndicator';
 import { UrlField } from './UrlField';
+import { isTestJourneyRequest } from '../../common/shared';
+import type { ClientBrowserRequest } from '../../../common/types';
 
 const Header = styled(EuiFlexGroup)`
   background-color: ${props => props.theme.colors.emptyShade};
@@ -58,12 +61,28 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
 
   const { steps } = useContext(StepsContext);
 
+  const { ipc } = useContext(CommunicationContext);
+
   const {
     isTestInProgress,
     onTest: startTest,
     setIsTestInProgress,
     setResult,
   } = useContext(TestContext);
+
+  useEffect(() => {
+    const listener = (request: ClientBrowserRequest) => {
+      console.log('hi from listener!', request);
+      if (isTestInProgress && isTestJourneyRequest(request)) {
+        setIsTestInProgress(false);
+        setResult(undefined);
+      }
+    };
+    ipc.answerMain('browser-request-failure', listener);
+    return () => {
+      ipc.removeListener('browser-request-failure', listener);
+    };
+  }, [ipc, isTestInProgress, setIsTestInProgress, setResult]);
 
   const onTest = useCallback(() => {
     setResult(undefined);
@@ -122,11 +141,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
         <EuiFlexGroup gutterSize="m">
           <TestButtonDivider>
             <TestButton
-              isDisabled={
-                isTestInProgress ||
-                steps.length === 0 ||
-                recordingStatus !== RecordingStatus.NotRecording
-              }
+              isDisabled={isTestInProgress || steps.length === 0}
               showTooltip={steps.length === 0}
               onTest={onTest}
             />

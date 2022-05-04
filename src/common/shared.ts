@@ -25,7 +25,12 @@ THE SOFTWARE.
 import type { Step, Steps } from '@elastic/synthetics';
 import { RendererProcessIpc } from 'electron-better-ipc';
 import React from 'react';
-import type { Journey, JourneyType } from '../../common/types';
+import type {
+  Journey,
+  JourneyType,
+  RecordJourneyRequest,
+  TestJourneyRequest,
+} from '../../common/types';
 
 export const COMMAND_SELECTOR_OPTIONS = [
   {
@@ -137,3 +142,10 @@ export async function getCodeForFailedResult(
 
   return getCodeFromActions(ipc, [failedStep], journey.type);
 }
+
+export const isRecordJourneyRequest = (req: any): req is RecordJourneyRequest => !!req?.data?.url;
+
+export const isTestJourneyRequest = (req: any): req is TestJourneyRequest =>
+  Array.isArray(req?.data?.steps) &&
+  typeof req?.data?.code === 'string' &&
+  typeof req?.data?.isSuite === 'boolean';
