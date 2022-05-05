@@ -213,7 +213,7 @@ pipeline {
                 // TODO: create GitHub release and upload the signed artifacts.
                 sh(label: 'publish release', script:
                   """
-                    ls -l dist/*.* || true
+                    ls -l ${DIST_FOLDER}/*.* || true
                     gh \
                       release \
                       create \
@@ -221,7 +221,7 @@ pipeline {
                       --draft \
                       --title "${TAG_NAME}" \
                       --repo v1v/${REPO} \
-                      dist/*.*
+                      ${DIST_FOLDER}/*.*
                   """)
               }
             }
@@ -262,13 +262,11 @@ def notifyStatus(def args = [:]) {
 }
 
 def downloadSignedBinaries() {
-  supportSignedBinaries().each { extension ->
-    googleStorageDownload(bucketUri: "${env.BUCKET_SIGNED_ARTIFACTS_PATH}/*.${extension}",
-          credentialsId: env.BUCKET_CREDENTIALS,
-          localDirectory: "${DIST_FOLDER}/",
-          pathPrefix: "${env.BUCKET_SUBFOLDER_SIGNED_ARTIFACTS}/${DIST_FOLDER}")
-    archiveArtifacts(allowEmptyArchive: false, artifacts: "*.${extension}")
-  }
+  googleStorageDownload(bucketUri: "${env.BUCKET_SIGNED_ARTIFACTS_PATH}/*",
+        credentialsId: env.BUCKET_CREDENTIALS,
+        localDirectory: "${DIST_FOLDER}/",
+        pathPrefix: "${env.BUCKET_SUBFOLDER_SIGNED_ARTIFACTS}")
+  archiveArtifacts(allowEmptyArchive: false, artifacts: "${DIST_FOLDER}/*.*")
 }
 
 def uploadBinariesToBeSigned() {
@@ -283,6 +281,5 @@ def uploadBinariesToBeSigned() {
 }
 
 def supportSignedBinaries() {
-  return ['deb']
-  //return ['deb', 'dmg', 'exe', 'zip']
+  return ['deb', 'dmg', 'exe', 'zip']
 }
