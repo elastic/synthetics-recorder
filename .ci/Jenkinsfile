@@ -178,13 +178,10 @@ pipeline {
             deleteDir()
             unstash 'source'
             withNodeJSEnv() {
-              // TODO: disable for the time being since we don't wanna mess up with the github release yet
-              //withCredentials([string(credentialsId: "2a9602aa-ab9f-4e52-baf3-b71ca88469c7", variable: 'GITHUB_TOKEN')]) {
-                dir("${BASE_DIR}"){
-                  sh(label: 'npm ci', script: 'npm ci')
-                  sh(label: 'npm release', script: 'npm run release')
-                }
-              //}
+              dir("${BASE_DIR}"){
+                sh(label: 'npm ci', script: 'npm ci')
+                sh(label: 'npm release-ci', script: 'npm run release-ci')
+              }
             }
           }
         }
