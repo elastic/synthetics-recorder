@@ -11,7 +11,6 @@ pipeline {
     DOCKER_ELASTIC_SECRET = 'secret/observability-team/ci/docker-registry/prod'
     JOB_GIT_CREDENTIALS = "f6c7695a-671e-4f4f-a331-acdce44ff9ba"
     PIPELINE_LOG_LEVEL = "INFO"
-    RELEASE_URL_MESSAGE = "(<https://github.com/elastic/${env.REPO}/releases/tag/${env.TAG_NAME}|${env.TAG_NAME}>)"
     NOTIFY_TO = 'victor.martinez+synthetics-recorder@elastic.co'
   }
   options {
@@ -167,9 +166,10 @@ pipeline {
         SIGNED_ARTIFACTS = 'signed-artifacts'
         BUCKET_SUBFOLDER_SIGNED_ARTIFACTS = "${env.BUCKET_SUBFOLDER}/${env.SIGNED_ARTIFACTS}"
         BUCKET_SIGNED_ARTIFACTS_PATH = "gs://${env.BUCKET_NAME}/${env.BUCKET_SUBFOLDER_SIGNED_ARTIFACTS}"
+        DIST_FOLDER = 'dist'
+        TAG_NAME = 'test-purpose' // TODO: to be removed
         RELEASE_URL_MESSAGE = "(<https://github.com/elastic/${env.REPO}/releases/tag/${env.TAG_NAME}|${env.TAG_NAME}>)"
       }
-      // QUESTION: It's possible to be all the packages on Linux?
       agent { label 'macosx' }
       stages {
         stage('Dist') {
@@ -189,13 +189,11 @@ pipeline {
           options { skipDefaultCheckout() }
           steps {
             dir("${BASE_DIR}") {
-              googleStorageUpload(bucket: env.BUCKET_PATH,
-                  credentialsId: env.BUCKET_CREDENTIALS,
-                  pathPrefix: 'dist/',
-                  pattern: 'dist/Elastic*.*',
-                  sharedPublicly: false,
-                  showInline: true)
-              build(wait: true, propagate: true, job: 'elastic+unified-release+master+sign-artifacts-with-gpg', parameters: [string(name: 'gcs_input_path', value: "${env.BUCKET_PATH}")])
+              uploadBinariesToBeSigned()
+              build(job: 'elastic+unified-release+master+sign-artifacts-with-gpg',
+                    parameters: [string(name: 'gcs_input_path', value: "${env.BUCKET_PATH}")],
+                    wait: true,
+                    propagate: true)
             }
           }
         }
@@ -203,11 +201,7 @@ pipeline {
           options { skipDefaultCheckout() }
           steps {
             dir("${SIGNED_ARTIFACTS}") {
-              googleStorageDownload(bucketUri: "${env.BUCKET_SIGNED_ARTIFACTS_PATH}/*",
-                    credentialsId: env.BUCKET_CREDENTIALS,
-                    localDirectory: 'dist/',
-                    pathPrefix: "${env.BUCKET_SUBFOLDER_SIGNED_ARTIFACTS}")
-              archiveArtifacts(allowEmptyArchive: false, artifacts: "**/*")
+              downloadSignedBinaries()
             }
           }
         }
@@ -217,7 +211,18 @@ pipeline {
             dir("${SIGNED_ARTIFACTS}") {
               withGhEnv(version: '2.4.0') {
                 // TODO: create GitHub release and upload the signed artifacts.
-                sh 'ls -la'
+                sh(label: 'publish release', script:
+                  """
+                    ls -l dist/*.* || true
+                    gh \
+                      release \
+                      create \
+                      "${TAG_NAME}" \
+                      --draft \
+                      --title "${TAG_NAME}" \
+                      --repo v1v/${REPO} \
+                      dist/*.*
+                  """)
               }
             }
           }
@@ -254,4 +259,30 @@ def notifyStatus(def args = [:]) {
                       to: "${env.NOTIFY_TO}",
                       subject: args.subject,
                       body: args.body)
+}
+
+def downloadSignedBinaries() {
+  supportSignedBinaries().each { extension ->
+    googleStorageDownload(bucketUri: "${env.BUCKET_SIGNED_ARTIFACTS_PATH}/*.${extension}",
+          credentialsId: env.BUCKET_CREDENTIALS,
+          localDirectory: "${DIST_FOLDER}/",
+          pathPrefix: "${env.BUCKET_SUBFOLDER_SIGNED_ARTIFACTS}/${DIST_FOLDER}")
+    archiveArtifacts(allowEmptyArchive: false, artifacts: "*.${extension}")
+  }
+}
+
+def uploadBinariesToBeSigned() {
+  supportSignedBinaries().each { extension ->
+    googleStorageUpload(bucket: env.BUCKET_PATH,
+                        credentialsId: env.BUCKET_CREDENTIALS,
+                        pathPrefix: "${env.DIST_FOLDER}/",
+                        pattern: "${env.DIST_FOLDER}/*.${extension}",
+                        sharedPublicly: false,
+                        showInline: true)
+  }
+}
+
+def supportSignedBinaries() {
+  return ['deb']
+  //return ['deb', 'dmg', 'exe', 'zip']
 }
