@@ -189,11 +189,10 @@ pipeline {
           options { skipDefaultCheckout() }
           steps {
             dir("${BASE_DIR}") {
-              // TODO: what artifacts to be uploaded
               googleStorageUpload(bucket: env.BUCKET_PATH,
                   credentialsId: env.BUCKET_CREDENTIALS,
-                  pathPrefix: 'build/packages/',
-                  pattern: 'build/packages/**/*',
+                  pathPrefix: 'dist/',
+                  pattern: 'dist/Elastic*.*',
                   sharedPublicly: false,
                   showInline: true)
               build(wait: true, propagate: true, job: 'elastic+unified-release+master+sign-artifacts-with-gpg', parameters: [string(name: 'gcs_input_path', value: "${env.BUCKET_PATH}")])
@@ -204,21 +203,22 @@ pipeline {
           options { skipDefaultCheckout() }
           steps {
             dir("${SIGNED_ARTIFACTS}") {
-              // TODO: what artifacts to be downloaded
               googleStorageDownload(bucketUri: "${env.BUCKET_SIGNED_ARTIFACTS_PATH}/*",
                     credentialsId: env.BUCKET_CREDENTIALS,
-                    localDirectory: 'build/packages/',
+                    localDirectory: 'dist/',
                     pathPrefix: "${env.BUCKET_SUBFOLDER_SIGNED_ARTIFACTS}")
+              archiveArtifacts(allowEmptyArchive: false, artifacts: "**/*")
             }
-            archiveArtifacts(allowEmptyArchive: true, artifacts: "${SIGNED_ARTIFACTS}/**/*")
           }
         }
         stage('Publish GitHub Release') {
           options { skipDefaultCheckout() }
           steps {
-            withGhEnv(version: '2.4.0') {
-              // TODO: create GitHub release and upload the signed artifacts.
-              echo 'TBD'
+            dir("${SIGNED_ARTIFACTS}") {
+              withGhEnv(version: '2.4.0') {
+                // TODO: create GitHub release and upload the signed artifacts.
+                sh 'ls -la'
+              }
             }
           }
         }
