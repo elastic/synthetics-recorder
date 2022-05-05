@@ -26,9 +26,9 @@ import type { Step, Steps } from '@elastic/synthetics';
 import { RendererProcessIpc } from 'electron-better-ipc';
 import React from 'react';
 import type {
+  ClientBrowserRequest,
   Journey,
   JourneyType,
-  RecordJourneyRequest,
   TestJourneyRequest,
 } from '../../common/types';
 
@@ -143,7 +143,11 @@ export async function getCodeForFailedResult(
   return getCodeFromActions(ipc, [failedStep], journey.type);
 }
 
-export const isTestJourneyRequest = (req: any): req is TestJourneyRequest =>
-  Array.isArray(req?.data?.steps) &&
-  typeof req?.data?.code === 'string' &&
-  typeof req?.data?.isSuite === 'boolean';
+export const isTestJourneyRequest = (req: ClientBrowserRequest): req is TestJourneyRequest => {
+  return (
+    'code' in req.data &&
+    'isSuite' in req.data &&
+    'steps' in req.data &&
+    Array.isArray(req.data.steps)
+  );
+};
