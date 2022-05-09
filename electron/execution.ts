@@ -91,46 +91,50 @@ let actionListener = new EventEmitter();
 let isBrowserRunning = false;
 
 async function onRecordJourneys(data: { url: string }, browserWindow: BrowserWindow) {
-  if (isBrowserRunning) {
-    throw new Error(
-      'Cannot start recording a journey, a browser operation is already in progress.'
-    );
-  }
-  isBrowserRunning = true;
-  const { browser, context } = await launchContext();
-  browserContext = context;
-  actionListener = new EventEmitter();
-  // Listen to actions from Playwright recording session
-  const actionsHandler = (actions: ActionInContext[]) => {
-    ipc.callRenderer(browserWindow, 'change', { actions });
-  };
-  actionListener.on('actions', actionsHandler);
-
-  // _enableRecorder is private method, not defined in BrowserContext type
-  await (context as any)._enableRecorder({
-    launchOptions: {},
-    contextOptions: {},
-    startRecording: true,
-    showRecorder: false,
-    actionListener,
-  });
-  await openPage(context, data.url);
-
-  const closeBrowser = async () => {
-    browserContext = null;
-    actionListener.removeListener('actions', actionsHandler);
-    try {
-      await browser.close();
-    } catch (e) {
-      logger.error('Browser close threw an error', e);
-    } finally {
-      isBrowserRunning = false;
+  try {
+    if (isBrowserRunning) {
+      throw new Error(
+        'Cannot start recording a journey, a browser operation is already in progress.'
+      );
     }
-  };
+    isBrowserRunning = true;
+    const { browser, context } = await launchContext();
+    browserContext = context;
+    actionListener = new EventEmitter();
+    // Listen to actions from Playwright recording session
+    const actionsHandler = (actions: ActionInContext[]) => {
+      ipc.callRenderer(browserWindow, 'change', { actions });
+    };
+    actionListener.on('actions', actionsHandler);
 
-  ipc.on('stop', closeBrowser);
+    // _enableRecorder is private method, not defined in BrowserContext type
+    await (context as any)._enableRecorder({
+      launchOptions: {},
+      contextOptions: {},
+      startRecording: true,
+      showRecorder: false,
+      actionListener,
+    });
+    await openPage(context, data.url);
 
-  await once(browser, 'disconnected');
+    const closeBrowser = async () => {
+      browserContext = null;
+      actionListener.removeListener('actions', actionsHandler);
+      try {
+        await browser.close();
+      } catch (e) {
+        logger.error('Browser close threw an error', e);
+      }
+    };
+
+    ipc.on('stop', closeBrowser);
+
+    await once(browser, 'disconnected');
+  } catch (e) {
+    logger.error(e);
+  } finally {
+    isBrowserRunning = false;
+  }
 }
 
 /**
