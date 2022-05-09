@@ -85,15 +85,3 @@ export type GenerateCodeOptions = {
   actions: Steps;
   isSuite: boolean;
 };
-
-export interface RecordJourneyRequest {
-  data: {
-    url: string;
-  };
-}
-
-export interface TestJourneyRequest {
-  data: RunJourneyOptions;
-}
-
-export type ClientBrowserRequest = RecordJourneyRequest | TestJourneyRequest;
