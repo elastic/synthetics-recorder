@@ -174,12 +174,16 @@ pipeline {
       stages {
         stage('Dist') {
           options { skipDefaultCheckout() }
+          environment {
+            CSC_KEYCHAIN = "${WORKSPACE}/Elastic.keychain.db"
+          }
           steps {
             deleteDir()
             unstash 'source'
             withNodeJSEnv() {
               dir("${BASE_DIR}"){
                 sh(label: 'npm ci', script: 'npm ci')
+                sh(label: 'keychain', script: 'vault read -field=db secret/jenkins-ci/macos-codesign-keychain | base64 --decode > ${CSC_KEYCHAIN}')
                 sh(label: 'npm release-ci', script: 'npm run release-ci')
               }
             }
@@ -189,11 +193,12 @@ pipeline {
           options { skipDefaultCheckout() }
           steps {
             dir("${BASE_DIR}") {
-              uploadBinariesToBeSigned()
+              uploadBinariesToBeSigned(['deb', 'zip'])
               build(job: 'elastic+unified-release+master+sign-artifacts-with-gpg',
                     parameters: [string(name: 'gcs_input_path', value: "${env.BUCKET_PATH}")],
                     wait: true,
                     propagate: true)
+              uploadBinariesToBeSigned(['exe'])
             }
           }
         }
@@ -263,14 +268,14 @@ def notifyStatus(def args = [:]) {
 
 def downloadSignedBinaries() {
   googleStorageDownload(bucketUri: "${env.BUCKET_SIGNED_ARTIFACTS_PATH}/*",
-        credentialsId: env.BUCKET_CREDENTIALS,
-        localDirectory: "${DIST_FOLDER}/",
-        pathPrefix: "${env.BUCKET_SUBFOLDER_SIGNED_ARTIFACTS}")
+                        credentialsId: env.BUCKET_CREDENTIALS,
+                        localDirectory: "${DIST_FOLDER}/",
+                        pathPrefix: "${env.BUCKET_SUBFOLDER_SIGNED_ARTIFACTS}")
   archiveArtifacts(allowEmptyArchive: false, artifacts: "${DIST_FOLDER}/*.*")
 }
 
-def uploadBinariesToBeSigned() {
-  supportSignedBinaries().each { extension ->
+def uploadBinariesToBeSigned(extensions = [:]) {
+  extensions?.each { extension ->
     googleStorageUpload(bucket: env.BUCKET_PATH,
                         credentialsId: env.BUCKET_CREDENTIALS,
                         pathPrefix: "${env.DIST_FOLDER}/",
@@ -278,8 +283,4 @@ def uploadBinariesToBeSigned() {
                         sharedPublicly: false,
                         showInline: true)
   }
-}
-
-def supportSignedBinaries() {
-  return ['deb', 'dmg', 'exe', 'zip']
 }
