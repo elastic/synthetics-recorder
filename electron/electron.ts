@@ -28,8 +28,9 @@ import isDev from 'electron-is-dev';
 import unhandled from 'electron-unhandled';
 import debug from 'electron-debug';
 import logger from 'electron-log';
-import setupListeners from './execution';
+import setupListeners, { MainWindowEvent } from './execution';
 import { buildMenu } from './menu';
+import { EventEmitter } from 'events';
 // For dev
 unhandled({ logger: err => logger.error(err) });
 debug({ isEnabled: true, showDevTools: false });
@@ -40,6 +41,8 @@ const BUILD_DIR = join(__dirname, '..', '..', 'build');
 // so we must access the process env directly
 const IS_TEST = process.env.NODE_ENV === 'test';
 const TEST_PORT = process.env.TEST_PORT;
+
+const mainWindowCloseEmitter = new EventEmitter();
 
 async function createWindow() {
   const win = new BrowserWindow({
@@ -62,6 +65,9 @@ async function createWindow() {
   } else {
     win.loadFile(join(BUILD_DIR, 'index.html'));
   }
+  win.on('close', () => {
+    mainWindowCloseEmitter.emit(MainWindowEvent.MAIN_CLOSE);
+  });
 }
 
 function createMenu() {
@@ -71,7 +77,7 @@ function createMenu() {
 
 app.whenReady().then(() => {
   createWindow();
-  setupListeners();
+  setupListeners(mainWindowCloseEmitter);
   createMenu();
 
   app.on('activate', function () {
