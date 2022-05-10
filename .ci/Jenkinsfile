@@ -33,7 +33,8 @@ pipeline {
         whenTrue(isInternalCI() && isTag()) {
           notifyStatus(slackStatus: 'good', subject: "[${env.REPO}] Build for the release tag *${env.TAG_NAME}* has been triggered", body: "Build: (<${env.RUN_DISPLAY_URL}|here>) for further details.")
         }
-        pipelineManager([ cancelPreviousRunningBuilds: [ when: 'PR' ] ])
+        // TODO: to be changed
+        // pipelineManager([ cancelPreviousRunningBuilds: [ when: 'PR' ] ])
         deleteDir()
         gitCheckout(basedir: "${BASE_DIR}", githubNotifyFirstTimeContributor: true)
         stash(allowEmpty: true, name: 'source', useDefaultExcludes: false)
@@ -160,14 +161,17 @@ pipeline {
       }
       environment {
         BUCKET_NAME = 'internal-ci-artifacts'
-        BUCKET_SUBFOLDER = "${env.REPO}/${env.TAG_NAME}"
+        // TODO: to be removed
+        TAG_NAME = 'test-purpose'
+        // TODO: to be changed
+        //BUCKET_SUBFOLDER = "${env.REPO}/${env.TAG_NAME}"
+        BUCKET_SUBFOLDER = "${env.REPO}/${env.TAG_NAME}/${env.BUILD_ID}"
         BUCKET_PATH = "gs://${env.BUCKET_NAME}/${env.BUCKET_SUBFOLDER}"
         BUCKET_CREDENTIALS = 'internal-ci-gcs-plugin'
         SIGNED_ARTIFACTS = 'signed-artifacts'
         BUCKET_SUBFOLDER_SIGNED_ARTIFACTS = "${env.BUCKET_SUBFOLDER}/${env.SIGNED_ARTIFACTS}"
         BUCKET_SIGNED_ARTIFACTS_PATH = "gs://${env.BUCKET_NAME}/${env.BUCKET_SUBFOLDER_SIGNED_ARTIFACTS}"
         DIST_FOLDER = 'dist'
-        TAG_NAME = 'test-purpose' // TODO: to be removed
         RELEASE_URL_MESSAGE = "(<https://github.com/elastic/${env.REPO}/releases/tag/${env.TAG_NAME}|${env.TAG_NAME}>)"
       }
       agent { label 'macosx' }
