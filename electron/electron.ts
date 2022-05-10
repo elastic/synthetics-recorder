@@ -42,9 +42,10 @@ const BUILD_DIR = join(__dirname, '..', '..', 'build');
 const IS_TEST = process.env.NODE_ENV === 'test';
 const TEST_PORT = process.env.TEST_PORT;
 
-const mainWindowCloseEmitter = new EventEmitter();
+let mainWindowEmitter: EventEmitter | null = null;
 
 async function createWindow() {
+  mainWindowEmitter = new EventEmitter();
   const win = new BrowserWindow({
     width: 1100,
     height: 700,
@@ -66,7 +67,11 @@ async function createWindow() {
     win.loadFile(join(BUILD_DIR, 'index.html'));
   }
   win.on('close', () => {
-    mainWindowCloseEmitter.emit(MainWindowEvent.MAIN_CLOSE);
+    mainWindowEmitter?.emit(MainWindowEvent.MAIN_CLOSE);
+  });
+  win.on('closed', () => {
+    mainWindowEmitter?.removeAllListeners();
+    mainWindowEmitter = null;
   });
 }
 
@@ -77,7 +82,10 @@ function createMenu() {
 
 app.whenReady().then(() => {
   createWindow();
-  setupListeners(mainWindowCloseEmitter);
+  if (mainWindowEmitter === null) {
+    throw Error('Main window event emitter cannot be null.');
+  }
+  setupListeners(mainWindowEmitter);
   createMenu();
 
   app.on('activate', function () {
