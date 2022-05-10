@@ -35,13 +35,17 @@ import {
 import { StepsContext } from '../../contexts/StepsContext';
 import { FormControl } from './FormControl';
 import { ActionContext } from '../../common/types';
+import { actionTitle } from '../../common/shared';
 
 function createUpdatedAction(field: string, value: string, context: ActionContext) {
-  return {
+  const actionContext = {
     ...context,
     action: { ...context.action, [field]: value },
     modified: true,
+    isOpen: false,
   };
+  const title = actionTitle(actionContext.action);
+  return title ? { ...actionContext, title } : actionContext;
 }
 
 interface IActionDetail {
@@ -52,18 +56,7 @@ interface IActionDetail {
 }
 
 export function ActionDetail({ actionContext, actionIndex, close, stepIndex }: IActionDetail) {
-  const { steps, onStepDetailChange } = useContext(StepsContext);
-  const onActionContextChange = (updatedAction: ActionContext, updatedActionIndex: number) => {
-    onStepDetailChange(
-      {
-        actions: steps[stepIndex].actions.map((actionToUpdate, index) =>
-          index === updatedActionIndex ? { ...updatedAction, isOpen: false } : actionToUpdate
-        ),
-        name: steps[stepIndex].name,
-      },
-      stepIndex
-    );
-  };
+  const { onUpdateAction } = useContext(StepsContext);
   const { action } = actionContext;
   const [selector, setSelector] = useState(action.selector || '');
   const [text, setText] = useState(action.text || '');
@@ -72,17 +65,17 @@ export function ActionDetail({ actionContext, actionIndex, close, stepIndex }: I
   const onSelectorChange = (value: string) => {
     if (!value) return;
     setSelector(value);
-    onActionContextChange(createUpdatedAction('selector', value, actionContext), actionIndex);
+    onUpdateAction(createUpdatedAction('selector', value, actionContext), stepIndex, actionIndex);
   };
   const onTextChange = (value: string) => {
     if (!value) return;
     setText(value);
-    onActionContextChange(createUpdatedAction('text', value, actionContext), actionIndex);
+    onUpdateAction(createUpdatedAction('text', value, actionContext), stepIndex, actionIndex);
   };
   const onURLChange = (value: string) => {
     if (!value) return;
     setUrl(value);
-    onActionContextChange(createUpdatedAction('url', value, actionContext), actionIndex);
+    onUpdateAction(createUpdatedAction('url', value, actionContext), stepIndex, actionIndex);
   };
 
   if (action.text !== text && typeof action.text !== 'undefined') {
