@@ -44,6 +44,7 @@ import type {
   TestEvent,
 } from '../common/types';
 import { SyntheticsGenerator } from './syntheticsGenerator';
+
 const SYNTHETICS_CLI = require.resolve('@elastic/synthetics/dist/cli');
 const IS_TEST_ENV = process.env.NODE_ENV === 'test';
 const CDP_TEST_PORT = parseInt(process.env.TEST_PORT ?? '61337') + 1;
@@ -87,9 +88,16 @@ async function openPage(context: BrowserContext, url: string) {
 
 let browserContext: BrowserContext | null = null;
 let actionListener = new EventEmitter();
+let isBrowserRunning = false;
 
 async function onRecordJourneys(data: { url: string }, browserWindow: BrowserWindow) {
   try {
+    if (isBrowserRunning) {
+      throw new Error(
+        'Cannot start recording a journey, a browser operation is already in progress.'
+      );
+    }
+    isBrowserRunning = true;
     const { browser, context } = await launchContext();
     browserContext = context;
     actionListener = new EventEmitter();
@@ -124,6 +132,8 @@ async function onRecordJourneys(data: { url: string }, browserWindow: BrowserWin
     await once(browser, 'disconnected');
   } catch (e) {
     logger.error(e);
+  } finally {
+    isBrowserRunning = false;
   }
 }
 
@@ -156,6 +166,10 @@ function addActionsToStepResult(steps: Steps, event: StepEndEvent): TestEvent {
 }
 
 async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
+  if (isBrowserRunning) {
+    throw new Error('Cannot start testing a journey, a browser operation is already in progress.');
+  }
+  isBrowserRunning = true;
   const parseOrSkip = (chunk: string): Array<Record<string, any>> => {
     // at times stdout ships multiple steps in one chunk, broken by newline,
     // so here we split on the newline
@@ -290,6 +304,7 @@ async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
     if (synthCliProcess) {
       synthCliProcess.kill();
     }
+    isBrowserRunning = false;
   }
 }
 

@@ -24,6 +24,7 @@ THE SOFTWARE.
 
 import { render as rtlRender, RenderResult, RenderOptions } from '@testing-library/react';
 import React from 'react';
+import { CommunicationContext, ICommunicationContext } from '../../contexts/CommunicationContext';
 import { IRecordingContext, RecordingContext } from '../../contexts/RecordingContext';
 import { IStepsContext, StepsContext } from '../../contexts/StepsContext';
 import { StyledComponentsEuiProvider } from '../../contexts/StyledComponentsEuiProvider';
@@ -32,6 +33,7 @@ import {
   getRecordingContextDefaults,
   getUrlContextDefaults,
   getStepsContextDefaults,
+  getCommunicationContextDefaults,
 } from './defaults';
 import { RenderContexts } from './RenderContexts';
 
@@ -40,6 +42,7 @@ export function render<ComponentType>(
   rtlRenderOptions?: Omit<RenderOptions, 'queries'>,
   options?: {
     contextOverrides?: {
+      communication?: Partial<ICommunicationContext>;
       recording?: Partial<IRecordingContext>;
       steps?: Partial<IStepsContext>;
       url?: Partial<IUrlContext>;
@@ -61,6 +64,11 @@ export function render<ComponentType>(
       defaults: getStepsContextDefaults(),
       Context: StepsContext,
       overrides: options?.contextOverrides?.steps,
+    },
+    {
+      defaults: getCommunicationContextDefaults(),
+      Context: CommunicationContext,
+      overrides: options?.contextOverrides?.communication,
     },
   ];
 

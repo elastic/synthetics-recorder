@@ -23,6 +23,7 @@ THE SOFTWARE.
 */
 
 import { RecordingStatus } from '../../common/types';
+import { ICommunicationContext } from '../../contexts/CommunicationContext';
 import { IRecordingContext } from '../../contexts/RecordingContext';
 import { IStepsContext } from '../../contexts/StepsContext';
 import { IUrlContext } from '../../contexts/UrlContext';
@@ -55,4 +56,13 @@ export const getStepsContextDefaults = (): IStepsContext => ({
   onSplitStep: jest.fn(),
   onStepDetailChange: jest.fn(),
   onUpdateAction: jest.fn(),
+});
+
+export const getCommunicationContextDefaults = (): ICommunicationContext => ({
+  // @ts-expect-error partial implementation for testing
+  ipc: {
+    answerMain: jest.fn(),
+    callMain: jest.fn(),
+    removeListener: jest.fn(),
+  },
 });

@@ -27,7 +27,7 @@ import { createContext } from 'react';
 
 const { ipcRenderer } = window.require('electron-better-ipc');
 
-interface ICommunicationContext {
+export interface ICommunicationContext {
   ipc: RendererProcessIpc;
 }
 
