@@ -300,20 +300,17 @@ def runReleaseWithKeychain() {
       [var: 'VAULT_ADDR', password: vault.vault_addr],
   ]){
     sh(label: 'npm release-ci with keychain', script: '''
-      source /usr/local/bin/bash_standard_lib.sh
       set +x
       echo 'prepare keychain'
       vault read -field=db secret/jenkins-ci/macos-codesign-keychain \
         | base64 --decode > ${CSC_KEYCHAIN}
 
       echo 'prepare developer-id'
-      DEVELOPER_ID=$(retry 5 \
-          vault read -field=developer-id secret/release/apple)
+      DEVELOPER_ID=$(vault read -field=developer-id secret/release/apple)
       export DEVELOPER_ID
 
       echo 'prepare keychain-password'
-      KEYCHAIN_PASSWORD=$(retry 5 \
-          vault read -field=keychain-password secret/release/apple)
+      KEYCHAIN_PASSWORD=$(vault read -field=keychain-password secret/release/apple)
       export KEYCHAIN_PASSWORD
 
       echo 'unblock keychain'
