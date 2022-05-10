@@ -295,19 +295,18 @@ def runReleaseWithKeychain() {
   }
   withEnvMask(
     vars: [
-      [var: 'VAULT_SECRET', password: vault.vault_secret_id],
-      [var: 'VAULT_TOKEN', password: vault.vault_role_id],
+      [var: 'VAULT_SECRET_ID_NOTARIZER', password: vault.vault_secret_id],
+      [var: 'VAULT_ROLE_ID_NOTARIZER', password: vault.vault_role_id],
       [var: 'VAULT_ADDR', password: vault.vault_addr],
   ]){
     sh(label: 'npm release-ci with keychain', script: '''
       set +x
-      echo 'prepare keychain'
-      vault read -field=db secret/jenkins-ci/macos-codesign-keychain \
-        | base64 --decode > ${CSC_KEYCHAIN}
+      echo 'prepare vault'
+      VAULT_TOKEN=$(vault write -field=token auth/approle/login role_id="$VAULT_ROLE_ID_NOTARIZER" secret_id="$VAULT_SECRET_ID_NOTARIZER")
+      export VAULT_TOKEN
 
-      echo 'prepare developer-id'
-      DEVELOPER_ID=$(vault read -field=developer-id secret/release/apple)
-      export DEVELOPER_ID
+      echo 'prepare keychain'
+      vault read -field=db secret/jenkins-ci/macos-codesign-keychain | base64 --decode > ${CSC_KEYCHAIN}
 
       echo 'prepare keychain-password'
       KEYCHAIN_PASSWORD=$(vault read -field=keychain-password secret/release/apple)
