@@ -289,21 +289,39 @@ def uploadBinariesToBeSigned(extensions = [:]) {
 }
 
 def runReleaseWithKeychain() {
-  sh(label: 'npm release-ci with keychain', script: '''
-    set +x
-    vault read -field=db secret/jenkins-ci/macos-codesign-keychain \
-      | base64 --decode > ${CSC_KEYCHAIN}
+  def vault = getVaultSecret(secret: 'secret/observability-team/ci/synthetics-recorder-macos-vault').data
+  if (!vault.containsKey('vault_secret_id') || !vault.containsKey('vault_role_id') || !vault.containsKey('vault_addr')) {
+    error("runReleaseWithKeychain: secret could not be accessed correctly")
+  }
+  withEnvMask(
+    vars: [
+      [var: 'VAULT_SECRET', password: vault.vault_secret_id],
+      [var: 'VAULT_TOKEN', password: vault.vault_role_id],
+      [var: 'VAULT_ADDR', password: vault.vault_addr],
+  ]){
+    sh(label: 'npm release-ci with keychain', script: '''
+      source /usr/local/bin/bash_standard_lib.sh
+      set +x
+      echo 'prepare keychain'
+      vault read -field=db secret/jenkins-ci/macos-codesign-keychain \
+        | base64 --decode > ${CSC_KEYCHAIN}
 
-    DEVELOPER_ID=$(retry 5 \
-        vault read -field=developer-id secret/release/apple)
-    export DEVELOPER_ID
+      echo 'prepare developer-id'
+      DEVELOPER_ID=$(retry 5 \
+          vault read -field=developer-id secret/release/apple)
+      export DEVELOPER_ID
 
-    KEYCHAIN_PASSWORD=$(retry 5 \
-        vault read -field=keychain-password secret/release/apple)
-    export KEYCHAIN_PASSWORD
+      echo 'prepare keychain-password'
+      KEYCHAIN_PASSWORD=$(retry 5 \
+          vault read -field=keychain-password secret/release/apple)
+      export KEYCHAIN_PASSWORD
 
-    security list-keychains -s "$KEYCHAIN"
-    security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$CSC_KEYCHAIN"
-    npm run release-ci
-    ''')
+      echo 'unblock keychain'
+      security list-keychains -s "$KEYCHAIN"
+      security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$CSC_KEYCHAIN"
+
+      echo 'run release-ci'
+      npm run release-ci
+      ''')
+  }
 }
