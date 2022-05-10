@@ -187,8 +187,7 @@ pipeline {
             withNodeJSEnv() {
               dir("${BASE_DIR}"){
                 sh(label: 'npm ci', script: 'npm ci')
-                sh(label: 'keychain', script: 'vault read -field=db secret/jenkins-ci/macos-codesign-keychain | base64 --decode > ${CSC_KEYCHAIN}')
-                sh(label: 'npm release-ci', script: 'npm run release-ci')
+                runReleaseWithKeychain()
               }
             }
           }
@@ -287,4 +286,24 @@ def uploadBinariesToBeSigned(extensions = [:]) {
                         sharedPublicly: false,
                         showInline: true)
   }
+}
+
+def runReleaseWithKeychain() {
+  sh(label: 'npm release-ci with keychain', script: '''
+    set +x
+    vault read -field=db secret/jenkins-ci/macos-codesign-keychain \
+      | base64 --decode > ${CSC_KEYCHAIN}
+
+    DEVELOPER_ID=$(retry 5 \
+        vault read -field=developer-id secret/release/apple)
+    export DEVELOPER_ID
+
+    KEYCHAIN_PASSWORD=$(retry 5 \
+        vault read -field=keychain-password secret/release/apple)
+    export KEYCHAIN_PASSWORD
+
+    security list-keychains -s "$KEYCHAIN"
+    security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$CSC_KEYCHAIN"
+    npm run release-ci
+    ''')
 }
