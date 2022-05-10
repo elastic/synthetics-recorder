@@ -313,7 +313,9 @@ def runReleaseWithKeychain() {
       export KEYCHAIN_PASSWORD
 
       echo 'unblock keychain'
+      set -x
       security list-keychains -s "$KEYCHAIN"
+      set +x
       security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$CSC_KEYCHAIN"
 
       echo 'run release-ci'
