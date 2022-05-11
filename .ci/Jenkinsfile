@@ -312,20 +312,13 @@ def runReleaseWithKeychain() {
       KEYCHAIN_PASSWORD=$(vault read -field=keychain-password secret/release/apple)
       export KEYCHAIN_PASSWORD
 
-      echo 'set default keychain'
+      echo 'set keychain'
       set -x
       security list-keychains -s "$CSC_KEYCHAIN"
-      security default-keychain -s "$CSC_KEYCHAIN"
 
       set +x
       echo 'unblock keychain'
       security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$CSC_KEYCHAIN"
-
-      set -x
-      security find-identity -v
-      security find-identity $CSC_KEYCHAIN -v
-      ls -l $CSC_KEYCHAIN
-      echo $DEVELOPER_ID
 
       echo 'run release-ci'
       DEBUG=electron-osx-sign npm run release-ci
