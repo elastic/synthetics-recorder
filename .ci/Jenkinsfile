@@ -173,7 +173,6 @@ pipeline {
         BUCKET_SIGNED_ARTIFACTS_PATH = "gs://${env.BUCKET_NAME}/${env.BUCKET_SUBFOLDER_SIGNED_ARTIFACTS}"
         DIST_FOLDER = 'dist'
         RELEASE_URL_MESSAGE = "(<https://github.com/elastic/${env.REPO}/releases/tag/${env.TAG_NAME}|${env.TAG_NAME}>)"
-        HOME = "${WORKSPACE}"
       }
       agent { label 'macos-code-signer' }
       stages {
@@ -319,6 +318,9 @@ def runReleaseWithKeychain() {
       set +x
       echo 'unblock keychain'
       security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$CSC_KEYCHAIN"
+
+      set -x
+      security find-identity -v
 
       echo 'run release-ci'
       DEBUG=electron-osx-sign npm run release-ci
