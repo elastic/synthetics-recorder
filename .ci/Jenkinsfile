@@ -318,8 +318,11 @@ def runReleaseWithKeychain() {
       set +x
       security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$CSC_KEYCHAIN"
 
+      set -x
+      security find-identity -v
+
       echo 'run release-ci'
-      npm run release-ci
+      DEBUG=electron-osx-sign npm run release-ci
       ''')
   }
 }
