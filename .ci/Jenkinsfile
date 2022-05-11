@@ -295,9 +295,8 @@ def runReleaseWithKeychain() {
   if (!vault.containsKey('vault_secret_id') || !vault.containsKey('vault_role_id') || !vault.containsKey('vault_addr')) {
     error("runReleaseWithKeychain: macos secret could not be accessed correctly")
   }
-  def apple = getVaultSecret(secret: 'secret/release/apple',
-                             role_id: vault.vault_role_id,
-                             secret_id: vault.vault_secret_id).data
+  def token = getVaultSecret.getVaultToken(vault.vault_addr, vault.vault_role_id, vault.vault_secret_id)
+  def apple = getVaultSecret.getVaultSecretObject(vault.vault_addr, 'secret/release/apple', token).data
   if (!apple.containsKey('developer-id') || !apple.containsKey('keychain-password')) {
     error("runReleaseWithKeychain: apple secret could not be accessed correctly")
   }
