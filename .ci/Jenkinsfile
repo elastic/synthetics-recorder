@@ -299,13 +299,14 @@ def runReleaseWithKeychain() {
   ]){
     sh(label: 'npm release-ci with keychain', script: '''
       set +x
-      export CSC_KEYCHAIN="$(pwd)/Elastic.keychain.db"
+      export CSC_KEYCHAIN="/var/lib/jenkins/Library/Keychains/Elastic.keychain-db"
       echo 'prepare vault'
       VAULT_TOKEN=$(vault write -field=token auth/approle/login role_id="$VAULT_ROLE_ID_NOTARIZER" secret_id="$VAULT_SECRET_ID_NOTARIZER")
       export VAULT_TOKEN
 
-      echo 'prepare keychain'
-      vault read -field=db secret/jenkins-ci/macos-codesign-keychain | base64 --decode > "$CSC_KEYCHAIN"
+      echo 'prepare developer-id'
+      DEVELOPER_ID=$(vault read -field=developer-id secret/release/apple)
+      export DEVELOPER_ID
 
       echo 'prepare keychain-password'
       KEYCHAIN_PASSWORD=$(vault read -field=keychain-password secret/release/apple)
@@ -316,14 +317,15 @@ def runReleaseWithKeychain() {
       security list-keychains -s "$CSC_KEYCHAIN"
       security default-keychain -s "$CSC_KEYCHAIN"
 
-      echo 'unblock keychain'
       set +x
+      echo 'unblock keychain'
       security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$CSC_KEYCHAIN"
 
       set -x
       security find-identity -v
       security find-identity $CSC_KEYCHAIN -v
       ls -l $CSC_KEYCHAIN
+      echo $DEVELOPER_ID
 
       echo 'run release-ci'
       DEBUG=electron-osx-sign npm run release-ci
