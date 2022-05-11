@@ -1,21 +1,14 @@
+/**
+  tsconfig for frontend. It is supposed to be `tsconfig.frontend.json`
+  but react-scripts can only understand `tsconfig.json`(cannot specify tsconfig path)
+*/
+
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2021",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
     "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
-    "incremental": true
+    "jsx": "react-jsx"
   },
-  "include": ["src"]
+  "include": ["common/helper/**/*", "src/**/*"]
 }

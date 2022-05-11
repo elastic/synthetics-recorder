@@ -1,6 +1,6 @@
 {
   "name": "synthetics-recorder",
-  "version": "0.0.1-alpha.3",
+  "version": "0.0.1-alpha.4",
   "description": "Record synthetics user journey flow of a website",
   "repository": "https://github.com/elastic/synthetics-recorder",
   "scripts": {
@@ -10,9 +10,9 @@
     "prepare-demo-app": "npm install --prefix demo-app && npm run build --prefix demo-app",
     "react:start": "react-scripts start",
     "react:build": "react-scripts build",
-    "electron:copy": "cp -r ./electron/. ./build",
-    "dev": "concurrently -k \"BROWSER=none npm run react:start\" \"wait-on tcp:3000 && nodemon --exec electron electron/electron.js\"",
-    "build": "npm run clean && npm run react:build && npm run electron:copy",
+    "dev": "concurrently -k \"BROWSER=none npm run react:start\" \"npm run tsc-electron -- -w\" \"wait-on tcp:3000 && nodemon --exec electron build/electron/electron.js\"",
+    "build": "npm run clean && npm run react:build && npm run tsc-electron",
+    "tsc-electron": "tsc -p tsconfig.node.json",
     "pack": "npm run build && electron-builder",
     "release": "npm run pack -- -mwl --publish=always",
     "fix-sharp": "node node_modules/sharp/install/libvips && node node_modules/sharp/install/dll-copy",
@@ -24,8 +24,8 @@
     "lint:fix": "npm run lint -- --fix",
     "prepare": "husky install",
     "test": "npm run test:unit && npm run test:e2e",
-    "test:unit": "jest --config ./jest.unit.config.js ./src",
-    "test:unit:watch": "npm run test:unit -- --coverage --watch",
+    "test:unit": "jest --config ./jest.unit.config.js .",
+    "test:unit:watch": "npm run test:unit -- --coverage --watch --collectCoverageFrom={src,electron}/**/*.{js,jsx,ts,tsx}",
     "test:e2e": "jest --runInBand --config ./jest.e2e.config.js ./e2e/tests",
     "test:e2e:server": "BROWSER=NONE PORT=61337 react-scripts start",
     "test:e2e:runner": "IS_RUNNER=true TEST_PORT=61337 jest --config ./jest.e2e.config.js ./e2e/tests",
@@ -42,7 +42,7 @@
     "playwright"
   ],
   "license": "MIT",
-  "main": "build/electron.js",
+  "main": "build/electron/electron.js",
   "homepage": "./",
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -67,12 +67,14 @@
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^7.0.4",
     "jest": "^26.6.3",
+    "jest-junit": "^13.2.0",
     "lint-staged": "^12.3.7",
     "nodemon": "^2.0.15",
     "prettier": "2.5.1",
     "react-scripts": "5.0.0",
     "react-test-renderer": "^17.0.2",
     "ts-jest": "^26.5.6",
+    "typescript": "^4.5.5",
     "ts-unused-exports": "^8.0.0",
     "wait-on": "^6.0.1"
   },

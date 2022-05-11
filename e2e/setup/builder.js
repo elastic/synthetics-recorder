@@ -27,7 +27,7 @@ const { spawn } = require('child_process');
 const buildFiles = async () => {
   return new Promise((resolve, reject) => {
     if (process.env.IS_RUNNER) return;
-    const ls = spawn('npm', ['run', 'react:build'], {
+    const ls = spawn('npm', ['run', 'build'], {
       env: {
         PATH: process.env.PATH,
         BROWSER: 'none',

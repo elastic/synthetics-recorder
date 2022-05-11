@@ -25,8 +25,11 @@ THE SOFTWARE.
 import type { Step, Steps } from '@elastic/synthetics';
 import { ActionContext } from '../common/types';
 import { generateIR, generateMergedIR } from './generator';
-import { createAction } from './test';
-import { createStepsWithOverrides, createStepWithOverrides } from './test/createAction';
+import {
+  createAction,
+  createStepWithOverrides,
+  createStepsWithOverrides,
+} from '../../common/helper/test/createAction';
 
 describe('generator', () => {
   describe('generateIR', () => {
