@@ -300,7 +300,7 @@ def runReleaseWithKeychain() {
   if (!apple.containsKey('developer-id') || !apple.containsKey('keychain-password')) {
     error("runReleaseWithKeychain: apple secret could not be accessed correctly")
   }
-  withEnvMask(vars: [[var: 'KEYCHAIN_PASSWORD', password: apple.keychain-password]]){
+  withEnvMask(vars: [[var: 'KEYCHAIN_PASSWORD', password: apple.get('keychain-password')]]){
     sh(label: 'npm release-ci with keychain', script: '''
       CSC_KEYCHAIN="/var/lib/jenkins/Library/Keychains/Elastic.keychain-db"
       export CSC_KEYCHAIN
