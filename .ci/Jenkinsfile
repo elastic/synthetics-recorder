@@ -3,7 +3,9 @@
 @Library('apm@current') _
 
 pipeline {
-  agent { label 'ubuntu-20.04 && immutable' }
+  // TODO: to be replaced
+  //agent { label 'ubuntu-20.04 && immutable' }
+  agent { label 'macos-code-signer' }
   environment {
     REPO = "synthetics-recorder"
     BASE_DIR = "src/github.com/elastic/${env.REPO}"
@@ -174,7 +176,8 @@ pipeline {
         DIST_FOLDER = 'dist'
         RELEASE_URL_MESSAGE = "(<https://github.com/elastic/${env.REPO}/releases/tag/${env.TAG_NAME}|${env.TAG_NAME}>)"
       }
-      agent { label 'macos-code-signer' }
+      // TODO: to be replaced
+      //agent { label 'macos-code-signer' }
       stages {
         stage('Dist') {
           options { skipDefaultCheckout() }
@@ -253,6 +256,8 @@ pipeline {
       whenFalse(isInternalCI()){
         notifyBuildResult(prComment: true)
       }
+      // TODO; to be removed
+      deleteDir()
     }
   }
 }
@@ -291,8 +296,8 @@ def runReleaseWithKeychain() {
     error("runReleaseWithKeychain: macos secret could not be accessed correctly")
   }
   def apple = getVaultSecret(secret: 'secret/release/apple',
-                               role_id: vault.vault_role_id,
-                               secret_id: vault.vault_secret_id).data
+                             role_id: vault.vault_role_id,
+                             secret_id: vault.vault_secret_id).data
   if (!apple.containsKey('developer-id') || !apple.containsKey('keychain-password')) {
     error("runReleaseWithKeychain: apple secret could not be accessed correctly")
   }
