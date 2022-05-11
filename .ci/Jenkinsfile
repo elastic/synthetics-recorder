@@ -175,7 +175,7 @@ pipeline {
         RELEASE_URL_MESSAGE = "(<https://github.com/elastic/${env.REPO}/releases/tag/${env.TAG_NAME}|${env.TAG_NAME}>)"
         HOME = "${WORKSPACE}"
       }
-      agent { label 'macosx' }
+      agent { label 'macos-code-signer' }
       stages {
         stage('Dist') {
           options { skipDefaultCheckout() }
