@@ -178,9 +178,6 @@ pipeline {
       stages {
         stage('Dist') {
           options { skipDefaultCheckout() }
-          environment {
-            CSC_KEYCHAIN = "${WORKSPACE}/Elastic.keychain.db"
-          }
           steps {
             deleteDir()
             unstash 'source'
@@ -301,12 +298,13 @@ def runReleaseWithKeychain() {
   ]){
     sh(label: 'npm release-ci with keychain', script: '''
       set +x
+      export CSC_KEYCHAIN="$(pwd)/Elastic.keychain.db"
       echo 'prepare vault'
       VAULT_TOKEN=$(vault write -field=token auth/approle/login role_id="$VAULT_ROLE_ID_NOTARIZER" secret_id="$VAULT_SECRET_ID_NOTARIZER")
       export VAULT_TOKEN
 
       echo 'prepare keychain'
-      vault read -field=db secret/jenkins-ci/macos-codesign-keychain | base64 --decode > ${CSC_KEYCHAIN}
+      vault read -field=db secret/jenkins-ci/macos-codesign-keychain | base64 --decode > "$CSC_KEYCHAIN"
 
       echo 'prepare keychain-password'
       KEYCHAIN_PASSWORD=$(vault read -field=keychain-password secret/release/apple)
