@@ -308,6 +308,7 @@ def runReleaseWithKeychain() {
       echo 'set keychain'
       set -x
       security list-keychains
+      security default-keychain -s "$CSC_KEYCHAIN"
       security list-keychains -s "$CSC_KEYCHAIN"
       security find-identity -v "$CSC_KEYCHAIN"
 
