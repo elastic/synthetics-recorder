@@ -8,7 +8,7 @@ local-browsers
 .synthetics
 react-app-env.d.ts
 
-eslint-junit.xml
+junit-eslint.xml
 .idea
 *-junit.xml
 .DS_Store
