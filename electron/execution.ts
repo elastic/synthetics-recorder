@@ -125,7 +125,9 @@ function onRecordJourneys(mainWindowEmitter: EventEmitter) {
       mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, async () => {
         actionListener.removeAllListeners();
         ipc.removeListener('stop', closeBrowser);
-        return browser.close();
+        return browser.close().then(() => {
+          isBrowserRunning = false;
+        });
       });
 
       // _enableRecorder is private method, not defined in BrowserContext type
@@ -294,6 +296,7 @@ function onTest(mainWindowEmitter: EventEmitter) {
         if (synthCliProcess && !synthCliProcess.kill()) {
           logger.warn('Unable to abort Synthetics test proceess.');
         }
+        isBrowserRunning = false;
       });
       const { stdout, stdin, stderr } = synthCliProcess as ChildProcess;
       if (!isSuite) {
@@ -374,12 +377,18 @@ async function onLinkExternal(url: string) {
  * Sets up IPC listeners for the main process to respond to UI events.
  *
  * @param mainWindowEmitter Allows handlers to respond to app-level events
+ * @returns a list of functions that will remove the listeners this function adds.
+ *
+ * Because the IPC is global, it is important to remove the listeners anytime this function's caller
+ * is destroyed or they will leak/block the next window from interacting with top-level app state.
  */
 export default function setupListeners(mainWindowEmitter: EventEmitter) {
-  ipc.answerRenderer<RecordJourneyOptions>('record-journey', onRecordJourneys(mainWindowEmitter));
-  ipc.answerRenderer<RunJourneyOptions>('run-journey', onTest(mainWindowEmitter));
-  ipc.answerRenderer<GenerateCodeOptions>('actions-to-code', onGenerateCode);
-  ipc.answerRenderer<string>('save-file', onFileSave);
-  ipc.answerRenderer<string>('set-mode', onSetMode);
-  ipc.answerRenderer<string>('link-to-external', onLinkExternal);
+  return [
+    ipc.answerRenderer<RecordJourneyOptions>('record-journey', onRecordJourneys(mainWindowEmitter)),
+    ipc.answerRenderer<RunJourneyOptions>('run-journey', onTest(mainWindowEmitter)),
+    ipc.answerRenderer<GenerateCodeOptions>('actions-to-code', onGenerateCode),
+    ipc.answerRenderer<string>('save-file', onFileSave),
+    ipc.answerRenderer<string>('set-mode', onSetMode),
+    ipc.answerRenderer<string>('link-to-external', onLinkExternal),
+  ];
 }

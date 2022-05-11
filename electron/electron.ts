@@ -42,10 +42,8 @@ const BUILD_DIR = join(__dirname, '..', '..', 'build');
 const IS_TEST = process.env.NODE_ENV === 'test';
 const TEST_PORT = process.env.TEST_PORT;
 
-let mainWindowEmitter: EventEmitter | null = null;
-
 async function createWindow() {
-  mainWindowEmitter = new EventEmitter();
+  const mainWindowEmitter = new EventEmitter();
   const win = new BrowserWindow({
     width: 1100,
     height: 700,
@@ -67,12 +65,12 @@ async function createWindow() {
     win.loadFile(join(BUILD_DIR, 'index.html'));
   }
   win.on('close', () => {
-    mainWindowEmitter?.emit(MainWindowEvent.MAIN_CLOSE);
+    mainWindowEmitter.emit(MainWindowEvent.MAIN_CLOSE);
   });
   win.on('closed', () => {
-    mainWindowEmitter?.removeAllListeners();
-    mainWindowEmitter = null;
+    mainWindowEmitter.removeAllListeners();
   });
+  return mainWindowEmitter;
 }
 
 function createMenu() {
@@ -80,21 +78,27 @@ function createMenu() {
   Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
 }
 
-app.whenReady().then(() => {
-  createWindow();
-  if (mainWindowEmitter === null) {
-    throw Error('Main window event emitter cannot be null.');
+async function mainWindow() {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    const mainWindowEmitter = await createWindow();
+    const ipcListenerDestructors = setupListeners(mainWindowEmitter);
+    mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, () =>
+      ipcListenerDestructors.forEach(f => f())
+    );
+    createMenu();
   }
-  setupListeners(mainWindowEmitter);
-  createMenu();
+}
 
-  app.on('activate', function () {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
-  });
-});
+app.on('activate', mainWindow);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
+
+// kick off the main process when electron is ready
+(async function () {
+  await app.whenReady();
+  return mainWindow();
+})();
