@@ -314,6 +314,7 @@ def runReleaseWithKeychain() {
       echo 'set keychain'
       set -x
       security list-keychains -s "$CSC_KEYCHAIN"
+      security find-identity -v
 
       set +x
       echo 'unblock keychain'
