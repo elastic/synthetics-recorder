@@ -318,7 +318,7 @@ def runReleaseWithKeychain() {
       security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$CSC_KEYCHAIN"
 
       set -x
-      security find-identity -v
+      security find-identity $CSC_KEYCHAIN -v
       ls -l $CSC_KEYCHAIN
 
       echo 'run release-ci'
