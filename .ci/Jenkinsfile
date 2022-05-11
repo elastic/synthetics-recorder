@@ -322,6 +322,7 @@ def runReleaseWithKeychain() {
 
       set -x
       security find-identity -v
+      security add-generic-password -U -a test-jenkins -s test-jenkins -w test-jenkins "$CSC_KEYCHAIN"
 
       echo 'run release-ci'
       DEBUG=electron-osx-sign npm run release-ci
