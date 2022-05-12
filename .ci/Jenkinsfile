@@ -288,11 +288,10 @@ def runReleaseWithKeychain() {
   }
   def token = getVaultSecret.getVaultToken(vault.vault_addr, vault.vault_role_id, vault.vault_secret_id)
   def apple = getVaultSecret.getVaultSecretObject(vault.vault_addr, 'secret/release/apple', token).data
-  if (!apple.containsKey('developer-id') || !apple.containsKey('keychain-password')) {
+  if (!apple.containsKey('keychain-password')) {
     error("runReleaseWithKeychain: apple secret could not be accessed correctly")
   }
-  withEnvMask(vars: [[var: 'KEYCHAIN_PASSWORD', password: apple.get('keychain-password')],
-                     [var: 'DEVELOPER_ID', password: apple.get('developer-id')]]){
+  withEnvMask(vars: [[var: 'KEYCHAIN_PASSWORD', password: apple.get('keychain-password')]]){
     sh(label: 'release-ci.sh', script: '.ci/scripts/release-ci.sh')
   }
 }
