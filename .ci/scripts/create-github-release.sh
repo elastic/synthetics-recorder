@@ -17,5 +17,5 @@ gh release \
   "${TAG_NAME}" \
   --draft \
   --title "${TAG_NAME}" \
-  --repo elastic/${REPO} \
+  --repo v1v/${REPO} \
   ${DIST_FOLDER}/*.*
