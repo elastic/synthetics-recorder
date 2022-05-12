@@ -186,7 +186,6 @@ pipeline {
             unstash 'source'
             withNodeJSEnv() {
               dir("${BASE_DIR}"){
-                sh(label: 'npm ci', script: 'npm ci')
                 runReleaseWithKeychain()
               }
             }
@@ -302,6 +301,15 @@ def runReleaseWithKeychain() {
   }
   withEnvMask(vars: [[var: 'KEYCHAIN_PASSWORD', password: apple.get('keychain-password')],
                      [var: 'DEVELOPER_ID', password: apple.get('developer-id')]]){
+    sh(label: 'debug', script: '''
+      security list-keychains || true
+      security list-keychains -d user || true
+      security list-keychains -d system || true
+      security list-keychains -d common || true
+      security list-keychains -d dynamic || true
+      security list-keychains -d user -s /var/lib/jenkins/Library/Keychains/Elastic.keychain-db || true
+      security list-keychains || true
+    ''')
     sh(label: 'npm release-ci with keychain', script: '''
       CSC_KEYCHAIN="/var/lib/jenkins/Library/Keychains/Elastic.keychain-db"
       export CSC_KEYCHAIN
@@ -325,14 +333,8 @@ def runReleaseWithKeychain() {
       security find-generic-password -a test-jenkins -s test-jenkins -w "$CSC_KEYCHAIN"
 
       echo 'run release-ci'
-      DEBUG=electron-osx-sign npm run release-ci || true
-
-      codesign --sign "$DEVELOPER_ID" \
-               --force \
-               --keychain "$CSC_KEYCHAIN" \
-               --timestamp \
-               --options runtime \
-               --entitlements "${WORKSPACE}/${BASE_DIR}/node_modules/app-builder-lib/templates/entitlements.mac.plist" "${WORKSPACE}/${BASE_DIR}/dist/mac/Elastic-Synthetics-Recorder.app/Contents/Resources/local-browsers/chromium-907428/chrome-mac/Chromium.app/Contents/Frameworks/Chromium Framework.framework/Versions/94.0.4595.0/Helpers/Chromium Helper (Alerts).app/Contents/Resources/base.lproj/InfoPlist.strings"
+      npm ci
+      npm run release-ci
     ''')
   }
 }
