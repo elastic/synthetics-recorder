@@ -122,12 +122,14 @@ function onRecordJourneys(mainWindowEmitter: EventEmitter) {
       actionListener = new EventEmitter();
       actionListener.on('actions', actionsHandler);
 
-      mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, async () => {
+      const handleMainClose = async () => {
         actionListener.removeAllListeners();
         ipc.removeListener('stop', closeBrowser);
         await browser.close();
         isBrowserRunning = false;
-      });
+      };
+
+      mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
 
       // _enableRecorder is private method, not defined in BrowserContext type
       await (context as any)._enableRecorder({
@@ -139,6 +141,8 @@ function onRecordJourneys(mainWindowEmitter: EventEmitter) {
       });
       await openPage(context, data.url);
       await once(browser, 'disconnected');
+
+      mainWindowEmitter.removeListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
     } catch (e) {
       logger.error(e);
     } finally {
@@ -291,12 +295,15 @@ function onTest(mainWindowEmitter: EventEmitter) {
         cwd: isDev ? process.cwd() : process.resourcesPath,
         stdio: 'pipe',
       });
-      mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, () => {
+
+      function handleMainClose() {
         if (synthCliProcess && !synthCliProcess.kill()) {
           logger.warn('Unable to abort Synthetics test proceess.');
         }
         isBrowserRunning = false;
-      });
+      }
+      mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
+
       const { stdout, stdin, stderr } = synthCliProcess as ChildProcess;
       if (!isSuite) {
         stdin?.write(data.code);
@@ -313,6 +320,8 @@ function onTest(mainWindowEmitter: EventEmitter) {
       if (isSuite) {
         await rm(filePath, { recursive: true, force: true });
       }
+
+      mainWindowEmitter.removeListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
     } catch (error: unknown) {
       logger.error(error);
       sendTestEvent({
