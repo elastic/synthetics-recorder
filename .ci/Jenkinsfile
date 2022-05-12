@@ -217,19 +217,11 @@ pipeline {
           steps {
             dir("${SIGNED_ARTIFACTS}") {
               withGhEnv(version: '2.4.0') {
-                // TODO: create GitHub release and upload the signed artifacts.
-                sh(label: 'publish release', script:
-                  """
-                    ls -l ${DIST_FOLDER}/*.* || true
-                    gh \
-                      release \
-                      create \
-                      "${TAG_NAME}" \
-                      --draft \
-                      --title "${TAG_NAME}" \
-                      --repo v1v/${REPO} \
-                      ${DIST_FOLDER}/*.*
-                  """)
+                // macos-code-signer labels don't provide the arch therefore
+                // some shared library steps won't work as expected
+                withEnv(["NODE_LABELS='darwin macosx x86_64'"]){
+                  sh(label: 'create-github-release.sh', script: '.ci/scripts/create-github-release.sh')
+                }
               }
             }
           }
