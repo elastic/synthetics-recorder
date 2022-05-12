@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -eox pipefail
 
-ls -l ${DIST_FOLDER}/*.* || true
+DIST_LOCATION=$1
+
+ls -l "${DIST_LOCATION}"/*.* || true
 
 if ! gh --version &>/dev/null ; then
   ## install gh
@@ -17,5 +19,5 @@ gh release \
   "${TAG_NAME}" \
   --draft \
   --title "${TAG_NAME}" \
-  --repo v1v/${REPO} \
-  ${DIST_FOLDER}/*.*
+  --repo "v1v/${REPO}" \
+  "${DIST_LOCATION}"/*.*
