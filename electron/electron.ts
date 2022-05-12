@@ -78,7 +78,7 @@ function createMenu() {
   Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
 }
 
-async function mainWindow() {
+async function createMainWindow() {
   if (BrowserWindow.getAllWindows().length === 0) {
     const mainWindowEmitter = await createWindow();
     const ipcListenerDestructors = setupListeners(mainWindowEmitter);
@@ -89,7 +89,7 @@ async function mainWindow() {
   }
 }
 
-app.on('activate', mainWindow);
+app.on('activate', createMainWindow);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -100,5 +100,5 @@ app.on('window-all-closed', () => {
 // kick off the main process when electron is ready
 (async function () {
   await app.whenReady();
-  return mainWindow();
+  return createMainWindow();
 })();
