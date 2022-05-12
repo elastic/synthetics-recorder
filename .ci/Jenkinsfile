@@ -195,7 +195,7 @@ pipeline {
           options { skipDefaultCheckout() }
           steps {
             dir("${BASE_DIR}") {
-              uploadBinariesToBeSigned(['deb', 'zip'])
+              uploadBinariesToBeSigned(['deb', 'dmg', 'zip'])
               build(job: 'elastic+unified-release+master+sign-artifacts-with-gpg',
                     parameters: [string(name: 'gcs_input_path', value: "${env.BUCKET_PATH}")],
                     wait: true,
