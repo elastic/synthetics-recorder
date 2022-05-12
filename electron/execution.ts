@@ -125,9 +125,8 @@ function onRecordJourneys(mainWindowEmitter: EventEmitter) {
       mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, async () => {
         actionListener.removeAllListeners();
         ipc.removeListener('stop', closeBrowser);
-        return browser.close().then(() => {
-          isBrowserRunning = false;
-        });
+        await browser.close();
+        isBrowserRunning = false;
       });
 
       // _enableRecorder is private method, not defined in BrowserContext type
