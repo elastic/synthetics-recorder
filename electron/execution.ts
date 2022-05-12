@@ -49,6 +49,10 @@ const SYNTHETICS_CLI = require.resolve('@elastic/synthetics/dist/cli');
 const IS_TEST_ENV = process.env.NODE_ENV === 'test';
 const CDP_TEST_PORT = parseInt(process.env.TEST_PORT ?? '61337') + 1;
 
+export enum MainWindowEvent {
+  MAIN_CLOSE = 'main-close',
+}
+
 async function launchContext() {
   const browser = await chromium.launch({
     headless: IS_TEST_ENV,
@@ -90,51 +94,61 @@ let browserContext: BrowserContext | null = null;
 let actionListener = new EventEmitter();
 let isBrowserRunning = false;
 
-async function onRecordJourneys(data: { url: string }, browserWindow: BrowserWindow) {
-  try {
+function onRecordJourneys(mainWindowEmitter: EventEmitter) {
+  return async function (data: { url: string }, browserWindow: BrowserWindow) {
     if (isBrowserRunning) {
       throw new Error(
         'Cannot start recording a journey, a browser operation is already in progress.'
       );
     }
     isBrowserRunning = true;
-    const { browser, context } = await launchContext();
-    browserContext = context;
-    actionListener = new EventEmitter();
-    // Listen to actions from Playwright recording session
-    const actionsHandler = (actions: ActionInContext[]) => {
-      ipc.callRenderer(browserWindow, 'change', { actions });
-    };
-    actionListener.on('actions', actionsHandler);
+    try {
+      const { browser, context } = await launchContext();
+      const closeBrowser = async () => {
+        browserContext = null;
+        actionListener.removeListener('actions', actionsHandler);
+        try {
+          await browser.close();
+        } catch (e) {
+          logger.error('Browser close threw an error', e);
+        }
+      };
+      ipc.addListener('stop', closeBrowser);
+      // Listen to actions from Playwright recording session
+      const actionsHandler = (actions: ActionInContext[]) => {
+        ipc.callRenderer(browserWindow, 'change', { actions });
+      };
+      browserContext = context;
+      actionListener = new EventEmitter();
+      actionListener.on('actions', actionsHandler);
 
-    // _enableRecorder is private method, not defined in BrowserContext type
-    await (context as any)._enableRecorder({
-      launchOptions: {},
-      contextOptions: {},
-      startRecording: true,
-      showRecorder: false,
-      actionListener,
-    });
-    await openPage(context, data.url);
-
-    const closeBrowser = async () => {
-      browserContext = null;
-      actionListener.removeListener('actions', actionsHandler);
-      try {
+      const handleMainClose = async () => {
+        actionListener.removeAllListeners();
+        ipc.removeListener('stop', closeBrowser);
         await browser.close();
-      } catch (e) {
-        logger.error('Browser close threw an error', e);
-      }
-    };
+        isBrowserRunning = false;
+      };
 
-    ipc.on('stop', closeBrowser);
+      mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
 
-    await once(browser, 'disconnected');
-  } catch (e) {
-    logger.error(e);
-  } finally {
-    isBrowserRunning = false;
-  }
+      // _enableRecorder is private method, not defined in BrowserContext type
+      await (context as any)._enableRecorder({
+        launchOptions: {},
+        contextOptions: {},
+        startRecording: true,
+        showRecorder: false,
+        actionListener,
+      });
+      await openPage(context, data.url);
+      await once(browser, 'disconnected');
+
+      mainWindowEmitter.removeListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
+    } catch (e) {
+      logger.error(e);
+    } finally {
+      isBrowserRunning = false;
+    }
+  };
 }
 
 /**
@@ -165,147 +179,166 @@ function addActionsToStepResult(steps: Steps, event: StepEndEvent): TestEvent {
   };
 }
 
-async function onTest(data: RunJourneyOptions, browserWindow: BrowserWindow) {
-  if (isBrowserRunning) {
-    throw new Error('Cannot start testing a journey, a browser operation is already in progress.');
-  }
-  isBrowserRunning = true;
-  const parseOrSkip = (chunk: string): Array<Record<string, any>> => {
-    // at times stdout ships multiple steps in one chunk, broken by newline,
-    // so here we split on the newline
-    return chunk.split('\n').map(subChunk => {
-      try {
-        return JSON.parse(subChunk);
-      } catch (_) {
-        return {};
+function onTest(mainWindowEmitter: EventEmitter) {
+  return async function (data: RunJourneyOptions, browserWindow: BrowserWindow) {
+    if (isBrowserRunning) {
+      throw new Error(
+        'Cannot start testing a journey, a browser operation is already in progress.'
+      );
+    }
+    isBrowserRunning = true;
+    const parseOrSkip = (chunk: string): Array<Record<string, any>> => {
+      // at times stdout ships multiple steps in one chunk, broken by newline,
+      // so here we split on the newline
+      return chunk.split('\n').map(subChunk => {
+        try {
+          return JSON.parse(subChunk);
+        } catch (_) {
+          return {};
+        }
+      });
+    };
+    const isJourneyStart = (event: any): event is { journey: { name: string } } => {
+      return event.type === 'journey/start' && !!event.journey.name;
+    };
+
+    const isStepEnd = (
+      event: any
+    ): event is {
+      step: { duration: { us: number }; name: string; status: StepStatus };
+      error?: Error;
+    } => {
+      return (
+        event.type === 'step/end' &&
+        ['succeeded', 'failed', 'skipped'].includes(event.step?.status) &&
+        typeof event.step?.duration?.us === 'number'
+      );
+    };
+
+    const isJourneyEnd = (
+      event: any
+    ): event is { journey: { name: string; status: 'succeeded' | 'failed' } } => {
+      return (
+        event.type === 'journey/end' && ['succeeded', 'failed'].includes(event.journey?.status)
+      );
+    };
+
+    const constructEvent = (parsed: Record<string, any>): TestEvent | null => {
+      if (isJourneyStart(parsed)) {
+        return {
+          event: 'journey/start',
+          data: {
+            name: parsed.journey.name,
+          },
+        };
       }
-    });
-  };
-  const isJourneyStart = (event: any): event is { journey: { name: string } } => {
-    return event.type === 'journey/start' && !!event.journey.name;
-  };
+      if (isStepEnd(parsed)) {
+        return {
+          event: 'step/end',
+          data: {
+            name: parsed.step.name,
+            status: parsed.step.status,
+            duration: Math.ceil(parsed.step.duration.us / 1000),
+            error: parsed.error,
+          },
+        };
+      }
+      if (isJourneyEnd(parsed)) {
+        return {
+          event: 'journey/end',
+          data: {
+            name: parsed.journey.name,
+            status: parsed.journey.status,
+          },
+        };
+      }
+      return null;
+    };
 
-  const isStepEnd = (
-    event: any
-  ): event is {
-    step: { duration: { us: number }; name: string; status: StepStatus };
-    error?: Error;
-  } => {
-    return (
-      event.type === 'step/end' &&
-      ['succeeded', 'failed', 'skipped'].includes(event.step?.status) &&
-      typeof event.step?.duration?.us === 'number'
-    );
-  };
+    const sendTestEvent = (event: TestEvent) => {
+      browserWindow.webContents.send('test-event', event);
+    };
 
-  const isJourneyEnd = (
-    event: any
-  ): event is { journey: { name: string; status: 'succeeded' | 'failed' } } => {
-    return event.type === 'journey/end' && ['succeeded', 'failed'].includes(event.journey?.status);
-  };
+    const emitResult = (chunk: string) => {
+      parseOrSkip(chunk).forEach(parsed => {
+        const event = constructEvent(parsed);
+        if (event) {
+          sendTestEvent(
+            event.event === 'step/end' ? addActionsToStepResult(data.steps, event) : event
+          );
+        }
+      });
+    };
 
-  const constructEvent = (parsed: Record<string, any>): TestEvent | null => {
-    if (isJourneyStart(parsed)) {
-      return {
-        event: 'journey/start',
-        data: {
-          name: parsed.journey.name,
+    let synthCliProcess: ChildProcess | null = null; // child process, define here to kill when finished
+
+    try {
+      const isSuite = data.isSuite;
+      const args = ['--no-headless', '--reporter=json', '--screenshots=off', '--no-throttling'];
+      const filePath = join(JOURNEY_DIR, 'recorded.journey.js');
+      if (!isSuite) {
+        args.push('--inline');
+      } else {
+        await mkdir(JOURNEY_DIR, { recursive: true });
+        await writeFile(filePath, data.code);
+        args.unshift(filePath);
+      }
+      /**
+       * Fork the Synthetics CLI with correct browser path and
+       * cwd correctly spawns the process
+       */
+      synthCliProcess = fork(`${SYNTHETICS_CLI}`, args, {
+        env: {
+          ...process.env,
+          PLAYWRIGHT_BROWSERS_PATH,
         },
-      };
-    }
-    if (isStepEnd(parsed)) {
-      return {
-        event: 'step/end',
-        data: {
-          name: parsed.step.name,
-          status: parsed.step.status,
-          duration: Math.ceil(parsed.step.duration.us / 1000),
-          error: parsed.error,
-        },
-      };
-    }
-    if (isJourneyEnd(parsed)) {
-      return {
+        cwd: isDev ? process.cwd() : process.resourcesPath,
+        stdio: 'pipe',
+      });
+
+      function handleMainClose() {
+        if (synthCliProcess && !synthCliProcess.kill()) {
+          logger.warn('Unable to abort Synthetics test proceess.');
+        }
+        isBrowserRunning = false;
+      }
+      mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
+
+      const { stdout, stdin, stderr } = synthCliProcess as ChildProcess;
+      if (!isSuite) {
+        stdin?.write(data.code);
+        stdin?.end();
+      }
+      stdout?.setEncoding('utf-8');
+      stderr?.setEncoding('utf-8');
+      for await (const chunk of stdout!) {
+        emitResult(chunk);
+      }
+      for await (const chunk of stderr!) {
+        logger.error(chunk);
+      }
+      if (isSuite) {
+        await rm(filePath, { recursive: true, force: true });
+      }
+
+      mainWindowEmitter.removeListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
+    } catch (error: unknown) {
+      logger.error(error);
+      sendTestEvent({
         event: 'journey/end',
         data: {
-          name: parsed.journey.name,
-          status: parsed.journey.status,
+          status: 'failed',
+          error: error as Error,
         },
-      };
-    }
-    return null;
-  };
-
-  const sendTestEvent = (event: TestEvent) => {
-    browserWindow.webContents.send('test-event', event);
-  };
-
-  const emitResult = (chunk: string) => {
-    parseOrSkip(chunk).forEach(parsed => {
-      const event = constructEvent(parsed);
-      if (event) {
-        sendTestEvent(
-          event.event === 'step/end' ? addActionsToStepResult(data.steps, event) : event
+      });
+    } finally {
+      if (synthCliProcess && !synthCliProcess.kill()) {
+        logger.warn(
+          `Attempted to send SIGTERM to synthetics process, but did not receive exit signal. Process ID is ${synthCliProcess.pid}.`
         );
       }
-    });
+    }
   };
-
-  let synthCliProcess: ChildProcess | null = null; // child process, define here to kill when finished
-  try {
-    const isSuite = data.isSuite;
-    const args = ['--no-headless', '--reporter=json', '--screenshots=off', '--no-throttling'];
-    const filePath = join(JOURNEY_DIR, 'recorded.journey.js');
-    if (!isSuite) {
-      args.push('--inline');
-    } else {
-      await mkdir(JOURNEY_DIR, { recursive: true });
-      await writeFile(filePath, data.code);
-      args.unshift(filePath);
-    }
-    /**
-     * Fork the Synthetics CLI with correct browser path and
-     * cwd correctly spawns the process
-     */
-    synthCliProcess = fork(`${SYNTHETICS_CLI}`, args, {
-      env: {
-        ...process.env,
-        PLAYWRIGHT_BROWSERS_PATH,
-      },
-      cwd: isDev ? process.cwd() : process.resourcesPath,
-      stdio: 'pipe',
-    });
-    const { stdout, stdin, stderr } = synthCliProcess as ChildProcess;
-    if (!isSuite) {
-      stdin?.write(data.code);
-      stdin?.end();
-    }
-    stdout?.setEncoding('utf-8');
-    stderr?.setEncoding('utf-8');
-    for await (const chunk of stdout!) {
-      emitResult(chunk);
-    }
-    for await (const chunk of stderr!) {
-      logger.error(chunk);
-    }
-    if (isSuite) {
-      await rm(filePath, { recursive: true, force: true });
-    }
-  } catch (error: unknown) {
-    logger.error(error);
-    sendTestEvent({
-      event: 'journey/end',
-      data: {
-        status: 'failed',
-        error: error as Error,
-      },
-    });
-  } finally {
-    if (synthCliProcess) {
-      synthCliProcess.kill();
-    }
-    isBrowserRunning = false;
-  }
 }
 
 async function onFileSave(code: string) {
@@ -350,11 +383,22 @@ async function onLinkExternal(url: string) {
   }
 }
 
-export default function setupListeners() {
-  ipc.answerRenderer<RecordJourneyOptions>('record-journey', onRecordJourneys);
-  ipc.answerRenderer<RunJourneyOptions>('run-journey', onTest);
-  ipc.answerRenderer<GenerateCodeOptions>('actions-to-code', onGenerateCode);
-  ipc.answerRenderer<string>('save-file', onFileSave);
-  ipc.answerRenderer<string>('set-mode', onSetMode);
-  ipc.answerRenderer<string>('link-to-external', onLinkExternal);
+/**
+ * Sets up IPC listeners for the main process to respond to UI events.
+ *
+ * @param mainWindowEmitter Allows handlers to respond to app-level events
+ * @returns a list of functions that will remove the listeners this function adds.
+ *
+ * Because the IPC is global, it is important to remove the listeners anytime this function's caller
+ * is destroyed or they will leak/block the next window from interacting with top-level app state.
+ */
+export default function setupListeners(mainWindowEmitter: EventEmitter) {
+  return [
+    ipc.answerRenderer<RecordJourneyOptions>('record-journey', onRecordJourneys(mainWindowEmitter)),
+    ipc.answerRenderer<RunJourneyOptions>('run-journey', onTest(mainWindowEmitter)),
+    ipc.answerRenderer<GenerateCodeOptions>('actions-to-code', onGenerateCode),
+    ipc.answerRenderer<string>('save-file', onFileSave),
+    ipc.answerRenderer<string>('set-mode', onSetMode),
+    ipc.answerRenderer<string>('link-to-external', onLinkExternal),
+  ];
 }
