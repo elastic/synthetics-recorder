@@ -19,5 +19,5 @@ gh release \
   "${TAG_NAME}" \
   --draft \
   --title "${TAG_NAME}" \
-  --repo "v1v/${REPO}" \
+  --repo "elastic/${REPO}" \
   "${DIST_LOCATION}"/*.*
