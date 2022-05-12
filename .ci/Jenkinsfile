@@ -216,12 +216,8 @@ pipeline {
           options { skipDefaultCheckout() }
           steps {
             dir("${SIGNED_ARTIFACTS}") {
-              withGhEnv(version: '2.4.0') {
-                // macos-code-signer labels don't provide the arch therefore
-                // some shared library steps won't work as expected
-                withEnv(["NODE_LABELS='darwin macosx x86_64'"]){
-                  sh(label: 'create-github-release.sh', script: '.ci/scripts/create-github-release.sh')
-                }
+              withCredentials([string(credentialsId: '2a9602aa-ab9f-4e52-baf3-b71ca88469c7', variable: 'GITHUB_TOKEN')]) {
+                sh(label: 'create-github-release.sh', script: '.ci/scripts/create-github-release.sh')
               }
             }
           }
