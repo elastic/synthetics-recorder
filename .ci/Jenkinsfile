@@ -243,9 +243,9 @@ pipeline {
         failure {
           notifyStatus(slackStatus: 'warning', subject: "[${env.REPO}] Release *${env.TAG_NAME}* could not be published", body: "Build: (<${env.RUN_DISPLAY_URL}|here>)")
         }
-        cleanup {
-          deleteDir()
-        }
+        //cleanup {
+        //  deleteDir()
+        //}
       }
     }
   }
@@ -300,16 +300,17 @@ def runReleaseWithKeychain() {
   if (!apple.containsKey('developer-id') || !apple.containsKey('keychain-password')) {
     error("runReleaseWithKeychain: apple secret could not be accessed correctly")
   }
-  withEnvMask(vars: [[var: 'KEYCHAIN_PASSWORD', password: apple.get('keychain-password')]]){
+  withEnvMask(vars: [[var: 'KEYCHAIN_PASSWORD', password: apple.get('keychain-password')],
+                     [var: 'DEVELOPER_ID', password: apple.get('developer-id')]]){
     sh(label: 'npm release-ci with keychain', script: '''
       CSC_KEYCHAIN="/var/lib/jenkins/Library/Keychains/Elastic.keychain-db"
       export CSC_KEYCHAIN
 
       echo 'set keychain'
       set -x
-      security list-keychains
-      security default-keychain -s "$CSC_KEYCHAIN"
       security list-keychains -s "$CSC_KEYCHAIN"
+      security default-keychain -s "$CSC_KEYCHAIN"
+      security list-keychains
       security find-identity -v "$CSC_KEYCHAIN"
 
       set +x
@@ -324,7 +325,14 @@ def runReleaseWithKeychain() {
       security find-generic-password -a test-jenkins -s test-jenkins -w "$CSC_KEYCHAIN"
 
       echo 'run release-ci'
-      DEBUG=electron-osx-sign npm run release-ci
+      DEBUG=electron-osx-sign npm run release-ci || true
+
+      codesign --sign "$DEVELOPER_ID" \
+               --force \
+               --keychain "$CSC_KEYCHAIN" \
+               --timestamp \
+               --options runtime \
+               --entitlements "${WORKSPACE}/${BASE_DIR}/node_modules/app-builder-lib/templates/entitlements.mac.plist" "${WORKSPACE}/${BASE_DIR}/dist/mac/Elastic-Synthetics-Recorder.app/Contents/Resources/local-browsers/chromium-907428/chrome-mac/Chromium.app/Contents/Frameworks/Chromium Framework.framework/Versions/94.0.4595.0/Helpers/Chromium Helper (Alerts).app/Contents/Resources/base.lproj/InfoPlist.strings"
     ''')
   }
 }
