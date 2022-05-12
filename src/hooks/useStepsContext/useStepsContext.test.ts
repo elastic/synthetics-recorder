@@ -87,6 +87,22 @@ describe('useStepsContext', () => {
     });
   });
 
+  describe('onSoftDeleteAction', () => {
+    it('applies a soft delete to a targeted action', () => {
+      act(() => {
+        defaultResult.result.current.onSoftDeleteAction(1, 1);
+      });
+
+      const { steps } = defaultResult.result.current;
+
+      expect(steps).toHaveLength(2);
+      expect(steps[0]).toEqual(defaultSteps[0]);
+      expect(steps[1].actions).toHaveLength(2);
+      console.log(JSON.stringify(steps, null, 2));
+      expect((steps[1].actions[1] as ActionContext).isSoftDeleted).toBe(true);
+    });
+  });
+
   describe('onDeleteStep', () => {
     it('deletes the targeted step', () => {
       act(() => {

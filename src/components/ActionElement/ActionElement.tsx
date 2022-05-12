@@ -106,6 +106,10 @@ function ActionComponent({
   const close = () => setIsOpen(false);
   const { isDragOver, onDropActions, splitStepAtAction } = useDrop(stepIndex, actionIndex);
 
+  if (actionContext?.isSoftDeleted) {
+    return null;
+  }
+
   return (
     <Container
       className={className}

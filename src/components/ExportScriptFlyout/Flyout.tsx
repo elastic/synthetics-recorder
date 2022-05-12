@@ -26,7 +26,7 @@ import { EuiFlyout } from '@elastic/eui';
 import type { Steps } from '@elastic/synthetics';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { getCodeFromActions } from '../../common/shared';
-import type { Setter } from '../../common/types';
+import type { ActionContext, Setter } from '../../common/types';
 import type { JourneyType } from '../../../common/types';
 import { CommunicationContext } from '../../contexts/CommunicationContext';
 import { Body } from './Body';
@@ -57,7 +57,14 @@ export function ExportScriptFlyout({ setVisible, steps }: IExportScriptFlyout) {
 
   useEffect(() => {
     (async function getCode() {
-      const codeFromActions = await getCodeFromActions(ipc, steps, type);
+      const codeFromActions = await getCodeFromActions(
+        ipc,
+        steps.map(step => ({
+          ...step,
+          actions: step.actions.filter(action => (action as ActionContext).isSoftDeleted !== true),
+        })),
+        type
+      );
       setCode(codeFromActions);
     })();
   }, [ipc, steps, setCode, type]);

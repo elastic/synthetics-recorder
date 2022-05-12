@@ -49,7 +49,7 @@ export function ExtraActions({
   stepIndex,
 }: IExtraActions) {
   const [isSettingsPopoverOpen, setIsSettingsPopoverOpen] = useState(false);
-  const { onDeleteAction, onInsertAction } = useContext(StepsContext);
+  const { onDeleteAction, onSoftDeleteAction, onInsertAction } = useContext(StepsContext);
   const { recordingStatus } = useContext(RecordingContext);
   const settingsHandler = (handler: () => void) => {
     return function () {
@@ -78,6 +78,7 @@ export function ExtraActions({
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <SettingsPopover
+          isAssertion={actionContext.action.isAssert === true}
           isRecording={recordingStatus !== RecordingStatus.NotRecording}
           isVisible={areControlsVisible || isSettingsPopoverOpen}
           onAddAssertion={settingsHandler(() => {
@@ -103,6 +104,9 @@ export function ExtraActions({
           onEdit={onEdit}
           onDelete={settingsHandler(() => {
             onDeleteAction(stepIndex, actionIndex);
+          })}
+          onSoftDelete={settingsHandler(() => {
+            onSoftDeleteAction(stepIndex, actionIndex);
           })}
           isOpen={isSettingsPopoverOpen}
           setIsOpen={setIsSettingsPopoverOpen}

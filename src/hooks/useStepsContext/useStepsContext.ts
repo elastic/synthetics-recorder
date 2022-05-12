@@ -66,6 +66,20 @@ export function useStepsContext(): IStepsContext {
         })
       );
     },
+    onSoftDeleteAction: (targetStepIdx, indexToDelete) => {
+      setSteps(steps =>
+        steps.map((step, currentStepIndex) => {
+          if (currentStepIndex !== targetStepIdx) return step;
+
+          return {
+            ...step,
+            actions: step.actions.map((action, idx) =>
+              idx === indexToDelete ? { ...action, isSoftDeleted: true } : action
+            ),
+          };
+        })
+      );
+    },
     onDeleteStep: stepIndex => {
       setSteps([...steps.slice(0, stepIndex), ...steps.slice(stepIndex + 1)]);
     },

@@ -45,8 +45,14 @@ export interface IStepsContext {
   setStepName: (stepIndex: number, name?: string) => void;
   /**
    * Deletes the action at the `actionIndex` in the given step.
+   *
+   * This should only be called when the user is not recording.
    */
   onDeleteAction: (stepIndex: number, actionIndex: number) => void;
+  /**
+   * Marks an action for omission from display and code generation.
+   */
+  onSoftDeleteAction: (stepIndex: number, actionIndex: number) => void;
   /**
    * Deletes the step at `stepIndex`.
    */
@@ -90,6 +96,7 @@ export const StepsContext = createContext<IStepsContext>({
   setSteps: notImplemented,
   setStepName: notImplemented,
   onDeleteAction: notImplemented,
+  onSoftDeleteAction: notImplemented,
   onDeleteStep: notImplemented,
   onDropStep: notImplemented,
   onInsertAction: notImplemented,

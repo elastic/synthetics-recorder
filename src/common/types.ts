@@ -25,7 +25,7 @@ THE SOFTWARE.
 import type { ActionInContext } from '@elastic/synthetics';
 import type { StepStatus } from '../../common/types';
 
-export type ActionContext = ActionInContext & { isOpen?: boolean };
+export type ActionContext = ActionInContext & { isOpen?: boolean; isSoftDeleted?: boolean };
 export type ResultCategory = StepStatus | 'running';
 
 export interface StepSeparatorDragDropDataTransfer {

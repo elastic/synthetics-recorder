@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 import { Steps } from '@elastic/synthetics';
 import { useCallback, useState } from 'react';
-import { RecordingStatus, Setter } from '../common/types';
+import { ActionContext, RecordingStatus, Setter } from '../common/types';
 import { RendererProcessIpc } from 'electron-better-ipc';
 import { IRecordingContext } from '../contexts/RecordingContext';
 
@@ -52,6 +52,13 @@ export function useRecordingContext(
       setRecordingStatus(RecordingStatus.NotRecording);
       // Stop browser process
       ipc.send('stop');
+      // remove any actions that were soft-deleted while recording
+      setSteps(steps =>
+        steps.map(step => ({
+          ...step,
+          actions: step.actions.filter(action => (action as ActionContext)?.isSoftDeleted !== true),
+        }))
+      );
     } else {
       setRecordingStatus(RecordingStatus.Recording);
       await ipc.callMain('record-journey', { url });
