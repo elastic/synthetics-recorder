@@ -333,7 +333,9 @@ function onTest(mainWindowEmitter: EventEmitter) {
       });
     } finally {
       if (synthCliProcess && !synthCliProcess.kill()) {
-        logger.warn("Couldn't kill browser process.");
+        logger.warn(
+          `Attempted to send SIGTERM to synthetics process, but did not receive exit signal. Process ID is ${synthCliProcess.pid}.`
+        );
       }
     }
   };
