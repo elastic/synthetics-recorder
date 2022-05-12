@@ -165,7 +165,10 @@ pipeline {
         DIST_FOLDER = 'dist'
         RELEASE_URL_MESSAGE = "(<https://github.com/elastic/${env.REPO}/releases/tag/${env.TAG_NAME}|${env.TAG_NAME}>)"
       }
-      agent { label 'macos-code-signer' }
+      // There are some environmental issues with some of the CI workers
+      // let's use the one we know it works.      
+      //agent { label 'macos-code-signer' }      
+      agent { label 'worker-c07yc0cejyvy' }
       stages {
         stage('Dist') {
           options { skipDefaultCheckout() }
