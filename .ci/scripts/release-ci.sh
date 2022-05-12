@@ -3,12 +3,12 @@
 set -eo pipefail
 
 echo 'debug'
+set -x
 security list-keychains || true
 security list-keychains -d user || true
 security list-keychains -d system || true
 security list-keychains -d common || true
 security list-keychains -d dynamic || true
-
 
 echo 'set keychain for the user'
 security list-keychains -d user -s /var/lib/jenkins/Library/Keychains/Elastic.keychain-db || true
