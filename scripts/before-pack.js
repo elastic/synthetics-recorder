@@ -38,6 +38,7 @@ function fixSharp(arch, platform) {
       shell: true,
       env: {
         ...process.env,
+        KEYCHAIN_PASSWORD: undefined,
         npm_config_arch: arch,
         npm_config_platform: platform,
       },
