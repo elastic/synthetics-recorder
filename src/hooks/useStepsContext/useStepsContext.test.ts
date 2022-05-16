@@ -98,7 +98,6 @@ describe('useStepsContext', () => {
       expect(steps).toHaveLength(2);
       expect(steps[0]).toEqual(defaultSteps[0]);
       expect(steps[1].actions).toHaveLength(2);
-      console.log(JSON.stringify(steps, null, 2));
       expect((steps[1].actions[1] as ActionContext).isSoftDeleted).toBe(true);
     });
   });

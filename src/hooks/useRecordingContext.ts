@@ -64,7 +64,7 @@ export function useRecordingContext(
       await ipc.callMain('record-journey', { url });
       setRecordingStatus(RecordingStatus.NotRecording);
     }
-  }, [ipc, recordingStatus, stepCount, url]);
+  }, [ipc, recordingStatus, setSteps, stepCount, url]);
 
   const startOver = useCallback(async () => {
     setSteps([]);
