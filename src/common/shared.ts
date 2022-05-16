@@ -95,26 +95,6 @@ export function createExternalLinkHandler(
   };
 }
 
-export function updateAction(
-  steps: Steps,
-  value: string,
-  stepIndex: number,
-  actionIndex: number
-): Steps {
-  return steps.map((step, sidx) => {
-    if (sidx !== stepIndex) return step;
-    const nextStep: Step = {
-      actions: step.actions.map((ac, aidx) => {
-        if (aidx !== actionIndex) return ac;
-        const { action, ...rest } = ac;
-        return { action: { ...action, value }, ...rest };
-      }),
-    };
-    if (step.name) nextStep.name = step.name;
-    return nextStep;
-  });
-}
-
 /**
  * Gets code string for failed step in result object.
  * @param steps steps to analyze
