@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 import type { ActionInContext, Steps } from '@elastic/synthetics';
 
-export type ActionContext = ActionInContext & { isOpen?: boolean };
+export type ActionContext = ActionInContext & { isOpen?: boolean; isSoftDeleted?: boolean };
 export type StepStatus = 'succeeded' | 'failed' | 'skipped';
 export type JourneyType = 'suite' | 'inline';
 
