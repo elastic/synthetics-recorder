@@ -3,7 +3,7 @@
 @Library('apm@current') _
 
 pipeline {
-  agent { label 'ubuntu-20 && immutable' }
+  agent { label 'ubuntu-20.04 && immutable' }
   environment {
     REPO = "synthetics-recorder"
     BASE_DIR = "src/github.com/elastic/${env.REPO}"
@@ -11,11 +11,11 @@ pipeline {
     DOCKER_ELASTIC_SECRET = 'secret/observability-team/ci/docker-registry/prod'
     JOB_GIT_CREDENTIALS = "f6c7695a-671e-4f4f-a331-acdce44ff9ba"
     PIPELINE_LOG_LEVEL = "INFO"
-    RELEASE_URL_MESSAGE = "(<https://github.com/elastic/${env.REPO}/releases/tag/${env.TAG_NAME}|${env.TAG_NAME}>)"
     NOTIFY_TO = 'synthrum+synthetics-recorder@elastic.co'
+    SLACK_CHANNEL = '#observablt-bots'
   }
   options {
-    timeout(time: 1, unit: 'HOURS')
+    timeout(time: 2, unit: 'HOURS')
     buildDiscarder(logRotator(numToKeepStr: '20', artifactNumToKeepStr: '20', daysToKeepStr: '30'))
     timestamps()
     ansiColor('xterm')
@@ -31,6 +31,9 @@ pipeline {
     stage('Checkout') {
       options { skipDefaultCheckout() }
       steps {
+        whenTrue(isInternalCI() && isTag()) {
+          notifyStatus(slackStatus: 'good', subject: "[${env.REPO}] Build for the release tag *${env.TAG_NAME}* has been triggered", body: "Build: (<${env.RUN_DISPLAY_URL}|here>) for further details.")
+        }
         pipelineManager([ cancelPreviousRunningBuilds: [ when: 'PR' ] ])
         deleteDir()
         gitCheckout(basedir: "${BASE_DIR}", githubNotifyFirstTimeContributor: true)
@@ -42,7 +45,10 @@ pipeline {
     }
     stage('Install'){
       options { skipDefaultCheckout() }
-      when { expression { return !isTag() } }
+      when {
+        beforeAgent true
+        expression { return !isTag() }
+      }
       steps {
         withGithubNotify(context: "Install") {
           withNodeJSEnv() {
@@ -55,7 +61,10 @@ pipeline {
     }
     stage('Lint'){
       options { skipDefaultCheckout() }
-      when { expression { return !isTag() } }
+      when {
+        beforeAgent true
+        expression { return !isTag() }
+      }
       steps {
         withGithubNotify(context: "Lint") {
           withNodeJSEnv() {
@@ -81,7 +90,10 @@ pipeline {
     }
     stage('Build'){
       options { skipDefaultCheckout() }
-      when { expression { return !isTag() } }
+      when {
+        beforeAgent true
+        expression { return !isTag() }
+      }
       steps {
         withGithubNotify(context: "Build") {
           withNodeJSEnv() {
@@ -137,20 +149,66 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        tag pattern: 'v\\d+\\.\\d+.*', comparator: 'REGEXP'
+        allOf {
+          tag pattern: 'v\\d+\\.\\d+.*', comparator: 'REGEXP'
+          expression { isInternalCI() }
+        }
       }
-      agent { label 'macosx' }
+      environment {
+        BUCKET_NAME = 'internal-ci-artifacts'
+        BUCKET_SUBFOLDER = "${env.REPO}/${env.TAG_NAME}/${env.BUILD_ID}"
+        BUCKET_PATH = "gs://${env.BUCKET_NAME}/${env.BUCKET_SUBFOLDER}"
+        BUCKET_CREDENTIALS = 'internal-ci-gcs-plugin'
+        SIGNED_ARTIFACTS = 'signed-artifacts'
+        BUCKET_SUBFOLDER_SIGNED_ARTIFACTS = "${env.BUCKET_SUBFOLDER}/${env.SIGNED_ARTIFACTS}"
+        BUCKET_SIGNED_ARTIFACTS_PATH = "gs://${env.BUCKET_NAME}/${env.BUCKET_SUBFOLDER_SIGNED_ARTIFACTS}"
+        DIST_FOLDER = 'dist'
+        RELEASE_URL_MESSAGE = "(<https://github.com/elastic/${env.REPO}/releases/tag/${env.TAG_NAME}|${env.TAG_NAME}>)"
+      }
+      // There are some environmental issues with some of the CI workers
+      // let's use the one we know it works.      
+      //agent { label 'macos-code-signer' }      
+      agent { label 'worker-c07yc0cejyvy' }
       stages {
         stage('Dist') {
+          options { skipDefaultCheckout() }
           steps {
             deleteDir()
             unstash 'source'
             withNodeJSEnv() {
-              withCredentials([string(credentialsId: "2a9602aa-ab9f-4e52-baf3-b71ca88469c7", variable: 'GITHUB_TOKEN')]) {
-                dir("${BASE_DIR}"){
-                  sh(label: 'npm ci', script: 'npm ci')
-                  sh(label: 'npm release', script: 'npm run release')
-                }
+              dir("${BASE_DIR}"){
+                runReleaseWithKeychain()
+              }
+            }
+          }
+        }
+        stage('Signing CI') {
+          options { skipDefaultCheckout() }
+          steps {
+            dir("${BASE_DIR}") {
+              uploadBinariesToBeSigned(['deb', 'dmg', 'zip'])
+              build(job: 'elastic+unified-release+master+sign-artifacts-with-gpg',
+                    parameters: [string(name: 'gcs_input_path', value: "${env.BUCKET_PATH}")],
+                    wait: true,
+                    propagate: true)
+              uploadBinariesToBeSigned(['exe'])
+            }
+          }
+        }
+        stage('Download signed artifacts') {
+          options { skipDefaultCheckout() }
+          steps {
+            dir("${BASE_DIR}/${SIGNED_ARTIFACTS}") {
+              downloadSignedBinaries()
+            }
+          }
+        }
+        stage('Publish GitHub Release') {
+          options { skipDefaultCheckout() }
+          steps {
+            dir("${BASE_DIR}") {
+              withCredentials([string(credentialsId: '2a9602aa-ab9f-4e52-baf3-b71ca88469c7', variable: 'GITHUB_TOKEN')]) {
+                sh(label: 'create-github-release.sh', script: '.ci/scripts/create-github-release.sh "${SIGNED_ARTIFACTS}/${DIST_FOLDER}"')
               }
             }
           }
@@ -171,11 +229,14 @@ pipeline {
   }
   post {
     cleanup {
-      notifyBuildResult(prComment: true)
+      // Reporting disables in the `internal-ci` since credentials are not in place
+      // OTOH it avoids duplicated notifications
+      whenFalse(isInternalCI()){
+        notifyBuildResult(prComment: true)
+      }
     }
   }
 }
-
 
 def notifyStatus(def args = [:]) {
   releaseNotification(slackChannel: "${env.SLACK_CHANNEL}",
@@ -184,4 +245,38 @@ def notifyStatus(def args = [:]) {
                       to: "${env.NOTIFY_TO}",
                       subject: args.subject,
                       body: args.body)
+}
+
+def downloadSignedBinaries() {
+  googleStorageDownload(bucketUri: "${env.BUCKET_SIGNED_ARTIFACTS_PATH}/*",
+                        credentialsId: env.BUCKET_CREDENTIALS,
+                        localDirectory: "${DIST_FOLDER}/",
+                        pathPrefix: "${env.BUCKET_SUBFOLDER_SIGNED_ARTIFACTS}")
+  archiveArtifacts(allowEmptyArchive: false, artifacts: "${DIST_FOLDER}/*.*")
+}
+
+def uploadBinariesToBeSigned(extensions = [:]) {
+  extensions?.each { extension ->
+    googleStorageUpload(bucket: env.BUCKET_PATH,
+                        credentialsId: env.BUCKET_CREDENTIALS,
+                        pathPrefix: "${env.DIST_FOLDER}/",
+                        pattern: "${env.DIST_FOLDER}/*.${extension}",
+                        sharedPublicly: false,
+                        showInline: true)
+  }
+}
+
+def runReleaseWithKeychain() {
+  def vault = getVaultSecret(secret: 'secret/observability-team/ci/synthetics-recorder-macos-vault').data
+  if (!vault.containsKey('vault_secret_id') || !vault.containsKey('vault_role_id') || !vault.containsKey('vault_addr')) {
+    error("runReleaseWithKeychain: macos secret could not be accessed correctly")
+  }
+  def token = getVaultSecret.getVaultToken(vault.vault_addr, vault.vault_role_id, vault.vault_secret_id)
+  def apple = getVaultSecret.getVaultSecretObject(vault.vault_addr, 'secret/release/apple', token).data
+  if (!apple.containsKey('keychain-password')) {
+    error("runReleaseWithKeychain: apple secret could not be accessed correctly")
+  }
+  withEnvMask(vars: [[var: 'KEYCHAIN_PASSWORD', password: apple.get('keychain-password')]]){
+    sh(label: 'release-ci.sh', script: '.ci/scripts/release-ci.sh')
+  }
 }

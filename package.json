@@ -15,6 +15,7 @@
     "tsc-electron": "tsc -p tsconfig.node.json",
     "pack": "npm run build && electron-builder",
     "release": "npm run pack -- -mwl --publish=always",
+    "release-ci": "npm run pack -- -mwl --publish=never",
     "fix-sharp": "node node_modules/sharp/install/libvips && node node_modules/sharp/install/dll-copy",
     "clean": "rm -rf ./build && rm -rf ./dist",
     "lint": "eslint .",
