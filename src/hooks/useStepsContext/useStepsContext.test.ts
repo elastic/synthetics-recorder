@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 import type { Step, Steps } from '@elastic/synthetics';
 import { act, renderHook, RenderHookResult } from '@testing-library/react-hooks';
-import { ActionContext } from '../../common/types';
+import { ActionContext } from '../../../common/types';
 import { IStepsContext } from '../../contexts/StepsContext';
 import { createAction, createStep, createSteps } from '../../../common/helper/test/createAction';
 import { useStepsContext } from './useStepsContext';
@@ -98,7 +98,7 @@ describe('useStepsContext', () => {
       expect(steps).toHaveLength(2);
       expect(steps[0]).toEqual(defaultSteps[0]);
       expect(steps[1].actions).toHaveLength(2);
-      expect((steps[1].actions[1] as ActionContext).isSoftDeleted).toBe(true);
+      expect((steps[1].actions[1] as ActionContext)?.isSoftDeleted).toBe(true);
     });
   });
 

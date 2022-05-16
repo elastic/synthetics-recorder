@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 import type { Step, Steps } from '@elastic/synthetics';
 import { actionTitle } from '../common/shared';
-import { ActionContext } from '../common/types';
+import { ActionContext } from '../../common/types';
 
 /**
  * Creates an intermediate representation of the steps Playwright has recorded from

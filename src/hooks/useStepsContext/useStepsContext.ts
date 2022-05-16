@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 import type { Step, Steps } from '@elastic/synthetics';
 import { useCallback, useState } from 'react';
-import { ActionContext } from '../../common/types';
+import { ActionContext } from '../../../common/types';
 import type { IStepsContext } from '../../contexts/StepsContext';
 import { onDropStep } from './onDropStep';
 

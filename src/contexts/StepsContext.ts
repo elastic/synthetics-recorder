@@ -24,7 +24,8 @@ THE SOFTWARE.
 
 import type { Step, Steps } from '@elastic/synthetics';
 import { createContext } from 'react';
-import type { ActionContext, Setter } from '../common/types';
+import type { Setter } from '../common/types';
+import type { ActionContext } from '../../common/types';
 
 function notImplemented() {
   throw Error('Step context not initialized');

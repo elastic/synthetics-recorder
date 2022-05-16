@@ -49,7 +49,7 @@ import { StyledComponentsEuiProvider } from './contexts/StyledComponentsEuiProvi
 import { ExportScriptFlyout } from './components/ExportScriptFlyout';
 import { useRecordingContext } from './hooks/useRecordingContext';
 import { StartOverWarningModal } from './components/StartOverWarningModal';
-import { ActionContext } from './common/types';
+import { ActionContext } from '../common/types';
 
 /**
  * This is the prescribed workaround to some internal EUI issues that occur

@@ -24,7 +24,8 @@ THE SOFTWARE.
 
 import { Steps } from '@elastic/synthetics';
 import { useCallback, useState } from 'react';
-import { ActionContext, RecordingStatus, Setter } from '../common/types';
+import { RecordingStatus, Setter } from '../common/types';
+import { ActionContext } from '../../common/types';
 import { RendererProcessIpc } from 'electron-better-ipc';
 import { IRecordingContext } from '../contexts/RecordingContext';
 

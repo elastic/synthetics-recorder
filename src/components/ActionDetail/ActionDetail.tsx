@@ -34,7 +34,7 @@ import {
 } from '@elastic/eui';
 import { StepsContext } from '../../contexts/StepsContext';
 import { FormControl } from './FormControl';
-import { ActionContext } from '../../common/types';
+import { ActionContext } from '../../../common/types';
 import { actionTitle } from '../../common/shared';
 
 function createUpdatedAction(field: string, value: string, context: ActionContext) {

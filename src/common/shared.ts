@@ -25,7 +25,7 @@ THE SOFTWARE.
 import type { Action, Step, Steps } from '@elastic/synthetics';
 import { RendererProcessIpc } from 'electron-better-ipc';
 import React from 'react';
-import type { Journey, JourneyType } from '../../common/types';
+import type { ActionContext, Journey, JourneyType } from '../../common/types';
 
 export const COMMAND_SELECTOR_OPTIONS = [
   {
@@ -73,11 +73,14 @@ export const SMALL_SCREEN_BREAKPOINT = 850;
 
 export async function getCodeFromActions(
   ipc: RendererProcessIpc,
-  actions: Steps,
+  steps: Steps,
   type: JourneyType
 ): Promise<string> {
   return await ipc.callMain('actions-to-code', {
-    actions,
+    actions: steps.map(({ actions, ...rest }) => ({
+      ...rest,
+      actions: actions.filter(action => !(action as ActionContext)?.isSoftDeleted),
+    })),
     isSuite: type === 'suite',
   });
 }

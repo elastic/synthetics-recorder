@@ -25,7 +25,7 @@ THE SOFTWARE.
 import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
 import React from 'react';
 import { COMMAND_SELECTOR_OPTIONS } from '../../common/shared';
-import { ActionContext } from '../../common/types';
+import { ActionContext } from '../../../common/types';
 import { Bold } from './styles';
 
 interface IAssertionHeadingText {
