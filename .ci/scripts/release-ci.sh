@@ -12,7 +12,7 @@ security list-keychains -s "$CSC_KEYCHAIN"
 security list-keychains
 
 set +x
-echo 'unblock keychain'
+echo 'unlock keychain'
 security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$CSC_KEYCHAIN"
 
 echo 'run release-ci'
