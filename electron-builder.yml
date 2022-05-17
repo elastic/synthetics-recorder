@@ -19,6 +19,9 @@ mac:
   extraResources:
     - from: local-browsers/_releases/mac
       to: local-browsers
+  target:
+    target: default
+    arch: [x64, arm64]
 win:
   target: nsis
   icon: public/elastic.png
