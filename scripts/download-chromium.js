@@ -39,7 +39,7 @@ const DOWNLOAD_URLS = {
   linux: '%s/builds/chromium/%s/chromium-linux.zip',
   mac: '%s/builds/chromium/%s/chromium-mac.zip',
   win: '%s/builds/chromium/%s/chromium-win64.zip',
-  // 'mac-arm64': '%s/builds/chromium/%s/chromium-mac-arm64.zip',
+  'mac-arm64': '%s/builds/chromium/%s/chromium-mac-arm64.zip',
 };
 
 async function download(platform, revision, directory) {
