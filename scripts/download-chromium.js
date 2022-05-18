@@ -42,14 +42,19 @@ const DOWNLOAD_URLS = {
   'mac-arm64': '%s/builds/chromium/%s/chromium-mac-arm64.zip',
 };
 
-async function download(platform, revision, directory) {
+async function download(platform, arch, revision, directory) {
+  const platformAndArch = `${platform}-${arch}`;
   const executablePath = findExecutablePath(directory, platform);
   const downloadHost =
     process.env['PLAYWRIGHT_DOWNLOAD_HOST'] || 'https://playwright.azureedge.net';
-  const downloadURL = util.format(DOWNLOAD_URLS[platform], downloadHost, revision);
-  const title = `chromium v${revision} for ${platform}`;
-  const downloadFileName = `playwright-download-chromium-${platform}-${revision}.zip`;
+  const url = DOWNLOAD_URLS[platformAndArch] ?? DOWNLOAD_URLS[platform];
+  const downloadURL = util.format(url, downloadHost, revision);
+  const title = `chromium v${revision} for ${platformAndArch}`;
+  const downloadFileName = `playwright-download-chromium-${platformAndArch}-${revision}.zip`;
   try {
+    if (executablePath == null) {
+      throw new Error('executablePath not found');
+    }
     // eslint-disable-next-line no-console
     console.info('Downloading browser ', title);
     await downloadBrowserWithProgressBar(
@@ -80,15 +85,15 @@ function translatePlatform(platform) {
   }
 }
 
-exports.downloadForPlatform = async function downloadForPlatform(platform) {
-  platform = translatePlatform(platform);
+exports.downloadForPlatform = async function downloadForPlatform(electron_platform, arch) {
+  const platform = translatePlatform(electron_platform);
   const [, revision] = getChromeVersion().split('-');
   const directory = path.join(
     process.cwd(),
     'local-browsers',
     '_releases',
-    platform,
+    `${platform}-${arch}`,
     getChromeVersion()
   );
-  await download(platform, revision, directory);
+  await download(platform, arch, revision, directory);
 };
