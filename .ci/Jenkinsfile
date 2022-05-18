@@ -47,7 +47,8 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        expression { return !isTag() }
+        //expression { return !isTag() }
+        expression { return false }
       }
       steps {
         withGithubNotify(context: "Install") {
@@ -63,7 +64,8 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        expression { return !isTag() }
+        //expression { return !isTag() }
+        expression { return false }
       }
       steps {
         withGithubNotify(context: "Lint") {
@@ -92,7 +94,8 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        expression { return !isTag() }
+        //expression { return !isTag() }
+        expression { return false }
       }
       steps {
         withGithubNotify(context: "Build") {
@@ -129,7 +132,8 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        expression { return !isTag() }
+        //expression { return !isTag() }
+        expression { return false }
       }
       steps {
         withGithubNotify(context: "Test") {
@@ -150,11 +154,16 @@ pipeline {
       when {
         beforeAgent true
         allOf {
-          tag pattern: 'v\\d+\\.\\d+.*', comparator: 'REGEXP'
+          // TODO: to be uncommented
+          //tag pattern: 'v\\d+\\.\\d+.*', comparator: 'REGEXP'
+          // TODO: to be removed
+          expression { env.CHANGE_ID ==~ /.*251/ }
           expression { isInternalCI() }
         }
       }
       environment {
+        // TODO: to be removed
+        TAG_NAME = env.BRANCH_NAME
         BUCKET_NAME = 'internal-ci-artifacts'
         BUCKET_SUBFOLDER = "${env.REPO}/${env.TAG_NAME}/${env.BUILD_ID}"
         BUCKET_PATH = "gs://${env.BUCKET_NAME}/${env.BUCKET_SUBFOLDER}"
@@ -166,8 +175,8 @@ pipeline {
         RELEASE_URL_MESSAGE = "(<https://github.com/elastic/${env.REPO}/releases/tag/${env.TAG_NAME}|${env.TAG_NAME}>)"
       }
       // There are some environmental issues with some of the CI workers
-      // let's use the one we know it works.      
-      //agent { label 'macos-code-signer' }      
+      // let's use the one we know it works.
+      //agent { label 'macos-code-signer' }
       agent { label 'worker-c07yc0cejyvy' }
       stages {
         stage('Dist') {
