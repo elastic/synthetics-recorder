@@ -53,7 +53,7 @@ async function download(platform, arch, revision, directory) {
   const downloadFileName = `playwright-download-chromium-${platformAndArch}-${revision}.zip`;
   try {
     if (executablePath == null) {
-      throw new Error('executablePath not found');
+      throw new Error('Executable path for playwright browser not found');
     }
     // eslint-disable-next-line no-console
     console.info('Downloading browser ', title);
