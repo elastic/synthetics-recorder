@@ -101,8 +101,8 @@ function onRecordJourneys(mainWindowEmitter: EventEmitter) {
         'Cannot start recording a journey, a browser operation is already in progress.'
       );
     }
+    isBrowserRunning = true;
     try {
-      isBrowserRunning = true;
       const { browser, context } = await launchContext();
       const closeBrowser = async () => {
         browserContext = null;
@@ -144,9 +144,8 @@ function onRecordJourneys(mainWindowEmitter: EventEmitter) {
       mainWindowEmitter.removeListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
     } catch (e) {
       logger.error(e);
-    } finally {
-      isBrowserRunning = false;
     }
+    isBrowserRunning = false;
   };
 }
 
@@ -185,6 +184,7 @@ function onTest(mainWindowEmitter: EventEmitter) {
         'Cannot start testing a journey, a browser operation is already in progress.'
       );
     }
+    isBrowserRunning = true;
     const parseOrSkip = (chunk: string): Array<Record<string, any>> => {
       // at times stdout ships multiple steps in one chunk, broken by newline,
       // so here we split on the newline
@@ -282,8 +282,6 @@ function onTest(mainWindowEmitter: EventEmitter) {
         args.unshift(filePath);
       }
 
-      isBrowserRunning = true;
-
       /**
        * Fork the Synthetics CLI with correct browser path and
        * cwd correctly spawns the process
@@ -337,8 +335,8 @@ function onTest(mainWindowEmitter: EventEmitter) {
           `Attempted to send SIGTERM to synthetics process, but did not receive exit signal. Process ID is ${synthCliProcess.pid}.`
         );
       }
-      isBrowserRunning = false;
     }
+    isBrowserRunning = false;
   };
 }
 
