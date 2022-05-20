@@ -73,8 +73,14 @@ async function createWindow() {
   return mainWindowEmitter;
 }
 
+async function initMainWindow() {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow();
+  }
+}
+
 function createMenu() {
-  const menuTemplate = buildMenu(app.name);
+  const menuTemplate = buildMenu(app.name, initMainWindow);
   Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
 }
 
