@@ -101,8 +101,8 @@ function onRecordJourneys(mainWindowEmitter: EventEmitter) {
         'Cannot start recording a journey, a browser operation is already in progress.'
       );
     }
-    isBrowserRunning = true;
     try {
+      isBrowserRunning = true;
       const { browser, context } = await launchContext();
       const closeBrowser = async () => {
         browserContext = null;
@@ -125,8 +125,7 @@ function onRecordJourneys(mainWindowEmitter: EventEmitter) {
       const handleMainClose = async () => {
         actionListener.removeAllListeners();
         ipc.removeListener('stop', closeBrowser);
-        await browser.close();
-        isBrowserRunning = false;
+        return browser.close();
       };
 
       mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
@@ -186,7 +185,6 @@ function onTest(mainWindowEmitter: EventEmitter) {
         'Cannot start testing a journey, a browser operation is already in progress.'
       );
     }
-    isBrowserRunning = true;
     const parseOrSkip = (chunk: string): Array<Record<string, any>> => {
       // at times stdout ships multiple steps in one chunk, broken by newline,
       // so here we split on the newline
@@ -283,6 +281,9 @@ function onTest(mainWindowEmitter: EventEmitter) {
         await writeFile(filePath, data.code);
         args.unshift(filePath);
       }
+
+      isBrowserRunning = true;
+
       /**
        * Fork the Synthetics CLI with correct browser path and
        * cwd correctly spawns the process
@@ -300,7 +301,6 @@ function onTest(mainWindowEmitter: EventEmitter) {
         if (synthCliProcess && !synthCliProcess.kill()) {
           logger.warn('Unable to abort Synthetics test proceess.');
         }
-        isBrowserRunning = false;
       }
       mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
 
@@ -337,6 +337,7 @@ function onTest(mainWindowEmitter: EventEmitter) {
           `Attempted to send SIGTERM to synthetics process, but did not receive exit signal. Process ID is ${synthCliProcess.pid}.`
         );
       }
+      isBrowserRunning = false;
     }
   };
 }
