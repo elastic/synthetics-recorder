@@ -122,11 +122,12 @@ function onRecordJourneys(mainWindowEmitter: EventEmitter) {
       actionListener = new EventEmitter();
       actionListener.on('actions', actionsHandler);
 
-      const handleMainClose = async () => {
+      const handleMainClose = () => {
         actionListener.removeAllListeners();
         ipc.removeListener('stop', closeBrowser);
-        await browser.close();
-        isBrowserRunning = false;
+        browser.close().catch(() => {
+          isBrowserRunning = false;
+        });
       };
 
       mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
@@ -283,6 +284,7 @@ function onTest(mainWindowEmitter: EventEmitter) {
         await writeFile(filePath, data.code);
         args.unshift(filePath);
       }
+
       /**
        * Fork the Synthetics CLI with correct browser path and
        * cwd correctly spawns the process
@@ -300,7 +302,6 @@ function onTest(mainWindowEmitter: EventEmitter) {
         if (synthCliProcess && !synthCliProcess.kill()) {
           logger.warn('Unable to abort Synthetics test proceess.');
         }
-        isBrowserRunning = false;
       }
       mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
 
@@ -337,6 +338,7 @@ function onTest(mainWindowEmitter: EventEmitter) {
           `Attempted to send SIGTERM to synthetics process, but did not receive exit signal. Process ID is ${synthCliProcess.pid}.`
         );
       }
+      isBrowserRunning = false;
     }
   };
 }
