@@ -144,8 +144,9 @@ function onRecordJourneys(mainWindowEmitter: EventEmitter) {
       mainWindowEmitter.removeListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
     } catch (e) {
       logger.error(e);
+    } finally {
+      isBrowserRunning = false;
     }
-    isBrowserRunning = false;
   };
 }
 
@@ -335,8 +336,8 @@ function onTest(mainWindowEmitter: EventEmitter) {
           `Attempted to send SIGTERM to synthetics process, but did not receive exit signal. Process ID is ${synthCliProcess.pid}.`
         );
       }
+      isBrowserRunning = false;
     }
-    isBrowserRunning = false;
   };
 }
 
