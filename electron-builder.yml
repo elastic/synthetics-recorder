@@ -1,10 +1,14 @@
 productName: "Elastic-Synthetics-Recorder"
 appId: co.elastic.synthetics-recorder
+artifactName: ${productName}-${version}-${os}-${arch}.${ext}
 beforePack: "./scripts/before-pack.js"
 afterPack: "./scripts/after-pack.js"
 files:
   - build/**/*
   - scripts/**/*
+extraResources:
+  - from: local-browsers/_releases/${os}-${arch}
+    to: local-browsers
 publish:
   - provider: github
 extraMetadata:
@@ -16,23 +20,17 @@ protocols:
 mac:
   icon: public/elastic.png
   category: public.app-category.developer-tools
-  extraResources:
-    - from: local-browsers/_releases/mac
-      to: local-browsers
+  target:
+    target: default
+    arch: [x64, arm64]
 win:
   target: nsis
   icon: public/elastic.png
-  extraResources:
-    - from: local-browsers/_releases/win
-      to: local-browsers
 linux:
   target:
     - deb
   icon: public/elastic.png
   category: Utility
-  extraResources:
-    - from: local-browsers/_releases/linux
-      to: local-browsers
   # electron-builder issue:
   # https://github.com/electron-userland/electron-builder/issues/6200#issuecomment-907830847
   asarUnpack:

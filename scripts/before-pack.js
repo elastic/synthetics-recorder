@@ -28,10 +28,10 @@ const { downloadForPlatform } = require('./download-chromium');
 exports.default = function beforePack(ctx) {
   const arch = Arch[ctx.arch];
   const platform = ctx.electronPlatformName;
-  return Promise.all([downloadForPlatform(platform), fixSharp(arch, platform)]);
+  return Promise.all([downloadForPlatform(platform, arch), fixSharp(platform, arch)]);
 };
 
-function fixSharp(arch, platform) {
+function fixSharp(platform, arch) {
   return new Promise((resolve, reject) => {
     const npmInstall = spawn('npm', ['run', 'fix-sharp'], {
       stdio: 'inherit',
