@@ -122,10 +122,12 @@ function onRecordJourneys(mainWindowEmitter: EventEmitter) {
       actionListener = new EventEmitter();
       actionListener.on('actions', actionsHandler);
 
-      const handleMainClose = async () => {
+      const handleMainClose = () => {
         actionListener.removeAllListeners();
         ipc.removeListener('stop', closeBrowser);
-        return browser.close();
+        browser.close().catch(() => {
+          isBrowserRunning = false;
+        });
       };
 
       mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
