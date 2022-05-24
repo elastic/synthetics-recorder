@@ -190,12 +190,39 @@ pipeline {
               }
             }
           }
+          post {
+            success {
+              dir("${BASE_DIR}"){
+                stash(allowEmpty: false, name: 'exe', includes: "${env.DIST_FOLDER}/*.exe")
+              }
+            }
+          }
         }
-        stage('Signing CI') {
+        stage('Signing Windows') {
+          agent { label 'cloud-hsm' }
+          options { skipDefaultCheckout() }
+          steps {
+            deleteDir()
+            // probably a zip file is required to be Unified Release compliance.
+            git(credentialsId: 'f6c7695a-671e-4f4f-a331-acdce44ff9ba', url: 'git@github.com:elastic/infra.git')
+            dir('cd\\release\\windows-artifact-signer') {
+              unstash('exe')
+              bat("cmd /c '.\\ci.bat' sign --cleanup --product Elastic_Synthetics_Recorder --input dist\\Elastic_Synthetics_Recorder.zip")
+              // TODO: stash windows signed artifact
+            }
+          }
+          post {
+            cleanup {
+              deleteDir()
+            }
+          }
+        }
+        stage('Signing *Nix') {
           options { skipDefaultCheckout() }
           steps {
             dir("${BASE_DIR}") {
-              uploadBinariesToBeSigned(['deb', 'dmg', 'zip', 'exe'])
+              // TODO: unstash windows signed artifact
+              uploadBinariesToBeSigned(['deb', 'dmg', 'zip'])
               build(job: 'elastic+unified-release+master+sign-artifacts-with-gpg',
                     parameters: [string(name: 'gcs_input_path', value: "${env.BUCKET_PATH}")],
                     wait: true,
