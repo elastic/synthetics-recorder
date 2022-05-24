@@ -163,7 +163,7 @@ pipeline {
       }
       environment {
         // TODO: to be removed
-        TAG_NAME = env.BRANCH_NAME
+        TAG_NAME = "${env.BRANCH_NAME}"
         BUCKET_NAME = 'internal-ci-artifacts'
         BUCKET_SUBFOLDER = "${env.REPO}/${env.TAG_NAME}/${env.BUILD_ID}"
         BUCKET_PATH = "gs://${env.BUCKET_NAME}/${env.BUCKET_SUBFOLDER}"
