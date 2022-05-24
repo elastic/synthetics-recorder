@@ -195,12 +195,11 @@ pipeline {
           options { skipDefaultCheckout() }
           steps {
             dir("${BASE_DIR}") {
-              uploadBinariesToBeSigned(['deb', 'dmg', 'zip'])
+              uploadBinariesToBeSigned(['deb', 'dmg', 'zip', 'exe'])
               build(job: 'elastic+unified-release+master+sign-artifacts-with-gpg',
                     parameters: [string(name: 'gcs_input_path', value: "${env.BUCKET_PATH}")],
                     wait: true,
                     propagate: true)
-              uploadBinariesToBeSigned(['exe'])
             }
           }
         }

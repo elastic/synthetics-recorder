@@ -1,6 +1,6 @@
 {
   "name": "synthetics-recorder",
-  "version": "0.0.1-alpha.4",
+  "version": "0.0.1-beta.1",
   "description": "Record synthetics user journey flow of a website",
   "repository": "https://github.com/elastic/synthetics-recorder",
   "scripts": {
@@ -57,7 +57,7 @@
     "@types/react-dom": "^17.0.14",
     "@types/styled-components": "^5.1.24",
     "ajv": "^8.11.0",
-    "concurrently": "^7.0.0",
+    "concurrently": "^7.2.0",
     "electron": "^14.2.4",
     "electron-builder": "^23.0.2",
     "eslint": "^8.1.0",
@@ -68,13 +68,13 @@
     "jest": "^26.6.3",
     "jest-junit": "^13.2.0",
     "lint-staged": "^12.3.7",
-    "nodemon": "^2.0.15",
+    "nodemon": "^2.0.16",
     "prettier": "2.5.1",
     "react-scripts": "5.0.0",
     "react-test-renderer": "^17.0.2",
     "ts-jest": "^26.5.6",
-    "typescript": "^4.5.5",
     "ts-unused-exports": "^8.0.0",
+    "typescript": "^4.6.4",
     "wait-on": "^6.0.1"
   },
   "dependencies": {
@@ -89,7 +89,7 @@
     "electron-is-dev": "^2.0.0",
     "electron-log": "^4.4.6",
     "electron-unhandled": "^3.0.2",
-    "moment": "^2.29.1",
+    "moment": "^2.29.3",
     "playwright": "git+https://github.com/elastic/playwright.git#separate-recorder",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",

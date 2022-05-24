@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 import type { MenuItemConstructorOptions } from 'electron';
 
-export function buildMenu(appName: string): MenuItemConstructorOptions[] {
+export function buildMenu(appName: string, initMain: () => void): MenuItemConstructorOptions[] {
   return [
     {
       label: appName,
@@ -60,6 +60,11 @@ export function buildMenu(appName: string): MenuItemConstructorOptions[] {
     {
       role: 'window',
       submenu: [
+        {
+          label: 'New Main Window',
+          accelerator: 'CommandOrControl+N',
+          click: initMain,
+        },
         { role: 'close' },
         { role: 'minimize' },
         { role: 'zoom' },
