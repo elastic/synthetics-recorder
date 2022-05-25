@@ -205,8 +205,11 @@ pipeline {
             deleteDir()
             // probably a zip file is required to be Unified Release compliance.
             git(credentialsId: 'f6c7695a-671e-4f4f-a331-acdce44ff9ba', url: 'git@github.com:elastic/infra.git')
+            bat 'dir'
             dir('cd\\release\\windows-artifact-signer') {
+              bat 'dir'
               unstash('exe')
+              bat 'dir'
               bat("cmd /c '.\\ci.bat' sign --cleanup --product Elastic_Synthetics_Recorder --input dist\\Elastic_Synthetics_Recorder.zip")
               // TODO: stash windows signed artifact
             }
