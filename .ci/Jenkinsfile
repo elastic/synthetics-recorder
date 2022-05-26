@@ -210,6 +210,8 @@ pipeline {
               // WINDOWS_ZIP_FILE is set in the prepareZipFile
               bat(label: 'windows-artifact-signer', script: "ci.bat sign --cleanup --product Elastic_Synthetics_Recorder --input ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE}")
               debugDistFolder()
+              // Temporary archive the signed windows zip file to help us to validate if it was signed correctly.
+              archiveArtifacts(allowEmptyArchive: false, artifacts: "${DIST_FOLDER}/*.zip")
               /*
               unzip Elastic-Synthetics-Recorder-0.0.1-beta.1-win-x64.exe.zip
               rm Elastic-Synthetics-Recorder-0.0.1-beta.1-win-x64.exe.zip
