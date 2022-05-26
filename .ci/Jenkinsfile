@@ -203,16 +203,11 @@ pipeline {
           options { skipDefaultCheckout() }
           steps {
             deleteDir()
-            // probably a zip file is required to be Unified Release compliance.
             git(credentialsId: 'f6c7695a-671e-4f4f-a331-acdce44ff9ba', url: 'git@github.com:elastic/infra.git')
             dir('cd\\release\\windows-artifact-signer') {
               unstash('exe')
-              dir('dist') {
-                zip(glob: '*.exe', zipFile: 'Elastic_Synthetics_Recorder.zip')
-                bat 'dir'
-              }
-              bat 'dir'
-              bat("ci.bat sign --cleanup --product Elastic_Synthetics_Recorder --input dist\\Elastic_Synthetics_Recorder.zip")
+              prepareZipFile()
+              bat("ci.bat sign --cleanup --product Elastic_Synthetics_Recorder --input dist\\${env.WINDOWS_ZIP_FILE}")
               dir('dist') {
                 bat 'dir'
               }
@@ -322,4 +317,20 @@ def runReleaseWithKeychain() {
   withEnvMask(vars: [[var: 'KEYCHAIN_PASSWORD', password: apple.get('keychain-password')]]){
     sh(label: 'release-ci.sh', script: '.ci/scripts/release-ci.sh')
   }
+}
+
+// The Unified Release process uses an opinionated zip file format
+// product-version.zip contains product.exe
+// This function is the one in charge to change it
+def prepareZipFile() {
+  dir('dist') {
+    def files = findFiles(glob: '*.exe')
+    zipName = files[0].name
+    bat "ren ${zipName} Elastic_Synthetics_Recorder.exe"
+    bat 'dir'
+    zip(glob: '*.exe', zipFile: '${zipName}.zip')
+    bat 'dir'
+    env.WINDOWS_ZIP_FILE = zipName
+  }
+  bat 'dir'
 }
