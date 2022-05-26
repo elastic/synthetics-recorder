@@ -210,7 +210,12 @@ pipeline {
               // WINDOWS_ZIP_FILE is set in the prepareZipFile
               bat(label: 'windows-artifact-signer', script: "ci.bat sign --cleanup --product Elastic_Synthetics_Recorder --input ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE}")
               debugDistFolder()
-              // TODO: stash windows signed artifact
+              /*
+              unzip Elastic-Synthetics-Recorder-0.0.1-beta.1-win-x64.exe.zip
+              rm Elastic-Synthetics-Recorder-0.0.1-beta.1-win-x64.exe.zip
+              rename Elastic-Synthetics-Recorder.exe Elastic-Synthetics-Recorder-0.0.1-beta.1-win-x64.exe
+              stash Elastic-Synthetics-Recorder-0.0.1-beta.1-win-x64.exe
+              */
             }
           }
           post {
@@ -224,7 +229,7 @@ pipeline {
           steps {
             dir("${BASE_DIR}") {
               // TODO: unstash windows signed artifact
-              uploadBinariesToBeSigned(['deb', 'dmg', 'zip'])
+              uploadBinariesToBeSigned(['deb', 'dmg', 'zip', 'exe'])
               build(job: 'elastic+unified-release+master+sign-artifacts-with-gpg',
                     parameters: [string(name: 'gcs_input_path', value: "${env.BUCKET_PATH}")],
                     wait: true,
