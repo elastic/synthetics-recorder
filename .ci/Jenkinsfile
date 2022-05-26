@@ -207,6 +207,7 @@ pipeline {
             dir('cd\\release\\windows-artifact-signer') {
               unstash('exe')
               prepareZipFile()
+              // WINDOWS_ZIP_FILE is set in the prepareZipFile
               bat("ci.bat sign --cleanup --product Elastic_Synthetics_Recorder --input dist\\${env.WINDOWS_ZIP_FILE}")
               dir('dist') {
                 bat 'dir'
@@ -325,12 +326,12 @@ def runReleaseWithKeychain() {
 def prepareZipFile() {
   dir('dist') {
     def files = findFiles(glob: '*.exe')
-    zipName = files[0].name
-    bat "ren ${zipName} Elastic_Synthetics_Recorder.exe"
+    def fileName = files[0].name
+    env.WINDOWS_ZIP_FILE = "${zipName}.zip"
+    bat "ren ${fileName} Elastic_Synthetics_Recorder.exe"
     bat 'dir'
-    zip(glob: '*.exe', zipFile: '${zipName}.zip')
+    zip(glob: '*.exe', zipFile: "${env.WINDOWS_ZIP_FILE}")
     bat 'dir'
-    env.WINDOWS_ZIP_FILE = zipName
   }
   bat 'dir'
 }
