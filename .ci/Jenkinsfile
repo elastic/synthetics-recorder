@@ -208,10 +208,8 @@ pipeline {
               unstash('exe')
               prepareZipFile()
               // WINDOWS_ZIP_FILE is set in the prepareZipFile
-              bat("ci.bat sign --cleanup --product Elastic_Synthetics_Recorder --input dist\\${env.WINDOWS_ZIP_FILE}")
-              dir('dist') {
-                bat 'dir'
-              }
+              bat(label: 'windows-artifact-signer', script: "ci.bat sign --cleanup --product Elastic_Synthetics_Recorder --input ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE}")
+              debugDistFolder()
               // TODO: stash windows signed artifact
             }
           }
@@ -324,14 +322,27 @@ def runReleaseWithKeychain() {
 // product-version.zip contains product.exe
 // This function is the one in charge to change it
 def prepareZipFile() {
-  dir('dist') {
+  dir("${env.DIST_FOLDER}") {
     def files = findFiles(glob: '*.exe')
     def fileName = files[0].name
+    // create env variable with the zip file so it can be used later one
     env.WINDOWS_ZIP_FILE = "${zipName}.zip"
-    bat "ren ${fileName} Elastic_Synthetics_Recorder.exe"
-    bat 'dir'
+    bat(label: 'rename exe file to be UR compliance', script: "ren ${fileName} Elastic_Synthetics_Recorder.exe")
+    debugDir()
     zip(glob: '*.exe', zipFile: "${env.WINDOWS_ZIP_FILE}")
-    bat 'dir'
+    debugDir()
   }
-  bat 'dir'
+  debugDir()
+}
+
+// debugging purposes. TBR
+def debugDistFolder() {
+  dir("${env.DIST_FOLDER}") {
+    debugDir()
+  }
+}
+
+// debugging purposes. TBR
+def debugDir() {
+  bat(label: 'debug: list files', script:'dir')
 }
