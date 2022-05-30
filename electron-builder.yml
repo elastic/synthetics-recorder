@@ -14,9 +14,9 @@ publish:
 extraMetadata:
   main: build/electron/electron.js
 protocols:
-  - name: elastic-synthetics-recorder
-    schemes:
-      - elastic-synthetics-recorder
+  name: elastic-synthetics-recorder
+  schemes:
+    - elastic-synthetics-recorder
 mac:
   icon: public/elastic.png
   category: public.app-category.developer-tools
