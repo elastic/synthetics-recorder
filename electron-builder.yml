@@ -1,6 +1,6 @@
-productName: "Elastic-Synthetics-Recorder"
+productName: "Elastic Synthetics Recorder"
 appId: co.elastic.synthetics-recorder
-artifactName: ${productName}-${version}-${os}-${arch}.${ext}
+artifactName: ${name}-${version}-${os}-${arch}.${ext}
 beforePack: "./scripts/before-pack.js"
 afterPack: "./scripts/after-pack.js"
 files:
