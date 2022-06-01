@@ -162,8 +162,6 @@ pipeline {
         }
       }
       environment {
-        // TODO: to be removed
-        TAG_NAME = "${env.BRANCH_NAME}"
         BUCKET_NAME = 'internal-ci-artifacts'
         BUCKET_SUBFOLDER = "${env.REPO}/${env.TAG_NAME}/${env.BUILD_ID}"
         BUCKET_PATH = "gs://${env.BUCKET_NAME}/${env.BUCKET_SUBFOLDER}"
@@ -209,15 +207,12 @@ pipeline {
               prepareZipFile()
               // WINDOWS_ZIP_FILE is set in the prepareZipFile
               bat(label: 'windows-artifact-signer', script: "ci.bat sign --cleanup --product Elastic_Synthetics_Recorder --input ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE}")
-              debugDistFolder()
               // Temporary archive the signed windows zip file to help us to validate if it was signed correctly.
-              archiveArtifacts(allowEmptyArchive: false, artifacts: "${DIST_FOLDER}/*.zip")
-              /*
+              archiveArtifacts(allowEmptyArchive: false, artifacts: "${DIST_FOLDER}/*.zip")              
               unzip Elastic-Synthetics-Recorder-0.0.1-beta.1-win-x64.exe.zip
               rm Elastic-Synthetics-Recorder-0.0.1-beta.1-win-x64.exe.zip
               rename Elastic-Synthetics-Recorder.exe Elastic-Synthetics-Recorder-0.0.1-beta.1-win-x64.exe
-              stash Elastic-Synthetics-Recorder-0.0.1-beta.1-win-x64.exe
-              */
+              stash includes: 'Elastic-Synthetics-Recorder-0.0.1-beta.1-win-x64.exe', name: 'signed_exe'
             }
           }
           post {
@@ -231,6 +226,7 @@ pipeline {
           steps {
             dir("${BASE_DIR}") {
               // TODO: unstash windows signed artifact
+              unstash 'signed_exe'
               uploadBinariesToBeSigned(['deb', 'dmg', 'zip', 'exe'])
               build(job: 'elastic+unified-release+master+sign-artifacts-with-gpg',
                     parameters: [string(name: 'gcs_input_path', value: "${env.BUCKET_PATH}")],
@@ -334,22 +330,7 @@ def prepareZipFile() {
     def fileName = files[0].name
     // create env variable with the zip file so it can be used later one
     env.WINDOWS_ZIP_FILE = "${fileName}.zip"
-    bat(label: 'rename exe file to be UR compliance', script: "ren ${fileName} Elastic_Synthetics_Recorder.exe")
-    debugDir()
-    zip(glob: '*.exe', zipFile: "${env.WINDOWS_ZIP_FILE}")
-    debugDir()
-  }
-  debugDir()
-}
-
-// debugging purposes. TBR
-def debugDistFolder() {
-  dir("${env.DIST_FOLDER}") {
-    debugDir()
-  }
-}
-
-// debugging purposes. TBR
-def debugDir() {
-  bat(label: 'debug: list files', script:'dir')
+    bat(label: 'rename exe file to be UR compliance', script: "ren ${fileName} Elastic_Synthetics_Recorder.exe")    
+    zip(glob: '*.exe', zipFile: "${env.WINDOWS_ZIP_FILE}")    
+  }  
 }
