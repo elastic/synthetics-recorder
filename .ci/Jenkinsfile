@@ -334,7 +334,7 @@ def prepareZipFile() {
     def fileName = files[0].name
     // create env variable with the zip file so it can be used later one
     env.WINDOWS_ZIP_FILE = "${fileName}.zip"
-    env.WINDOWS_FILE_NAME = "${filename}"
+    env.WINDOWS_FILE_NAME = "${fileName}"
     bat(label: 'rename exe file to be UR compliance', script: "ren ${env.WINDOWS_FILE_NAME} Elastic_Synthetics_Recorder.exe")    
     zip(glob: '*.exe', zipFile: "${env.WINDOWS_ZIP_FILE}")    
   }  
