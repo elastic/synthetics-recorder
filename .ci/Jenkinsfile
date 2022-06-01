@@ -206,14 +206,16 @@ pipeline {
             dir('cd\\release\\windows-artifact-signer') {
               unstash('exe')
               prepareZipFile()
-              // WINDOWS_ZIP_FILE is set in the prepareZipFile
+              // WINDOWS_ZIP_FILE and WINDOWS_FILE_NAME are declared in prepareZipFile
               bat(label: 'windows-artifact-signer', script: "ci.bat sign --cleanup --product Elastic_Synthetics_Recorder --input ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE}")
+              sh(label: 'debug', script: 'ls -lah')
               // Temporary archive the signed windows zip file to help us to validate if it was signed correctly.
               archiveArtifacts(allowEmptyArchive: false, artifacts: "${DIST_FOLDER}/*.zip")              
-              unzip Elastic-Synthetics-Recorder-0.0.1-beta.1-win-x64.exe.zip
-              rm Elastic-Synthetics-Recorder-0.0.1-beta.1-win-x64.exe.zip
-              rename Elastic-Synthetics-Recorder.exe Elastic-Synthetics-Recorder-0.0.1-beta.1-win-x64.exe
-              stash includes: 'Elastic-Synthetics-Recorder-0.0.1-beta.1-win-x64.exe', name: 'signed_exe'
+              unzip "${env.WINDOWS_ZIP_FILE}"
+              // rm Elastic-Synthetics-Recorder-0.0.1-beta.1-win-x64.exe.zip
+              bat(label: 'rename exe file', script: "ren Elastic-Synthetics-Recorder.exe ${env.WINDOWS_FILE_NAME}")    
+              // rename Elastic-Synthetics-Recorder.exe 
+              stash includes: "${env.WINDOWS_FILE_NAME}", name: 'signed_exe'
             }
           }
           post {
@@ -331,6 +333,7 @@ def prepareZipFile() {
     def fileName = files[0].name
     // create env variable with the zip file so it can be used later one
     env.WINDOWS_ZIP_FILE = "${fileName}.zip"
+    env.WINDOWS_FILE_NAME = "${filename}"
     bat(label: 'rename exe file to be UR compliance', script: "ren ${fileName} Elastic_Synthetics_Recorder.exe")    
     zip(glob: '*.exe', zipFile: "${env.WINDOWS_ZIP_FILE}")    
   }  
