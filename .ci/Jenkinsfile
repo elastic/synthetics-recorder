@@ -210,14 +210,15 @@ pipeline {
               bat(label: 'windows-artifact-signer', script: "ci.bat sign --cleanup --product Elastic_Synthetics_Recorder --input ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE}")              
               // Temporary archive the signed windows zip file to help us to validate if it was signed correctly.
               archiveArtifacts(allowEmptyArchive: false, artifacts: "${DIST_FOLDER}/*.zip")
-              // todo rm
-              bat(label: 'debug: list files', script:'dir')
-              bat(label: 'debug: tree', script: 'tree')            
-              unzip "${env.WINDOWS_ZIP_FILE}"
-              // rm Elastic-Synthetics-Recorder-0.0.1-beta.1-win-x64.exe.zip
-              bat(label: 'rename exe file', script: "ren Elastic-Synthetics-Recorder.exe ${env.WINDOWS_FILE_NAME}")    
-              // rename Elastic-Synthetics-Recorder.exe 
-              stash includes: "${env.WINDOWS_FILE_NAME}", name: 'signed_exe'
+              dir ("${DIST_FOLDER}") {
+                bat(label: 'debug: list files', script:'dir')
+                bat(label: 'debug: tree', script: 'tree')            
+                unzip "${env.WINDOWS_ZIP_FILE}"
+                // rm Elastic-Synthetics-Recorder-0.0.1-beta.1-win-x64.exe.zip
+                bat(label: 'rename exe file', script: "ren Elastic-Synthetics-Recorder.exe ${env.WINDOWS_FILE_NAME}")    
+                // rename Elastic-Synthetics-Recorder.exe 
+                stash includes: "${env.WINDOWS_FILE_NAME}", name: 'signed_exe'
+              }
             }
           }
           post {
