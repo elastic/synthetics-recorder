@@ -257,10 +257,13 @@ pipeline {
           options { skipDefaultCheckout() }
           steps {
             dir("${BASE_DIR}") {
-              //todo remove
-              sh(label: 'delete this: remame gpg signed exe', script: 'mv synthetics-recorder-0.0.1-beta.2-win-x64.exe synthetics-recorder-0.0.1-beta.2-win-x64-gpg.exe')
-              //todo remove
-              unstash('exe')
+              dir("${BASE_DIR}/${SIGNED_ARTIFACTS}") {
+                //todo remove
+                sh(label: 'delete this: remame gpg signed exe', script: 'mv synthetics-recorder-0.0.1-beta.2-win-x64.exe synthetics-recorder-0.0.1-beta.2-win-x64-gpg.exe')
+                //todo remove
+                unstash('exe')
+              }
+              
               withCredentials([string(credentialsId: '2a9602aa-ab9f-4e52-baf3-b71ca88469c7', variable: 'GITHUB_TOKEN')]) {
                 sh(label: 'create-github-release.sh', script: '.ci/scripts/create-github-release.sh "${SIGNED_ARTIFACTS}/${DIST_FOLDER}"')
               }
