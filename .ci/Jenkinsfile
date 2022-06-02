@@ -210,17 +210,12 @@ pipeline {
               unstash('exe')
               prepareZipFile()
               // WINDOWS_ZIP_FILE and WINDOWS_FILE_NAME are declared in prepareZipFile
-              bat(label: 'windows-artifact-signer', script: "ci.bat sign --cleanup --product ${env.SIGNER_PROJECT_NAME} --input ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE}")              
-              // Temporary archive the signed windows zip file to help us to validate if it was signed correctly.
-              
+              bat(label: 'windows-artifact-signer', script: "ci.bat sign --cleanup --product ${env.SIGNER_PROJECT_NAME} --input ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE}")
               dir("${DIST_FOLDER}") {
                 archiveArtifacts(allowEmptyArchive: false, artifacts: "*.zip")
-                bat(label: 'debug: list files', script:'dir')                          
                 unzip "${env.WINDOWS_ZIP_FILE}"
-                // rm Elastic-Synthetics-Recorder-0.0.1-beta.1-win-x64.exe.zip
-                bat(label: 'rename exe file', script: "ren ${env.SIGNER_PROJECT_NAME}.exe ${env.WINDOWS_FILE_NAME}")    
-                // rename Elastic-Synthetics-Recorder.exe 
-                stash includes: "${env.WINDOWS_FILE_NAME}", name: 'signed_exe'
+                bat(label: 'rename exe file', script: "ren ${env.SIGNER_PROJECT_NAME}.exe ${env.WINDOWS_FILE_NAME}")
+                stash includes: "${env.WINDOWS_FILE_NAME}", name: 'signed_exe', allowEmpty: false
               }
             }
           }
@@ -234,7 +229,6 @@ pipeline {
           options { skipDefaultCheckout() }
           steps {
             dir("${BASE_DIR}") {
-              // TODO: unstash windows signed artifact
               unstash 'signed_exe'
               uploadBinariesToBeSigned(['deb', 'dmg', 'zip', 'exe'])
               build(job: 'elastic+unified-release+master+sign-artifacts-with-gpg',
