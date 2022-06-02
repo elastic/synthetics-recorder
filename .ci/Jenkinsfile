@@ -214,7 +214,9 @@ pipeline {
               dir("${DIST_FOLDER}") {
                 archiveArtifacts(allowEmptyArchive: false, artifacts: "*.zip")
                 unzip "${env.WINDOWS_ZIP_FILE}"
+                bat(label: 'debug: list files before rename', script:'dir')
                 bat(label: 'rename exe file', script: "ren ${env.SIGNER_PROJECT_NAME}.exe ${env.WINDOWS_FILE_NAME}")
+                bat(label: 'debug: list files after rename', script:'dir')
                 stash includes: "${env.WINDOWS_FILE_NAME}", name: 'signed_exe', allowEmpty: false
               }
             }
@@ -229,7 +231,9 @@ pipeline {
           options { skipDefaultCheckout() }
           steps {
             dir("${BASE_DIR}") {
+              sh(label: 'debug dir before unstash', script: 'ls -lah')
               unstash 'signed_exe'
+              sh(label: 'debug dir', script: 'ls -lah')
               uploadBinariesToBeSigned(['deb', 'dmg', 'zip', 'exe'])
               build(job: 'elastic+unified-release+master+sign-artifacts-with-gpg',
                     parameters: [string(name: 'gcs_input_path', value: "${env.BUCKET_PATH}")],
