@@ -231,9 +231,11 @@ pipeline {
           options { skipDefaultCheckout() }
           steps {
             dir("${BASE_DIR}") {
-              sh(label: 'debug dir before unstash', script: 'ls -lah')
-              unstash 'signed_exe'
-              sh(label: 'debug dir', script: 'ls -lah')
+              dir("${env.DIST_FOLDER}") {
+                sh(label: 'debug dir before unstash', script: 'ls -lah')
+                unstash 'signed_exe'
+                sh(label: 'debug dir', script: 'ls -lah')
+              }
               uploadBinariesToBeSigned(['deb', 'dmg', 'zip', 'exe'])
               build(job: 'elastic+unified-release+master+sign-artifacts-with-gpg',
                     parameters: [string(name: 'gcs_input_path', value: "${env.BUCKET_PATH}")],
