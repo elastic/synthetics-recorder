@@ -172,6 +172,7 @@ pipeline {
         BUCKET_SIGNED_ARTIFACTS_PATH = "gs://${env.BUCKET_NAME}/${env.BUCKET_SUBFOLDER_SIGNED_ARTIFACTS}"
         DIST_FOLDER = 'dist'
         RELEASE_URL_MESSAGE = "(<https://github.com/elastic/${env.REPO}/releases/tag/${env.TAG_NAME}|${env.TAG_NAME}>)"
+        SIGNER_PROJECT_NAME = 'Elastic_Synthetics_Recorder'
       }
       // There are some environmental issues with some of the CI workers
       // let's use the one we know it works.
@@ -199,26 +200,16 @@ pipeline {
         }
         stage('Signing Windows') {
           agent { label 'cloud-hsm' }
-          environment {
-            SIGNER_PROJECT_NAME = 'Elastic_Synthetics_Recorder'
-          }
           options { skipDefaultCheckout() }
           steps {
             deleteDir()
             git(credentialsId: 'f6c7695a-671e-4f4f-a331-acdce44ff9ba', url: 'git@github.com:elastic/infra.git')
             dir('cd\\release\\windows-artifact-signer') {
               unstash('exe')
-              prepareZipFile()
+              prepareZipFileBeforeSigning()
               // WINDOWS_ZIP_FILE and WINDOWS_FILE_NAME are declared in prepareZipFile
               bat(label: 'windows-artifact-signer', script: "ci.bat sign --cleanup --product ${env.SIGNER_PROJECT_NAME} --input ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE}")
-              dir("${DIST_FOLDER}") {
-                archiveArtifacts(allowEmptyArchive: false, artifacts: "*.zip")
-                unzip("${env.WINDOWS_ZIP_FILE}")
-                bat(label: 'debug: list files before rename', script:'dir')
-                bat(label: 'rename exe file', script: "ren ${env.SIGNER_PROJECT_NAME}.exe ${env.WINDOWS_FILE_NAME}")
-                bat(label: 'debug: list files after rename', script:'dir')
-                stash(includes: "${env.WINDOWS_FILE_NAME}", name: 'signed_exe', allowEmpty: false)
-              }
+              prepareZipFileAfterSigning()
             }
           }
           post {
@@ -330,14 +321,28 @@ def runReleaseWithKeychain() {
 // product-version.zip contains product.exe
 // This function is the one in charge to change it
 // version comes from package.json
-def prepareZipFile() {
+def prepareZipFileBeforeSigning() {
   dir("${env.DIST_FOLDER}") {
     def files = findFiles(glob: '*.exe')
     def fileName = files[0].name
     // create env variable with the zip file so it can be used later one
     env.WINDOWS_ZIP_FILE = "${fileName}.zip"
     env.WINDOWS_FILE_NAME = "${fileName}"
-    bat(label: 'rename exe file to be UR compliance', script: "ren ${env.WINDOWS_FILE_NAME} Elastic_Synthetics_Recorder.exe")
+    bat(label: 'rename exe file to be UR compliance', script: "ren ${env.WINDOWS_FILE_NAME} ${env.SIGNER_PROJECT_NAME}.exe")
     zip(glob: '*.exe', zipFile: "${env.WINDOWS_ZIP_FILE}")
+  }
+}
+
+// The Unified Release process uses an opinionated zip file format
+// product-version.zip contains product.exe
+// This function is the one in charge to change it
+// version comes from package.json
+def prepareZipFileAfterSigning() {
+  dir("${env.DIST_FOLDER}") {
+    unzip("${env.WINDOWS_ZIP_FILE}")
+    bat(label: 'debug: list files before rename', script:'dir')
+    bat(label: 'rename exe file', script: "ren ${env.SIGNER_PROJECT_NAME}.exe ${env.WINDOWS_FILE_NAME}")
+    bat(label: 'debug: list files after rename', script:'dir')
+    stash(includes: "${env.WINDOWS_FILE_NAME}", name: 'signed_exe', allowEmpty: false)
   }
 }
