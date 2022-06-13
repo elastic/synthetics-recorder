@@ -213,11 +213,11 @@ pipeline {
               bat(label: 'windows-artifact-signer', script: "ci.bat sign --cleanup --product ${env.SIGNER_PROJECT_NAME} --input ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE}")
               dir("${DIST_FOLDER}") {
                 archiveArtifacts(allowEmptyArchive: false, artifacts: "*.zip")
-                unzip "${env.WINDOWS_ZIP_FILE}"
+                unzip("${env.WINDOWS_ZIP_FILE}")
                 bat(label: 'debug: list files before rename', script:'dir')
                 bat(label: 'rename exe file', script: "ren ${env.SIGNER_PROJECT_NAME}.exe ${env.WINDOWS_FILE_NAME}")
                 bat(label: 'debug: list files after rename', script:'dir')
-                stash includes: "${env.WINDOWS_FILE_NAME}", name: 'signed_exe', allowEmpty: false
+                stash(includes: "${env.WINDOWS_FILE_NAME}", name: 'signed_exe', allowEmpty: false)
               }
             }
           }
@@ -231,13 +231,7 @@ pipeline {
           options { skipDefaultCheckout() }
           steps {
             dir("${BASE_DIR}") {
-              dir("${env.DIST_FOLDER}") {
-                sh(label: 'debug dir before unstash', script: 'ls -lah')
-                sh(label: 'delete unsigned exe file', script: 'rm ./*.exe')
-                unstash 'signed_exe'
-                sh(label: 'debug dir', script: 'ls -lah')
-              }
-              uploadBinariesToBeSigned(['deb', 'dmg', 'zip', 'exe'])
+              uploadBinariesToBeSigned(['deb', 'dmg', 'zip'])
               build(job: 'elastic+unified-release+master+sign-artifacts-with-gpg',
                     parameters: [string(name: 'gcs_input_path', value: "${env.BUCKET_PATH}")],
                     wait: true,
@@ -250,6 +244,7 @@ pipeline {
           steps {
             dir("${BASE_DIR}/${SIGNED_ARTIFACTS}") {
               downloadSignedBinaries()
+              unstash 'signed_exe'
             }
           }
         }
@@ -257,13 +252,6 @@ pipeline {
           options { skipDefaultCheckout() }
           steps {
             dir("${BASE_DIR}") {
-              dir("${BASE_DIR}/${SIGNED_ARTIFACTS}") {
-                //todo remove
-                sh(label: 'delete this: remame gpg signed exe', script: 'mv synthetics-recorder-0.0.1-beta.2-win-x64.exe synthetics-recorder-0.0.1-beta.2-win-x64-gpg.exe')
-                //todo remove
-                unstash('exe')
-              }
-              
               withCredentials([string(credentialsId: '2a9602aa-ab9f-4e52-baf3-b71ca88469c7', variable: 'GITHUB_TOKEN')]) {
                 sh(label: 'create-github-release.sh', script: '.ci/scripts/create-github-release.sh "${SIGNED_ARTIFACTS}/${DIST_FOLDER}"')
               }
@@ -349,7 +337,7 @@ def prepareZipFile() {
     // create env variable with the zip file so it can be used later one
     env.WINDOWS_ZIP_FILE = "${fileName}.zip"
     env.WINDOWS_FILE_NAME = "${fileName}"
-    bat(label: 'rename exe file to be UR compliance', script: "ren ${env.WINDOWS_FILE_NAME} Elastic_Synthetics_Recorder.exe")    
-    zip(glob: '*.exe', zipFile: "${env.WINDOWS_ZIP_FILE}")    
-  }  
+    bat(label: 'rename exe file to be UR compliance', script: "ren ${env.WINDOWS_FILE_NAME} Elastic_Synthetics_Recorder.exe")
+    zip(glob: '*.exe', zipFile: "${env.WINDOWS_ZIP_FILE}")
+  }
 }
