@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { Steps } from '@elastic/synthetics';
 import { useCallback, useContext, useState } from 'react';
+import { RecorderSteps } from '../../common/types';
 import { DRAG_AND_DROP_DATA_TRANSFER_TYPE } from '../common/shared';
 import { StepSeparatorDragDropDataTransfer } from '../common/types';
 import { DragAndDropContext } from '../contexts/DragAndDropContext';
@@ -32,7 +32,7 @@ import { StepsContext } from '../contexts/StepsContext';
 export const computeIsDroppable = (
   stepIndex: number,
   actionIndex: number,
-  steps: Steps,
+  steps: RecorderSteps,
   dragStepIndex?: number
 ) =>
   /**

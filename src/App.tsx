@@ -49,7 +49,7 @@ import { StyledComponentsEuiProvider } from './contexts/StyledComponentsEuiProvi
 import { ExportScriptFlyout } from './components/ExportScriptFlyout';
 import { useRecordingContext } from './hooks/useRecordingContext';
 import { StartOverWarningModal } from './components/StartOverWarningModal';
-import { ActionContext } from '../common/types';
+import { ActionContext, RecorderSteps } from '../common/types';
 
 /**
  * This is the prescribed workaround to some internal EUI issues that occur
@@ -85,7 +85,7 @@ export default function App() {
   useEffect(() => {
     // `actions` here is a set of `ActionInContext`s that make up a `Step`
     const listener = ({ actions }: { actions: ActionContext[] }) => {
-      setSteps((prevSteps: Steps) => {
+      setSteps((prevSteps: RecorderSteps) => {
         const nextSteps: Steps = generateIR([{ actions }]);
         return generateMergedIR(prevSteps, nextSteps);
       });

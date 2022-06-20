@@ -22,16 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Steps } from '@elastic/synthetics';
 import { IpcRendererEvent } from 'electron';
 import { useCallback, useContext, useEffect, useReducer, useState } from 'react';
 import { getCodeFromActions, getCodeForFailedResult } from '../common/shared';
 import { CommunicationContext } from '../contexts/CommunicationContext';
-import type { Result, TestEvent } from '../../common/types';
+import type { RecorderSteps, Result, TestEvent } from '../../common/types';
 import type { ITestContext } from '../contexts/TestContext';
 import { resultReducer } from '../helpers/resultReducer';
 
-export function useSyntheticsTest(steps: Steps): ITestContext {
+export function useSyntheticsTest(steps: RecorderSteps): ITestContext {
   const [result, dispatch] = useReducer(resultReducer, undefined);
   const [isResultFlyoutVisible, setIsResultFlyoutVisible] = useState(false);
   const [codeBlocks, setCodeBlocks] = useState('');

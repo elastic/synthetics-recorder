@@ -22,11 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Steps } from '@elastic/synthetics';
 import { useContext } from 'react';
+import { RecorderSteps } from '../../common/types';
 import { StepsContext } from '../contexts/StepsContext';
 
-export function canDrag(stepIndex: number, steps: Steps): boolean | null {
+export function canDrag(stepIndex: number, steps: RecorderSteps): boolean | null {
   if (stepIndex === 0) return null;
   /**
    * A step heading is draggable if there's _somewhere_ for it to go between the preceeding

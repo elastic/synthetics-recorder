@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { Action, Step, Steps } from '@elastic/synthetics';
-import { ActionContext } from '../../types';
+import { Action, Step } from '@elastic/synthetics';
+import { ActionContext, RecorderSteps } from '../../types';
 
 type ActionOverride = Partial<Action>;
 type ActionWithName = Partial<Action> & { name: string };
@@ -69,7 +69,7 @@ export const createStep = (actionNames: string[]): Step => ({
   actions: actionNames.map(name => createAction(name)),
 });
 
-export const createStepsWithOverrides = (steps: CreateStepActionOverride[][]): Steps =>
+export const createStepsWithOverrides = (steps: CreateStepActionOverride[][]): RecorderSteps =>
   steps.map(s => createStepWithOverrides(s));
 
 export const createSteps = (stepList: string[][]) =>
