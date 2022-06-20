@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 import type { Step, Steps } from '@elastic/synthetics';
-import { ActionContext } from '../../common/types';
+import { ActionContext, RecorderSteps } from '../../common/types';
 import { generateIR, generateMergedIR } from './generator';
 import {
   createAction,
@@ -145,7 +145,7 @@ describe('generator', () => {
     });
   });
   describe('generateMergedIR', () => {
-    const prev: Steps = createStepsWithOverrides([
+    const prev: RecorderSteps = createStepsWithOverrides([
       [
         {
           action: {
@@ -526,6 +526,135 @@ describe('generator', () => {
           ],
         ])
       );
+    });
+
+    it('preserves soft deletes', () => {
+      const softDeletedAction: ActionContext = {
+        pageAlias: 'page',
+        isMainFrame: true,
+        frameUrl:
+          'https://www.google.com/search?q=hello+world&source=hp&ei=Wa-wYt7xDPa15NoP6NeGmAk&iflsig=AJiK0e8AAAAAYrC9aQ-K5PLjczC0c7dceKI--pjoitdO&ved=0ahUKEwieguz8x7z4AhX2GlkFHeirAZMQ4dUDCAo&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDMggIABCABBCxAzIFCC4QgAQyCAgAEIAEELEDMggIABCABBCxAzILCC4QgAQQsQMQ1AIyBQgAEIAEOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6EQguEI8BENQCEOoCEIwDEOUCOhEILhCABBCxAxCDARDHARCjAjoLCC4QgAQQxwEQrwE6CAgAELEDEIMBOgQIABADOgsIABCABBCxAxCDAToICC4QsQMQgwE6DgguEIAEELEDEMcBEKMCOhEILhCABBCxAxCDARDHARCvAToOCC4QgAQQxwEQrwEQ1AI6DgguELEDEIMBEMcBEKMCOhEILhCABBCxAxCDARDHARDRAzoLCC4QgAQQsQMQgwE6CAguEIAEELEDOg4IABCABBCxAxCDARDJAzoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6BwgAELEDEApQrwJYvAtgsgxoAXAAeACAAVeIAbgFkgECMTGYAQCgAQGwAQo&sclient=gws-wiz',
+        action: {
+          name: 'click',
+          selector: 'text=/.*"Hello, World!" program - Wikipedia.*/',
+          signals: [
+            {
+              name: 'navigation',
+              url: 'https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
+            },
+          ],
+          button: 'left',
+          modifiers: 0,
+
+          clickCount: 1,
+        },
+        title: 'Click text=/.*"Hello, World!" program - Wikipedia.*/',
+        isSoftDeleted: true,
+        modified: true,
+      };
+      const recorderActions: RecorderSteps = [
+        {
+          actions: [
+            {
+              pageAlias: 'page',
+              isMainFrame: true,
+              frameUrl: 'https://www.google.com/?gws_rd=ssl',
+              action: {
+                name: 'press',
+                selector: '[aria-label="Search"]',
+                signals: [
+                  {
+                    name: 'navigation',
+                    url: 'https://www.google.com/search?q=hello+world&source=hp&ei=Wa-wYt7xDPa15NoP6NeGmAk&iflsig=AJiK0e8AAAAAYrC9aQ-K5PLjczC0c7dceKI--pjoitdO&ved=0ahUKEwieguz8x7z4AhX2GlkFHeirAZMQ4dUDCAo&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDMggIABCABBCxAzIFCC4QgAQyCAgAEIAEELEDMggIABCABBCxAzILCC4QgAQQsQMQ1AIyBQgAEIAEOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6EQguEI8BENQCEOoCEIwDEOUCOhEILhCABBCxAxCDARDHARCjAjoLCC4QgAQQxwEQrwE6CAgAELEDEIMBOgQIABADOgsIABCABBCxAxCDAToICC4QsQMQgwE6DgguEIAEELEDEMcBEKMCOhEILhCABBCxAxCDARDHARCvAToOCC4QgAQQxwEQrwEQ1AI6DgguELEDEIMBEMcBEKMCOhEILhCABBCxAxCDARDHARDRAzoLCC4QgAQQsQMQgwE6CAguEIAEELEDOg4IABCABBCxAxCDARDJAzoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6BwgAELEDEApQrwJYvAtgsgxoAXAAeACAAVeIAbgFkgECMTGYAQCgAQGwAQo&sclient=gws-wiz',
+                  },
+                  {
+                    name: 'navigation',
+                    url: 'https://www.google.com/search?q=hello+world&source=hp&ei=Wa-wYt7xDPa15NoP6NeGmAk&iflsig=AJiK0e8AAAAAYrC9aQ-K5PLjczC0c7dceKI--pjoitdO&ved=0ahUKEwieguz8x7z4AhX2GlkFHeirAZMQ4dUDCAo&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDMggIABCABBCxAzIFCC4QgAQyCAgAEIAEELEDMggIABCABBCxAzILCC4QgAQQsQMQ1AIyBQgAEIAEOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6EQguEI8BENQCEOoCEIwDEOUCOhEILhCABBCxAxCDARDHARCjAjoLCC4QgAQQxwEQrwE6CAgAELEDEIMBOgQIABADOgsIABCABBCxAxCDAToICC4QsQMQgwE6DgguEIAEELEDEMcBEKMCOhEILhCABBCxAxCDARDHARCvAToOCC4QgAQQxwEQrwEQ1AI6DgguELEDEIMBEMcBEKMCOhEILhCABBCxAxCDARDHARDRAzoLCC4QgAQQsQMQgwE6CAguEIAEELEDOg4IABCABBCxAxCDARDJAzoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6BwgAELEDEApQrwJYvAtgsgxoAXAAeACAAVeIAbgFkgECMTGYAQCgAQGwAQo&sclient=gws-wiz',
+                    isAsync: true,
+                  },
+                ],
+                key: 'Enter',
+                modifiers: 0,
+              },
+              committed: true,
+              title: 'Press Enter',
+            },
+            softDeletedAction,
+          ],
+        },
+      ];
+      const incomingPlaywrightActions: Steps = [
+        {
+          actions: [
+            {
+              pageAlias: 'page',
+              isMainFrame: true,
+              frameUrl: 'https://www.google.com/?gws_rd=ssl',
+              action: {
+                name: 'press',
+                selector: '[aria-label="Search"]',
+                signals: [
+                  {
+                    name: 'navigation',
+                    url: 'https://www.google.com/search?q=hello+world&source=hp&ei=Wa-wYt7xDPa15NoP6NeGmAk&iflsig=AJiK0e8AAAAAYrC9aQ-K5PLjczC0c7dceKI--pjoitdO&ved=0ahUKEwieguz8x7z4AhX2GlkFHeirAZMQ4dUDCAo&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDMggIABCABBCxAzIFCC4QgAQyCAgAEIAEELEDMggIABCABBCxAzILCC4QgAQQsQMQ1AIyBQgAEIAEOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6EQguEI8BENQCEOoCEIwDEOUCOhEILhCABBCxAxCDARDHARCjAjoLCC4QgAQQxwEQrwE6CAgAELEDEIMBOgQIABADOgsIABCABBCxAxCDAToICC4QsQMQgwE6DgguEIAEELEDEMcBEKMCOhEILhCABBCxAxCDARDHARCvAToOCC4QgAQQxwEQrwEQ1AI6DgguELEDEIMBEMcBEKMCOhEILhCABBCxAxCDARDHARDRAzoLCC4QgAQQsQMQgwE6CAguEIAEELEDOg4IABCABBCxAxCDARDJAzoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6BwgAELEDEApQrwJYvAtgsgxoAXAAeACAAVeIAbgFkgECMTGYAQCgAQGwAQo&sclient=gws-wiz',
+                  },
+                  {
+                    name: 'navigation',
+                    url: 'https://www.google.com/search?q=hello+world&source=hp&ei=Wa-wYt7xDPa15NoP6NeGmAk&iflsig=AJiK0e8AAAAAYrC9aQ-K5PLjczC0c7dceKI--pjoitdO&ved=0ahUKEwieguz8x7z4AhX2GlkFHeirAZMQ4dUDCAo&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDMggIABCABBCxAzIFCC4QgAQyCAgAEIAEELEDMggIABCABBCxAzILCC4QgAQQsQMQ1AIyBQgAEIAEOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6EQguEI8BENQCEOoCEIwDEOUCOhEILhCABBCxAxCDARDHARCjAjoLCC4QgAQQxwEQrwE6CAgAELEDEIMBOgQIABADOgsIABCABBCxAxCDAToICC4QsQMQgwE6DgguEIAEELEDEMcBEKMCOhEILhCABBCxAxCDARDHARCvAToOCC4QgAQQxwEQrwEQ1AI6DgguELEDEIMBEMcBEKMCOhEILhCABBCxAxCDARDHARDRAzoLCC4QgAQQsQMQgwE6CAguEIAEELEDOg4IABCABBCxAxCDARDJAzoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6BwgAELEDEApQrwJYvAtgsgxoAXAAeACAAVeIAbgFkgECMTGYAQCgAQGwAQo&sclient=gws-wiz',
+                    isAsync: true,
+                  },
+                ],
+                key: 'Enter',
+                modifiers: 0,
+              },
+              committed: true,
+              title: 'Press Enter',
+            },
+            {
+              pageAlias: 'page',
+              isMainFrame: true,
+              frameUrl:
+                'https://www.google.com/search?q=hello+world&source=hp&ei=Wa-wYt7xDPa15NoP6NeGmAk&iflsig=AJiK0e8AAAAAYrC9aQ-K5PLjczC0c7dceKI--pjoitdO&ved=0ahUKEwieguz8x7z4AhX2GlkFHeirAZMQ4dUDCAo&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDMggIABCABBCxAzIFCC4QgAQyCAgAEIAEELEDMggIABCABBCxAzILCC4QgAQQsQMQ1AIyBQgAEIAEOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6EQguEI8BENQCEOoCEIwDEOUCOhEILhCABBCxAxCDARDHARCjAjoLCC4QgAQQxwEQrwE6CAgAELEDEIMBOgQIABADOgsIABCABBCxAxCDAToICC4QsQMQgwE6DgguEIAEELEDEMcBEKMCOhEILhCABBCxAxCDARDHARCvAToOCC4QgAQQxwEQrwEQ1AI6DgguELEDEIMBEMcBEKMCOhEILhCABBCxAxCDARDHARDRAzoLCC4QgAQQsQMQgwE6CAguEIAEELEDOg4IABCABBCxAxCDARDJAzoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6BwgAELEDEApQrwJYvAtgsgxoAXAAeACAAVeIAbgFkgECMTGYAQCgAQGwAQo&sclient=gws-wiz',
+              action: {
+                name: 'click',
+                selector: 'text=/.*"Hello, World!" program - Wikipedia.*/',
+                signals: [
+                  {
+                    name: 'navigation',
+                    url: 'https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
+                  },
+                ],
+                button: 'left',
+                modifiers: 0,
+                clickCount: 1,
+              },
+              committed: true,
+              title: 'Click text=/.*"Hello, World!" program - Wikipedia.*/',
+            },
+            {
+              pageAlias: 'page',
+              isMainFrame: true,
+              frameUrl: 'https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
+              action: {
+                name: 'click',
+                selector: 'text=Ada',
+                signals: [
+                  {
+                    name: 'navigation',
+                    url: 'https://en.wikipedia.org/wiki/%22Hello,_World!%22_program#Ada',
+                  },
+                ],
+                button: 'left',
+                modifiers: 0,
+                clickCount: 1,
+              },
+              title: 'Click text=Ada',
+            },
+          ],
+        },
+      ];
+      const result = generateMergedIR(recorderActions, incomingPlaywrightActions);
+      expect(result[0].actions[1].isSoftDeleted).toBe(true);
     });
   });
 });

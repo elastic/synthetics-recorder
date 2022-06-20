@@ -22,14 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Step, Steps } from '@elastic/synthetics';
+import type { Step } from '@elastic/synthetics';
 import { useCallback, useState } from 'react';
-import { ActionContext } from '../../../common/types';
+import { ActionContext, RecorderSteps } from '../../../common/types';
 import type { IStepsContext } from '../../contexts/StepsContext';
 import { onDropStep } from './onDropStep';
 
 export function useStepsContext(): IStepsContext {
-  const [steps, setSteps] = useState<Steps>([]);
+  const [steps, setSteps] = useState<RecorderSteps>([]);
 
   const setStepName = useCallback((idx: number, name?: string) => {
     setSteps(oldSteps =>
@@ -73,8 +73,16 @@ export function useStepsContext(): IStepsContext {
 
           return {
             ...step,
-            actions: step.actions.map((action, idx) =>
-              idx === indexToDelete ? { ...action, isSoftDeleted: true } : action
+            actions: step.actions.map((actionContext, idx) =>
+              // setting the `isModified` flag will cause the generator code to maintain the soft delete flag
+              // when playwright tries to overwrite the action
+              idx === indexToDelete
+                ? {
+                    ...actionContext,
+                    modified: true,
+                    isSoftDeleted: true,
+                  }
+                : actionContext
             ),
           };
         })
