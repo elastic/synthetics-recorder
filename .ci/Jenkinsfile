@@ -208,7 +208,12 @@ pipeline {
               unstash('exe')
               prepareZipFileBeforeSigning()
               // WINDOWS_ZIP_FILE and WINDOWS_FILE_NAME are declared in prepareZipFile
-              bat(label: 'windows-artifact-signer', script: "ci.bat sign --cleanup --product ${env.SIGNER_PROJECT_NAME} --input ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE}")
+              bat(label: 'windows-artifact-signer', script: "ci.bat sign --cleanup --product ${env.SIGNER_PROJECT_NAME} --input ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE}")              
+            }
+            bat('xcopy cd\\release\\windows-artifact-signer\\*.zip cd\\release\\endpoint-windows-artifact-signer\\')
+            dir('cd\\release\\endpoint-windows-artifact-signer') {
+              bat(label: 'endpoint signing', script: "ci.bat --inner-zip ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE} --cab-name EndpointDrv-signed.cab")
+              bat(label: 'debug: list files', script:'dir')
               prepareZipFileAfterSigning()
             }
           }
