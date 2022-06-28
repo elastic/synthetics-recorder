@@ -212,7 +212,7 @@ pipeline {
             }
             bat('xcopy cd\\release\\windows-artifact-signer\\*.zip cd\\release\\endpoint-windows-artifact-signer\\')
             dir('cd\\release\\endpoint-windows-artifact-signer') {
-              bat(label: 'endpoint signing', script: "ci.bat sign --inner-zip ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE} --cab-name EndpointDrv-signed.cab")
+              bat(label: 'endpoint signing', script: "ci.bat sign --input ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE} --buildid ${env.BUILD_ID} --cab-name EndpointDrv-signed.cab")
               bat(label: 'debug: list files', script:'dir')
               prepareZipFileAfterSigning()
             }
