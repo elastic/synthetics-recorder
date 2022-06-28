@@ -22,6 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+// Original work: https://github.com/microsoft/accessibility-insights-web/blob/main/src/tests/common/resolver.js
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 module.exports = (path, options) => {
   // Call the defaultResolver, so we leverage its cache, error handling, etc.
   return options.defaultResolver(path, {
