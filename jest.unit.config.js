@@ -23,8 +23,22 @@ THE SOFTWARE.
 */
 
 module.exports = {
-  preset: 'ts-jest',
-  testPathIgnorePatterns: [`node_modules`, `\\.cache`, `e2e`, `build`],
-  setupFilesAfterEnv: ['./jest.unit.setup.js'],
-  reporters: ['default', ['jest-junit', { outputName: 'unit-junit.xml' }]],
+  projects: [
+    {
+      displayName: 'node',
+      preset: 'ts-jest',
+      testEnvironment: 'node',
+      testMatch: ['**/?(*.)+(spec|test).[tj]s'],
+      testPathIgnorePatterns: [`node_modules`, `\\.cache`, `e2e`, `build`],
+    },
+    {
+      displayName: 'components',
+      preset: 'ts-jest',
+      testEnvironment: 'jsdom',
+      testMatch: ['**/?(*.)+(spec|test).[tj]sx'],
+      setupFilesAfterEnv: ['./jest.unit.setup.js'],
+      testPathIgnorePatterns: [`node_modules`, `\\.cache`, `e2e`, `build`],
+      resolver: `./tests/common/resolver.js`,
+    },
+  ],
 };
