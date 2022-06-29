@@ -22,8 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+const path = require('path');
 const { readFileSync } = require('fs');
-const LICENSE = readFileSync('./LICENSE', 'utf-8');
+const LICENSE = readFileSync(path.join(__dirname, 'LICENSE'), 'utf-8');
 const LICENSE_HEADER = '\n' + LICENSE;
 
 module.exports = {
@@ -32,7 +33,7 @@ module.exports = {
   },
   plugins: ['header', 'prettier'],
   extends: ['react-app', 'plugin:react/recommended', 'prettier'],
-  ignorePatterns: ['build', 'local-browsers'],
+  ignorePatterns: ['build', 'local-browsers', 'demo-app'],
   overrides: [
     {
       extends: ['eslint:recommended'],
