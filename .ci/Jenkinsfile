@@ -210,9 +210,9 @@ pipeline {
                 bat(label: 'debug: list files', script:'dir')           
                 getFirstExeFileName()
                 echo "${env.WORKSPACE}\\${env.EXE_FILE_NAME}"
-                bat(label: 'ACS signing', script: "c:\\tools\\Microsoft.Windows.SDK.BuildTools.10.0.20348.19\\bin\\10.0.20348.0\\x64\\signtool.exe sign /v /debug /fd sha256 /tr \"http://timestamp.acs.microsoft.com\" /td sha256 /as /ph /dmdf \"C:\\tools\\Azure.CodeSigning.Dlib.1.0.19\\metadata.json\" /dlib \"C:\\tools\\Azure.CodeSigning.Dlib.1.0.19\\bin\\x64\\Azure.CodeSigning.Dlib.dll\" ${env.DIST_FOLDER}\\${env.EXE_FILE_NAME}")
+                bat(label: 'ACS signing', script: "c:\\tools\\Microsoft.Windows.SDK.BuildTools.10.0.20348.19\\bin\\10.0.20348.0\\x64\\signtool.exe sign /v /debug /fd sha256 /tr \"http://timestamp.acs.microsoft.com\" /td sha256 /as /ph /dmdf \"C:\\tools\\Azure.CodeSigning.Dlib.1.0.19\\metadata.json\" /dlib \"C:\\tools\\Azure.CodeSigning.Dlib.1.0.19\\bin\\x64\\Azure.CodeSigning.Dlib.dll\" ${env.WORKSPACE}\\${env.DIST_FOLDER}\\${env.EXE_FILE_NAME}")
                 bat(label: 'debug: list files', script: 'dir')           
-                stash(includes: "${env.DIST_FOLDER}\\${env.EXE_FILE_NAME}", name: 'signed_exe', allowEmpty: false)
+                stash(includes: "${env.EXE_FILE_NAME}", name: 'signed_exe', allowEmpty: false)
               }
             }
 
