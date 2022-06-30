@@ -335,7 +335,7 @@ def runReleaseWithKeychain() {
 }
 
 def withAzureSigningCreds(Closure body) {
-  def syntheticsRecorderMacosVault = 'secret/observability-team/ci/synthetics-recorder-macos-vault'
+  def syntheticsRecorderMacosVault = 'secret/observability-team/ci/synthetics-recorder-windows-vault'
   def vault = getVaultSecret(secret: syntheticsRecorderMacosVault).data
   if (!vault.containsKey('vault_secret_id') || !vault.containsKey('vault_role_id') || !vault.containsKey('vault_addr')) {
     error("withAzureSigningCreds: ${syntheticsRecorderMacosVault} secert must contain vault_secret_id, vault_role_id and vault_addr entries")
