@@ -203,21 +203,31 @@ pipeline {
           options { skipDefaultCheckout() }
           steps {
             deleteDir()
-            git(credentialsId: 'f6c7695a-671e-4f4f-a331-acdce44ff9ba', url: 'git@github.com:elastic/infra.git')
-            dir('cd\\release\\windows-artifact-signer') {
-              unstash('exe')
-              prepareZipFileBeforeSigning()
-              // WINDOWS_ZIP_FILE and WINDOWS_FILE_NAME are declared in prepareZipFile
-              bat(label: 'windows-artifact-signer', script: "ci.bat sign --cleanup --product ${env.SIGNER_PROJECT_NAME} --input ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE}")
+            // git(credentialsId: 'f6c7695a-671e-4f4f-a331-acdce44ff9ba', url: 'git@github.com:elastic/infra.git')
+            unstash('exe')
+            withAzureSigningCreds {
               bat(label: 'debug: list files', script:'dir')           
+              getFirstExeFileName()
+              echo "${env.WORKSPACE}\\${env.EXE_FILE_NAME}"
+              bat(label: 'ACS signing', script: "c:\\tools\\Microsoft.Windows.SDK.BuildTools.10.0.20348.19\\bin\\10.0.20348.0\\x64\\signtool.exe sign /v /debug /fd sha256 /tr \"http://timestamp.acs.microsoft.com\" /td sha256 /as /ph /dmdf \"C:\\tools\\Azure.CodeSigning.Dlib.1.0.19\\metadata.json\" /dlib \"C:\\tools\\Azure.CodeSigning.Dlib.1.0.19\\bin\\x64\\Azure.CodeSigning.Dlib.dll\" ${env.WORKSPACE}\\${env.EXE_FILE_NAME}")
+              bat(label: 'debug: list files', script: 'dir')           
+              stash(includes: "${env.WORKSPACE}\\${env.EXE_FILE_NAME}", name: 'signed_exe', allowEmpty: false)
             }
-            bat('xcopy cd\\release\\windows-artifact-signer\\*.zip cd\\release\\endpoint-windows-artifact-signer\\')
-            dir('cd\\release\\endpoint-windows-artifact-signer') {
-              bat(label: 'debug: list files', script:'dir')
-              bat(label: 'endpoint signing', script: "ci.bat sign --input ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE} --buildid ${env.BUILD_ID} --cab-name EndpointDrv-signed.cab")
-              bat(label: 'debug: list files', script:'dir')
-              prepareZipFileAfterSigning()
-            }
+
+            // dir('cd\\release\\windows-artifact-signer') {
+            //   unstash('exe')
+            //   prepareZipFileBeforeSigning()
+            //   // WINDOWS_ZIP_FILE and WINDOWS_FILE_NAME are declared in prepareZipFile
+            //   bat(label: 'windows-artifact-signer', script: "ci.bat sign --cleanup --product ${env.SIGNER_PROJECT_NAME} --input ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE}")
+            //   bat(label: 'debug: list files', script:'dir')           
+            // }
+            // bat('xcopy cd\\release\\windows-artifact-signer\\*.zip cd\\release\\endpoint-windows-artifact-signer\\')
+            // dir('cd\\release\\endpoint-windows-artifact-signer') {
+            //   bat(label: 'debug: list files', script:'dir')
+            //   bat(label: 'endpoint signing', script: "ci.bat sign --input ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE} --buildid ${env.BUILD_ID} --cab-name EndpointDrv-signed.cab")
+            //   bat(label: 'debug: list files', script:'dir')
+            //   prepareZipFileAfterSigning()
+            // }
           }
           post {
             cleanup {
@@ -322,6 +332,37 @@ def runReleaseWithKeychain() {
   withEnvMask(vars: [[var: 'KEYCHAIN_PASSWORD', password: apple.get('keychain-password')]]){
     sh(label: 'release-ci.sh', script: '.ci/scripts/release-ci.sh')
   }
+}
+
+def withAzureSigningCreds(Closure body) {
+  def syntheticsRecorderMacosVault = 'secret/observability-team/ci/synthetics-recorder-macos-vault'
+  def vault = getVaultSecret(secret: syntheticsRecorderMacosVault).data
+  if (!vault.containsKey('vault_secret_id') || !vault.containsKey('vault_role_id') || !vault.containsKey('vault_addr')) {
+    error("withAzureSigningCreds: ${syntheticsRecorderMacosVault} secert must contain vault_secret_id, vault_role_id and vault_addr entries")
+  }
+  def token = getVaultSecret.getVaultToken(vault.vault_addr, vault.vault_role_id, vault.vault_secret_id)
+  def cloudHsmPath = 'release/cloud-hsm'
+  def azureSecrets = getVaultSecret.getVaultSecretObject(vault.vault_addr, 'release/cloud-hsm', token).data
+  if (!azureSecrets.containsKey('azure-tenant-id') || !azureSecrets.containsKey('azure-client-id') || !azureSecrets.containsKey('azure-client-secret')) {
+    error("withAzureSigningCreds: ${cloudHsmPath} must have azure-tenant-id, azure-client-id and azure-client-secret entries")
+  }
+  
+  withEnvMask(vars: [
+    [var: "AZURE_TENANT_ID", password: azureSecrets['azure-tenant-id']],
+    [var: "AZURE_CLIENT_ID", password: azureSecrets['azure-client-id']],
+    [var: "AZURE_CLIENT_SECRET", password: azureSecrets['azure-client-secret']]      
+    ]) {        
+      body()
+  }
+}
+
+
+/*
+Sets EXE_FILE_NAME env var as first found exe file in current dir
+*/
+def getFirstExeFileName() {
+  def files = findFiles(glob: '*.exe')
+  env.EXE_FILE_NAME = "${files[0].name}"
 }
 
 // The Unified Release process uses an opinionated zip file format
