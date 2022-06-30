@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Action, Step, Steps } from '@elastic/synthetics';
+import type { Action, Steps } from '@elastic/synthetics';
 import { RendererProcessIpc } from 'electron-better-ipc';
 import React from 'react';
-import type { Journey, JourneyType } from '../../common/types';
+import type { ActionContext, Journey, JourneyType } from '../../common/types';
 
 export const COMMAND_SELECTOR_OPTIONS = [
   {
@@ -73,11 +73,14 @@ export const SMALL_SCREEN_BREAKPOINT = 850;
 
 export async function getCodeFromActions(
   ipc: RendererProcessIpc,
-  actions: Steps,
+  steps: Steps,
   type: JourneyType
 ): Promise<string> {
   return await ipc.callMain('actions-to-code', {
-    actions,
+    actions: steps.map(({ actions, ...rest }) => ({
+      ...rest,
+      actions: actions.filter(action => !(action as ActionContext)?.isSoftDeleted),
+    })),
     isSuite: type === 'suite',
   });
 }
@@ -90,26 +93,6 @@ export function createExternalLinkHandler(
     e.preventDefault();
     await ipc.callMain('link-to-external', url);
   };
-}
-
-export function updateAction(
-  steps: Steps,
-  value: string,
-  stepIndex: number,
-  actionIndex: number
-): Steps {
-  return steps.map((step, sidx) => {
-    if (sidx !== stepIndex) return step;
-    const nextStep: Step = {
-      actions: step.actions.map((ac, aidx) => {
-        if (aidx !== actionIndex) return ac;
-        const { action, ...rest } = ac;
-        return { action: { ...action, value }, ...rest };
-      }),
-    };
-    if (step.name) nextStep.name = step.name;
-    return nextStep;
-  });
 }
 
 /**

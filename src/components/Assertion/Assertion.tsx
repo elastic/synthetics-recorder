@@ -34,7 +34,7 @@ import {
 } from '@elastic/eui';
 import { AssertionSelect } from './Select';
 import { AssertionInfo } from './AssertionInfo';
-import { ActionContext } from '../../common/types';
+import { ActionContext } from '../../../common/types';
 import { actionTitle } from '../../common/shared';
 
 interface IAssertion {

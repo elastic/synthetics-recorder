@@ -22,10 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { ActionInContext } from '@elastic/synthetics';
 import type { StepStatus } from '../../common/types';
 
-export type ActionContext = ActionInContext & { isOpen?: boolean };
 export type ResultCategory = StepStatus | 'running';
 
 export interface StepSeparatorDragDropDataTransfer {

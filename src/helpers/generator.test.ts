@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 import type { Step, Steps } from '@elastic/synthetics';
-import { ActionContext } from '../common/types';
+import { ActionContext, RecorderSteps } from '../../common/types';
 import { generateIR, generateMergedIR } from './generator';
 import {
   createAction,
@@ -145,7 +145,7 @@ describe('generator', () => {
     });
   });
   describe('generateMergedIR', () => {
-    const prev: Steps = createStepsWithOverrides([
+    const prev: RecorderSteps = createStepsWithOverrides([
       [
         {
           action: {
@@ -187,11 +187,11 @@ describe('generator', () => {
             signals: [
               {
                 name: 'navigation',
-                url: 'https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz',
+                url: 'https://www.google.com/search?q=hello+world',
               },
               {
                 name: 'navigation',
-                url: 'https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz',
+                url: 'https://www.google.com/search?q=hello+world',
                 isAsync: true,
               },
             ],
@@ -281,11 +281,11 @@ describe('generator', () => {
             signals: [
               {
                 name: 'navigation',
-                url: 'https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz',
+                url: 'https://www.google.com/search?q=hello+world',
               },
               {
                 name: 'navigation',
-                url: 'https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz',
+                url: 'https://www.google.com/search?q=hello+world',
                 isAsync: true,
               },
             ],
@@ -414,12 +414,12 @@ describe('generator', () => {
                 signals: [
                   {
                     name: 'navigation',
-                    url: 'https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz',
+                    url: 'https://www.google.com/search?q=hello+world',
                   },
                   {
                     isAsync: true,
                     name: 'navigation',
-                    url: 'https://www.google.com/search?q=hello+world&source=hp&ei=HN8wYuGUN6aD9PwP3ryR2A8&iflsig=AHkkrS4AAAAAYjDtLG_pgIZ4vhlN3VoBrRzhKb2cOf9Y&ved=0ahUKEwjhkrvD48j2AhWmAZ0JHV5eBPsQ4dUDCAk&uact=5&oq=hello+world&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAEIAEELEDMggILhCABBCxAzIICC4QgAQQsQMyCwguEIAEELEDENQCMggIABCABBCxAzIICAAQgAQQsQMyCAgAEIAEELEDMgsILhCABBCxAxDUAjIICAAQgAQQsQMyCAgAEIAEELEDOg4IABCPARDqAhCMAxDlAjoOCC4QjwEQ6gIQjAMQ5QI6DgguEIAEELEDEMcBEKMCOgsIABCABBCxAxCDAToLCC4QgAQQxwEQrwE6CggAELEDEIMBEAo6CAguELEDEIMBOhEILhCABBCxAxCDARDHARCjAjoRCC4QgAQQsQMQgwEQxwEQrwE6BQguEIAEOg4ILhCABBCxAxDHARDRAzoOCC4QgAQQxwEQrwEQ1AI6CwguELEDEMcBEKMCOgUIABCABDoRCC4QgAQQsQMQgwEQxwEQ0QM6CwguEIAEELEDEIMBOgsIABCABBCxAxDJAzoHCAAQsQMQCjoQCC4QgAQQsQMQxwEQ0QMQCjoICAAQgAQQyQM6CAguEIAEENQCUKMEWNYOYPAPaAFwAHgAgAFUiAGcBpIBAjExmAEAoAEBsAEK&sclient=gws-wiz',
+                    url: 'https://www.google.com/search?q=hello+world',
                   },
                 ],
               },
@@ -526,6 +526,103 @@ describe('generator', () => {
           ],
         ])
       );
+    });
+
+    it('preserves soft deletes', () => {
+      const softDeletedAction = createAction('click', { isSoftDeleted: true, modified: true });
+      const recorderActions: RecorderSteps = [
+        {
+          actions: [createAction('press'), softDeletedAction],
+        },
+      ];
+      const incomingPlaywrightActions = createStepsWithOverrides([
+        [
+          {
+            title: 'Press Enter',
+            action: { name: 'press' },
+          },
+          {
+            title: 'Click text=/.*"Hello, World!" program - Wikipedia.*/',
+            action: { name: 'click' },
+          },
+          {
+            title: 'Click text=Ada',
+            action: {
+              name: 'click',
+            },
+          },
+        ],
+      ]);
+      // const incomingPlaywrightActions: Steps = [
+      //   {
+      //     actions: [
+      //       {
+      //         pageAlias: 'page',
+      //         isMainFrame: true,
+      //         frameUrl: 'https://www.google.com/?gws_rd=ssl',
+      //         action: {
+      //           name: 'press',
+      //           selector: '[aria-label="Search"]',
+      //           signals: [
+      //             {
+      //               name: 'navigation',
+      //               url: 'https://www.google.com/search?q=hello+world',
+      //             },
+      //             {
+      //               name: 'navigation',
+      //               url: 'https://www.google.com/search?q=hello+world',
+      //               isAsync: true,
+      //             },
+      //           ],
+      //           key: 'Enter',
+      //           modifiers: 0,
+      //         },
+      //         committed: true,
+      //       },
+      //       {
+      //         pageAlias: 'page',
+      //         isMainFrame: true,
+      //         frameUrl: 'https://www.google.com/search?q=hello+world',
+      //         action: {
+      //           name: 'click',
+      //           selector: 'text=/.*"Hello, World!" program - Wikipedia.*/',
+      //           signals: [
+      //             {
+      //               name: 'navigation',
+      //               url: 'https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
+      //             },
+      //           ],
+      //           button: 'left',
+      //           modifiers: 0,
+      //           clickCount: 1,
+      //         },
+      //         committed: true,
+      //         title: 'Click text=/.*"Hello, World!" program - Wikipedia.*/',
+      //       },
+      //       {
+      //         pageAlias: 'page',
+      //         isMainFrame: true,
+      //         frameUrl: 'https://en.wikipedia.org/wiki/%22Hello,_World!%22_program',
+      //         action: {
+      //           name: 'click',
+      //           selector: 'text=Ada',
+      //           signals: [
+      //             {
+      //               name: 'navigation',
+      //               url: 'https://en.wikipedia.org/wiki/%22Hello,_World!%22_program#Ada',
+      //             },
+      //           ],
+      //           button: 'left',
+      //           modifiers: 0,
+      //           clickCount: 1,
+      //         },
+      //         title: 'Click text=Ada',
+      //       },
+      //     ],
+      //   },
+      // ];
+      const result = generateMergedIR(recorderActions, incomingPlaywrightActions);
+      expect(result[0].actions[1].isSoftDeleted).toBe(true);
     });
   });
 });

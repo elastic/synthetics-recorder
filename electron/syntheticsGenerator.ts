@@ -22,10 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { Action, ActionInContext, Signal, Steps } from '@elastic/synthetics';
+import { Action, ActionInContext, Signal } from '@elastic/synthetics';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore unit tests won't run without this ignore because there is no type declaration for `PlaywrightGenerator`
 import * as PlaywrightGenerator from 'playwright/lib/server/supplements/recorder/javascript';
+import { RecorderSteps } from '../common/types';
 
 function toAssertCall(pageAlias: string, action: Action) {
   const { command, selector, value } = action;
@@ -293,7 +294,7 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
    * @param steps IR to use for code generation
    * @returns a list of the code strings outputted by the generator
    */
-  generateFromSteps(steps: Steps): string {
+  generateFromSteps(steps: RecorderSteps): string {
     const text = [];
     if (this.isSuite) {
       text.push(this.generateHeader());
@@ -340,7 +341,7 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
    * @param steps the step IR to evaluate
    * @returns an array that contains the names of all variables that need to be hoisted
    */
-  findVarsToHoist(steps: Steps): string[] {
+  findVarsToHoist(steps: RecorderSteps): string[] {
     const aliasSet = new Set<string>();
     for (const step of steps) {
       for (const actionContext of step.actions) {

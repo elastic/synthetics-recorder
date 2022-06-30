@@ -28,22 +28,46 @@ import { Setter } from '../../common/types';
 import { ActionControlButton } from './ControlButton';
 
 interface ISettingsPopover {
+  isAssertion: boolean;
   isRecording: boolean;
   isVisible: boolean;
   isOpen: boolean;
   onAddAssertion: () => void;
   onDelete: () => void;
+  onSoftDelete: () => void;
   onEdit: () => void;
   setIsOpen: Setter<boolean>;
 }
 
+function createDeleteButton(
+  isRecording: boolean,
+  onDelete: () => void,
+  onSoftDelete: () => void,
+  isAssertion: boolean
+) {
+  return isRecording && !isAssertion
+    ? {
+        icon: <EuiIcon type="trash" color="danger" />,
+        name: <EuiText color="danger">Delete action</EuiText>,
+        onClick: onSoftDelete,
+      }
+    : {
+        icon: <EuiIcon type="trash" color={isRecording ? 'disabledText' : 'danger'} />,
+        disabled: isRecording,
+        name: <EuiText color={isRecording ? 'disabledText' : 'danger'}>Delete action</EuiText>,
+        onClick: onDelete,
+      };
+}
+
 export function SettingsPopover({
+  isAssertion,
   isVisible: visible,
   isRecording,
   isOpen,
   setIsOpen,
   onAddAssertion,
   onDelete,
+  onSoftDelete,
   onEdit,
 }: ISettingsPopover) {
   return (
@@ -78,14 +102,7 @@ export function SettingsPopover({
                 name: 'Edit action',
                 onClick: onEdit,
               },
-              {
-                icon: <EuiIcon type="trash" color={isRecording ? 'disabledText' : 'danger'} />,
-                disabled: isRecording,
-                name: (
-                  <EuiText color={isRecording ? 'disabledText' : 'danger'}>Delete action</EuiText>
-                ),
-                onClick: onDelete,
-              },
+              createDeleteButton(isRecording, onDelete, onSoftDelete, isAssertion),
             ],
           },
         ]}

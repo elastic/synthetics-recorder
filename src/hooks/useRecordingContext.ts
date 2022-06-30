@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { Steps } from '@elastic/synthetics';
 import { useCallback, useState } from 'react';
 import { RecordingStatus, Setter } from '../common/types';
+import { RecorderSteps } from '../../common/types';
 import { RendererProcessIpc } from 'electron-better-ipc';
 import { IRecordingContext } from '../contexts/RecordingContext';
 
@@ -41,7 +41,7 @@ export function useRecordingContext(
   url: string,
   stepCount: number,
   setResult: (data: undefined) => void,
-  setSteps: Setter<Steps>
+  setSteps: Setter<RecorderSteps>
 ): IRecordingContext {
   const [isStartOverModalVisible, setIsStartOverModalVisible] = useState(false);
   const [recordingStatus, setRecordingStatus] = useState(RecordingStatus.NotRecording);

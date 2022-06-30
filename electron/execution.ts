@@ -34,9 +34,10 @@ import logger from 'electron-log';
 import isDev from 'electron-is-dev';
 import { JOURNEY_DIR, PLAYWRIGHT_BROWSERS_PATH, EXECUTABLE_PATH } from './config';
 import type { BrowserContext } from 'playwright';
-import type { ActionInContext, Steps } from '@elastic/synthetics';
+import type { ActionInContext } from '@elastic/synthetics';
 import type {
   GenerateCodeOptions,
+  RecorderSteps,
   RecordJourneyOptions,
   RunJourneyOptions,
   StepEndEvent,
@@ -161,7 +162,7 @@ function onRecordJourneys(mainWindowEmitter: EventEmitter) {
  * @param {*} event the result data from Playwright
  * @returns the event data combined with action titles in a new object
  */
-function addActionsToStepResult(steps: Steps, event: StepEndEvent): TestEvent {
+function addActionsToStepResult(steps: RecorderSteps, event: StepEndEvent): TestEvent {
   const step = steps.find(
     s =>
       s.actions.length &&
@@ -356,7 +357,7 @@ async function onFileSave(code: string) {
   return false;
 }
 
-async function onGenerateCode(data: { isSuite: boolean; actions: Steps }) {
+async function onGenerateCode(data: { isSuite: boolean; actions: RecorderSteps }) {
   const generator = new SyntheticsGenerator(data.isSuite);
   return generator.generateFromSteps(data.actions);
 }

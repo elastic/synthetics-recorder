@@ -25,7 +25,7 @@ THE SOFTWARE.
 import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
 import React from 'react';
 import styled from 'styled-components';
-import { ActionContext } from '../../common/types';
+import { ActionContext } from '../../../common/types';
 import { AssertionHeadingText } from './AssertionHeadingText';
 import { Bold } from './styles';
 

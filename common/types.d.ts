@@ -22,9 +22,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { ActionInContext, Steps } from '@elastic/synthetics';
+import type { ActionInContext, Step, Steps } from '@elastic/synthetics';
 
-export type ActionContext = ActionInContext & { isOpen?: boolean };
+export interface ActionContext extends ActionInContext {
+  isOpen?: boolean;
+  isSoftDeleted?: boolean;
+}
+export interface RecorderStep<ActionType = ActionContext> extends Step {
+  actions: ActionType[];
+}
+
+interface RecorderSteps<StepType = RecorderStep> extends Steps {
+  [key: number]: StepType;
+}
+
 export type StepStatus = 'succeeded' | 'failed' | 'skipped';
 export type JourneyType = 'suite' | 'inline';
 

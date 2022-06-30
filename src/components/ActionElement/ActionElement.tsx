@@ -26,7 +26,8 @@ import { EuiFlexGroup, EuiFlexItem, EuiAccordion } from '@elastic/eui';
 import React, { useCallback, useContext, useState } from 'react';
 import styled from 'styled-components';
 import { SMALL_SCREEN_BREAKPOINT } from '../../common/shared';
-import { ActionContext, ResultCategory } from '../../common/types';
+import { ResultCategory } from '../../common/types';
+import { ActionContext } from '../../../common/types';
 import { StepsContext } from '../../contexts/StepsContext';
 import { useDrop } from '../../hooks/useDrop';
 import { ActionDetail } from '../ActionDetail';
@@ -105,6 +106,10 @@ function ActionComponent({
   );
   const close = () => setIsOpen(false);
   const { isDragOver, onDropActions, splitStepAtAction } = useDrop(stepIndex, actionIndex);
+
+  if (actionContext?.isSoftDeleted) {
+    return null;
+  }
 
   return (
     <Container

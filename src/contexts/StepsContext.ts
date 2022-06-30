@@ -22,9 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Step, Steps } from '@elastic/synthetics';
+import type { Step } from '@elastic/synthetics';
 import { createContext } from 'react';
-import type { ActionContext, Setter } from '../common/types';
+import type { Setter } from '../common/types';
+import type { ActionContext, RecorderSteps } from '../../common/types';
 
 function notImplemented() {
   throw Error('Step context not initialized');
@@ -34,19 +35,25 @@ export interface IStepsContext {
   /**
    * Represents the actions and assertions that the user has recorded.
    */
-  steps: Steps;
+  steps: RecorderSteps;
   /**
    * Updates the steps.
    */
-  setSteps: Setter<Steps>;
+  setSteps: Setter<RecorderSteps>;
   /**
    * Sets the name of the step at the given index.
    */
   setStepName: (stepIndex: number, name?: string) => void;
   /**
    * Deletes the action at the `actionIndex` in the given step.
+   *
+   * This should only be called when the user is not recording.
    */
   onDeleteAction: (stepIndex: number, actionIndex: number) => void;
+  /**
+   * Marks an action for omission from display and code generation.
+   */
+  onSoftDeleteAction: (stepIndex: number, actionIndex: number) => void;
   /**
    * Deletes the step at `stepIndex`.
    */
@@ -90,6 +97,7 @@ export const StepsContext = createContext<IStepsContext>({
   setSteps: notImplemented,
   setStepName: notImplemented,
   onDeleteAction: notImplemented,
+  onSoftDeleteAction: notImplemented,
   onDeleteStep: notImplemented,
   onDropStep: notImplemented,
   onInsertAction: notImplemented,
