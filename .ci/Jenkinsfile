@@ -335,16 +335,18 @@ def runReleaseWithKeychain() {
 }
 
 def withAzureSigningCreds(Closure body) {
-  def syntheticsRecorderMacosVault = 'secret/observability-team/ci/synthetics-recorder-windows-vault'
-  def vault = getVaultSecret(secret: syntheticsRecorderMacosVault).data
+  def syntheticsRecorderWindowsVault = 'secret/observability-team/ci/synthetics-recorder-windows-vault'
+  def vault = getVaultSecret(secret: syntheticsRecorderWindowsVault).data
   if (!vault.containsKey('vault_secret_id') || !vault.containsKey('vault_role_id') || !vault.containsKey('vault_addr')) {
-    error("withAzureSigningCreds: ${syntheticsRecorderMacosVault} secert must contain vault_secret_id, vault_role_id and vault_addr entries")
+    error("withAzureSigningCreds: ${syntheticsRecorderWindowsVault} secert must contain vault_secret_id, vault_role_id and vault_addr entries")
   }
   def token = getVaultSecret.getVaultToken(vault.vault_addr, vault.vault_role_id, vault.vault_secret_id)
+  //todo remove
+  echo "${token}"
   def cloudHsmPath = 'release/cloud-hsm'
   def azureSecrets = getVaultSecret.getVaultSecretObject(vault.vault_addr, 'release/cloud-hsm', token).data
   if (!azureSecrets.containsKey('azure-tenant-id') || !azureSecrets.containsKey('azure-client-id') || !azureSecrets.containsKey('azure-client-secret')) {
-    error("withAzureSigningCreds: ${cloudHsmPath} must have azure-tenant-id, azure-client-id and azure-client-secret entries")
+    error("withAzureSigningCreds: ${cloudHsmPath} must contain azure-tenant-id, azure-client-id and azure-client-secret entries")
   }
   
   withEnvMask(vars: [
