@@ -43,12 +43,11 @@ pipeline {
         }
       }
     }
-    stage('Install'){
+    stage('Install') {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        //expression { return !isTag() }
-        expression { return false }
+        expression { return !isTag() }
       }
       steps {
         withGithubNotify(context: "Install") {
@@ -60,12 +59,11 @@ pipeline {
         }
       }
     }
-    stage('Lint'){
+    stage('Lint') {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        //expression { return !isTag() }
-        expression { return false }
+        expression { return !isTag() }
       }
       steps {
         withGithubNotify(context: "Lint") {
@@ -94,8 +92,7 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        //expression { return !isTag() }
-        expression { return false }
+        expression { return !isTag() }
       }
       steps {
         withGithubNotify(context: "Build") {
@@ -132,8 +129,7 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        //expression { return !isTag() }
-        expression { return false }
+        expression { return !isTag() }
       }
       steps {
         withGithubNotify(context: "Test") {
@@ -154,10 +150,7 @@ pipeline {
       when {
         beforeAgent true
         allOf {
-          // TODO: to be uncommented
-          //tag pattern: 'v\\d+\\.\\d+.*', comparator: 'REGEXP'
-          // TODO: to be removed
-          expression { env.CHANGE_ID ==~ /.*251/ }
+          tag pattern: 'v\\d+\\.\\d+.*', comparator: 'REGEXP'
           expression { isInternalCI() }
         }
       }
@@ -174,9 +167,6 @@ pipeline {
         RELEASE_URL_MESSAGE = "(<https://github.com/elastic/${env.REPO}/releases/tag/${env.TAG_NAME}|${env.TAG_NAME}>)"
         SIGNER_PROJECT_NAME = 'Elastic_Synthetics_Recorder'
       }
-      // There are some environmental issues with some of the CI workers
-      // let's use the one we know it works.
-      //agent { label 'macos-code-signer' }
       agent { label 'worker-c07yc0cejyvy' }
       stages {
         stage('Dist') {
@@ -341,7 +331,7 @@ def withAzureSigningCreds(Closure body) {
   withEnvMask(vars: [
     [var: "AZURE_TENANT_ID", password: azureSecrets['azure-tenant-id']],
     [var: "AZURE_CLIENT_ID", password: azureSecrets['azure-client-id']],
-    [var: "AZURE_CLIENT_SECRET", password: azureSecrets['azure-client-secret']]      
+    [var: "AZURE_CLIENT_SECRET", password: azureSecrets['azure-client-secret']]
     ]) {        
       body()
   }
