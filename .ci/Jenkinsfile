@@ -201,7 +201,7 @@ pipeline {
         stage('Signing Windows') {
           agent { label 'cloud-hsm' }
           options { skipDefaultCheckout() }
-          env {
+          environment {
             BASE_DIR_WIN = "${BASE_DIR.replaceAll('/', '\\')}"
           }
           steps {
