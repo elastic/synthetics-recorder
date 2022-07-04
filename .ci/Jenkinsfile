@@ -213,7 +213,7 @@ pipeline {
             withAzureSigningCreds {
               dir("${env.DIST_FOLDER}") {
                 getFirstExeFileName()                
-                bat(label: 'ACS signing', script: "${BASE_DIR_WIN}\\.ci\\scripts\\acs-signing.bat ${env.WORKSPACE}\\${env.DIST_FOLDER}\\${env.EXE_FILE_NAME}")
+                bat(label: 'ACS signing', script: "${env.WORKSPACE}\\${BASE_DIR_WIN}\\.ci\\scripts\\acs-signing.bat ${env.WORKSPACE}\\${env.DIST_FOLDER}\\${env.EXE_FILE_NAME}")
                 stash(includes: "${env.EXE_FILE_NAME}", name: 'signed_exe', allowEmpty: false)
               }
             }
