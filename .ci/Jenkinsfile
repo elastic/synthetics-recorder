@@ -200,35 +200,18 @@ pipeline {
         }
         stage('Signing Windows') {
           agent { label 'cloud-hsm' }
-          // options { skipDefaultCheckout() }
+          options { skipDefaultCheckout() }
           steps {
-            // deleteDir()
-            // git(credentialsId: 'f6c7695a-671e-4f4f-a331-acdce44ff9ba', url: 'git@github.com:elastic/infra.git')
+            deleteDir()
+            unstash 'source'
             unstash('exe')
             withAzureSigningCreds {
               dir("${env.DIST_FOLDER}") {
-                bat(label: 'debug: list files', script:'dir')           
                 getFirstExeFileName()                
                 bat(label: 'ACS signing', script: "..\\.ci\\scripts\\acs-signing.bat ${env.WORKSPACE}\\${env.DIST_FOLDER}\\${env.EXE_FILE_NAME}")
-                bat(label: 'debug: list files', script: 'dir')           
                 stash(includes: "${env.EXE_FILE_NAME}", name: 'signed_exe', allowEmpty: false)
               }
             }
-
-            // dir('cd\\release\\windows-artifact-signer') {
-            //   unstash('exe')
-            //   prepareZipFileBeforeSigning()
-            //   // WINDOWS_ZIP_FILE and WINDOWS_FILE_NAME are declared in prepareZipFile
-            //   bat(label: 'windows-artifact-signer', script: "ci.bat sign --cleanup --product ${env.SIGNER_PROJECT_NAME} --input ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE}")
-            //   bat(label: 'debug: list files', script:'dir')           
-            // }
-            // bat('xcopy cd\\release\\windows-artifact-signer\\*.zip cd\\release\\endpoint-windows-artifact-signer\\')
-            // dir('cd\\release\\endpoint-windows-artifact-signer') {
-            //   bat(label: 'debug: list files', script:'dir')
-            //   bat(label: 'endpoint signing', script: "ci.bat sign --input ${env.DIST_FOLDER}\\${env.WINDOWS_ZIP_FILE} --buildid ${env.BUILD_ID} --cab-name EndpointDrv-signed.cab")
-            //   bat(label: 'debug: list files', script:'dir')
-            //   prepareZipFileAfterSigning()
-            // }
           }
           post {
             cleanup {
@@ -365,33 +348,4 @@ Sets EXE_FILE_NAME env var as first found exe file in current dir
 def getFirstExeFileName() {
   def files = findFiles(glob: '*.exe')
   env.EXE_FILE_NAME = "${files[0].name}"
-}
-
-// The Unified Release process uses an opinionated zip file format
-// product-version.zip contains product.exe
-// This function is the one in charge to change it
-// version comes from package.json
-def prepareZipFileBeforeSigning() {
-  dir("${env.DIST_FOLDER}") {
-    def files = findFiles(glob: '*.exe')
-    def fileName = files[0].name
-    // create env variable with the zip file so it can be used later one
-    env.WINDOWS_ZIP_FILE = "${fileName}.zip"
-    env.WINDOWS_FILE_NAME = "${fileName}"
-    bat(label: 'rename exe file to be UR compliance', script: "ren ${env.WINDOWS_FILE_NAME} ${env.SIGNER_PROJECT_NAME}.exe")
-    zip(glob: '*.exe', zipFile: "${env.WINDOWS_ZIP_FILE}")
-  }
-}
-
-// This function is the one in charge to change the file signed with the Unified Release
-// process to follow the naming convention defined in the synthetics-recorder project
-def prepareZipFileAfterSigning() {
-  dir("${env.DIST_FOLDER}") {
-    unzip("${env.WINDOWS_ZIP_FILE}")
-    bat(label: 'debug: list files before rename', script:'dir')
-    bat(label: 'rename exe file', script: "ren ${env.SIGNER_PROJECT_NAME}.exe ${env.WINDOWS_FILE_NAME}")
-    bat(label: 'debug: list files after rename', script:'dir')
-  }
-  // Stash with the dist_folder since it's required for the GitHub release
-  stash(includes: "${env.DIST_FOLDER}/${env.WINDOWS_FILE_NAME}", name: 'signed_exe', allowEmpty: false)
 }
