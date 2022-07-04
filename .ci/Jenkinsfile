@@ -32,7 +32,7 @@ pipeline {
       options { skipDefaultCheckout() }
       steps {
         whenTrue(isInternalCI() && isTag()) {
-          notifyStatus(slackStatus: 'good', subject: "[${env.REPO}] Build for the release tag *${env.TAG_NAME}* has been triggered", body: "Build: (<${env.RUN_DISPLAY_URL}|here>) for further details.")
+          notifyStatus(slackStatus: 'good', subject: "[${env.REPO}] Build for the release tag *${env.BRANCH_NAME}* has been triggered", body: "Build: (<${env.RUN_DISPLAY_URL}|here>) for further details.")
         }
         pipelineManager([ cancelPreviousRunningBuilds: [ when: 'PR' ] ])
         deleteDir()
@@ -155,18 +155,20 @@ pipeline {
         }
       }
       environment {
-        TAG_NAME = "${env.BRANCH_NAME}"
         BUCKET_NAME = 'internal-ci-artifacts'
-        BUCKET_SUBFOLDER = "${env.REPO}/${env.TAG_NAME}/${env.BUILD_ID}"
+        BUCKET_SUBFOLDER = "${env.REPO}/${env.BRANCH_NAME}/${env.BUILD_ID}"
         BUCKET_PATH = "gs://${env.BUCKET_NAME}/${env.BUCKET_SUBFOLDER}"
         BUCKET_CREDENTIALS = 'internal-ci-gcs-plugin'
         SIGNED_ARTIFACTS = 'signed-artifacts'
         BUCKET_SUBFOLDER_SIGNED_ARTIFACTS = "${env.BUCKET_SUBFOLDER}/${env.SIGNED_ARTIFACTS}"
         BUCKET_SIGNED_ARTIFACTS_PATH = "gs://${env.BUCKET_NAME}/${env.BUCKET_SUBFOLDER_SIGNED_ARTIFACTS}"
         DIST_FOLDER = 'dist'
-        RELEASE_URL_MESSAGE = "(<https://github.com/elastic/${env.REPO}/releases/tag/${env.TAG_NAME}|${env.TAG_NAME}>)"
+        RELEASE_URL_MESSAGE = "(<https://github.com/elastic/${env.REPO}/releases/tag/${env.BRANCH_NAME}|${env.BRANCH_NAME}>)"
         SIGNER_PROJECT_NAME = 'Elastic_Synthetics_Recorder'
       }
+      // There are some environmental issues with some of the CI workers
+      // let's use the one we know it works.
+      // agent { label 'macos-code-signer' }
       agent { label 'worker-c07yc0cejyvy' }
       stages {
         stage('Dist') {
@@ -198,8 +200,6 @@ pipeline {
             deleteDir()
             unstash 'source'
             unstash('exe')
-            bat(label: 'debug dir', script: 'dir')
-            
             withAzureSigningCreds {
               dir("${env.DIST_FOLDER}") {
                 getFirstExeFileName()                
@@ -247,10 +247,10 @@ pipeline {
       }
       post {
         success {
-          notifyStatus(slackStatus: 'good', subject: "[${env.REPO}] Release *${env.TAG_NAME}* published", body: "Build: (<${env.RUN_DISPLAY_URL}|here>)")
+          notifyStatus(slackStatus: 'good', subject: "[${env.REPO}] Release *${env.BRANCH_NAME}* published", body: "Build: (<${env.RUN_DISPLAY_URL}|here>)")
         }
         failure {
-          notifyStatus(slackStatus: 'warning', subject: "[${env.REPO}] Release *${env.TAG_NAME}* could not be published", body: "Build: (<${env.RUN_DISPLAY_URL}|here>)")
+          notifyStatus(slackStatus: 'warning', subject: "[${env.REPO}] Release *${env.BRANCH_NAME}* could not be published", body: "Build: (<${env.RUN_DISPLAY_URL}|here>)")
         }
         cleanup {
           deleteDir()
@@ -322,8 +322,8 @@ def withAzureSigningCreds(Closure body) {
     error("withAzureSigningCreds: ${syntheticsRecorderWindowsVault} secert must contain vault_secret_id, vault_role_id and vault_addr entries")
   }
   def token = getVaultSecret.getVaultToken(vault.vault_addr, vault.vault_role_id, vault.vault_secret_id)  
-  def cloudHsmPath = 'release/cloud-hsm'
-  def azureSecrets = getVaultSecret.getVaultSecretObject(vault.vault_addr, 'secret/release/cloud-hsm', token).data
+  def cloudHsmPath = 'secret/release/cloud-hsm'
+  def azureSecrets = getVaultSecret.getVaultSecretObject(vault.vault_addr, cloudHsmPath, token).data
   if (!azureSecrets.containsKey('azure-tenant-id') || !azureSecrets.containsKey('azure-client-id') || !azureSecrets.containsKey('azure-client-secret')) {
     error("withAzureSigningCreds: ${cloudHsmPath} must contain azure-tenant-id, azure-client-id and azure-client-secret entries")
   }
