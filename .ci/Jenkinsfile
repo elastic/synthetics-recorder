@@ -202,7 +202,7 @@ pipeline {
           agent { label 'cloud-hsm' }
           options { skipDefaultCheckout() }
           environment {
-            BASE_DIR_WIN = "${BASE_DIR.replaceAll('/', '\\\\')}"
+            BASE_DIR_WIN = "${BASE_DIR.replaceAll('\/', '\\')}"
           }
           steps {
             deleteDir()
