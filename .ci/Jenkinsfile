@@ -209,7 +209,7 @@ pipeline {
               dir("${env.DIST_FOLDER}") {
                 bat(label: 'debug: list files', script:'dir')           
                 getFirstExeFileName()                
-                bat(label: 'ACS signing', script: "../.ci/scripts/acs-signing.bat ${env.WORKSPACE}\\${env.DIST_FOLDER}\\${env.EXE_FILE_NAME}")
+                bat(label: 'ACS signing', script: "..\\.ci\\scripts\\acs-signing.bat ${env.WORKSPACE}\\${env.DIST_FOLDER}\\${env.EXE_FILE_NAME}")
                 bat(label: 'debug: list files', script: 'dir')           
                 stash(includes: "${env.EXE_FILE_NAME}", name: 'signed_exe', allowEmpty: false)
               }
