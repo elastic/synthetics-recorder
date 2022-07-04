@@ -1,0 +1,1 @@
+c:\tools\Microsoft.Windows.SDK.BuildTools.10.0.20348.19\bin\10.0.20348.0\x64\signtool.exe sign /v /debug /fd sha256 /tr "http://timestamp.acs.microsoft.com" /td sha256 /as /ph /dmdf "C:\tools\Azure.CodeSigning.Dlib.1.0.19\metadata.json" /dlib "C:\tools\Azure.CodeSigning.Dlib.1.0.19\bin\x64\Azure.CodeSigning.Dlib.dll" %*
