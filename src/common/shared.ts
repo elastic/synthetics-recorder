@@ -81,7 +81,7 @@ export async function getCodeFromActions(
       ...rest,
       actions: actions.filter(action => !(action as ActionContext)?.isSoftDeleted),
     })),
-    isSuite: type === 'suite',
+    isProject: type === 'project',
   });
 }
 

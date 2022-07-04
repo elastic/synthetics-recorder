@@ -28,18 +28,18 @@ import type { Setter } from '../../common/types';
 
 interface Props {
   code: string;
-  exportAsSuite: boolean;
-  setExportAsSuite: Setter<boolean>;
+  exportAsProject: boolean;
+  setExportAsProject: Setter<boolean>;
 }
 
-export function Body({ code, exportAsSuite, setExportAsSuite }: Props) {
+export function Body({ code, exportAsProject, setExportAsProject }: Props) {
   return (
     <EuiFlyoutBody>
       <EuiCheckbox
-        id="export-as-suite-checkbox"
-        label="Export as suite"
-        checked={exportAsSuite}
-        onChange={() => setExportAsSuite(!exportAsSuite)}
+        id="export-as-project-checkbox"
+        label="Export as project"
+        checked={exportAsProject}
+        onChange={() => setExportAsProject(!exportAsProject)}
       />
       <EuiSpacer />
       <EuiCodeBlock

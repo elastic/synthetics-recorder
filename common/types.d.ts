@@ -37,7 +37,7 @@ interface RecorderSteps<StepType = RecorderStep> extends Steps {
 }
 
 export type StepStatus = 'succeeded' | 'failed' | 'skipped';
-export type JourneyType = 'suite' | 'inline';
+export type JourneyType = 'project' | 'inline';
 
 export interface JourneyStep {
   duration: number;
@@ -90,9 +90,9 @@ export type RecordJourneyOptions = { url: string };
 export type RunJourneyOptions = {
   steps: Steps;
   code: string;
-  isSuite: boolean;
+  isProject: boolean;
 };
 export type GenerateCodeOptions = {
   actions: Steps;
-  isSuite: boolean;
+  isProject: boolean;
 };

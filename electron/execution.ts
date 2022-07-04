@@ -275,10 +275,10 @@ function onTest(mainWindowEmitter: EventEmitter) {
     let synthCliProcess: ChildProcess | null = null; // child process, define here to kill when finished
 
     try {
-      const isSuite = data.isSuite;
+      const isProject = data.isProject;
       const args = ['--no-headless', '--reporter=json', '--screenshots=off', '--no-throttling'];
       const filePath = join(JOURNEY_DIR, 'recorded.journey.js');
-      if (!isSuite) {
+      if (!isProject) {
         args.push('--inline');
       } else {
         await mkdir(JOURNEY_DIR, { recursive: true });
@@ -307,7 +307,7 @@ function onTest(mainWindowEmitter: EventEmitter) {
       mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
 
       const { stdout, stdin, stderr } = synthCliProcess as ChildProcess;
-      if (!isSuite) {
+      if (!isProject) {
         stdin?.write(data.code);
         stdin?.end();
       }
@@ -319,7 +319,7 @@ function onTest(mainWindowEmitter: EventEmitter) {
       for await (const chunk of stderr!) {
         logger.error(chunk);
       }
-      if (isSuite) {
+      if (isProject) {
         await rm(filePath, { recursive: true, force: true });
       }
 
@@ -357,8 +357,8 @@ async function onFileSave(code: string) {
   return false;
 }
 
-async function onGenerateCode(data: { isSuite: boolean; actions: RecorderSteps }) {
-  const generator = new SyntheticsGenerator(data.isSuite);
+async function onGenerateCode(data: { isProject: boolean; actions: RecorderSteps }) {
+  const generator = new SyntheticsGenerator(data.isProject);
   return generator.generateFromSteps(data.actions);
 }
 

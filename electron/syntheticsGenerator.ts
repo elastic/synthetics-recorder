@@ -146,7 +146,7 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
   private insideStep: boolean;
   private varsToHoist: string[];
 
-  constructor(private isSuite: boolean) {
+  constructor(private isProject: boolean) {
     super(true);
     this.insideStep = false;
     this.previousContext = undefined;
@@ -170,7 +170,7 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
     }
 
     const stepIndent = this.insideStep ? 2 : 0;
-    const offset = this.isSuite ? 2 + stepIndent : 0 + stepIndent;
+    const offset = this.isProject ? 2 + stepIndent : 0 + stepIndent;
     const formatter = new PlaywrightGenerator.JavaScriptFormatter(offset);
 
     const subject = actionInContext.isMainFrame
@@ -296,7 +296,7 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
    */
   generateFromSteps(steps: RecorderSteps): string {
     const text = [];
-    if (this.isSuite) {
+    if (this.isProject) {
       text.push(this.generateHeader());
     }
     this.varsToHoist = this.findVarsToHoist(steps);
@@ -313,7 +313,7 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
 
       text.push(this.generateStepEnd());
     }
-    if (this.isSuite) {
+    if (this.isProject) {
       text.push(this.generateFooter());
     }
 
@@ -333,7 +333,7 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
   }
 
   getDefaultOffset() {
-    return this.isSuite ? 2 : 0;
+    return this.isProject ? 2 : 0;
   }
 
   /**
