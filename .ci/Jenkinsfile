@@ -32,7 +32,7 @@ pipeline {
       options { skipDefaultCheckout() }
       steps {
         whenTrue(isInternalCI() && isTag()) {
-          notifyStatus(slackStatus: 'good', subject: "[${env.REPO}] Build for the release tag *${env.BRANCH_NAME}* has been triggered", body: "Build: (<${env.RUN_DISPLAY_URL}|here>) for further details.")
+          notifyStatus(slackStatus: 'good', subject: "[${env.REPO}] Build for the release tag *${env.TAG_NAME}* has been triggered", body: "Build: (<${env.RUN_DISPLAY_URL}|here>) for further details.")
         }
         pipelineManager([ cancelPreviousRunningBuilds: [ when: 'PR' ] ])
         deleteDir()
@@ -156,14 +156,14 @@ pipeline {
       }
       environment {
         BUCKET_NAME = 'internal-ci-artifacts'
-        BUCKET_SUBFOLDER = "${env.REPO}/${env.BRANCH_NAME}/${env.BUILD_ID}"
+        BUCKET_SUBFOLDER = "${env.REPO}/${env.TAG_NAME}/${env.BUILD_ID}"
         BUCKET_PATH = "gs://${env.BUCKET_NAME}/${env.BUCKET_SUBFOLDER}"
         BUCKET_CREDENTIALS = 'internal-ci-gcs-plugin'
         SIGNED_ARTIFACTS = 'signed-artifacts'
         BUCKET_SUBFOLDER_SIGNED_ARTIFACTS = "${env.BUCKET_SUBFOLDER}/${env.SIGNED_ARTIFACTS}"
         BUCKET_SIGNED_ARTIFACTS_PATH = "gs://${env.BUCKET_NAME}/${env.BUCKET_SUBFOLDER_SIGNED_ARTIFACTS}"
         DIST_FOLDER = 'dist'
-        RELEASE_URL_MESSAGE = "(<https://github.com/elastic/${env.REPO}/releases/tag/${env.BRANCH_NAME}|${env.BRANCH_NAME}>)"
+        RELEASE_URL_MESSAGE = "(<https://github.com/elastic/${env.REPO}/releases/tag/${env.TAG_NAME}|${env.TAG_NAME}>)"
         SIGNER_PROJECT_NAME = 'Elastic_Synthetics_Recorder'
       }
       // There are some environmental issues with some of the CI workers
@@ -247,10 +247,10 @@ pipeline {
       }
       post {
         success {
-          notifyStatus(slackStatus: 'good', subject: "[${env.REPO}] Release *${env.BRANCH_NAME}* published", body: "Build: (<${env.RUN_DISPLAY_URL}|here>)")
+          notifyStatus(slackStatus: 'good', subject: "[${env.REPO}] Release *${env.TAG_NAME}* published", body: "Build: (<${env.RUN_DISPLAY_URL}|here>)")
         }
         failure {
-          notifyStatus(slackStatus: 'warning', subject: "[${env.REPO}] Release *${env.BRANCH_NAME}* could not be published", body: "Build: (<${env.RUN_DISPLAY_URL}|here>)")
+          notifyStatus(slackStatus: 'warning', subject: "[${env.REPO}] Release *${env.TAG_NAME}* could not be published", body: "Build: (<${env.RUN_DISPLAY_URL}|here>)")
         }
         cleanup {
           deleteDir()
