@@ -202,7 +202,7 @@ pipeline {
           agent { label 'cloud-hsm' }
           // options { skipDefaultCheckout() }
           steps {
-            deleteDir()
+            // deleteDir()
             // git(credentialsId: 'f6c7695a-671e-4f4f-a331-acdce44ff9ba', url: 'git@github.com:elastic/infra.git')
             unstash('exe')
             withAzureSigningCreds {
