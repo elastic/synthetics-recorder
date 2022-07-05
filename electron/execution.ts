@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 import { chromium } from 'playwright';
-import { join, resolve } from 'path';
+import { join, resolve, extname } from 'path';
 import { existsSync } from 'fs';
 import { writeFile, rm, mkdir } from 'fs/promises';
 import { ipcMain as ipc } from 'electron-better-ipc';
@@ -351,7 +351,8 @@ async function onFileSave(code: string) {
   });
 
   if (!canceled && filePath) {
-    await writeFile(filePath, code);
+    const validPath = extname(filePath) === '.js' ? filePath : filePath + '.js';
+    await writeFile(validPath, code);
     return true;
   }
   return false;

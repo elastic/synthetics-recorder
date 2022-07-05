@@ -40,12 +40,14 @@ export function SaveCodeButton({ type }: ISaveCodeButton) {
   const { sendToast } = useContext(ToastContext);
   const onSave = async () => {
     const codeFromActions = await getCodeFromActions(ipc, steps, type);
-    await ipc.callMain('save-file', codeFromActions);
-    sendToast({
-      id: `file-export-${new Date().valueOf()}`,
-      title: 'Script export successful',
-      color: 'success',
-    });
+    const exported = await ipc.callMain('save-file', codeFromActions);
+    if (exported) {
+      sendToast({
+        id: `file-export-${new Date().valueOf()}`,
+        title: 'Script export successful',
+        color: 'success',
+      });
+    }
   };
   return (
     <EuiButton fill color="primary" iconType="exportAction" onClick={onSave}>
