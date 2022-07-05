@@ -26,7 +26,7 @@ THE SOFTWARE.
 require('dotenv').config();
 
 const { Registry } = require('playwright/lib/utils/registry');
-const SYNTHETICS_BROWSER_REVISIONS = require('@elastic/synthetics/node_modules/playwright-chromium/browsers.json');
+const SYNTHETICS_BROWSER_REVISIONS = require('../node_modules/playwright-core/browsers.json');
 
 /**
  * Constructs the Registry with browsers that will be used
@@ -47,7 +47,8 @@ module.exports.getExecutablePath = function (browserName = 'chromium') {
 (async () => {
   if (require.main === module) {
     try {
-      await registry.install();
+      // await registry.install();
+      require('../node_modules/playwright-chromium/install');
       // eslint-disable-next-line no-console
       console.log('Installation complete');
     } catch (e) {

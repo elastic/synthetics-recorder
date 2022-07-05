@@ -81,7 +81,7 @@
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "^58.1.1",
-    "@elastic/synthetics": "=1.0.0-beta.23",
+    "@elastic/synthetics": "=1.0.0-beta.30",
     "@emotion/cache": "^11.9.3",
     "@emotion/react": "^11.9.3",
     "dotenv": "^10.0.0",
@@ -104,7 +104,7 @@
     "last 1 version"
   ],
   "engines": {
-    "node": ">14.14.0",
-    "npm": "6"
+    "node": ">=16.15.0",
+    "npm": ">7"
   }
 }
