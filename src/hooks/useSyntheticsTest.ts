@@ -70,7 +70,7 @@ export function useSyntheticsTest(steps: RecorderSteps): ITestContext {
           const promise = ipc.callMain('run-journey', {
             steps,
             code,
-            isSuite: false,
+            isProject: false,
           });
           setIsTestInProgress(true);
           setIsResultFlyoutVisible(true);

@@ -25,7 +25,7 @@ THE SOFTWARE.
 import { resultReducer } from './resultReducer';
 
 describe('result reducer', () => {
-  it.each(['inline', 'suite'])('initializes result on journey start', type => {
+  it.each(['inline', 'project'])('initializes result on journey start', type => {
     expect(
       resultReducer(undefined, {
         event: 'journey/start',

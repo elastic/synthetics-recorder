@@ -35,7 +35,7 @@ const ROOT_DIR = process.cwd();
 
 /**
  * Journey directory is for storing a dummy file to simulate
- * the suite tests
+ * the project tests
  */
 export const JOURNEY_DIR = isDev ? join(ROOT_DIR, 'journeys') : join(RESOURCES_PATH, 'journeys');
 
