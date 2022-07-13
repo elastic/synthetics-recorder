@@ -37,17 +37,27 @@ import { FormControl } from './FormControl';
 import { ActionContext } from '../../../common/types';
 import { actionTitle } from '../../common/shared';
 
-function createUpdatedAction(field: string, value: string, context: ActionContext) {
+function createUpdatedAction(fields: IActionUpdateFields, context: ActionContext) {
+  const action = {
+    ...context.action,
+    url: fields.url,
+    selector: fields.selector,
+    text: fields.text,
+  };
   const actionContext = {
     ...context,
-    action: { ...context.action, [field]: value },
+    action,
     modified: true,
     isOpen: false,
   };
   const title = actionTitle(actionContext.action);
   return title ? { ...actionContext, title } : actionContext;
 }
-
+interface IActionUpdateFields {
+  url: string;
+  selector: string;
+  text?: string;
+}
 interface IActionDetail {
   actionContext: ActionContext;
   actionIndex: number;
@@ -59,28 +69,19 @@ export function ActionDetail({ actionContext, actionIndex, close, stepIndex }: I
   const { onUpdateAction } = useContext(StepsContext);
   const { action } = actionContext;
   const [selector, setSelector] = useState(action.selector || '');
-  const [text, setText] = useState(action.text || '');
+  const [text, setText] = useState(action.text);
   const [url, setUrl] = useState(action.url || '');
-
-  const onSelectorChange = (value: string) => {
-    if (!value) return;
-    setSelector(value);
-    onUpdateAction(createUpdatedAction('selector', value, actionContext), stepIndex, actionIndex);
+  const updateAction = () => {
+    const updatedAction = createUpdatedAction(
+      {
+        url,
+        selector,
+        text,
+      },
+      actionContext
+    );
+    onUpdateAction(updatedAction, stepIndex, actionIndex);
   };
-  const onTextChange = (value: string) => {
-    if (!value) return;
-    setText(value);
-    onUpdateAction(createUpdatedAction('text', value, actionContext), stepIndex, actionIndex);
-  };
-  const onURLChange = (value: string) => {
-    if (!value) return;
-    setUrl(value);
-    onUpdateAction(createUpdatedAction('url', value, actionContext), stepIndex, actionIndex);
-  };
-
-  if (action.text !== text && typeof action.text !== 'undefined') {
-    setText(action.text);
-  }
 
   return (
     <EuiPanel hasBorder={false} hasShadow={false} paddingSize="none">
@@ -109,7 +110,7 @@ export function ActionDetail({ actionContext, actionIndex, close, stepIndex }: I
             />
           </EuiFlexItem>
         )}
-        {text && (
+        {text != null && (
           <EuiFlexItem>
             <FormControl
               data-test-subj={`edit-text-${stepIndex}-${actionIndex}`}
@@ -127,15 +128,7 @@ export function ActionDetail({ actionContext, actionIndex, close, stepIndex }: I
         <EuiFlexItem grow={false}>
           <EuiButton
             data-test-subj={`save-action-${stepIndex}-${actionIndex}`}
-            onClick={() => {
-              if (url) {
-                onURLChange(url);
-              } else if (selector && !action.isAssert) {
-                onSelectorChange(selector);
-              } else if (text) {
-                onTextChange(text);
-              }
-            }}
+            onClick={() => updateAction()}
           >
             Save
           </EuiButton>
