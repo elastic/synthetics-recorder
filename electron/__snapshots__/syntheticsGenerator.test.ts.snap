@@ -19,7 +19,7 @@ journey('Recorded journey', async ({ page, context }) => {
       page.click('text=Babel Minify')
     ]);
     await Promise.all([
-      page1.waitForNavigation(),
+      page1.waitForNavigation({ url: 'https://github.com/babel/minify' }),
       page1.click('a:has-text(\\"smoke\\")')
     ]);
   });
