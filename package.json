@@ -19,6 +19,7 @@
     "fix-sharp": "node node_modules/sharp/install/libvips && node node_modules/sharp/install/dll-copy",
     "clean": "rm -rf ./build && rm -rf ./dist",
     "lint": "eslint .",
+    "lint-ci": "eslint . --format eslint-formatter-multiple",
     "format": "prettier --write .",
     "unused-exports": "node scripts/find-unused-exports.js",
     "lint:fix": "npm run lint -- --fix",
@@ -62,6 +63,7 @@
     "electron-builder": "^23.1.0",
     "eslint": "^8.19.0",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-formatter-multiple": "^2.0.0",
     "eslint-plugin-header": "^3.1.1",
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^7.0.4",
@@ -103,6 +105,19 @@
   "browserslist": [
     "last 1 version"
   ],
+  "eslint-formatter-multiple": {
+    "formatters": [
+      {
+        "name": "stylish",
+        "output": "console"
+      },
+      {
+        "name": "junit",
+        "output": "file",
+        "path": "junit-eslint.xml"
+      }
+    ]
+  },
   "engines": {
     "node": ">14.14.0",
     "npm": "6"
