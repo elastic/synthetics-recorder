@@ -28,6 +28,7 @@ import { ResultContainer, ResultHeader } from './styles';
 import { TruncatedTitle } from './TruncatedTitle';
 
 interface IResultHeader {
+  children: React.ReactNode;
   durationElement?: JSX.Element;
   maxTitleLength: number;
   titleText: string;

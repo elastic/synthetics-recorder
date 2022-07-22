@@ -22,7 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Step } from '@elastic/synthetics';
+// import type { Step } from '@elastic/synthetics';
+import type { Step } from '../../common/types';
 import { RendererProcessIpc } from 'electron-better-ipc';
 import { getCodeForFailedResult } from './shared';
 
@@ -83,9 +84,11 @@ describe('shared', () => {
               name: 'click',
               signals: [],
             },
-            isMainFrame: true,
-            frameUrl: 'https://www.elastic.co',
-            pageAlias: 'page alias',
+            frame: {
+              isMainFrame: true,
+              url: 'https://www.elastic.co',
+              pageAlias: 'page alias',
+            }
           },
         ],
       };

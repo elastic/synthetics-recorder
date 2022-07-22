@@ -30,6 +30,6 @@ const PageBody = styled(EuiPageBody)`
   padding: 0px 0px 0px 40px;
 `;
 
-export const AppPageBody: React.FC = ({ children }) => {
+export const AppPageBody: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <PageBody>{children}</PageBody>;
 };

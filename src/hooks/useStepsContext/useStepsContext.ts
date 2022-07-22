@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Step } from '@elastic/synthetics';
+// import type { Step } from '@elastic/synthetics';
 import { useCallback, useState } from 'react';
-import { ActionContext, RecorderSteps } from '../../../common/types';
+import { ActionContext, RecorderSteps, Step } from '../../../common/types';
 import type { IStepsContext } from '../../contexts/StepsContext';
 import { onDropStep } from './onDropStep';
 

@@ -22,30 +22,37 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { Step, Steps } from '@elastic/synthetics';
+import /* Step, Steps */ '@elastic/synthetics';
 import { SyntheticsGenerator } from './syntheticsGenerator';
 import {
   createStepsWithOverrides,
   createStepWithOverrides,
 } from '../common/helper/test/createAction';
+import type { Step, Steps } from '../common/types';
 
 const recorderStep = createStepWithOverrides([
   {
-    frameUrl: 'about:blank',
+    frame: {
+      url: 'about:blank',
+    },
     action: {
       name: 'openPage',
       url: 'about:blank',
     },
   },
   {
-    frameUrl: 'https://vigneshh.in/',
+    frame: {
+      url: 'https://vigneshh.in/',
+    },
     action: {
       name: 'navigate',
       url: 'https://vigneshh.in/',
     },
   },
   {
-    frameUrl: 'https://vignesh.in/',
+    frame: {
+      url: 'https://vignesh.in/',
+    },
     action: {
       name: 'assert',
       isAssert: true,
@@ -54,7 +61,9 @@ const recorderStep = createStepWithOverrides([
     },
   },
   {
-    frameUrl: 'https://vigneshh.in/',
+    frame: {
+      url: 'https://vigneshh.in/',
+    },
     action: {
       name: 'assert',
       isAssert: true,
@@ -63,7 +72,9 @@ const recorderStep = createStepWithOverrides([
     },
   },
   {
-    frameUrl: 'https://vigneshh.in/',
+    frame: {
+      url: 'https://vigneshh.in/',
+    },
     action: {
       name: 'assert',
       isAssert: true,
@@ -73,7 +84,9 @@ const recorderStep = createStepWithOverrides([
     },
   },
   {
-    frameUrl: 'https://vigneshh.in/',
+    frame: {
+      url: 'https://vigneshh.in/',
+    },
     action: {
       name: 'click',
       selector: 'text=Babel Minify',
@@ -90,8 +103,10 @@ const recorderStep = createStepWithOverrides([
     },
   },
   {
-    pageAlias: 'page1',
-    frameUrl: 'https://github.com/babel/minify',
+    frame: {
+      url: 'https://github.com/babel/minify',
+      pageAlias: 'page1',
+    },
     action: {
       name: 'click',
       selector: 'a:has-text("smoke")',
@@ -121,14 +136,18 @@ const recorderStep = createStepWithOverrides([
     },
   },
   {
-    pageAlias: 'page1',
-    frameUrl: 'https://github.com/babel/minify',
+    frame: {
+      url: 'https://github.com/babel/minify',
+      pageAlias: 'page1',
+    },
     action: {
       name: 'closePage',
     },
   },
   {
-    frameUrl: 'https://vigneshh.in/',
+    frame: {
+      url: 'https://vigneshh.in/',
+    },
     action: {
       name: 'closePage',
     },
@@ -173,14 +192,18 @@ describe('Synthetics JavaScript formatter', () => {
     const steps = createStepsWithOverrides([
       [
         {
-          frameUrl: 'https://vigneshh.in',
+          frame: {
+            url: 'https://vigneshh.in',
+          },
           action: {
             name: 'navigate',
             url: 'https://vigneshh.in/',
           },
         },
         {
-          frameUrl: 'https://vigneshh.in/',
+          frame: {
+            url: 'https://vigneshh.in/',
+          },
           action: {
             name: 'click',
             selector: 'text=Tailor',
@@ -191,8 +214,10 @@ describe('Synthetics JavaScript formatter', () => {
           },
         },
         {
-          pageAlias: 'page1',
-          frameUrl: 'https://github.com/zalando/tailor',
+          frame: {
+            url: 'https://github.com/zalando/tailor',
+            pageAlias: 'page1',
+          },
           action: {
             name: 'click',
             selector: 'text=Packages 0',
@@ -210,14 +235,18 @@ describe('Synthetics JavaScript formatter', () => {
       ],
       [
         {
-          pageAlias: 'page1',
-          frameUrl: 'https://github.com/orgs/zalando/packages?repo_name=tailor',
+          frame: {
+            url: 'https://github.com/orgs/zalando/packages?repo_name=tailor',
+            pageAlias: 'page1',
+          },
           action: { name: 'closePage' },
         },
       ],
       [
         {
-          frameUrl: 'https://vigneshh.in/',
+          frame: {
+            url: 'https://vigneshh.in/',
+          },
           action: {
             name: 'click',
             selector: 'text=Babel Minify',
@@ -228,8 +257,10 @@ describe('Synthetics JavaScript formatter', () => {
           },
         },
         {
-          pageAlias: 'page2',
-          frameUrl: 'https://github.com/babel/minify',
+          frame: {
+            url: 'https://github.com/babel/minify',
+            pageAlias: 'page2',
+          },
           action: {
             name: 'click',
             selector: ':nth-match(a:has-text("babel-minify"), 3)',
@@ -242,8 +273,10 @@ describe('Synthetics JavaScript formatter', () => {
       ],
       [
         {
-          pageAlias: 'page2',
-          frameUrl: 'https://github.com/topics/babel-minify',
+          frame: {
+            url: 'https://github.com/topics/babel-minify',
+            pageAlias: 'page2',
+          },
           action: { name: 'closePage' },
         },
       ],
@@ -257,11 +290,15 @@ describe('Synthetics JavaScript formatter', () => {
         createStepsWithOverrides([
           [
             {
-              frameUrl: 'https://vigneshh.in/',
+              frame: {
+                url: 'https://vigneshh.in/',
+              },
               action: { name: 'navigate', url: 'https://vigneshh.in/' },
             },
             {
-              frameUrl: 'https://vigneshh.in/',
+              frame: {
+                url: 'https://vigneshh.in/',
+              },
               action: {
                 name: 'click',
                 selector: 'text=Tailor',
@@ -272,8 +309,10 @@ describe('Synthetics JavaScript formatter', () => {
               },
             },
             {
-              pageAlias: 'page1',
-              frameUrl: 'https://github.com/zalando/tailor',
+              frame: {
+                url: 'https://github.com/zalando/tailor',
+                pageAlias: 'page1',
+              },
               action: {
                 name: 'click',
                 selector: 'text=Packages 0',
@@ -289,12 +328,16 @@ describe('Synthetics JavaScript formatter', () => {
               },
             },
             {
-              pageAlias: 'page1',
-              frameUrl: 'https://github.com/orgs/zalando/packages?repo_name=tailor',
+              frame: {
+                url: 'https://github.com/orgs/zalando/packages?repo_name=tailor',
+                pageAlias: 'page1',
+              },
               action: { name: 'closePage' },
             },
             {
-              frameUrl: 'https://vigneshh.in/',
+              frame: {
+                url: 'https://vigneshh.in/',
+              },
               action: {
                 name: 'click',
                 selector: 'text=Babel Minify',
@@ -305,8 +348,10 @@ describe('Synthetics JavaScript formatter', () => {
               },
             },
             {
-              pageAlias: 'page2',
-              frameUrl: 'https://github.com/babel/minify',
+              frame: {
+                url: 'https://github.com/babel/minify',
+                pageAlias: 'page2',
+              },
               action: { name: 'closePage' },
             },
           ],
@@ -321,11 +366,15 @@ describe('Synthetics JavaScript formatter', () => {
         createStepsWithOverrides([
           [
             {
-              frameUrl: 'https://vigneshh.in/',
+              frame: {
+                url: 'https://vigneshh.in/',
+              },
               action: { name: 'navigate', url: 'https://vigneshh.in/' },
             },
             {
-              frameUrl: 'https://vigneshh.in/',
+              frame: {
+                url: 'https://vigneshh.in/',
+              },
               action: {
                 name: 'click',
                 selector: 'text=Tailor',
@@ -336,8 +385,10 @@ describe('Synthetics JavaScript formatter', () => {
               },
             },
             {
-              pageAlias: 'page1',
-              frameUrl: 'https://github.com/zalando/tailor',
+              frame: {
+                url: 'https://github.com/zalando/tailor',
+                pageAlias: 'page1',
+              },
               action: {
                 name: 'click',
                 selector: 'text=Packages 0',
@@ -355,12 +406,16 @@ describe('Synthetics JavaScript formatter', () => {
           ],
           [
             {
-              pageAlias: 'page1',
-              frameUrl: 'https://github.com/orgs/zalando/packages?repo_name=tailor',
+              frame: {
+                url: 'https://github.com/orgs/zalando/packages?repo_name=tailor',
+                pageAlias: 'page1',
+              },
               action: { name: 'closePage' },
             },
             {
-              frameUrl: 'https://vigneshh.in/',
+              frame: {
+                url: 'https://vigneshh.in/',
+              },
               action: {
                 name: 'click',
                 selector: 'text=Babel Minify',
@@ -373,8 +428,10 @@ describe('Synthetics JavaScript formatter', () => {
           ],
           [
             {
-              pageAlias: 'page2',
-              frameUrl: 'https://github.com/babel/minify',
+              frame: {
+                url: 'https://github.com/babel/minify',
+                pageAlias: 'page2',
+              },
               action: { name: 'closePage' },
             },
           ],
@@ -389,11 +446,15 @@ describe('Synthetics JavaScript formatter', () => {
         createStepsWithOverrides([
           [
             {
-              frameUrl: 'https://vigneshh.in/',
+              frame: {
+                url: 'https://vigneshh.in/',
+              },
               action: { name: 'navigate', url: 'https://vigneshh.in/' },
             },
             {
-              frameUrl: 'https://vigneshh.in/',
+              frame: {
+                url: 'https://vigneshh.in/',
+              },
               action: {
                 name: 'click',
                 selector: 'text=Tailor',
@@ -404,8 +465,10 @@ describe('Synthetics JavaScript formatter', () => {
               },
             },
             {
-              pageAlias: 'page1',
-              frameUrl: 'https://github.com/zalando/tailor',
+              frame: {
+                url: 'https://github.com/zalando/tailor',
+                pageAlias: 'page1',
+              },
               action: {
                 name: 'click',
                 selector: 'text=Packages 0',
@@ -423,14 +486,18 @@ describe('Synthetics JavaScript formatter', () => {
           ],
           [
             {
-              pageAlias: 'page1',
-              frameUrl: 'https://github.com/orgs/zalando/packages?repo_name=tailor',
+              frame: {
+                url: 'https://github.com/orgs/zalando/packages?repo_name=tailor',
+                pageAlias: 'page1',
+              },
               action: { name: 'closePage' },
             },
           ],
           [
             {
-              frameUrl: 'https://vigneshh.in/',
+              frame: {
+                url: 'https://vigneshh.in/',
+              },
               action: {
                 name: 'click',
                 selector: 'text=Babel Minify',
@@ -441,8 +508,10 @@ describe('Synthetics JavaScript formatter', () => {
               },
             },
             {
-              pageAlias: 'page2',
-              frameUrl: 'https://github.com/babel/minify',
+              frame: {
+                url: 'https://github.com/babel/minify',
+                pageAlias: 'page2',
+              },
               action: {
                 name: 'click',
                 selector: ':nth-match(a:has-text("babel-minify"), 3)',
@@ -455,8 +524,10 @@ describe('Synthetics JavaScript formatter', () => {
           ],
           [
             {
-              pageAlias: 'page2',
-              frameUrl: 'https://github.com/topics/babel-minify',
+              frame: {
+                url: 'https://github.com/topics/babel-minify',
+                pageAlias: 'page2',
+              },
               action: { name: 'closePage' },
             },
           ],

@@ -59,7 +59,7 @@
     "ajv": "^8.11.0",
     "concurrently": "^7.2.2",
     "electron": "^14.2.9",
-    "electron-builder": "^23.1.0",
+    "electron-builder": "^23.3.1",
     "eslint": "^8.19.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-header": "^3.1.1",
@@ -91,7 +91,7 @@
     "electron-log": "^4.4.8",
     "electron-unhandled": "^3.0.2",
     "moment": "^2.29.4",
-    "playwright": "git+https://github.com/elastic/playwright.git#separate-recorder",
+    "playwright": "git+https://github.com/elastic/playwright.git#1.20.1-recorder",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "styled-components": "^5.3.5"

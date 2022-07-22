@@ -24,9 +24,15 @@ THE SOFTWARE.
 
 // Load the process.env config from .env file
 require('dotenv').config();
+const path = require('path');
 
-const { Registry } = require('playwright/lib/utils/registry');
-const SYNTHETICS_BROWSER_REVISIONS = require('../node_modules/playwright-core/browsers.json');
+const { Registry } = require('playwright/packages/playwright-core/lib/utils/registry');
+// const SYNTHETICS_BROWSER_REVISIONS = require('@elastic/synthetics/node_modules/playwright-core/browsers.json');
+// when installing with yarn, the modules can be found on top level
+const SYNTHETICS_BROWSER_REVISIONS = require(path.join(
+  process.cwd(),
+  'node_modules/playwright-core/browsers.json'
+));
 
 /**
  * Constructs the Registry with browsers that will be used
@@ -47,8 +53,8 @@ module.exports.getExecutablePath = function (browserName = 'chromium') {
 (async () => {
   if (require.main === module) {
     try {
-      // await registry.install();
-      require('../node_modules/playwright-chromium/install');
+      const chromium = registry.defaultExecutables().find(browser => browser.name === 'chromium');
+      await registry.install([chromium]);
       // eslint-disable-next-line no-console
       console.log('Installation complete');
     } catch (e) {

@@ -26,7 +26,9 @@ import { useEuiTheme } from '@elastic/eui';
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
 
-export const StyledComponentsEuiProvider: React.FC = ({ children }) => {
+export const StyledComponentsEuiProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const { euiTheme } = useEuiTheme();
   return <ThemeProvider theme={euiTheme}>{children}</ThemeProvider>;
 };

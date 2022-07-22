@@ -24,7 +24,7 @@ THE SOFTWARE.
 import React, { useContext } from 'react';
 import { useEffect, useState } from 'react';
 import { EuiCode, EuiEmptyPrompt, EuiGlobalToastList, EuiProvider } from '@elastic/eui';
-import type { Steps } from '@elastic/synthetics';
+// import type { Steps } from '@elastic/synthetics';
 import createCache from '@emotion/cache';
 import '@elastic/eui/dist/eui_theme_light.css';
 import { Title } from './components/Header/Title';
@@ -49,7 +49,7 @@ import { StyledComponentsEuiProvider } from './contexts/StyledComponentsEuiProvi
 import { ExportScriptFlyout } from './components/ExportScriptFlyout';
 import { useRecordingContext } from './hooks/useRecordingContext';
 import { StartOverWarningModal } from './components/StartOverWarningModal';
-import { ActionContext, RecorderSteps } from '../common/types';
+import { ActionContext, RecorderSteps, Steps } from '../common/types';
 
 /**
  * This is the prescribed workaround to some internal EUI issues that occur

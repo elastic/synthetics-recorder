@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Step } from '@elastic/synthetics';
+// import type { Step } from '@elastic/synthetics';
 import { createContext } from 'react';
 import type { Setter } from '../common/types';
-import type { ActionContext, RecorderSteps } from '../../common/types';
+import type { ActionContext, RecorderSteps, Step } from '../../common/types';
 
 function notImplemented() {
   throw Error('Step context not initialized');

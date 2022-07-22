@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { chromium } from 'playwright';
+import { chromium } from 'playwright/packages/playwright-core';
 import { join, resolve } from 'path';
 import { existsSync } from 'fs';
 import { writeFile, rm, mkdir } from 'fs/promises';
@@ -33,9 +33,9 @@ import { fork, ChildProcess } from 'child_process';
 import logger from 'electron-log';
 import isDev from 'electron-is-dev';
 import { JOURNEY_DIR, PLAYWRIGHT_BROWSERS_PATH, EXECUTABLE_PATH } from './config';
-import type { BrowserContext } from 'playwright';
-import type { ActionInContext } from '@elastic/synthetics';
+import type { BrowserContext } from 'playwright-core';
 import type {
+  ActionInContext,
   GenerateCodeOptions,
   RecorderSteps,
   RecordJourneyOptions,
