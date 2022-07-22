@@ -1,4 +1,4 @@
-0; /*
+/*
 MIT License
 
 Copyright (c) 2021-present, Elastic NV

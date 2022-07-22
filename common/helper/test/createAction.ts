@@ -23,17 +23,17 @@ THE SOFTWARE.
 */
 
 import { Action /* Step */ } from '@elastic/synthetics';
-import { ActionContext, ActionInContext, FrameDescription, RecorderSteps, Step } from '../../types';
+import { ActionContext, FrameDescription, RecorderSteps, Step } from '../../types';
 
-type OptionalActionContext = Omit<ActionContext, 'action' | 'frame'>; 
+type OptionalActionContext = Omit<ActionContext, 'action' | 'frame'>;
 type ActionContextOverride = OptionalActionContext & {
   frame?: Partial<FrameDescription>;
   action?: Partial<Action>;
-}
+};
 type CreateStepActionOverride = OptionalActionContext & {
   frame?: Partial<FrameDescription>;
   action: Partial<Action> & { name: string };
-}
+};
 
 export const createAction = (name: string, overrides?: ActionContextOverride): ActionContext => {
   const baseAction = {

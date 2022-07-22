@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Action, /* Steps */ } from '@elastic/synthetics';
+import type { Action /* , Steps */ } from '@elastic/synthetics';
 import { RendererProcessIpc } from 'electron-better-ipc';
 import React from 'react';
 import type { ActionContext, Journey, JourneyType, Steps } from '../../common/types';
