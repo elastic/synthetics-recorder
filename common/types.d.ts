@@ -51,13 +51,6 @@ export interface ActionContext extends ActionInContext {
   isOpen?: boolean;
   isSoftDeleted?: boolean;
 }
-/* export interface RecorderStep<ActionType = ActionContext> extends Step {
-  actions: ActionType[];
-}
-
-export interface RecorderSteps<StepType = RecorderStep> extends Steps {
-  [key: number]: StepType;
-} */
 export interface RecorderStep extends Step {
   actions: ActionContext[];
 }

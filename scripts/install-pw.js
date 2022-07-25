@@ -27,8 +27,6 @@ require('dotenv').config();
 const path = require('path');
 
 const { Registry } = require('playwright/packages/playwright-core/lib/utils/registry');
-// const SYNTHETICS_BROWSER_REVISIONS = require('@elastic/synthetics/node_modules/playwright-core/browsers.json');
-// when installing with yarn, the modules can be found on top level
 const SYNTHETICS_BROWSER_REVISIONS = require(path.join(
   process.cwd(),
   'node_modules/playwright-core/browsers.json'
