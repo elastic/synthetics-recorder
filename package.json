@@ -5,8 +5,7 @@
   "repository": "https://github.com/elastic/synthetics-recorder",
   "scripts": {
     "install:pw": "node scripts/install-pw.js",
-    "preinstall": "npx npm-force-resolutions@0.0.10",
-    "postinstall": "npm run install:pw && electron-builder install-app-deps",
+    "postinstall": "npm run install:pw && electron-builder install-app-deps && npm run prepare-demo-app --legacy-peer-deps",
     "prepare-demo-app": "npm install --prefix demo-app && npm run build --prefix demo-app",
     "react:start": "react-scripts start",
     "react:build": "react-scripts build",
@@ -95,10 +94,6 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "styled-components": "^5.3.5"
-  },
-  "resolutions": {
-    "trim": "0.0.3",
-    "caniuse-lite": "1.0.30001366"
   },
   "browserslist": [
     "last 1 version"
