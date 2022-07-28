@@ -25,7 +25,7 @@ THE SOFTWARE.
 import { Action, /* ActionInContext, */ Signal } from '@elastic/synthetics';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore unit tests won't run without this ignore because there is no type declaration for `PlaywrightGenerator`
-import * as PlaywrightGenerator from 'playwright/packages/playwright-core/lib/server/recorder/javascript';
+import * as PlaywrightGenerator from 'playwright/lib/server/recorder/javascript';
 import { RecorderSteps, ActionInContext } from '../common/types';
 
 function toAssertCall(pageAlias: string, action: Action) {

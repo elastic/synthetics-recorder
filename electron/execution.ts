@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { chromium } from 'playwright/packages/playwright-core';
+import { chromium } from 'playwright';
 import { join, resolve } from 'path';
 import { existsSync } from 'fs';
 import { writeFile, rm, mkdir } from 'fs/promises';

@@ -16,11 +16,11 @@ journey('Recorded journey', async ({ page, context }) => {
     expect(await page.textContent('text=Babel Minify')).toMatch('Babel');
     [page1] = await Promise.all([
       page.waitForEvent('popup'),
-      page.click('text=Babel Minify')
+      page.locator('text=Babel Minify').click()
     ]);
     await Promise.all([
       page1.waitForNavigation({ url: 'https://github.com/babel/minify' }),
-      page1.click('a:has-text(\\"smoke\\")')
+      page1.locator('a:has-text(\\"smoke\\")').click()
     ]);
   });
   step('Close page', async () => {
@@ -36,14 +36,14 @@ step('Go to https://vigneshh.in/', async () => {
   await page.goto('https://vigneshh.in/');
   [page1] = await Promise.all([
     page.waitForEvent('popup'),
-    page.click('text=Tailor')
+    page.locator('text=Tailor').click()
   ]);
-  await page1.click('text=Packages 0');
+  await page1.locator('text=Packages 0').click();
   expect(page1.url()).toBe('https://github.com/orgs/zalando/packages?repo_name=tailor');
   await page1.close();
   [page2] = await Promise.all([
     page.waitForEvent('popup'),
-    page.click('text=Babel Minify')
+    page.locator('text=Babel Minify').click()
   ]);
   await page2.close();
 });"
@@ -56,16 +56,16 @@ step('Go to https://vigneshh.in/', async () => {
   await page.goto('https://vigneshh.in/');
   [page1] = await Promise.all([
     page.waitForEvent('popup'),
-    page.click('text=Tailor')
+    page.locator('text=Tailor').click()
   ]);
-  await page1.click('text=Packages 0');
+  await page1.locator('text=Packages 0').click();
   expect(page1.url()).toBe('https://github.com/orgs/zalando/packages?repo_name=tailor');
 });
 step('Close page', async () => {
   await page1.close();
   [page2] = await Promise.all([
     page.waitForEvent('popup'),
-    page.click('text=Babel Minify')
+    page.locator('text=Babel Minify').click()
   ]);
 });
 step('Close page', async () => {
@@ -80,9 +80,9 @@ step('Go to https://vigneshh.in/', async () => {
   await page.goto('https://vigneshh.in/');
   [page1] = await Promise.all([
     page.waitForEvent('popup'),
-    page.click('text=Tailor')
+    page.locator('text=Tailor').click()
   ]);
-  await page1.click('text=Packages 0');
+  await page1.locator('text=Packages 0').click();
   expect(page1.url()).toBe('https://github.com/orgs/zalando/packages?repo_name=tailor');
 });
 step('Close page', async () => {
@@ -91,9 +91,9 @@ step('Close page', async () => {
 step('Click text=Babel Minify', async () => {
   [page2] = await Promise.all([
     page.waitForEvent('popup'),
-    page.click('text=Babel Minify')
+    page.locator('text=Babel Minify').click()
   ]);
-  await page2.click(':nth-match(a:has-text(\\"babel-minify\\"), 3)');
+  await page2.locator(':nth-match(a:has-text(\\"babel-minify\\"), 3)').click();
   expect(page2.url()).toBe('https://github.com/topics/babel-minify');
 });
 step('Close page', async () => {
