@@ -17,4 +17,4 @@ if [ -n "${NPM_COMMAND}" ] ; then
 fi
 
 echo $PATH
-NPM_CONFIG_LOGLEVEL=verbose npm test
+NPM_CONFIG_LOGLEVEL=verbose npm run test:unit
