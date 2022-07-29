@@ -9,7 +9,7 @@ echo $USER
 echo $USERNAME
 
 source $NVM_DIR/nvm.sh
-nvm install
+nvm use
 set -x
 # If NPM_COMMAND then run it.
 if [ -n "${NPM_COMMAND}" ] ; then
