@@ -23,7 +23,7 @@
     "lint:fix": "npm run lint -- --fix",
     "prepare": "husky install",
     "test": "echo $PATH && npm run test:unit && npm run test:e2e",
-    "test:unit": "source ~/.env && jest --config ./jest.unit.config.js .",
+    "test:unit": "whoami && source ~/.env && env && jest --config ./jest.unit.config.js .",
     "test:unit:watch": "npm run test:unit -- --coverage --watch --collectCoverageFrom={src,electron}/**/*.{js,jsx,ts,tsx}",
     "test:e2e": "jest --runInBand --config ./jest.e2e.config.js ./e2e/tests",
     "test:e2e:server": "BROWSER=NONE PORT=61337 react-scripts start",
