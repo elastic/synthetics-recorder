@@ -14,15 +14,10 @@ fi
 
 DOCKER_RUN_OPTIONS="-i --rm"
 
-# Start debug
-
 # Only allocate tty if we detect one
-#if [ -t 0 ] && [ -t 1 ]; then
-#    DOCKER_RUN_OPTIONS="$DOCKER_RUN_OPTIONS -t"
-#fi
-DOCKER_RUN_OPTIONS="$DOCKER_RUN_OPTIONS -t"
-
-# end debug
+if [ -t 0 ] && [ -t 1 ]; then
+    DOCKER_RUN_OPTIONS="$DOCKER_RUN_OPTIONS -t"
+fi
 
 # shellcheck disable=SC2086
 docker run \

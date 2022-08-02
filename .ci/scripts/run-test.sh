@@ -19,5 +19,5 @@ echo $PATH
 which node
 ls -al /root/versions/node/v16.15.0/bin
 ls -al /root/versions/node
-/usr/bin/env
+/usr/bin/env > ~/.env
 NPM_CONFIG_LOGLEVEL=verbose npm run test:unit
