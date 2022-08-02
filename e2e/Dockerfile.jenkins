@@ -33,6 +33,7 @@ WORKDIR /synthetics-recorder
 
 # Copy .nvmrc as long as you run the script in .ci/scripts/docker-build.sh
 ADD .nvmrc /synthetics-recorder/.nvmrc
+RUN nvm install
 
 # Installing NVM
 ENV NVM_DIR /root
