@@ -133,10 +133,12 @@ pipeline {
       }
       steps {
         withGithubNotify(context: "Test") {
-          dir("${BASE_DIR}"){
-            // NOTE: It uses the current workspace that was configured with npm ci
-            sh(label: 'run tests', script: '.ci/scripts/run-test-in-docker.sh')
-          }
+          withNodeJSEnv() {
+            dir("${BASE_DIR}"){
+              // NOTE: It uses the current workspace that was configured with npm ci
+              sh(label: 'run tests', script: '.ci/scripts/run-test-in-docker.sh')
+            }
+          } 
         }
       }
       post {
