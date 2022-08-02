@@ -15,5 +15,5 @@ set -x
 if [ -n "${NPM_COMMAND}" ] ; then
   npm ${NPM_COMMAND}
 fi
-ls -al /root/versions/node/v16.15.0/bin
+#ls -al /root/versions/node/v16.15.0/bin
 NPM_CONFIG_LOGLEVEL=verbose npm run test:unit
