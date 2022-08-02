@@ -23,5 +23,6 @@ ls -al /root/versions/node
 echo whoami1
 whoami
 echo whoami2
+ls -al /synthetics-recorder/node_modules/.bin
 #NPM_CONFIG_LOGLEVEL=verbose npm run test:unit
 NPM_CONFIG_LOGLEVEL=verbose npm run env
