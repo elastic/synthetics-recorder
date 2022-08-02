@@ -23,4 +23,5 @@ ls -al /root/versions/node
 echo whoami1
 whoami
 echo whoami2
-NPM_CONFIG_LOGLEVEL=verbose npm run test:unit
+#NPM_CONFIG_LOGLEVEL=verbose npm run test:unit
+NPM_CONFIG_LOGLEVEL=verbose npm run env
