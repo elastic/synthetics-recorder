@@ -20,7 +20,7 @@ if [ -t 0 ] && [ -t 1 ]; then
 fi
 
 # shellcheck disable=SC2086
-docker run \
+sudo docker run \
   -u 0:0 \
   $DOCKER_RUN_OPTIONS \
   -v "$(pwd):/synthetics-recorder" \
