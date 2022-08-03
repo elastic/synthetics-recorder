@@ -25,4 +25,9 @@ whoami
 echo whoami2
 ls -al /synthetics-recorder/node_modules/.bin
 #NPM_CONFIG_LOGLEVEL=verbose npm run test:unit
+echo system path
+env
+echo end system path
+echo npm path
 NPM_CONFIG_LOGLEVEL=verbose npm run env
+echo end npm path
