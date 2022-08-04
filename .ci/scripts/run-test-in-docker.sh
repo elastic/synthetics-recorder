@@ -23,7 +23,6 @@ fi
 docker run \
   $DOCKER_RUN_OPTIONS \
   -u '0:0' \
-  -v "$(pwd):/synthetics-recorder" \
   -e NPM_COMMAND=${1:-''} \
   $DOCKER_IMAGE \
   .ci/scripts/run-test.sh

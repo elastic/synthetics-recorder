@@ -24,14 +24,10 @@ THE SOFTWARE.
 
 // Load the process.env config from .env file
 require('dotenv').config();
-const path = require('path');
 const { Registry } = require('playwright/lib/utils/registry');
-
-const SYNTHETICS_BROWSER_REVISIONS = require(path.join(
-  process.cwd(),
-  'node_modules/playwright-core/browsers.json'
-));
-
+const PLAYWRIGHT_CORE_PATH = require.resolve('playwright-core');
+const BROWSER_PATH = PLAYWRIGHT_CORE_PATH.replace('index.js', 'browsers.json');
+const SYNTHETICS_BROWSER_REVISIONS = require(BROWSER_PATH);
 /**
  * Constructs the Registry with browsers that will be used
  * to download the chromium version required by the synthetics version
