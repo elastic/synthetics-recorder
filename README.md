@@ -65,34 +65,44 @@ When updating the version of [@elastic/synthetics](https://github.com/elastic/sy
 
 1. Pull the remote changes to your machine. If necessary, set the remote as follows:
 ```
+git remote add upstream https://github.com/microsoft/playwright.git
 git remote add elastic https://github.com/elastic/playwright.git
 git remote -v
 // prints:
+// upstream	https://github.com/microsoft/playwright.git (fetch)
+// upstream	https://github.com/microsoft/playwright.git (push)
 // elastic  https://github.com/elastic/playwright.git (fetch)
 // elastic  https://github.com/elastic/playwright.git (push)
 ```
-2. Confirm the Playwright version from Synthetics agent's `package.json`, we will refer it as `v${NEW_VERSION}`. Checkout to `NEW_VERSION` tag, and create a new branch from there:
+2. Confirm the Playwright version from Synthetics agent's `package.json`:
 ```
-# export NEW_VERSION=x.y.z
-git checkout v${NEW_VERSION}
-git switch -c ${NEW_VERSION}-recorder
+// @elastic/synthetics's package.json
+...
+    "playwright-core": "=1.20.1",
+...
 ```
-3. Now cherry-pick the commit from `synthetics-recorder` then run `npm run build`. You should see generated js files under `packages/playwright-core/lib` directory. Commit all the changes and push it to remote:
+3. Fetch the tags from upstream, checkout to the version 1.20.1, and create a new branch:
 ```
+git fetch upstream --tags
+git checkout -b 1.20.1-recorder v1.20.1
+```
+4. Cherry-pick the commit from `synthetics-recorder` branch, then run `npm run build`. You should see generated js files under `packages/playwright-core/lib` directory. Commit all the changes and push it to elastic remote:
+```
+git cherry-pick 84309bf
+# solve conflicts if necessary
+npm run build
 git add .
-git push  --set-upstream elastic ${NEW_VERSION}-recorder
+git push  --set-upstream elastic 1.20.1-recorder
 ```
-4. To test the new changes working properly, come back to synthetics-recorder project and update the target for `playwright` dependency in `package.json`:
+5. Test new changes in the Recorder by updating Recorder's package.json. Update `playwright` dependency to the branch you pushed from above step:
 ```js
-// synthetics-recorder/package.json
-// BRANCH_NAME=${NEW_VERSION}-recorder
+// @elastic/synthetics-recorder's package.json
 ...
-    "playwright": "https://gitpkg.now.sh/elastic/playwright/packages/playwright-core?${BRANCH_NAME}",
+    "playwright": "https://gitpkg.now.sh/elastic/playwright/packages/playwright-core?1.20.1-recorder",
 ...
 ```
-5. If necessary, do modify some of the code and make sure to push the changes to `synthetics-recorder` branch (if it's applicable and the change is not a version-specific change). 
 
-That's all needed to update the Synthetics agent and Playwright dependency. For now, we are doing it all manually, However, we should consider automating this process.
+For now, we are doing it all manually, However, we should consider automating the process.
 ### Build
 
 Build and Package the app for all platforms
