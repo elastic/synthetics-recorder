@@ -15,5 +15,4 @@ set -x
 if [ -n "${NPM_COMMAND}" ] ; then
   npm ${NPM_COMMAND}
 fi
-
 NPM_CONFIG_LOGLEVEL=verbose npm run test

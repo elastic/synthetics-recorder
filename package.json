@@ -99,6 +99,7 @@
     "last 1 version"
   ],
   "engines": {
-    "node": ">=16.15.0"
+    "node": ">=16.15.0",
+    "npm": ">=7"
   }
 }
