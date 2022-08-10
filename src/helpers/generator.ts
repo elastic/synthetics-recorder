@@ -22,9 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Step, Steps } from '@elastic/synthetics';
+// import type { Step, Steps } from '@elastic/synthetics';
+
 import { actionTitle } from '../common/shared';
-import { ActionContext, RecorderSteps } from '../../common/types';
+import { ActionContext, RecorderSteps, Step, Steps } from '../../common/types';
 
 /**
  * Creates an intermediate representation of the steps Playwright has recorded from
@@ -65,7 +66,7 @@ export function generateMergedIR(prevSteps: RecorderSteps, pwInput: Steps): Reco
   const nextSteps: Steps = pwInput.map(step => ({
     ...step,
     actions: step.actions.filter(
-      ({ action: { name }, pageAlias }) => !isOpenOrCloseAction(name, pageAlias)
+      ({ action: { name }, frame: { pageAlias } }) => !isOpenOrCloseAction(name, pageAlias)
     ),
   }));
   const prevLength = prevSteps.reduce(getActionCount, 0);

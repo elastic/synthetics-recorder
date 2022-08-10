@@ -24,10 +24,13 @@ THE SOFTWARE.
 
 // Load the process.env config from .env file
 require('dotenv').config();
-
 const { Registry } = require('playwright/lib/utils/registry');
-const SYNTHETICS_BROWSER_REVISIONS = require('@elastic/synthetics/node_modules/playwright-chromium/browsers.json');
-
+// npm >=7 has workspaces enabled by default
+// Therefore playwright-core, dependency of @elastic/synthetics,
+// is downloaded to top-level `node_modules` rather than `@elastic/synthetics/node_modules`
+const PLAYWRIGHT_CORE_PATH = require.resolve('playwright-core');
+const BROWSER_PATH = PLAYWRIGHT_CORE_PATH.replace('index.js', 'browsers.json');
+const SYNTHETICS_BROWSER_REVISIONS = require(BROWSER_PATH);
 /**
  * Constructs the Registry with browsers that will be used
  * to download the chromium version required by the synthetics version
@@ -47,7 +50,8 @@ module.exports.getExecutablePath = function (browserName = 'chromium') {
 (async () => {
   if (require.main === module) {
     try {
-      await registry.install();
+      const executable = registry.findExecutable('chromium');
+      await registry.install([executable]);
       // eslint-disable-next-line no-console
       console.log('Installation complete');
     } catch (e) {

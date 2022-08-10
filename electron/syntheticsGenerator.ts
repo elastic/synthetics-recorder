@@ -22,11 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { Action, ActionInContext, Signal } from '@elastic/synthetics';
+import { Action, /* ActionInContext, */ Signal } from '@elastic/synthetics';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore unit tests won't run without this ignore because there is no type declaration for `PlaywrightGenerator`
-import * as PlaywrightGenerator from 'playwright/lib/server/supplements/recorder/javascript';
-import { RecorderSteps } from '../common/types';
+import * as PlaywrightGenerator from 'playwright/lib/server/recorder/javascript';
+import { RecorderSteps, ActionInContext } from '../common/types';
 
 function toAssertCall(pageAlias: string, action: Action) {
   const { command, selector, value } = action;
@@ -93,7 +93,7 @@ function formatObject(value: Formattable, indent = '  '): string {
   if (typeof value === 'object') {
     const keys = Object.keys(value);
     if (!keys.length) return '{}';
-    const tokens = [];
+    const tokens: string[] = [];
     for (const key of keys) {
       const child = value[key];
       if (child === undefined || !isFormattable(child)) continue;
@@ -159,7 +159,8 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
    * @returns the strings generated for the action.
    */
   generateAction(actionInContext: ActionInContext) {
-    const { action, pageAlias } = actionInContext;
+    const { action, frame } = actionInContext;
+    const { pageAlias } = frame;
     if (action.name === 'openPage') {
       return '';
     }
@@ -173,14 +174,14 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
     const offset = this.isProject ? 2 + stepIndent : 0 + stepIndent;
     const formatter = new PlaywrightGenerator.JavaScriptFormatter(offset);
 
-    const subject = actionInContext.isMainFrame
+    const subject = frame.isMainFrame
       ? pageAlias
-      : actionInContext.frameName
+      : frame.name
       ? `${pageAlias}.frame(${formatObject({
-          name: actionInContext.frameName,
+          name: frame.name,
         })})`
       : `${pageAlias}.frame(${formatObject({
-          url: actionInContext.frameUrl,
+          url: frame.url,
         })})`;
 
     const signals = toSignalMap(action);
@@ -245,11 +246,11 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
   }
 
   isNewStep(actioninContext: ActionInContext) {
-    const { action, frameUrl } = actioninContext;
+    const { action, frame } = actioninContext;
     if (action.name === 'navigate') {
       return true;
     } else if (action.name === 'click') {
-      return this.previousContext?.frameUrl === frameUrl && action.signals.length > 0;
+      return this.previousContext?.frame.url === frame.url && action.signals.length > 0;
     }
     return false;
   }
@@ -293,7 +294,7 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
    * @returns a list of the code strings outputted by the generator
    */
   generateFromSteps(steps: RecorderSteps): string {
-    const text = [];
+    const text: string[] = [];
     if (this.isProject) {
       text.push(this.generateHeader());
     }
@@ -346,7 +347,7 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
         actionContext.action.signals
           .filter(({ name, popupAlias }) => name === 'popup' && popupAlias)
           .forEach(({ popupAlias }) => aliasSet.add(popupAlias as string));
-        aliasSet.add(actionContext.pageAlias);
+        aliasSet.add(actionContext.frame.pageAlias);
       }
     }
     return Array.from(aliasSet).filter(alias => alias !== 'page');

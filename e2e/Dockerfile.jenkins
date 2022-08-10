@@ -29,13 +29,13 @@ RUN apt-get -y -qq install xvfb \
 ENV DISPLAY $DISPLAY
 ENV NPM_COMMAND ci
 
+COPY . ./synthetics-recorder
 WORKDIR /synthetics-recorder
-
 # Copy .nvmrc as long as you run the script in .ci/scripts/docker-build.sh
-ADD .nvmrc /synthetics-recorder/.nvmrc
+# ADD .nvmrc /synthetics-recorder/.nvmrc
 
 # Installing NVM
 ENV NVM_DIR /root
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 RUN source "${NVM_DIR}/nvm.sh" --install \
-  && nvm use
+  && nvm use && npm ci

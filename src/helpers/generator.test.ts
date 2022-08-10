@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Step, Steps } from '@elastic/synthetics';
-import { ActionContext, RecorderSteps } from '../../common/types';
+// import type { Step, Steps } from '@elastic/synthetics';
+import { ActionContext, RecorderSteps, Step, Steps } from '../../common/types';
 import { generateIR, generateMergedIR } from './generator';
 import {
   createAction,
@@ -37,7 +37,9 @@ describe('generator', () => {
     beforeEach(() => {
       step = createStepWithOverrides([
         {
-          frameUrl: 'about:blank',
+          frame: {
+            url: 'about:blank',
+          },
           action: {
             name: 'openPage',
             url: 'about:blank',

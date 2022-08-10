@@ -33,9 +33,9 @@ import { fork, ChildProcess } from 'child_process';
 import logger from 'electron-log';
 import isDev from 'electron-is-dev';
 import { JOURNEY_DIR, PLAYWRIGHT_BROWSERS_PATH, EXECUTABLE_PATH } from './config';
-import type { BrowserContext } from 'playwright';
-import type { ActionInContext } from '@elastic/synthetics';
+import type { BrowserContext } from 'playwright-core';
 import type {
+  ActionInContext,
   GenerateCodeOptions,
   RecorderSteps,
   RecordJourneyOptions,

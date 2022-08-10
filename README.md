@@ -11,32 +11,6 @@ You can find downloadable installers there for a variety of platforms.
 
 Download and unpack the appropriate installer for your platform, and install it.
 
-#### Possible install issues
-
-If you receive a set of error logs like those listed below, it is likely because your
-version of `npm` is higher than `v6`. Later versions of `npm` are stricter about peer
-dependency resolution, and thus it will refuse to install.
-
-```
-npm ERR! code ERESOLVE
-npm ERR! ERESOLVE unable to resolve dependency tree
-npm ERR!
-npm ERR! While resolving: synthetics-recorder@0.0.1-alpha.1
-npm ERR! Found: @types/react-dom@17.0.11
-npm ERR! node_modules/@types/react-dom
-npm ERR!   dev @types/react-dom@"^17.0.10" from the root project
-npm ERR!
-npm ERR! Could not resolve dependency:
-npm ERR! peer @types/react-dom@"^16.9.6" from @elastic/eui@37.7.0
-npm ERR! node_modules/@elastic/eui
-npm ERR!   @elastic/eui@"^37.0.0" from the root project
-npm ERR!
-npm ERR! Fix the upstream dependency conflict, or retry
-npm ERR! this command with --force, or --legacy-peer-deps
-npm ERR! to accept an incorrect (and potentially broken) dependency resolution.
-```
-
-You can get around this by using `npm` version 6 to install.
 
 #### Usage
 
@@ -84,51 +58,55 @@ Run the recorder app in dev mode.
 npm run dev
 ```
 
-### Troubleshooting
+#### Managing Playwright dependency
+When updating the version of [@elastic/synthetics](https://github.com/elastic/synthetics)(called _Synthetics agent_ hereafter), it is important to align the version of Playwright that the Synthetics agent uses and the forked Playwright that is installed by the recorder. Steps to update the Playwright is as followed:
 
-#### Page object is not defined
+1. Go to [@elastic/playwright](https://github.com/elastic/playwright), fetch upstream microsoft:main into main if needed. We keep our modifications in `synthetics-recorder` branch. It is supposed to have only one extra commit[(84309bf)](https://github.com/elastic/playwright/commit/84309bf44d2a97889b178f2f2da2bc9f30e5aff8)) compared to the main branch. If main branch has new commits, fetch the changes into `synthetics-recorder` branch by pulling it with [rebase](https://git-scm.com/docs/git-pull#Documentation/git-pull.txt---rebasefalsetruemergesinteractive) option
 
-It is possible to define a series of steps that splits your recorded actions in a way that causes the required
-page object to be out of scope. You may be encountering this issue if, when testing or running your journey, you
-see an error message like:
-
-```javascript
-page1 is not defined
+1. Pull the remote changes to your machine. If necessary, set the remote as follows:
+```
+git remote add upstream https://github.com/microsoft/playwright.git
+git remote add elastic https://github.com/elastic/playwright.git
+git remote -v
+// prints:
+// upstream	https://github.com/microsoft/playwright.git (fetch)
+// upstream	https://github.com/microsoft/playwright.git (push)
+// elastic  https://github.com/elastic/playwright.git (fetch)
+// elastic  https://github.com/elastic/playwright.git (push)
+```
+2. Confirm the Playwright version from Synthetics agent's `package.json`:
+```
+// @elastic/synthetics's package.json
+...
+    "playwright-core": "=1.20.1",
+...
+```
+3. Fetch the tags from upstream, checkout to the version 1.20.1, and create a new branch:
+```
+git fetch upstream --tags
+git checkout -b 1.20.1-recorder v1.20.1
+```
+4. Cherry-pick the commit from `synthetics-recorder` branch, then run `npm run build`. You should see generated js files under `packages/playwright-core/lib` directory. Commit all the changes and push it to elastic remote:
+```
+git cherry-pick 84309bf
+# solve conflicts if necessary
+npm run build
+git add .
+git push  --set-upstream elastic 1.20.1-recorder
+```
+5. Test new changes in the Recorder by updating Recorder's package.json. Update `playwright` dependency to the branch you pushed from above step:
+```js
+// @elastic/synthetics-recorder's package.json
+...
+    "playwright": "https://gitpkg.now.sh/elastic/playwright/packages/playwright-core?1.20.1-recorder",
+...
 ```
 
-You can verify the problem by clicking the `Export` button in the recorder and checking the code output. If your generated
-code is similar to the example below, you may need to rearrange your steps.
-
-```javascript
-step('Click text=Babel Minify', async () => {
-  // `page2` is defined here
-  const [page2] = await Promise.all([page.waitForEvent('popup'), page.click('text=Babel Minify')]);
-  await page2.click(':nth-match(a:has-text("babel-minify"), 3)');
-});
-step('Close page', async () => {
-  // referencing `page2`, which is now out of scope
-  await page2.close();
-});
-```
-
-By removing the second step divider in the Script Recorder UI, we will generate code that keeps the `page2` object
-in scope for all its references.
-
-```javascript
-step('Click text=Babel Minify', async () => {
-  // now all references to `page2` occur while it is still in scope
-  const [page2] = await Promise.all([page.waitForEvent('popup'), page.click('text=Babel Minify')]);
-  await page2.click(':nth-match(a:has-text("babel-minify"), 3)');
-  await page2.close();
-});
-```
-
-We are actively working on a solution to this issue, you can follow the progress [here](https://github.com/elastic/synthetics-recorder/issues/195).
-
+For now, we are doing it all manually, However, we should consider automating the process.
 ### Build
 
 Build and Package the app for all platforms
 
 ```
-npm run build
+npm run pack -- -mwl
 ```

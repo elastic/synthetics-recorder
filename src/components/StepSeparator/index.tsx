@@ -22,7 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Step } from '@elastic/synthetics';
+// import type { Step } from '@elastic/synthetics';
+import type { Step } from '../../../common/types';
 import React, { useState } from 'react';
 import { useDragAndDrop } from '../../hooks/useDragAndDrop';
 import { useStepResultStatus } from '../../hooks/useTestResult';

@@ -22,30 +22,40 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { Action, Step } from '@elastic/synthetics';
-import { ActionContext, RecorderSteps } from '../../types';
+import { Action /* Step */ } from '@elastic/synthetics';
+import { ActionContext, FrameDescription, RecorderSteps, Step } from '../../types';
 
-type ActionOverride = Partial<Action>;
-type ActionWithName = Partial<Action> & { name: string };
-type CreateStepActionOverride = Partial<Omit<ActionContext, 'action'>> & { action: ActionWithName };
-type ActionContextOverride = Partial<Omit<ActionContext, 'action'>> & { action?: ActionOverride };
+type OptionalActionContext = Omit<ActionContext, 'action' | 'frame'>;
+type ActionContextOverride = OptionalActionContext & {
+  frame?: Partial<FrameDescription>;
+  action?: Partial<Action>;
+};
+type CreateStepActionOverride = OptionalActionContext & {
+  frame?: Partial<FrameDescription>;
+  action: Partial<Action> & { name: string };
+};
 
 export const createAction = (name: string, overrides?: ActionContextOverride): ActionContext => {
   const baseAction = {
-    frameUrl: 'https://www.elastic.co',
-    isMainFrame: true,
-    committed: true,
-    pageAlias: 'page',
+    frame: {
+      url: 'https://www.elastic.co',
+      isMainFrame: true,
+      committed: true,
+      pageAlias: 'page',
+    },
   };
   return overrides
     ? {
-        ...baseAction,
         ...overrides,
         action: {
           name,
           signals: [],
           url: 'https://www.elastic.co',
           ...overrides.action,
+        },
+        frame: {
+          ...baseAction.frame,
+          ...overrides.frame,
         },
       }
     : {

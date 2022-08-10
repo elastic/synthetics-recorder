@@ -37,6 +37,7 @@ const ActionItem = styled(EuiFlexItem)`
 `;
 
 interface IActionWrapper {
+  children: React.ReactNode;
   isAssert?: boolean;
   omitBorder?: boolean;
 }

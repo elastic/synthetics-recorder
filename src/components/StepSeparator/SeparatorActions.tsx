@@ -23,7 +23,8 @@ THE SOFTWARE.
 */
 
 import { EuiButtonIcon, EuiFlexItem, EuiToolTip } from '@elastic/eui';
-import { Step } from '@elastic/synthetics';
+// import { Step } from '@elastic/synthetics';
+import type { Step } from '../../../common/types';
 import React, { useContext, useState } from 'react';
 import { DRAG_AND_DROP_DATA_TRANSFER_TYPE } from '../../common/shared';
 import { StepSeparatorDragDropDataTransfer } from '../../common/types';
