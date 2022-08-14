@@ -21,14 +21,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import { fireEvent, getByRole } from '@testing-library/react';
 import React from 'react';
+import { fireEvent, getByRole } from '@testing-library/react';
 import { createAction } from '../../../common/helper/test/createAction';
-import { ActionContext } from '../../../common/types';
 import { render } from '../../helpers/test';
 import { ActionDetail } from './ActionDetail';
 
-describe.only('<ActionDetail />', () => {
+describe('<ActionDetail />', () => {
+  afterEach(() => {
+    // restore the spy created with spyOn
+    jest.restoreAllMocks();
+  });
+
   describe('navigate', () => {
     const url = 'https://example.com';
     const navigateAction = createAction('navigate', { action: { url } });
@@ -42,15 +46,102 @@ describe.only('<ActionDetail />', () => {
       expect(input.getAttribute('value')).toEqual(url);
     });
 
-    it('updates input', () => {
+    it('updates url', () => {
+      const update = jest.fn(updatedAction => {
+        return updatedAction;
+      });
       const { getByLabelText, getByRole } = render(
-        <ActionDetail actionContext={navigateAction} actionIndex={0} stepIndex={0} />
+        <ActionDetail
+          actionContext={navigateAction}
+          actionIndex={0}
+          stepIndex={0}
+          update={update}
+        />
       );
       const input = getByLabelText(/navigate/i);
 
-      fireEvent.change(input, { target: { value: 'https://elastic.co' } });
+      const newUrl = 'https://elastic.co';
+      fireEvent.change(input, { target: { value: newUrl } });
       const button = getByRole('button', { name: /save/i });
       fireEvent.click(button);
+      expect(update).toHaveBeenCalled();
+      const {
+        value: { action },
+      } = update.mock.results[0];
+      expect(action.url).toEqual(newUrl);
+    });
+  });
+
+  describe('click', () => {
+    const clickAction = createAction('click', { action: { selector: '#elem-id', url: '' } });
+
+    it('has selector value in input', () => {
+      const { getByLabelText } = render(
+        <ActionDetail actionContext={clickAction} actionIndex={0} stepIndex={0} />
+      );
+      const input = getByLabelText(/click/i);
+      expect(input).toBeTruthy();
+      expect(input.getAttribute('value')).toEqual('#elem-id');
+    });
+
+    it('updates selector', () => {
+      const update = jest.fn(updatedAction => {
+        return updatedAction;
+      });
+      const { getByLabelText, getByRole } = render(
+        <ActionDetail actionContext={clickAction} actionIndex={0} stepIndex={0} update={update} />
+      );
+      const input = getByLabelText(/click/i);
+
+      fireEvent.change(input, { target: { value: '#new-elem-id' } });
+      const button = getByRole('button', { name: /save/i });
+      fireEvent.click(button);
+      expect(update).toHaveBeenCalled();
+      const {
+        value: { action },
+      } = update.mock.results[0];
+      expect(action.selector).toEqual('#new-elem-id');
+    });
+  });
+
+  describe('fill', () => {
+    const fillAction = createAction('fill', {
+      action: { selector: '#elem-id', url: '', text: 'Hello world' },
+    });
+
+    it('has two input fields', () => {
+      const { getByLabelText } = render(
+        <ActionDetail actionContext={fillAction} actionIndex={0} stepIndex={0} />
+      );
+      const input1 = getByLabelText(/fill/i);
+      expect(input1).toBeTruthy();
+      expect(input1.getAttribute('value')).toEqual('#elem-id');
+
+      const input2 = getByLabelText(/Value/i);
+      expect(input2).toBeTruthy();
+      expect(input2.getAttribute('value')).toEqual('Hello world');
+    });
+
+    it('updates selector and fill value', () => {
+      const update = jest.fn(updatedAction => {
+        return updatedAction;
+      });
+      const { getByLabelText, getByRole } = render(
+        <ActionDetail actionContext={fillAction} actionIndex={0} stepIndex={0} update={update} />
+      );
+      const selectorInput = getByLabelText(/fill/i);
+      fireEvent.change(selectorInput, { target: { value: '#new-elem-id' } });
+
+      const valueInput = getByLabelText(/value/i);
+      fireEvent.change(valueInput, { target: { value: 'Elastic' } });
+      const button = getByRole('button', { name: /save/i });
+      fireEvent.click(button);
+      expect(update).toHaveBeenCalled();
+      const {
+        value: { action },
+      } = update.mock.results[0];
+      expect(action.selector).toEqual('#new-elem-id');
+      expect(action.text).toEqual('Elastic');
     });
   });
 });

@@ -63,9 +63,16 @@ interface IActionDetail {
   actionIndex: number;
   stepIndex: number;
   close?: () => void;
+  update?: (action: ActionContext, stepIndex: number, actionIndex: number) => void;
 }
 
-export function ActionDetail({ actionContext, actionIndex, close, stepIndex }: IActionDetail) {
+export function ActionDetail({
+  actionContext,
+  actionIndex,
+  stepIndex,
+  close,
+  update,
+}: IActionDetail) {
   const { onUpdateAction } = useContext(StepsContext);
   const { action } = actionContext;
   const [selector, setSelector] = useState(action.selector || '');
@@ -80,7 +87,8 @@ export function ActionDetail({ actionContext, actionIndex, close, stepIndex }: I
       },
       actionContext
     );
-    onUpdateAction(updatedAction, stepIndex, actionIndex);
+    const applyUpdate = update ?? onUpdateAction;
+    applyUpdate(updatedAction, stepIndex, actionIndex);
   };
 
   return (
