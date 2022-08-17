@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 import { chromium } from 'playwright';
-import { join, resolve, extname } from 'path';
+import { join, resolve } from 'path';
 import { existsSync } from 'fs';
 import { writeFile, rm, mkdir } from 'fs/promises';
 import { ipcMain as ipc } from 'electron-better-ipc';
@@ -347,12 +347,17 @@ function onTest(mainWindowEmitter: EventEmitter) {
 async function onFileSave(code: string) {
   const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
   const { filePath, canceled } = await dialog.showSaveDialog(window, {
+    filters: [
+      {
+        name: 'JavaScript',
+        extensions: ['js'],
+      },
+    ],
     defaultPath: 'recorded.journey.js',
   });
 
   if (!canceled && filePath) {
-    const validPath = extname(filePath) === '.js' ? filePath : filePath + '.js';
-    await writeFile(validPath, code);
+    await writeFile(filePath, code);
     return true;
   }
   return false;
