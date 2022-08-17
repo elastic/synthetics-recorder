@@ -53,7 +53,6 @@ async function createWindow() {
       devTools: isDev || IS_TEST,
       nodeIntegration: true,
       contextIsolation: false,
-      nativeWindowOpen: true,
     },
   });
 
