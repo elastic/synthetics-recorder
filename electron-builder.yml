@@ -21,14 +21,21 @@ mac:
   icon: public/elastic.png
   category: public.app-category.developer-tools
   target:
-    target: default
-    arch: [x64, arm64]
+    - target: default
+      arch: 
+        - x64 
+        - arm64
 win:
-  target: nsis
+  target:
+    - target: nsis
+      arch:
+        - x64
   icon: public/elastic.png
 linux:
   target:
-    - deb
+    - target: deb
+      arch:
+        - x64
   icon: public/elastic.png
   category: Utility
   # electron-builder issue:

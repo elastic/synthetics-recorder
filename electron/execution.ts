@@ -347,6 +347,12 @@ function onTest(mainWindowEmitter: EventEmitter) {
 async function onFileSave(code: string) {
   const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
   const { filePath, canceled } = await dialog.showSaveDialog(window, {
+    filters: [
+      {
+        name: 'JavaScript',
+        extensions: ['js'],
+      },
+    ],
     defaultPath: 'recorded.journey.js',
   });
 
