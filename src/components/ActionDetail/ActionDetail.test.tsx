@@ -22,20 +22,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 import React from 'react';
-import { fireEvent, getByRole } from '@testing-library/react';
+import { fireEvent } from '@testing-library/react';
 import { createAction } from '../../../common/helper/test/createAction';
 import { render } from '../../helpers/test';
 import { ActionDetail } from './ActionDetail';
+import { ActionContext } from '../../../common/types';
+import { IStepsContext, StepsContext } from '../../contexts/StepsContext';
+import { getStepsContextDefaults } from '../../helpers/test/defaults';
 
 describe('<ActionDetail />', () => {
   afterEach(() => {
-    // restore the spy created with spyOn
     jest.restoreAllMocks();
   });
 
   describe('navigate', () => {
     const url = 'https://example.com';
-    const navigateAction = createAction('navigate', { action: { url } });
+    let navigateAction: ActionContext;
+    beforeEach(() => {
+      navigateAction = createAction('navigate', { action: { url } });
+    });
 
     it('has url input', () => {
       const { getByLabelText } = render(
@@ -47,16 +52,12 @@ describe('<ActionDetail />', () => {
     });
 
     it('updates url', () => {
-      const update = jest.fn(updatedAction => {
+      const onUpdateActionMock = jest.fn(updatedAction => {
         return updatedAction;
       });
-      const { getByLabelText, getByRole } = render(
-        <ActionDetail
-          actionContext={navigateAction}
-          actionIndex={0}
-          stepIndex={0}
-          update={update}
-        />
+      const { getByLabelText, getByRole } = renderWithStepsContext(
+        <ActionDetail actionContext={navigateAction} actionIndex={0} stepIndex={0} />,
+        { onUpdateAction: onUpdateActionMock }
       );
       const input = getByLabelText(/navigate/i);
 
@@ -64,16 +65,19 @@ describe('<ActionDetail />', () => {
       fireEvent.change(input, { target: { value: newUrl } });
       const button = getByRole('button', { name: /save/i });
       fireEvent.click(button);
-      expect(update).toHaveBeenCalled();
+      expect(onUpdateActionMock).toHaveBeenCalled();
       const {
         value: { action },
-      } = update.mock.results[0];
+      } = onUpdateActionMock.mock.results[0];
       expect(action.url).toEqual(newUrl);
     });
   });
 
   describe('click', () => {
-    const clickAction = createAction('click', { action: { selector: '#elem-id', url: '' } });
+    let clickAction: ActionContext;
+    beforeEach(() => {
+      clickAction = createAction('click', { action: { selector: '#elem-id', url: '' } });
+    });
 
     it('has selector value in input', () => {
       const { getByLabelText } = render(
@@ -85,28 +89,32 @@ describe('<ActionDetail />', () => {
     });
 
     it('updates selector', () => {
-      const update = jest.fn(updatedAction => {
+      const onUpdateActionMock = jest.fn(updatedAction => {
         return updatedAction;
       });
-      const { getByLabelText, getByRole } = render(
-        <ActionDetail actionContext={clickAction} actionIndex={0} stepIndex={0} update={update} />
+      const { getByLabelText, getByRole } = renderWithStepsContext(
+        <ActionDetail actionContext={clickAction} actionIndex={0} stepIndex={0} />,
+        { onUpdateAction: onUpdateActionMock }
       );
       const input = getByLabelText(/click/i);
 
       fireEvent.change(input, { target: { value: '#new-elem-id' } });
       const button = getByRole('button', { name: /save/i });
       fireEvent.click(button);
-      expect(update).toHaveBeenCalled();
+      expect(onUpdateActionMock).toHaveBeenCalled();
       const {
         value: { action },
-      } = update.mock.results[0];
+      } = onUpdateActionMock.mock.results[0];
       expect(action.selector).toEqual('#new-elem-id');
     });
   });
 
   describe('fill', () => {
-    const fillAction = createAction('fill', {
-      action: { selector: '#elem-id', url: '', text: 'Hello world' },
+    let fillAction: ActionContext;
+    beforeEach(() => {
+      fillAction = createAction('fill', {
+        action: { selector: '#elem-id', url: '', text: 'Hello world' },
+      });
     });
 
     it('has two input fields', () => {
@@ -123,11 +131,12 @@ describe('<ActionDetail />', () => {
     });
 
     it('updates selector and fill value', () => {
-      const update = jest.fn(updatedAction => {
+      const onUpdateActionMock = jest.fn(updatedAction => {
         return updatedAction;
       });
-      const { getByLabelText, getByRole } = render(
-        <ActionDetail actionContext={fillAction} actionIndex={0} stepIndex={0} update={update} />
+      const { getByLabelText, getByRole } = renderWithStepsContext(
+        <ActionDetail actionContext={fillAction} actionIndex={0} stepIndex={0} />,
+        { onUpdateAction: onUpdateActionMock }
       );
       const selectorInput = getByLabelText(/fill/i);
       fireEvent.change(selectorInput, { target: { value: '#new-elem-id' } });
@@ -136,12 +145,17 @@ describe('<ActionDetail />', () => {
       fireEvent.change(valueInput, { target: { value: 'Elastic' } });
       const button = getByRole('button', { name: /save/i });
       fireEvent.click(button);
-      expect(update).toHaveBeenCalled();
+      expect(onUpdateActionMock).toHaveBeenCalled();
       const {
         value: { action },
-      } = update.mock.results[0];
+      } = onUpdateActionMock.mock.results[0];
       expect(action.selector).toEqual('#new-elem-id');
       expect(action.text).toEqual('Elastic');
     });
   });
 });
+
+function renderWithStepsContext(childComp: React.ReactChild, overrides?: Partial<IStepsContext>) {
+  const value: IStepsContext = { ...getStepsContextDefaults(), ...overrides };
+  return render(<StepsContext.Provider value={value}>{childComp}</StepsContext.Provider>);
+}

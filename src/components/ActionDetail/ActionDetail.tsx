@@ -63,16 +63,9 @@ interface IActionDetail {
   actionIndex: number;
   stepIndex: number;
   close?: () => void;
-  update?: (action: ActionContext, stepIndex: number, actionIndex: number) => void;
 }
 
-export function ActionDetail({
-  actionContext,
-  actionIndex,
-  stepIndex,
-  close,
-  update,
-}: IActionDetail) {
+export function ActionDetail({ actionContext, actionIndex, stepIndex, close }: IActionDetail) {
   const { onUpdateAction } = useContext(StepsContext);
   const { action } = actionContext;
   const [selector, setSelector] = useState(action.selector || '');
@@ -87,8 +80,7 @@ export function ActionDetail({
       },
       actionContext
     );
-    const applyUpdate = update ?? onUpdateAction;
-    applyUpdate(updatedAction, stepIndex, actionIndex);
+    onUpdateAction(updatedAction, stepIndex, actionIndex);
   };
 
   return (
@@ -136,7 +128,7 @@ export function ActionDetail({
         <EuiFlexItem grow={false}>
           <EuiButton
             data-test-subj={`save-action-${stepIndex}-${actionIndex}`}
-            onClick={() => updateAction()}
+            onClick={updateAction}
           >
             Save
           </EuiButton>
