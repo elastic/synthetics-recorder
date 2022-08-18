@@ -213,10 +213,7 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
     if (signals.popup) formatter.add(`${pageAlias}.waitForEvent('popup'),`);
 
     // Navigation signal.
-    if (signals.waitForNavigation)
-      formatter.add(
-        `${pageAlias}.waitForNavigation({ url: ${quote(signals.waitForNavigation.url ?? '')} }),`
-      );
+    if (signals.waitForNavigation) formatter.add(`${pageAlias}.waitForNavigation(),`);
 
     // Download signals.
     if (signals.download) formatter.add(`${pageAlias}.waitForEvent('download'),`);
