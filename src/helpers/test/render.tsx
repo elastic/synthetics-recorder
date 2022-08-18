@@ -39,8 +39,8 @@ import { RenderContexts } from './RenderContexts';
 
 export function render<ComponentType>(
   component: React.ReactElement<ComponentType>,
-  rtlRenderOptions?: Omit<RenderOptions, 'queries'>,
   options?: {
+    renderOptions?: Omit<RenderOptions, 'queries'>;
     contextOverrides?: {
       communication?: Partial<ICommunicationContext>;
       recording?: Partial<IRecordingContext>;
@@ -76,6 +76,6 @@ export function render<ComponentType>(
     <StyledComponentsEuiProvider>
       <RenderContexts contexts={contexts}>{component}</RenderContexts>
     </StyledComponentsEuiProvider>,
-    rtlRenderOptions
+    options?.renderOptions
   );
 }

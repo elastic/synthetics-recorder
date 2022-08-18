@@ -27,10 +27,16 @@ import { createAction } from '../../../common/helper/test/createAction';
 import { render } from '../../helpers/test';
 import { ActionDetail } from './ActionDetail';
 import { ActionContext } from '../../../common/types';
-import { IStepsContext, StepsContext } from '../../contexts/StepsContext';
-import { getStepsContextDefaults } from '../../helpers/test/defaults';
 
 describe('<ActionDetail />', () => {
+  let onUpdateActionMock: jest.Mock;
+
+  beforeEach(() => {
+    onUpdateActionMock = jest.fn(updatedAction => {
+      return updatedAction;
+    });
+  });
+
   afterEach(() => {
     jest.restoreAllMocks();
   });
@@ -52,23 +58,18 @@ describe('<ActionDetail />', () => {
     });
 
     it('updates url', () => {
-      const onUpdateActionMock = jest.fn(updatedAction => {
-        return updatedAction;
-      });
-      const { getByLabelText, getByRole } = renderWithStepsContext(
+      const { getByLabelText, getByRole } = render(
         <ActionDetail actionContext={navigateAction} actionIndex={0} stepIndex={0} />,
-        { onUpdateAction: onUpdateActionMock }
+        { contextOverrides: { steps: { onUpdateAction: onUpdateActionMock } } }
       );
       const input = getByLabelText(/navigate/i);
-
       const newUrl = 'https://elastic.co';
       fireEvent.change(input, { target: { value: newUrl } });
       const button = getByRole('button', { name: /save/i });
       fireEvent.click(button);
+
       expect(onUpdateActionMock).toHaveBeenCalled();
-      const {
-        value: { action },
-      } = onUpdateActionMock.mock.results[0];
+      const { action } = onUpdateActionMock.mock.results[0].value;
       expect(action.url).toEqual(newUrl);
     });
   });
@@ -89,12 +90,11 @@ describe('<ActionDetail />', () => {
     });
 
     it('updates selector', () => {
-      const onUpdateActionMock = jest.fn(updatedAction => {
-        return updatedAction;
-      });
-      const { getByLabelText, getByRole } = renderWithStepsContext(
+      const { getByLabelText, getByRole } = render(
         <ActionDetail actionContext={clickAction} actionIndex={0} stepIndex={0} />,
-        { onUpdateAction: onUpdateActionMock }
+        {
+          contextOverrides: { steps: { onUpdateAction: onUpdateActionMock } },
+        }
       );
       const input = getByLabelText(/click/i);
 
@@ -102,9 +102,7 @@ describe('<ActionDetail />', () => {
       const button = getByRole('button', { name: /save/i });
       fireEvent.click(button);
       expect(onUpdateActionMock).toHaveBeenCalled();
-      const {
-        value: { action },
-      } = onUpdateActionMock.mock.results[0];
+      const { action } = onUpdateActionMock.mock.results[0].value;
       expect(action.selector).toEqual('#new-elem-id');
     });
   });
@@ -131,12 +129,11 @@ describe('<ActionDetail />', () => {
     });
 
     it('updates selector and fill value', () => {
-      const onUpdateActionMock = jest.fn(updatedAction => {
-        return updatedAction;
-      });
-      const { getByLabelText, getByRole } = renderWithStepsContext(
+      const { getByLabelText, getByRole } = render(
         <ActionDetail actionContext={fillAction} actionIndex={0} stepIndex={0} />,
-        { onUpdateAction: onUpdateActionMock }
+        {
+          contextOverrides: { steps: { onUpdateAction: onUpdateActionMock } },
+        }
       );
       const selectorInput = getByLabelText(/fill/i);
       fireEvent.change(selectorInput, { target: { value: '#new-elem-id' } });
@@ -145,17 +142,11 @@ describe('<ActionDetail />', () => {
       fireEvent.change(valueInput, { target: { value: 'Elastic' } });
       const button = getByRole('button', { name: /save/i });
       fireEvent.click(button);
+
       expect(onUpdateActionMock).toHaveBeenCalled();
-      const {
-        value: { action },
-      } = onUpdateActionMock.mock.results[0];
+      const { action } = onUpdateActionMock.mock.results[0].value;
       expect(action.selector).toEqual('#new-elem-id');
       expect(action.text).toEqual('Elastic');
     });
   });
 });
-
-function renderWithStepsContext(childComp: React.ReactChild, overrides?: Partial<IStepsContext>) {
-  const value: IStepsContext = { ...getStepsContextDefaults(), ...overrides };
-  return render(<StepsContext.Provider value={value}>{childComp}</StepsContext.Provider>);
-}
