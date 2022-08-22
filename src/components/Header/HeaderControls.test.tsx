@@ -35,29 +35,21 @@ describe('<HeaderControls />', () => {
   });
 
   it('displays pause text when recording', () => {
-    const { getByLabelText } = render(
-      <HeaderControls setIsCodeFlyoutVisible={jest.fn()} />,
-      undefined,
-      {
-        contextOverrides: {
-          recording: { recordingStatus: RecordingStatus.Recording },
-        },
-      }
-    );
+    const { getByLabelText } = render(<HeaderControls setIsCodeFlyoutVisible={jest.fn()} />, {
+      contextOverrides: {
+        recording: { recordingStatus: RecordingStatus.Recording },
+      },
+    });
 
     expect(getByLabelText('Pause')).toBeTruthy();
   });
 
   it('displays resume text when paused', () => {
-    const { getByLabelText } = render(
-      <HeaderControls setIsCodeFlyoutVisible={jest.fn()} />,
-      undefined,
-      {
-        contextOverrides: {
-          recording: { recordingStatus: RecordingStatus.Paused },
-        },
-      }
-    );
+    const { getByLabelText } = render(<HeaderControls setIsCodeFlyoutVisible={jest.fn()} />, {
+      contextOverrides: {
+        recording: { recordingStatus: RecordingStatus.Paused },
+      },
+    });
 
     expect(getByLabelText('Resume')).toBeTruthy();
   });
