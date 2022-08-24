@@ -26,7 +26,6 @@ mac:
   entitlementsInherit: assets/entitlements.mac.plist
   gatekeeperAssess: false
   hardenedRuntime: true
-  provisioningProfile: Synthetics_Recorder.provisionprofile
   target:
     - target: default
       arch: 
