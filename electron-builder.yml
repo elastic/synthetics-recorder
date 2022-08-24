@@ -3,9 +3,11 @@ appId: co.elastic.synthetics-recorder
 artifactName: ${name}-${version}-${os}-${arch}.${ext}
 beforePack: "./scripts/before-pack.js"
 afterPack: "./scripts/after-pack.js"
+afterSign: "./scripts/notarize.js"
 files:
   - build/**/*
   - scripts/**/*
+  - assets/entitlements.mac.plist
 extraResources:
   - from: local-browsers/_releases/${os}-${arch}
     to: local-browsers
@@ -20,6 +22,11 @@ protocols:
 mac:
   icon: public/elastic.png
   category: public.app-category.developer-tools
+  entitlements: assets/entitlements.mac.plist
+  entitlementsInherit: assets/entitlements.mac.plist
+  gatekeeperAssess: false
+  hardenedRuntime: true
+  provisioningProfile: Synthetics_Recorder.provisionprofile
   target:
     - target: default
       arch: 
