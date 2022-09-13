@@ -36,7 +36,7 @@ exports.default = async function notarizing(context) {
     tool: 'notarytool',
     appPath: `${appOutDir}/${appName}.app`,
     appBundleId: 'co.elastic.synthetics-recorder',
-    keychain: process.env.$CSC_KEYCHAIN,
-    keychainProfile: process.env.$KEYCHAIN_PASSWORD,
+    keychain: process.env.CSC_KEYCHAIN,
+    keychainProfile: process.env.KEYCHAIN_PASSWORD,
   });
 };
