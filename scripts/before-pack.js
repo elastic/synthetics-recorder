@@ -32,13 +32,19 @@ exports.default = function beforePack(ctx) {
 };
 
 function fixSharp(platform, arch) {
+  const filteredEnvs = {};
+  for (const [k, v] of Object.entries(process.env)) {
+    if (!k.startsWith('APPLE_') && !k.includes('PASSWORD')) {
+      filteredEnvs[k] = v;
+    }
+  }
+
   return new Promise((resolve, reject) => {
     const npmInstall = spawn('npm', ['run', 'fix-sharp'], {
       stdio: 'inherit',
       shell: true,
       env: {
-        ...process.env,
-        KEYCHAIN_PASSWORD: undefined,
+        ...filteredEnvs,
         npm_config_arch: arch,
         npm_config_platform: platform,
       },

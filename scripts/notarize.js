@@ -28,15 +28,15 @@ exports.default = async function notarizing(context) {
   if (electronPlatformName !== 'darwin') {
     return;
   }
-
   const appName = context.packager.appInfo.productFilename;
-
   console.log('Uploading app to notarization server...');
+  const { APPLE_USERNAME, APPLE_TEAM_ID, APPLE_APP_SPECIFIC_PASSWORD } = process.env;
+
   return await notarize({
     tool: 'notarytool',
     appPath: `${appOutDir}/${appName}.app`,
-    appBundleId: 'co.elastic.synthetics-recorder',
-    keychain: process.env.CSC_KEYCHAIN,
-    keychainProfile: process.env.KEYCHAIN_PASSWORD,
+    appleId: APPLE_USERNAME,
+    appleIdPassword: APPLE_APP_SPECIFIC_PASSWORD,
+    teamId: APPLE_TEAM_ID,
   });
 };
