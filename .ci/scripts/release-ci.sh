@@ -18,4 +18,9 @@ security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$CSC_KEYCHAIN"
 echo 'run release-ci'
 set -x
 npm ci
+
+# temp, TEAM_ID is public info that is available in codesign verification
+export APPLE_TEAM_ID='2BT3HPN62Z'
+export APPLE_USERNAME
+export APPLE_APP_SPECIFIC_PASSWORD
 npm run release-ci
