@@ -87,6 +87,13 @@ function isFormattable(value: unknown): value is Formattable {
   );
 }
 
+function asLocator(selector: string, locatorFn = 'locator') {
+  const match = selector.match(/(.*)\s+>>\s+nth=(\d+)$/);
+  if (!match) return `${locatorFn}(${quote(selector)})`;
+  if (+match[2] === 0) return `${locatorFn}(${quote(match[1])}).first()`;
+  return `${locatorFn}(${quote(match[1])}).nth(${match[2]})`;
+}
+
 function formatObject(value: Formattable, indent = '  '): string {
   if (typeof value === 'string') return quote(value);
   if (Array.isArray(value)) return `[${value.map(o => formatObject(o)).join(', ')}]`;
@@ -159,8 +166,8 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
    * @returns the strings generated for the action.
    */
   generateAction(actionInContext: ActionInContext) {
-    const { action, frame } = actionInContext;
-    const { pageAlias } = frame;
+    const { action } = actionInContext;
+    const { pageAlias } = actionInContext.frame;
     if (action.name === 'openPage') {
       return '';
     }
@@ -174,15 +181,19 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
     const offset = this.isProject ? 2 + stepIndent : 0 + stepIndent;
     const formatter = new PlaywrightGenerator.JavaScriptFormatter(offset);
 
-    const subject = frame.isMainFrame
-      ? pageAlias
-      : frame.name
-      ? `${pageAlias}.frame(${formatObject({
-          name: frame.name,
-        })})`
-      : `${pageAlias}.frame(${formatObject({
-          url: frame.url,
-        })})`;
+    let subject: string;
+    if (actionInContext.frame.isMainFrame) {
+      subject = pageAlias;
+    } else if (actionInContext.frame.selectorsChain && action.name !== 'navigate') {
+      const locators = actionInContext.frame.selectorsChain.map(
+        selector => '.' + asLocator(selector, 'frameLocator')
+      );
+      subject = `${pageAlias}${locators.join('')}`;
+    } else if (actionInContext.frame.name) {
+      subject = `${pageAlias}.frame(${formatObject({ name: actionInContext.frame.name })})`;
+    } else {
+      subject = `${pageAlias}.frame(${formatObject({ url: actionInContext.frame.url })})`;
+    }
 
     const signals = toSignalMap(action);
 
@@ -193,16 +204,16 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
   });`);
     }
 
-    const emitPromiseAll = signals.waitForNavigation || signals.popup || signals.download;
+    const emitPromiseAll = signals.popup || signals.download;
     if (emitPromiseAll) {
       const isVarHoisted = signals.popup?.popupAlias && this.isVarHoisted(signals.popup.popupAlias);
       // Generate either await Promise.all([]) or
       // const [popup1] = await Promise.all([]).
       let leftHandSide = '';
-      if (signals.popup && signals.popup.popupAlias && !isVarHoisted) {
-        leftHandSide = `const [${signals.popup.popupAlias}] = `;
-      } else if (isVarHoisted) {
-        leftHandSide = `[${signals.popup?.popupAlias}] = `;
+      if (signals.popup) {
+        leftHandSide = isVarHoisted
+          ? `[${signals.popup?.popupAlias}] = `
+          : `const [${signals.popup.popupAlias}] = `;
       } else if (signals.download) {
         leftHandSide = `const [download] = `;
       }
@@ -212,27 +223,25 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
     // Popup signals.
     if (signals.popup) formatter.add(`${pageAlias}.waitForEvent('popup'),`);
 
-    // Navigation signal.
-    if (signals.waitForNavigation) formatter.add(`${pageAlias}.waitForNavigation(),`);
-
     // Download signals.
     if (signals.download) formatter.add(`${pageAlias}.waitForEvent('download'),`);
 
-    const prefix = signals.popup || signals.waitForNavigation || signals.download ? '' : 'await ';
+    const prefix = signals.popup || signals.download ? '' : 'await ';
     const actionCall = super._generateActionCall(action);
     // Add assertion from Synthetics.
     const isAssert = action.name === 'assert' && action.isAssert;
 
     if (!isAssert) {
-      const suffix = signals.waitForNavigation || emitPromiseAll ? '' : ';';
+      const suffix = emitPromiseAll ? '' : ';';
       formatter.add(`${prefix}${subject}.${actionCall}${suffix}`);
 
       if (emitPromiseAll) {
         formatter.add(']);');
-      } else if (signals.assertNavigation) {
-        formatter.add(
-          `  expect(${pageAlias}.url()).toBe(${quote(signals.assertNavigation.url ?? '')});`
-        );
+      } else if (signals.assertNavigation?.url) {
+        // original code uses the full URL including query strings which often contains randomly generated value(cashbusting)
+        // when replaying the script it will fail so we will check only baseurl and path
+        const url = new URL(signals.assertNavigation.url);
+        formatter.add(`expect(${pageAlias}.url()).toContain(${quote(url.origin + url.pathname)});`);
       }
     } else if (action.command) {
       formatter.add(toAssertCall(pageAlias, action));
