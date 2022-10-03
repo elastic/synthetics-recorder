@@ -92,13 +92,15 @@ git fetch upstream --tags
 git checkout -b 1.20.1-recorder v1.20.1
 ```
 
-4. Cherry-pick the commit from `synthetics-recorder` branch, then run `npm run build`. You should see generated js files under `packages/playwright-core/lib` directory. Commit all the changes and push it to elastic remote:
+4. Cherry-pick the commit from `synthetics-recorder` branch, then run `npm run build`. Make sure you've uncommented L14(`!packages/playwright-core/lib/` in .gitignore to include all the generated libs file. Check all the files under `packages/playwright-core/lib` are staged, then commit and push it to elastic remote:
 
 ```
 git cherry-pick 84309bf
 # solve conflicts if necessary
 npm run build
+# uncomment `!packages/playwright-core/lib/` in .gitignore (L14)
 git add .
+git commit -m "feat: generate libs"
 git push  --set-upstream elastic 1.20.1-recorder
 ```
 

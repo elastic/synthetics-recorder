@@ -137,7 +137,7 @@ function onRecordJourneys(mainWindowEmitter: EventEmitter) {
       await (context as any)._enableRecorder({
         launchOptions: {},
         contextOptions: {},
-        startRecording: true,
+        mode: 'recording',
         showRecorder: false,
         actionListener,
       });
