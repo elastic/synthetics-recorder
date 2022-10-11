@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 // Load the process.env config from .env file
 require('dotenv').config();
-const { Registry } = require('playwright/lib/utils/registry');
+const { Registry } = require('playwright/lib/server');
 // npm >=7 has workspaces enabled by default
 // Therefore playwright-core, dependency of @elastic/synthetics,
 // is downloaded to top-level `node_modules` rather than `@elastic/synthetics/node_modules`
