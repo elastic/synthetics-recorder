@@ -30,16 +30,42 @@ afterEach(async () => {
   await electronService.terminate();
 });
 
-describe('Test Button', () => {
-  it('is disabled during a recording session', async () => {
-    const electronWindow = await electronService.getWindow();
+describe('Run test', () => {
+  describe('Test Button', () => {
+    it('is disabled when scripts are not recorded', async () => {
+      const electronWindow = await electronService.getWindow();
 
-    await electronService.enterTestUrl(env.DEMO_APP_URL);
-    await electronService.clickStartRecording();
-    await electronService.waitForPageToBeIdle();
+      const testButton = await electronWindow.$(`[aria-label="Test"]`);
+      expect(testButton).toBeTruthy();
+      expect(await testButton.isEnabled()).toBeFalsy();
+    });
 
-    const testButton = await electronWindow.$(`[aria-label="Test"]`);
-    expect(testButton).toBeTruthy();
-    expect(await testButton.isEnabled());
+    it('is disabled during a recording session', async () => {
+      const electronWindow = await electronService.getWindow();
+
+      await electronService.enterTestUrl(env.DEMO_APP_URL);
+      await electronService.clickStartRecording();
+      await electronService.waitForPageToBeIdle();
+
+      const testButton = await electronWindow.$(`[aria-label="Test"]`);
+      expect(testButton).toBeTruthy();
+      expect(await testButton.isEnabled()).toBeFalsy();
+    });
+  });
+
+  describe('Test result', () => {
+    it('has the right number of step results', async () => {
+      const electronWindow = await electronService.getWindow();
+
+      await electronService.enterTestUrl(env.DEMO_APP_URL);
+
+      await electronService.clickStartRecording();
+      await electronService.waitForPageToBeIdle();
+      await electronService.clickStopRecording();
+      await electronService.clickRunTest();
+
+      expect(await electronWindow.$('text=1 success'));
+      expect(await electronWindow.$(`text=Go to http://${env.DEMO_APP_URL}`));
+    });
   });
 });

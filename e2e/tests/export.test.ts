@@ -21,27 +21,49 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-
+import os from 'os';
+import path from 'path';
+import { stat, rm } from 'fs/promises';
+import { _electron } from 'playwright';
 import { ElectronServiceFactory, env } from '../services';
 
 const electronService = new ElectronServiceFactory();
 
-afterEach(async () => {
-  await electronService.terminate();
-});
+describe('Export', () => {
+  afterEach(async () => {
+    await electronService.terminate();
+  });
 
-describe('Steps', () => {
-  it('has the right number of step results', async () => {
+  it('shows disabled export button when script is not recorded', async () => {
     const electronWindow = await electronService.getWindow();
+    const exportButton = await electronWindow.$(`[aria-label="export"]`);
+    expect(exportButton).toBeTruthy();
+    expect(await exportButton!.isEnabled()).toBeFalsy();
+  });
 
+  it('exports a script in filesystem', async () => {
+    const app = await electronService.getInstance();
+    const filePath = path.join(os.tmpdir(), 'some.journey.test');
+    const saveDialogMock = async ({ dialog }, filePath) => {
+      dialog.showSaveDialog = () => Promise.resolve({ canceled: false, filePath });
+    };
+    // mock dialog.showSaveDialog
+    await app.evaluate(saveDialogMock, filePath);
+
+    const electronWindow = await electronService.getWindow();
     await electronService.enterTestUrl(env.DEMO_APP_URL);
-
     await electronService.clickStartRecording();
     await electronService.waitForPageToBeIdle();
     await electronService.clickStopRecording();
-    await electronService.clickRunTest();
 
-    expect(await electronWindow.$('text=1 success'));
-    expect(await electronWindow.$(`text=Go to http://${env.DEMO_APP_URL}`));
+    const exportButton = await electronWindow.$(`[aria-label="export"]`);
+    expect(exportButton).toBeTruthy();
+    await exportButton?.click();
+    const saveButton = await electronWindow.$('[aria-label="save-code"]');
+    await saveButton?.click();
+    // file exists, otherwise throws
+    await stat(filePath);
+    // cleanup
+    await rm(filePath);
   });
 });

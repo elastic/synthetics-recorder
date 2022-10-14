@@ -82,4 +82,6 @@ describe('Drag and Drop', () => {
      */
     expect(await electronWindow.$('id=insert-divider-0-1')).toBeTruthy();
   });
+
+  it('deletes a step and reflected in the generated code');
 });
