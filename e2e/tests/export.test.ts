@@ -23,17 +23,15 @@ THE SOFTWARE.
 */
 import os from 'os';
 import path from 'path';
-import { stat, rm } from 'fs/promises';
-import { _electron } from 'playwright';
+import * as fs from 'fs/promises';
 import { ElectronServiceFactory, env } from '../services';
 
 const electronService = new ElectronServiceFactory();
+afterEach(async () => {
+  await electronService.terminate();
+});
 
 describe('Export', () => {
-  afterEach(async () => {
-    await electronService.terminate();
-  });
-
   it('shows disabled export button when script is not recorded', async () => {
     const electronWindow = await electronService.getWindow();
     const exportButton = await electronWindow.$(`[aria-label="export"]`);
@@ -41,13 +39,15 @@ describe('Export', () => {
     expect(await exportButton!.isEnabled()).toBeFalsy();
   });
 
-  it('exports a script in filesystem', async () => {
+  it('saves a script in filesystem', async () => {
     const app = await electronService.getInstance();
     const filePath = path.join(os.tmpdir(), 'some.journey.test');
+    // when clicking `Save` button, saves given file immediately instead of opening save dialog
+    // it bypasses native dialog interaction for testing
     const saveDialogMock = async ({ dialog }, filePath) => {
       dialog.showSaveDialog = () => Promise.resolve({ canceled: false, filePath });
     };
-    // mock dialog.showSaveDialog
+    // apply mocking dialog.showSaveDialog to electron app
     await app.evaluate(saveDialogMock, filePath);
 
     const electronWindow = await electronService.getWindow();
@@ -62,8 +62,8 @@ describe('Export', () => {
     const saveButton = await electronWindow.$('[aria-label="save-code"]');
     await saveButton?.click();
     // file exists, otherwise throws
-    await stat(filePath);
+    expect(await fs.stat(filePath)).toBeTruthy();
     // cleanup
-    await rm(filePath);
+    await fs.rm(filePath);
   });
 });

@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { contextBridge } from 'electron';
 import { ElectronServiceFactory, env } from '../services';
 
 const electronService = new ElectronServiceFactory();
@@ -32,7 +31,7 @@ afterEach(async () => {
 });
 
 describe('Assertion', () => {
-  context('Assertion Info Popover', () => {
+  describe('Assertion Info Popover', () => {
     it('creates a link to playwright docs on assertion info popover', async () => {
       const electronWindow = await electronService.getWindow();
       await electronService.enterTestUrl(env.DEMO_APP_URL);

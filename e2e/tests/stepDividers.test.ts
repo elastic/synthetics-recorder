@@ -25,8 +25,6 @@ import type { Server } from 'http';
 import { ElectronServiceFactory, env } from '../services';
 import { createTestHttpServer } from './testServer';
 
-const electronService = new ElectronServiceFactory();
-
 let server: Server;
 let hostname: string;
 let port: number;
@@ -41,7 +39,6 @@ beforeEach(() => {
 });
 
 afterEach(async () => {
-  await electronService.terminate();
   server.close();
 });
 
@@ -59,7 +56,17 @@ function getCoordinates({
   return [x + width / 2, y + height / 2];
 }
 
-describe('Drag and Drop', () => {
+describe('Step Divider', () => {
+  let electronService;
+
+  beforeEach(() => {
+    electronService = new ElectronServiceFactory();
+  });
+
+  afterEach(async () => {
+    await electronService.terminate();
+  });
+
   it('creates a step and drags to a new position', async () => {
     const electronWindow = await electronService.getWindow();
     await electronService.enterTestUrl(env.DEMO_APP_URL);
@@ -83,5 +90,24 @@ describe('Drag and Drop', () => {
     expect(await electronWindow.$('id=insert-divider-0-1')).toBeTruthy();
   });
 
-  it('deletes a step and reflected in the generated code');
+  it('deletes a step', async () => {
+    const electronWindow = await electronService.getWindow();
+    await electronService.enterTestUrl(env.DEMO_APP_URL);
+    await electronService.clickStartRecording();
+    await electronService.waitForPageToBeIdle();
+    await electronService.navigateRecordingBrowser(url);
+    await electronService.waitForPageToBeIdle();
+    await electronService.recordClick('text=Hello Elastic Synthetics Recorder');
+
+    await (await electronWindow.$('id=insert-divider-0-1')).click();
+    await (await electronWindow.$('id=step-1')).hover();
+    const elems = await electronWindow.$$('[data-test-subj="step-div"]');
+    expect(elems.length).toEqual(2);
+    const isVisible = await electronWindow.locator('text=Step 2').isVisible();
+    expect(isVisible).toBeTruthy();
+
+    await electronWindow.locator('[aria-label="Delete step"]').nth(0).click();
+    const stepCounts = await electronWindow.locator('[data-test-subj="step-div"]').count();
+    expect(stepCounts).toEqual(1);
+  });
 });

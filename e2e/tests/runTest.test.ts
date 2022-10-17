@@ -24,7 +24,11 @@ THE SOFTWARE.
 
 import { ElectronServiceFactory, env } from '../services';
 
-const electronService = new ElectronServiceFactory();
+let electronService;
+
+beforeEach(() => {
+  electronService = new ElectronServiceFactory();
+});
 
 afterEach(async () => {
   await electronService.terminate();
