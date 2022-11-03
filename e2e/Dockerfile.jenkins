@@ -26,5 +26,6 @@ RUN apt-get -y -qq install xvfb \
 # Make relevant environment variables available for tests
 ENV DISPLAY $DISPLAY
 ENV NPM_COMMAND ci
+ENV NPM_CONFIG_PREFIX=/synthetics-recorder/.npm
 
 WORKDIR /synthetics-recorder
