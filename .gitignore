@@ -13,3 +13,5 @@ eslint-junit.xml
 *-junit.xml
 .DS_Store
 tsconfig.tsbuildinfo
+
+.npm
