@@ -1,7 +1,5 @@
-FROM ubuntu:20.04
-
-# Setting bash as the default shell
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+ARG NODE_VERSION
+FROM node:$NODE_VERSION
 
 # Get desired XVFB display
 ARG DISPLAY
@@ -29,13 +27,10 @@ RUN apt-get -y -qq install xvfb \
 ENV DISPLAY $DISPLAY
 ENV NPM_COMMAND ci
 
-COPY . ./synthetics-recorder
 WORKDIR /synthetics-recorder
-# Copy .nvmrc as long as you run the script in .ci/scripts/docker-build.sh
-# ADD .nvmrc /synthetics-recorder/.nvmrc
 
-# Installing NVM
-ENV NVM_DIR /root
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-RUN source "${NVM_DIR}/nvm.sh" --install \
-  && nvm use && npm ci
+# Change the UID to match the one running the docker container
+ARG UID
+RUN usermod -u $UID node
+
+USER node
