@@ -1,5 +1,5 @@
 ARG NODE_VERSION=16.15.0
-FROM node:$NODE_VERSION-buster
+FROM node:$NODE_VERSION
 
 # Get desired XVFB display
 ARG DISPLAY
