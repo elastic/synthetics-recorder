@@ -29,6 +29,6 @@ ENV NPM_COMMAND ci
 
 WORKDIR /synthetics-recorder
 
-# Avoid issues with permissions if running as root
-ENV NPM_CONFIG_PREFIX=/synthetics-recorder/.npm
-ENV PATH=$PATH:/synthetics-recorder/.npm/bin
+USER node
+ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
+ENV PATH=$PATH:/home/node/.npm-global/bin
