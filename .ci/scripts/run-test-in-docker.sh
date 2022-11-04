@@ -22,6 +22,8 @@ fi
 # shellcheck disable=SC2086
 docker run \
   $DOCKER_RUN_OPTIONS \
+  --user node \
+  -v ~/.npmrc:/home/node/.npmrc \
   -v "$(pwd):/synthetics-recorder" \
   -e NPM_COMMAND=${1:-'ci'} \
   $DOCKER_IMAGE \
