@@ -29,6 +29,8 @@ ENV NPM_COMMAND ci
 
 WORKDIR /synthetics-recorder
 
+# Change the UID to match the one running the docker container
+ARG UID
+RUN usermod -u $UID node
+
 USER node
-ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
-ENV PATH=$PATH:/home/node/.npm-global/bin

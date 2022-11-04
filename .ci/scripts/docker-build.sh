@@ -14,4 +14,5 @@ docker \
   --file e2e/Dockerfile.jenkins \
   --build-arg DISPLAY=":99" \
   --build-arg NODE_VERSION="${NODE_VERSION}" \
+  --build-arg UID="$UID" \
   --tag docker.elastic.co/observability-ci/synthetics-recorder:$TAG .
