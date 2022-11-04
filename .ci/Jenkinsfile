@@ -47,7 +47,8 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        expression { return !isTag() }
+        //expression { return !isTag() }
+        expression { return false }
       }
       steps {
         withGithubNotify(context: "Install") {
@@ -63,7 +64,8 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        expression { return !isTag() }
+        //expression { return !isTag() }
+        expression { return false }
       }
       steps {
         withGithubNotify(context: "Lint") {
@@ -92,7 +94,8 @@ pipeline {
       options { skipDefaultCheckout() }
       when {
         beforeAgent true
-        expression { return !isTag() }
+        //expression { return !isTag() }
+        expression { return false }
       }
       steps {
         withGithubNotify(context: "Build") {
