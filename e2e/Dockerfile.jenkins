@@ -1,4 +1,4 @@
-ARG NODE_VERSION=16.15.0
+ARG NODE_VERSION
 FROM node:$NODE_VERSION
 
 # Get desired XVFB display
