@@ -29,7 +29,6 @@ exports.default = async function notarizing(context) {
     return;
   }
   const appName = context.packager.appInfo.productFilename;
-  console.log('Uploading app to notarization server...');
   const { APPLE_USERNAME, APPLE_TEAM_ID, APPLE_APP_SPECIFIC_PASSWORD } = process.env;
 
   return await notarize({
