@@ -15,6 +15,6 @@
     "react-dom": "17.0.1",
     "react-final-form": "^6.5.2",
     "styled-jsx": "^4.0.1",
-    "swr": "^0.3.9"
+    "swr": "^0.5.7"
   }
 }
