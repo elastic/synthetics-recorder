@@ -22,9 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-const { buildFiles } = require('./builder');
 const { startDemoApp } = require('./demo_app');
 
 module.exports = async () => {
-  await Promise.all([buildFiles(), startDemoApp()]);
+  await Promise.all([startDemoApp()]);
 };
