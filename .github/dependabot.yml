@@ -9,3 +9,8 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+    allow:
+      - dependency-type: "production"
+    ignore:
+      - dependency-name: "*"
+        update-types: "version-update:semver-patch"
