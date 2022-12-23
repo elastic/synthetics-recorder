@@ -53,7 +53,6 @@ pipeline {
         withGithubNotify(context: "Install") {
           withNodeJSEnv() {
             dir("${BASE_DIR}") {
-              sh "npm cache clear --force" // TODO: Remove this again
               sh(label: 'npm ci', script: 'npm ci')
             }
           }
@@ -202,7 +201,7 @@ pipeline {
             unstash('exe')
             withAzureSigningCreds {
               dir("${env.DIST_FOLDER}") {
-                getFirstExeFileName()
+                getFirstExeFileName()                
                 bat(label: 'ACS signing', script: "${env.WORKSPACE}\\${BASE_DIR_WIN}\\.ci\\scripts\\acs-signing.bat ${env.WORKSPACE}\\${env.DIST_FOLDER}\\${env.EXE_FILE_NAME}")
                 stash(includes: "${env.EXE_FILE_NAME}", name: 'signed_exe', allowEmpty: false)
               }
@@ -285,7 +284,7 @@ def downloadSignedBinaries() {
                         pathPrefix: "${env.BUCKET_SUBFOLDER_SIGNED_ARTIFACTS}")
   dir("${env.DIST_FOLDER}") {
     unstash 'signed_exe'
-  }
+  }                      
   archiveArtifacts(allowEmptyArchive: false, artifacts: "${DIST_FOLDER}/*.*")
 }
 
@@ -325,18 +324,18 @@ def withAzureSigningCreds(Closure body) {
   if (!vault.containsKey('vault_secret_id') || !vault.containsKey('vault_role_id') || !vault.containsKey('vault_addr')) {
     error("withAzureSigningCreds: ${syntheticsRecorderWindowsVault} secert must contain vault_secret_id, vault_role_id and vault_addr entries")
   }
-  def token = getVaultSecret.getVaultToken(vault.vault_addr, vault.vault_role_id, vault.vault_secret_id)
+  def token = getVaultSecret.getVaultToken(vault.vault_addr, vault.vault_role_id, vault.vault_secret_id)  
   def cloudHsmPath = 'secret/release/cloud-hsm'
   def azureSecrets = getVaultSecret.getVaultSecretObject(vault.vault_addr, cloudHsmPath, token).data
   if (!azureSecrets.containsKey('azure-tenant-id') || !azureSecrets.containsKey('azure-client-id') || !azureSecrets.containsKey('azure-client-secret')) {
     error("withAzureSigningCreds: ${cloudHsmPath} must contain azure-tenant-id, azure-client-id and azure-client-secret entries")
   }
-
+  
   withEnvMask(vars: [
     [var: "AZURE_TENANT_ID", password: azureSecrets['azure-tenant-id']],
     [var: "AZURE_CLIENT_ID", password: azureSecrets['azure-client-id']],
     [var: "AZURE_CLIENT_SECRET", password: azureSecrets['azure-client-secret']]
-    ]) {
+    ]) {        
       body()
   }
 }
