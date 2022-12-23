@@ -12,7 +12,7 @@ if [[ "$(docker images -q $DOCKER_IMAGE 2> /dev/null)" == "" ]]; then
   fi
 fi
 
-DOCKER_RUN_OPTIONS="-i --rm"
+DOCKER_RUN_OPTIONS="-u $(id -u):$(id -g) -i --rm"
 
 # Only allocate tty if we detect one
 if [ -t 0 ] && [ -t 1 ]; then
