@@ -104,47 +104,6 @@ pipeline {
         }
       }
     }
-    stage('Docker build') {
-      options { skipDefaultCheckout() }
-      when {
-        beforeAgent true
-        anyOf {
-          expression { env.DOCKER_CHANGES == 'true' }
-          expression { return env.GITHUB_COMMENT?.contains('all') }
-        }
-      }
-      steps {
-        withGithubNotify(context: 'Docker Build') {
-          dir("${BASE_DIR}"){
-            dockerLogin(secret: "${DOCKER_ELASTIC_SECRET}", registry: "${DOCKER_REGISTRY}")
-            sh(label: 'docker build', script: ".ci/scripts/docker-build.sh")
-            retryWithSleep(retries: 3, seconds: 5, backoff: true){
-              sh(label: 'docker push', script: ".ci/scripts/docker-push.sh")
-            }
-          }
-        }
-      }
-    }
-    stage('Test'){
-      options { skipDefaultCheckout() }
-      when {
-        beforeAgent true
-        expression { return !isTag() }
-      }
-      steps {
-        withGithubNotify(context: "Test") {
-          dir("${BASE_DIR}"){
-            // NOTE: It uses the current workspace that was configured with npm ci
-            sh(label: 'run tests', script: '.ci/scripts/run-test-in-docker.sh')
-          }
-        }
-      }
-      post {
-        always {
-          junit(allowEmptyResults: true, keepLongStdio: true, testResults: "${BASE_DIR}/*junit.xml")
-        }
-      }
-    }
     stage('Release') {
       options { skipDefaultCheckout() }
       when {
