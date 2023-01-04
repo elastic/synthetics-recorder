@@ -1,8 +1,13 @@
 name: Run Test
-on: 
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
   pull_request:
-    types:
-      - opened
+    paths-ignore:
+      - '**.md'
 jobs:
   test:
     runs-on: macos-latest
