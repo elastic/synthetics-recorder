@@ -17,7 +17,7 @@ jobs:
       - name: Lint
         run: npm run lint
       - name: Unused exports
-        run: npm unused-exports
+        run: npm run unused-exports
       - name: Build
         run: npm run build
       - name: Run test
