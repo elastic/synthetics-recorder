@@ -69,6 +69,7 @@ describe('Drag and Drop', () => {
     await electronService.recordClick('text=Hello Elastic Synthetics Recorder');
 
     await (await electronWindow.$('id=insert-divider-0-1')).click();
+    await electronService.clickStopRecording();
     await (await electronWindow.$('id=step-1')).hover();
     await electronWindow.mouse.down();
     await electronWindow.mouse.move(100, 100, { steps: 5 });

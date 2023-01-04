@@ -37,6 +37,7 @@ describe('Test Button', () => {
     await electronService.enterTestUrl(env.DEMO_APP_URL);
     await electronService.clickStartRecording();
     await electronService.waitForPageToBeIdle();
+    await electronService.clickStopRecording();
 
     const testButton = await electronWindow.$(`[aria-label="Test"]`);
     expect(testButton).toBeTruthy();
