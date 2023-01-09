@@ -57,19 +57,29 @@ describe('Run test', () => {
     });
   });
 
-  describe('Test result', () => {
-    it('has the right number of step results', async () => {
+  describe('Record forms and run tests', () => {
+    it('records filling up the form, run tests and shows the result', async () => {
       const electronWindow = await electronService.getWindow();
-
       await electronService.enterTestUrl(env.DEMO_APP_URL);
-
       await electronService.clickStartRecording();
       await electronService.waitForPageToBeIdle();
+
+      await electronService.recordClick('text=BuyUSD 12.49 >> button');
+      await electronService.recordClick('text=Add to Cart');
+      await electronService
+        .getRecordingPage()
+        .locator('input[name="email"]')
+        .fill('hello@example.com');
+      await electronService
+        .getRecordingPage()
+        .locator('input[name="street_address"]')
+        .fill('1 High st');
+      await electronService.recordClick('text=Place your order');
+
       await electronService.clickStopRecording();
       await electronService.clickRunTest();
 
       expect(await electronWindow.$('text=1 success'));
-      expect(await electronWindow.$(`text=Go to http://${env.DEMO_APP_URL}`));
     });
   });
 });

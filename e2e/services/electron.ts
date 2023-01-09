@@ -86,6 +86,10 @@ export class ElectronServiceFactory {
     return this.#recordingBrowserPage;
   }
 
+  getRecordingPage() {
+    return this.#recordingBrowserPage;
+  }
+
   async clickRunTest() {
     const electronWindow = await this.getWindow();
     await electronWindow.click('text=Test');
