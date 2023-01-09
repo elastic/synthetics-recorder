@@ -39,12 +39,12 @@ const Header = styled(EuiFlexGroup)`
   background-color: ${props => props.theme.colors.emptyShade};
   border-bottom: ${props => props.theme.border.thin};
   margin: 0px;
-  padding: 8px;
+  padding: 14px;
 `;
 
 const TestButtonDivider = styled(EuiFlexItem)`
   border-right: ${props => props.theme.border.thin};
-  padding-right: 16px;
+  padding-right: 12px;
 `;
 
 interface IHeaderControls {
