@@ -25,6 +25,7 @@ import type { Server } from 'http';
 import { ElectronServiceFactory, env } from '../services';
 import { createTestHttpServer } from './testServer';
 
+const electronService = new ElectronServiceFactory();
 let server: Server;
 let hostname: string;
 let port: number;
@@ -39,6 +40,7 @@ beforeEach(() => {
 });
 
 afterEach(async () => {
+  await electronService.terminate();
   server.close();
 });
 
@@ -57,16 +59,6 @@ function getCoordinates({
 }
 
 describe('Step Divider', () => {
-  let electronService;
-
-  beforeEach(() => {
-    electronService = new ElectronServiceFactory();
-  });
-
-  afterEach(async () => {
-    await electronService.terminate();
-  });
-
   it('creates a step and drags to a new position', async () => {
     const electronWindow = await electronService.getWindow();
     await electronService.enterTestUrl(env.DEMO_APP_URL);

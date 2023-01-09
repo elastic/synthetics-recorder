@@ -375,7 +375,7 @@ async function onSetMode(mode: string) {
   await page.mainFrame().evaluate(
     ([mode]) => {
       // `_playwrightSetMode` is a private function
-      (window as any)._playwrightSetMode(mode);
+      (window as any).__pw_setMode(mode);
     },
     [mode]
   );
