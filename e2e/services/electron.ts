@@ -64,6 +64,7 @@ export class ElectronServiceFactory {
 
   async terminate() {
     if (!this.#instance) return;
+    await TestBrowserService.closeRemoteBrowser();
     await this.#instance.close();
     this.#instance = null;
   }

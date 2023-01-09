@@ -96,6 +96,12 @@ export class TestBrowserService {
 
   static async closeRemoteBrowser(connectParams?: ConnectRetryParams) {
     const browser = await TestBrowserService.getRemoteBrowser(connectParams);
+    const ctxs = await browser.contexts();
+    for (const ctx of ctxs) {
+      await ctx.close();
+    }
     await browser.close();
+    // with this timeout, it will make sure the browser to be closed before terminating electron (it's an issue to mac).
+    await new Promise(r => setTimeout(r, 50));
   }
 }
