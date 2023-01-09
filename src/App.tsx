@@ -60,6 +60,7 @@ const cache = createCache({
   key: 'elastic-synthetics-recorder',
   container: document.querySelector<HTMLElement>('meta[name="global-style-insert"]') ?? undefined,
 });
+cache.compat = true;
 
 export default function App() {
   const [url, setUrl] = useState('');

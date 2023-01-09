@@ -41,7 +41,7 @@ describe('<ActionDetail />', () => {
     jest.restoreAllMocks();
   });
 
-  describe('navigate', () => {
+  describe.only('navigate', () => {
     const url = 'https://example.com';
     let navigateAction: ActionContext;
     beforeEach(() => {
