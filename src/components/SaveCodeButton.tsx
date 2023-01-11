@@ -50,7 +50,7 @@ export function SaveCodeButton({ type }: ISaveCodeButton) {
     }
   };
   return (
-    <EuiButton fill color="primary" iconType="exportAction" onClick={onSave}>
+    <EuiButton fill color="primary" iconType="exportAction" onClick={onSave} aria-label="save-code">
       Export
     </EuiButton>
   );

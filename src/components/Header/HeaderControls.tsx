@@ -133,6 +133,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
           </TestButtonDivider>
           <EuiFlexItem>
             <ControlButton
+              aria-label="export"
               isDisabled={steps.length === 0}
               iconType="exportAction"
               fill

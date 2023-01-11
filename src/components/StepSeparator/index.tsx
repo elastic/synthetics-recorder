@@ -46,7 +46,11 @@ export function StepSeparator({ index, step }: IStepSeparator) {
   const { isDraggable } = useDragAndDrop(index);
 
   return (
-    <div onMouseEnter={() => setShowControls(true)} onMouseLeave={() => setShowControls(false)}>
+    <div
+      onMouseEnter={() => setShowControls(true)}
+      onMouseLeave={() => setShowControls(false)}
+      data-test-subj="step-div"
+    >
       <StepSeparatorAccordion
         extraAction={
           <SeparatorActions

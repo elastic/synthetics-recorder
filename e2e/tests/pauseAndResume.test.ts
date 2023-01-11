@@ -30,26 +30,28 @@ afterEach(async () => {
   await electronService.terminate();
 });
 
-describe('Assertion Info Popover', () => {
-  it('creates a link to playwright docs on assertion info popover', async () => {
+describe('Pause and Resume', () => {
+  it('pauses and resumes', async () => {
     const electronWindow = await electronService.getWindow();
+
     await electronService.enterTestUrl(env.DEMO_APP_URL);
     await electronService.clickStartRecording();
     await electronService.waitForPageToBeIdle();
-    await electronService.clickStopRecording();
-    await electronService.clickActionElementSettingsButton(
-      'id=action-element-0-0',
-      'text=Add assertion'
-    );
-    await electronWindow.click(
-      `[aria-label="Shows a popover with more information about Playwright assertions."]`
-    );
+    await electronWindow.click('text=Pause');
 
-    expect(
-      await electronWindow.$(
-        "text=You can add assertions to validate your page's content matches your expectations."
-      )
-    ).toBeTruthy();
-    expect(await electronWindow.$('text=Read more')).toBeTruthy();
+    expect(await electronWindow.getByText('Recording paused')).toBeTruthy();
+
+    expect(await electronWindow.getByText('Resume')).toBeTruthy();
+    expect(await electronWindow.getByText('Stop').isDisabled()).toBeTruthy();
+    expect(await electronWindow.getByText('Test').isDisabled()).toBeTruthy();
+
+    await electronWindow.click('text=Resume');
+    expect(await electronWindow.getByText('Recording', { exact: true })).toBeTruthy();
+    await electronService.recordClick('text=BuyUSD 12.49 >> button');
+    await electronService.recordClick('text=Add to Cart');
+    await electronService.clickStopRecording();
+
+    expect(await electronWindow.getByText('Start over').isEnabled()).toBeTruthy();
+    expect(await electronWindow.getByText('Test').isEnabled()).toBeTruthy();
   });
 });

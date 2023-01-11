@@ -24,22 +24,62 @@ THE SOFTWARE.
 
 import { ElectronServiceFactory, env } from '../services';
 
-const electronService = new ElectronServiceFactory();
+let electronService;
+
+beforeEach(() => {
+  electronService = new ElectronServiceFactory();
+});
 
 afterEach(async () => {
   await electronService.terminate();
 });
 
-describe('Test Button', () => {
-  it('is disabled during a recording session', async () => {
-    const electronWindow = await electronService.getWindow();
+describe('Run test', () => {
+  describe('Test Button', () => {
+    it('is disabled when scripts are not recorded', async () => {
+      const electronWindow = await electronService.getWindow();
 
-    await electronService.enterTestUrl(env.DEMO_APP_URL);
-    await electronService.clickStartRecording();
-    await electronService.waitForPageToBeIdle();
+      const testButton = await electronWindow.$(`[aria-label="Test"]`);
+      expect(testButton).toBeTruthy();
+      expect(await testButton.isEnabled()).toBeFalsy();
+    });
 
-    const testButton = await electronWindow.$(`[aria-label="Test"]`);
-    expect(testButton).toBeTruthy();
-    expect(await testButton.isEnabled());
+    it('is disabled during a recording session', async () => {
+      const electronWindow = await electronService.getWindow();
+
+      await electronService.enterTestUrl(env.DEMO_APP_URL);
+      await electronService.clickStartRecording();
+      await electronService.waitForPageToBeIdle();
+
+      const testButton = await electronWindow.$(`[aria-label="Test"]`);
+      expect(testButton).toBeTruthy();
+      expect(await testButton.isEnabled()).toBeFalsy();
+    });
+  });
+
+  describe('Record forms and run tests', () => {
+    it('records filling up the form, run tests and shows the result', async () => {
+      const electronWindow = await electronService.getWindow();
+      await electronService.enterTestUrl(env.DEMO_APP_URL);
+      await electronService.clickStartRecording();
+      await electronService.waitForPageToBeIdle();
+
+      await electronService.recordClick('text=BuyUSD 12.49 >> button');
+      await electronService.recordClick('text=Add to Cart');
+      await electronService
+        .getRecordingPage()
+        .locator('input[name="email"]')
+        .fill('hello@example.com');
+      await electronService
+        .getRecordingPage()
+        .locator('input[name="street_address"]')
+        .fill('1 High st');
+      await electronService.recordClick('text=Place your order');
+
+      await electronService.clickStopRecording();
+      await electronService.clickRunTest();
+
+      expect(await electronWindow.$('text=1 success'));
+    });
   });
 });
