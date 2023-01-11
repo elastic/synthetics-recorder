@@ -1,0 +1,30 @@
+name: Test
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - name: Install modules
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Unused exports
+        run: npm run unused-exports
+      - name: Build
+        run: npm run build
+      - name: Run test
+        run: npm test
