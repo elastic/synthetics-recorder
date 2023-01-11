@@ -33,7 +33,7 @@ const DEFAULT_TIMEOUT = 10000;
 const DEFAULT_INTERVAL = 250;
 
 export class TestBrowserService {
-  static #remoteBrowser: Browser;
+  static #remoteBrowser: Browser | null;
 
   static async getRemoteBrowser(
     { url, timeout, interval }: ConnectRetryParams = {
@@ -95,6 +95,8 @@ export class TestBrowserService {
   }
 
   static async closeRemoteBrowser(connectParams?: ConnectRetryParams) {
+    // when `start` button is not clicked for the test case, terminate call will hang
+    // because the recording browser isn't started but we try to connect to it with loop
     if (TestBrowserService.#remoteBrowser == null) return;
     const browser = await TestBrowserService.getRemoteBrowser(connectParams);
     const ctxs = await browser.contexts();
@@ -102,6 +104,7 @@ export class TestBrowserService {
       await ctx.close();
     }
     await browser.close();
+    // it tries to use previous test's connection if we don't assign null to it
     TestBrowserService.#remoteBrowser = null;
     // with this timeout, it will make sure the browser to be closed before terminating electron (it's an issue to mac).
     await new Promise(r => setTimeout(r, 50));
