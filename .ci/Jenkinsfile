@@ -43,67 +43,6 @@ pipeline {
         }
       }
     }
-    stage('Install') {
-      options { skipDefaultCheckout() }
-      when {
-        beforeAgent true
-        expression { return !isTag() }
-      }
-      steps {
-        withGithubNotify(context: "Install") {
-          withNodeJSEnv() {
-            dir("${BASE_DIR}") {
-              sh(label: 'npm ci', script: 'npm ci')
-            }
-          }
-        }
-      }
-    }
-    stage('Lint') {
-      options { skipDefaultCheckout() }
-      when {
-        beforeAgent true
-        expression { return !isTag() }
-      }
-      steps {
-        withGithubNotify(context: "Lint") {
-          withNodeJSEnv() {
-            dir("${BASE_DIR}"){
-              sh(label: 'npm lint', script: 'npm run lint')
-            }
-          }
-        }
-        withGithubNotify(context: "Unused exports") {
-          withNodeJSEnv() {
-            dir("${BASE_DIR}"){
-              sh(label: 'npm unused-exports', script: 'npm run unused-exports')
-            }
-          }
-        }
-      }
-      post {
-        always {
-          archiveArtifacts(allowEmptyArchive: true, artifacts: "${BASE_DIR}/eslint-junit.xml")
-          junit(allowEmptyResults: true, keepLongStdio: true, testResults: "${BASE_DIR}/eslint-junit.xml")
-        }
-      }
-    }
-    stage('Build'){
-      options { skipDefaultCheckout() }
-      when {
-        beforeAgent true
-        expression { return !isTag() }
-      }
-      steps {
-        withGithubNotify(context: "Build") {
-          withNodeJSEnv() {
-            dir("${BASE_DIR}"){
-              sh(label: 'npm build', script: 'npm run build')
-            }
-          }
-        }
-      }
-    }
     stage('Release') {
       options { skipDefaultCheckout() }
       when {
