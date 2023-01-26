@@ -32,7 +32,7 @@ export function useGlobalToasts(): IToastContext {
 
   const dismissToast = useCallback(
     (toast: Toast) => {
-      setToasts(toasts => toasts.filter(t => t !== toast));
+      setToasts(toasts => toasts.filter(({ id }) => id !== toast.id));
     },
     [setToasts]
   );
