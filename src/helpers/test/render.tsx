@@ -28,12 +28,14 @@ import { CommunicationContext, ICommunicationContext } from '../../contexts/Comm
 import { IRecordingContext, RecordingContext } from '../../contexts/RecordingContext';
 import { IStepsContext, StepsContext } from '../../contexts/StepsContext';
 import { StyledComponentsEuiProvider } from '../../contexts/StyledComponentsEuiProvider';
+import { IToastContext, ToastContext } from '../../contexts/ToastContext';
 import { IUrlContext, UrlContext } from '../../contexts/UrlContext';
 import {
   getRecordingContextDefaults,
   getUrlContextDefaults,
   getStepsContextDefaults,
   getCommunicationContextDefaults,
+  getToastContextDefaults,
 } from './defaults';
 import { RenderContexts } from './RenderContexts';
 
@@ -46,6 +48,7 @@ export function render<ComponentType>(
       recording?: Partial<IRecordingContext>;
       steps?: Partial<IStepsContext>;
       url?: Partial<IUrlContext>;
+      toast?: Partial<IToastContext>;
     };
   }
 ): RenderResult {
@@ -69,6 +72,11 @@ export function render<ComponentType>(
       defaults: getCommunicationContextDefaults(),
       Context: CommunicationContext,
       overrides: options?.contextOverrides?.communication,
+    },
+    {
+      defaults: getToastContextDefaults(),
+      Context: ToastContext,
+      overrides: options?.contextOverrides?.toast,
     },
   ];
 
