@@ -24,6 +24,7 @@ THE SOFTWARE.
 
 import { RecordingStatus } from '../../common/types';
 import { ICommunicationContext } from '../../contexts/CommunicationContext';
+import { IDragAndDropContext } from '../../contexts/DragAndDropContext';
 import { IRecordingContext } from '../../contexts/RecordingContext';
 import { IStepsContext } from '../../contexts/StepsContext';
 import { ITestContext } from '../../contexts/TestContext';
@@ -87,4 +88,9 @@ export const getCommunicationContextDefaults = (): ICommunicationContext => ({
     callMain: jest.fn(),
     removeListener: jest.fn(),
   },
+});
+
+export const getDragAndDropContextDefaults = (): IDragAndDropContext => ({
+  dragIndex: undefined,
+  setDragIndex: jest.fn(),
 });
