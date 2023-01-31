@@ -24,9 +24,12 @@ THE SOFTWARE.
 
 const { join } = require('path');
 const { readFileSync, writeFileSync, readdirSync } = require('fs');
+const { request } = require('undici');
 
 const ROOT_DIR = join(__dirname, '../');
 const ROOT_NODE_MODULES = join(ROOT_DIR, 'node_modules');
+const CHROMIUM_LICENSE_URL =
+  'https://chromium.googlesource.com/chromium/src/+/refs/heads/main/LICENSE?format=TEXT';
 
 function safeReadDirSync(directory) {
   let files = [];
@@ -78,12 +81,25 @@ function getMeta() {
   return { name, dependencies };
 }
 
-function generateNotice() {
+async function getChromiumInfo() {
+  const { statusCode, body } = await request(CHROMIUM_LICENSE_URL);
+  const bodyStr = await body.text();
+  if (statusCode !== 200) {
+    throw new Error(
+      `Failed to fetch chromium license info. status: ${statusCode}, reason: ${bodyStr}`
+    );
+  }
+  const license = Buffer.from(bodyStr, 'base64').toString('utf-8');
+  return { name: 'chromium', license };
+}
+
+async function generateNotice() {
   const { name: pkgName, dependencies } = getMeta();
-  const depInfo = generateDependencyInfo(Object.keys(dependencies));
+  const chromiumInfo = await getChromiumInfo();
+  const depInfo = [chromiumInfo, ...generateDependencyInfo(Object.keys(dependencies))];
   let allLicenses = `
 ${pkgName}
-Copyright (c) 2017-present, Elasticsearch BV
+Copyright (c) 2021-present, Elasticsearch BV
 
 `;
   depInfo.forEach(d => {
@@ -102,9 +118,6 @@ ${d.notice ? d.notice : ''}`;
   console.log('NOTICE.txt file is generated');
 }
 
-module.exports = {
-  generateDependencyInfo,
-  generateNotice,
-};
-
-generateNotice();
+generateNotice()
+  // eslint-disable-next-line no-console
+  .catch(error => console.error('Failed to generate NOTICE.txt', { error }));
