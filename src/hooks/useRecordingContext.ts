@@ -63,7 +63,7 @@ export function useRecordingContext(
     setSteps([]);
     if (recordingStatus === RecordingStatus.NotRecording) {
       setRecordingStatus(RecordingStatus.Recording);
-      // Depends on the results context, because when we overwrite
+      // Depends on the result's context, because when we overwrite
       // a previous journey we need to discard its result status
       setResult(undefined);
       await ipc.callMain('record-journey', { url });
