@@ -52,10 +52,11 @@ interface DropProps {
   onDragLeave?: DragEvent;
   onDragOver?: DragEvent;
 }
+
 export function useDrop(stepIndex: number, actionIndex: number) {
   const { dragIndex } = useContext(DragAndDropContext);
   const { steps, onDropStep, onSplitStep } = useContext(StepsContext);
-  const [dropzoneOver, setDropzeonOver] = useState(false);
+  const [dropzoneOver, setDropzoneOver] = useState(false);
   const [enterTarget, setEnterTarget] = useState<EventTarget | undefined>(undefined);
 
   const splitStepAtAction = useCallback(() => {
@@ -70,20 +71,20 @@ export function useDrop(stepIndex: number, actionIndex: number) {
       const { initiatorIndex } = JSON.parse(
         e.dataTransfer.getData(DRAG_AND_DROP_DATA_TRANSFER_TYPE)
       ) as StepSeparatorDragDropDataTransfer;
-      setDropzeonOver(false);
+      setDropzoneOver(false);
       onDropStep(stepIndex, initiatorIndex, actionIndex);
       e.preventDefault();
     };
     onDropActions.onDragEnter = e => {
       setEnterTarget(e.target);
-      setDropzeonOver(true);
+      setDropzoneOver(true);
       e.preventDefault();
     };
     onDropActions.onDragOver = e => {
       e.preventDefault();
     };
     onDropActions.onDragLeave = e => {
-      if (e.target === enterTarget) setDropzeonOver(false);
+      if (e.target === enterTarget) setDropzoneOver(false);
     };
   }
 
