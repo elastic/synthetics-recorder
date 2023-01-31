@@ -22,33 +22,35 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { Toast } from '@elastic/eui/src/components/toast/global_toast_list';
-import { useCallback, useState } from 'react';
-import { IToastContext } from '../contexts/ToastContext';
+import { act, renderHook } from '@testing-library/react-hooks';
+import { useGlobalToasts } from './useGlobalToasts';
 
-export function useGlobalToasts(): IToastContext {
-  const [toasts, setToasts] = useState<Toast[]>([]);
-  const [toastLifeTimeMs, setToastLifeTimeMs] = useState<number>(5000);
+describe('useGlobalToasts', () => {
+  it('should add a toast', () => {
+    const { result } = renderHook(() => useGlobalToasts());
+    act(() => {
+      result.current.sendToast({ id: '1', title: 'Test Toast' });
+    });
+    expect(result.current.toasts).toEqual([{ id: '1', title: 'Test Toast' }]);
+  });
 
-  const dismissToast = useCallback(
-    (toast: Toast) => {
-      setToasts(toasts => toasts.filter(({ id }) => id !== toast.id));
-    },
-    [setToasts]
-  );
+  it('should dismiss a toast', () => {
+    const { result } = renderHook(() => useGlobalToasts());
+    act(() => {
+      result.current.sendToast({ id: '1', title: 'Test Toast' });
+    });
+    expect(result.current.toasts).toEqual([{ id: '1', title: 'Test Toast' }]);
+    act(() => {
+      result.current.dismissToast({ id: '1', title: 'Test Toast' });
+    });
+    expect(result.current.toasts).toEqual([]);
+  });
 
-  const sendToast = useCallback(
-    (toast: Toast) => {
-      setToasts(toasts => [...toasts, toast]);
-    },
-    [setToasts]
-  );
-
-  return {
-    dismissToast,
-    sendToast,
-    setToastLifeTimeMs,
-    toasts,
-    toastLifeTimeMs,
-  };
-}
+  it('should set toastLifeTimeMs', () => {
+    const { result } = renderHook(() => useGlobalToasts());
+    act(() => {
+      result.current.setToastLifeTimeMs(10000);
+    });
+    expect(result.current.toastLifeTimeMs).toEqual(10000);
+  });
+});
