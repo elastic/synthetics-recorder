@@ -26,6 +26,7 @@ import { RecordingStatus } from '../../common/types';
 import { ICommunicationContext } from '../../contexts/CommunicationContext';
 import { IRecordingContext } from '../../contexts/RecordingContext';
 import { IStepsContext } from '../../contexts/StepsContext';
+import { ITestContext } from '../../contexts/TestContext';
 import { IToastContext } from '../../contexts/ToastContext';
 import { IUrlContext } from '../../contexts/UrlContext';
 
@@ -58,6 +59,17 @@ export const getStepsContextDefaults = (): IStepsContext => ({
   onSplitStep: jest.fn(),
   onStepDetailChange: jest.fn(),
   onUpdateAction: jest.fn(),
+});
+
+export const getTestContextDefaults = (): ITestContext => ({
+  codeBlocks: '',
+  isResultFlyoutVisible: false,
+  isTestInProgress: false,
+  onTest: jest.fn(),
+  setCodeBlocks: jest.fn(),
+  setResult: jest.fn(),
+  setIsTestInProgress: jest.fn(),
+  setIsResultFlyoutVisible: jest.fn(),
 });
 
 export const getToastContextDefaults = (): IToastContext => ({
