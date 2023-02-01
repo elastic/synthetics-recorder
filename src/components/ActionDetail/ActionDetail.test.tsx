@@ -28,7 +28,7 @@ import { render } from '../../helpers/test';
 import { ActionDetail } from './ActionDetail';
 import { ActionContext } from '../../../common/types';
 
-describe('<ActionDetail />', () => {
+describe('ActionDetail', () => {
   let onUpdateActionMock: jest.Mock;
 
   beforeEach(() => {

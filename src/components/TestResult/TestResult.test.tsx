@@ -28,7 +28,7 @@ import { createStep } from '../../../common/helper/test/createAction';
 import { render } from '../../helpers/test';
 import { TestResult } from './TestResult';
 
-describe('<TestResult />', () => {
+describe('TestResult', () => {
   it('does not render the flyout if there is no result data', () => {
     const { queryByTestId } = render(<TestResult />, {
       contextOverrides: {

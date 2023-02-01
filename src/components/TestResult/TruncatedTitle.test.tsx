@@ -27,7 +27,7 @@ import { fireEvent, waitFor } from '@testing-library/react';
 import { render } from '../../helpers/test';
 import { TruncatedTitle } from './TruncatedTitle';
 
-describe('<TruncatedTitle />', () => {
+describe('TruncatedTitle', () => {
   it(`renders the full string if it's less than max length`, () => {
     const { getByText } = render(
       <TruncatedTitle maxLength={100} stepIndex={0} text="Hello World!" />

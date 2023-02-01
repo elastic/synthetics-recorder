@@ -27,7 +27,7 @@ import React from 'react';
 import { render } from '../../helpers/test';
 import { FormControl } from './FormControl';
 
-describe('<FormControl />', () => {
+describe('FormControl', () => {
   it('Displays the label', () => {
     const { getByText } = render(
       <FormControl label="Test label" name="Test name" onChange={jest.fn()} value="Test value" />
