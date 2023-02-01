@@ -1,6 +1,6 @@
 
 synthetics-recorder
-Copyright (c) 2017-present, Elasticsearch BV
+Copyright (c) 2021-present, Elasticsearch BV
 
 
 ---
