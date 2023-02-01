@@ -41,6 +41,62 @@ import {
 } from './defaults';
 import { RenderContexts } from './RenderContexts';
 
+export function TestContextWrapper<ComponentType>({
+  component,
+  contextOverrides,
+}: {
+  component:
+    | React.ReactNode
+    | React.ReactElement<ComponentType, string | React.JSXElementConstructor<any>>;
+  contextOverrides?: {
+    communication?: Partial<ICommunicationContext>;
+    recording?: Partial<IRecordingContext>;
+    steps?: Partial<IStepsContext>;
+    url?: Partial<IUrlContext>;
+    test?: Partial<ITestContext>;
+    toast?: Partial<IToastContext>;
+  };
+}) {
+  const contexts = [
+    {
+      defaults: getRecordingContextDefaults(),
+      Context: RecordingContext,
+      overrides: contextOverrides?.recording,
+    },
+    {
+      defaults: getUrlContextDefaults(),
+      Context: UrlContext,
+      overrides: contextOverrides?.url,
+    },
+    {
+      defaults: getStepsContextDefaults(),
+      Context: StepsContext,
+      overrides: contextOverrides?.steps,
+    },
+    {
+      defaults: getCommunicationContextDefaults(),
+      Context: CommunicationContext,
+      overrides: contextOverrides?.communication,
+    },
+    {
+      defaults: getTestContextDefaults(),
+      Context: TestContext,
+      overrides: contextOverrides?.test,
+    },
+    {
+      defaults: getToastContextDefaults(),
+      Context: ToastContext,
+      overrides: contextOverrides?.toast,
+    },
+  ];
+
+  return (
+    <StyledComponentsEuiProvider>
+      <RenderContexts contexts={contexts}>{component}</RenderContexts>
+    </StyledComponentsEuiProvider>
+  );
+}
+
 export function render<ComponentType>(
   component: React.ReactElement<ComponentType>,
   options?: {
@@ -55,43 +111,8 @@ export function render<ComponentType>(
     };
   }
 ): RenderResult {
-  const contexts = [
-    {
-      defaults: getRecordingContextDefaults(),
-      Context: RecordingContext,
-      overrides: options?.contextOverrides?.recording,
-    },
-    {
-      defaults: getUrlContextDefaults(),
-      Context: UrlContext,
-      overrides: options?.contextOverrides?.url,
-    },
-    {
-      defaults: getStepsContextDefaults(),
-      Context: StepsContext,
-      overrides: options?.contextOverrides?.steps,
-    },
-    {
-      defaults: getCommunicationContextDefaults(),
-      Context: CommunicationContext,
-      overrides: options?.contextOverrides?.communication,
-    },
-    {
-      defaults: getTestContextDefaults(),
-      Context: TestContext,
-      overrides: options?.contextOverrides?.test,
-    },
-    {
-      defaults: getToastContextDefaults(),
-      Context: ToastContext,
-      overrides: options?.contextOverrides?.toast,
-    },
-  ];
-
   return rtlRender(
-    <StyledComponentsEuiProvider>
-      <RenderContexts contexts={contexts}>{component}</RenderContexts>
-    </StyledComponentsEuiProvider>,
+    <TestContextWrapper component={component} contextOverrides={options?.contextOverrides} />,
     options?.renderOptions
   );
 }
