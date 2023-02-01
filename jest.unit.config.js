@@ -27,6 +27,7 @@ module.exports = {
     {
       displayName: 'node',
       preset: 'ts-jest',
+      coveragePathIgnorePatterns: ['.test.ts', '.test.js', '.test.tsx', '.test.jsx'],
       testEnvironment: 'node',
       testMatch: ['**/?(*.)+(spec|test).[tj]s'],
       testPathIgnorePatterns: [`node_modules`, `\\.cache`, `e2e`, `build`],
@@ -34,6 +35,7 @@ module.exports = {
     {
       displayName: 'components',
       preset: 'ts-jest',
+      coveragePathIgnorePatterns: ['.test.ts', '.test.js', '.test.tsx', '.test.jsx'],
       testEnvironment: 'jsdom',
       testMatch: ['**/?(*.)+(spec|test).[tj]sx'],
       setupFilesAfterEnv: ['./jest.unit.setup.js'],
