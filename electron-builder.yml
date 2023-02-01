@@ -11,6 +11,7 @@ files:
 extraResources:
   - from: local-browsers/_releases/${os}-${arch}
     to: local-browsers
+  - NOTICE.txt
 publish:
   - provider: github
 extraMetadata:
