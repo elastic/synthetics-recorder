@@ -23,9 +23,8 @@ THE SOFTWARE.
 */
 
 import React from 'react';
-import { renderHook, act } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react-hooks';
 import { useStepResultStatus } from './useTestResult';
-import { ITestContext, TestContext } from '../contexts/TestContext';
 import { TestContextWrapper } from '../helpers/test/render';
 
 describe('useStepResultStatus', () => {
