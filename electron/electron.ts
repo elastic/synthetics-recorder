@@ -93,7 +93,7 @@ async function createMainWindow() {
     createMenu();
   }
 }
-
+app.setName('Elastic Synthetics Recorder');
 app.on('activate', createMainWindow);
 
 app.on('window-all-closed', () => {
