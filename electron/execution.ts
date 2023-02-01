@@ -58,6 +58,7 @@ async function launchContext() {
   const browser = await chromium.launch({
     headless: IS_TEST_ENV,
     executablePath: EXECUTABLE_PATH,
+    chromiumSandbox: true,
     args: IS_TEST_ENV ? [`--remote-debugging-port=${CDP_TEST_PORT}`] : [],
   });
 
@@ -276,7 +277,13 @@ function onTest(mainWindowEmitter: EventEmitter) {
 
     try {
       const isProject = data.isProject;
-      const args = ['--no-headless', '--reporter=json', '--screenshots=off', '--no-throttling'];
+      const args = [
+        '--no-headless',
+        '--reporter=json',
+        '--screenshots=off',
+        '--no-throttling',
+        '--sandbox',
+      ];
       const filePath = join(JOURNEY_DIR, 'recorded.journey.js');
       if (!isProject) {
         args.push('--inline');
