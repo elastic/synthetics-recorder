@@ -55,6 +55,12 @@ function getFileContent(directory, filename) {
 function generateDependencyInfo(deps) {
   var allLicenses = [];
   deps.forEach(d => {
+    // we download forked `playwright-core` as playwright. The directory doesn't include NOTICE nor LICENSE
+    // so we need to copy over from the official playwright-core package downloaded for synthetics agent.
+    if (d === 'playwright') {
+      d = 'playwright-core';
+    }
+
     const modulesPath = join(ROOT_NODE_MODULES, d);
 
     const dep = { name: d };
@@ -74,9 +80,9 @@ function generateDependencyInfo(deps) {
   return allLicenses;
 }
 
-function getMeta() {
+function getPackageInfo(pkgDir) {
   const { name, dependencies = {} } = JSON.parse(
-    readFileSync(join(ROOT_DIR, 'package.json'), 'utf8')
+    readFileSync(join(pkgDir, 'package.json'), 'utf8')
   );
   return { name, dependencies };
 }
@@ -94,7 +100,7 @@ async function getChromiumInfo() {
 }
 
 async function generateNotice() {
-  const { name: pkgName, dependencies } = getMeta();
+  const { name: pkgName, dependencies } = getPackageInfo(ROOT_DIR);
   const chromiumInfo = await getChromiumInfo();
   const depInfo = [chromiumInfo, ...generateDependencyInfo(Object.keys(dependencies))];
   let allLicenses = `
@@ -115,7 +121,7 @@ ${d.notice ? d.notice : ''}`;
   });
   writeFileSync(join(ROOT_DIR, './NOTICE.txt'), allLicenses);
   // eslint-disable-next-line no-console
-  console.log('NOTICE.txt file is generated');
+  console.info('NOTICE.txt file is up-to-date');
 }
 
 generateNotice()
