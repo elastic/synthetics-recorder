@@ -23,7 +23,6 @@ THE SOFTWARE.
 */
 
 import { EuiButtonIcon, EuiFlexItem, EuiToolTip } from '@elastic/eui';
-// import { Step } from '@elastic/synthetics';
 import type { Step } from '../../../common/types';
 import React, { useContext, useState } from 'react';
 import { DRAG_AND_DROP_DATA_TRANSFER_TYPE } from '../../common/shared';
@@ -94,6 +93,7 @@ export function SeparatorActions({
   return (
     <ControlsWrapper
       alignItems="center"
+      aria-label="Drag to reorganize steps"
       draggable={!!isDraggable}
       gutterSize="s"
       isGrabbing={isGrabbing}
