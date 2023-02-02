@@ -182,4 +182,79 @@ describe('ActionElement', () => {
       );
     });
   });
+
+  it('shows controls on mouse over and hides them on mouse leave', async () => {
+    const hiddenStyle = '"visibility":"hidden"';
+    const action = createAction('action-1', {
+      title: 'action-1',
+      isOpen: true,
+    });
+    const { getByLabelText, getByTestId } = render(
+      <ActionElement actionIndex={1} actionContext={action} stepIndex={1} />,
+      {
+        contextOverrides: {
+          steps: {
+            onDeleteAction,
+            onUpdateAction,
+            onSetActionIsOpen,
+            steps,
+          },
+        },
+      }
+    );
+
+    expect(JSON.stringify(getByLabelText('Begin editing this action').style)).toContain(
+      hiddenStyle
+    );
+
+    const accordion = getByTestId('step-accordion-action-1');
+
+    fireEvent.mouseOver(accordion);
+
+    await waitFor(() => {
+      expect(JSON.stringify(getByLabelText('Begin editing this action').style)).not.toContain(
+        hiddenStyle
+      );
+    });
+
+    fireEvent.mouseLeave(accordion);
+
+    await waitFor(() => {
+      expect(JSON.stringify(getByLabelText('Begin editing this action').style)).toContain(
+        hiddenStyle
+      );
+    });
+  });
+
+  it('sets action open status via controls', async () => {
+    const actionIndex = 1;
+    const stepIndex = 1;
+    const action = createAction('action-1', {
+      title: 'action-1',
+      isOpen: true,
+    });
+    const { getByText, getByTestId } = render(
+      <ActionElement actionIndex={actionIndex} actionContext={action} stepIndex={stepIndex} />,
+      {
+        contextOverrides: {
+          steps: {
+            onDeleteAction,
+            onUpdateAction,
+            onSetActionIsOpen,
+            steps,
+          },
+        },
+      }
+    );
+
+    const accordion = getByTestId('step-accordion-action-1');
+
+    fireEvent.mouseOver(accordion);
+
+    fireEvent.click(getByText('Cancel'));
+
+    await waitFor(() => {
+      expect(onSetActionIsOpen).toHaveBeenCalledWith(stepIndex, actionIndex, false);
+    });
+  });
 });
