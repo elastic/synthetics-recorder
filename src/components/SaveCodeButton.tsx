@@ -40,7 +40,7 @@ export function SaveCodeButton({ type }: ISaveCodeButton) {
   const { sendToast } = useContext(ToastContext);
   const onSave = async () => {
     const codeFromActions = await getCodeFromActions(ipc, steps, type);
-    const exported = await ipc.callMain('save-file', codeFromActions);
+    const exported = await window.electronAPI.exportScript(codeFromActions);
     if (exported) {
       sendToast({
         id: `file-export-${new Date().valueOf()}`,

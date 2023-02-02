@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { join } from 'path';
-import { app, BrowserWindow, Menu } from 'electron';
+import path from 'path';
+import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import isDev from 'electron-is-dev';
 import unhandled from 'electron-unhandled';
 import debug from 'electron-debug';
@@ -35,7 +35,7 @@ import { EventEmitter } from 'events';
 unhandled({ logger: err => logger.error(err) });
 debug({ isEnabled: true, showDevTools: false });
 
-const BUILD_DIR = join(__dirname, '..', '..', 'build');
+const BUILD_DIR = path.join(__dirname, '..', '..', 'build');
 
 // We can't read from the `env` file within `services` here
 // so we must access the process env directly
@@ -51,8 +51,7 @@ async function createWindow() {
     minWidth: 800,
     webPreferences: {
       devTools: isDev || IS_TEST,
-      nodeIntegration: true,
-      contextIsolation: false,
+      preload: path.join(__dirname, 'preload.js')
     },
   });
 
@@ -61,7 +60,7 @@ async function createWindow() {
   } else if (IS_TEST && TEST_PORT) {
     win.loadURL(`http://localhost:${TEST_PORT}`);
   } else {
-    win.loadFile(join(BUILD_DIR, 'index.html'));
+    win.loadFile(path.join(BUILD_DIR, 'index.html'));
   }
   win.on('close', () => {
     mainWindowEmitter.emit(MainWindowEvent.MAIN_CLOSE);

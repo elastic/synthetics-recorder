@@ -28,7 +28,7 @@ import { existsSync } from 'fs';
 import { writeFile, rm, mkdir } from 'fs/promises';
 import { ipcMain as ipc } from 'electron-better-ipc';
 import { EventEmitter, once } from 'events';
-import { dialog, shell, BrowserWindow } from 'electron';
+import { dialog, shell, BrowserWindow, ipcMain } from 'electron';
 import { fork, ChildProcess } from 'child_process';
 import logger from 'electron-log';
 import isDev from 'electron-is-dev';
@@ -351,7 +351,7 @@ function onTest(mainWindowEmitter: EventEmitter) {
   };
 }
 
-async function onFileSave(code: string) {
+async function onFileSave(_event, code: string) {
   const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
   const { filePath, canceled } = await dialog.showSaveDialog(window, {
     filters: [
@@ -409,11 +409,12 @@ async function onLinkExternal(url: string) {
  * is destroyed or they will leak/block the next window from interacting with top-level app state.
  */
 export default function setupListeners(mainWindowEmitter: EventEmitter) {
+  ipcMain.handle('export-script', onFileSave);
   return [
     ipc.answerRenderer<RecordJourneyOptions>('record-journey', onRecordJourneys(mainWindowEmitter)),
     ipc.answerRenderer<RunJourneyOptions>('run-journey', onTest(mainWindowEmitter)),
     ipc.answerRenderer<GenerateCodeOptions>('actions-to-code', onGenerateCode),
-    ipc.answerRenderer<string>('save-file', onFileSave),
+    // ipc.answerRenderer<string>('save-file', onFileSave),
     ipc.answerRenderer<string>('set-mode', onSetMode),
     ipc.answerRenderer<string>('link-to-external', onLinkExternal),
   ];

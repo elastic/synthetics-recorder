@@ -115,3 +115,6 @@ export type GenerateCodeOptions = {
   actions: Steps;
   isProject: boolean;
 };
+export interface IElectronAPI {
+  exportScript: (string) => Promise<boolean>,
+}
