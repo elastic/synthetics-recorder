@@ -105,7 +105,7 @@ async function showNotice() {
   const { x, y } = parent.getBounds();
   const child = new BrowserWindow({
     parent,
-    title: 'Acknowledgement',
+    title: 'Acknowledgements',
     x: x + 50,
     y: y + 50,
   });
