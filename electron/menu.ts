@@ -23,9 +23,9 @@ THE SOFTWARE.
 */
 
 import type { MenuItemConstructorOptions } from 'electron';
+import path from 'path';
 import { BrowserWindow, shell } from 'electron';
 import isDev from 'electron-is-dev';
-import path from 'path';
 
 export function buildMenu(appName: string, initMain: () => void): MenuItemConstructorOptions[] {
   return [
@@ -87,7 +87,7 @@ export function buildMenu(appName: string, initMain: () => void): MenuItemConstr
           },
         },
         {
-          label: 'Acknowledgement',
+          label: 'Acknowledgements',
           click: async () => {
             await showNotice();
           },
@@ -109,6 +109,7 @@ async function showNotice() {
     x: x + 50,
     y: y + 50,
   });
+  child.menuBarVisible = false;
   const resourceDir = isDev ? path.join(__dirname, '../../') : process.resourcesPath;
   const pathToNotice = path.join(resourceDir, 'NOTICE.txt');
   child.loadFile(pathToNotice);
