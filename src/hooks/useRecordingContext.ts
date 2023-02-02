@@ -51,10 +51,12 @@ export function useRecordingContext(
     } else if (recordingStatus === RecordingStatus.Recording) {
       setRecordingStatus(RecordingStatus.NotRecording);
       // Stop browser process
-      ipc.send('stop');
+      // ipc.send('stop');
+      window.electronAPI.stopRecording();
     } else {
       setRecordingStatus(RecordingStatus.Recording);
-      await ipc.callMain('record-journey', { url });
+      // await ipc.callMain('record-journey', { url });
+      await window.electronAPI.recordJourney(url);
       setRecordingStatus(RecordingStatus.NotRecording);
     }
   }, [ipc, recordingStatus, stepCount, url]);
@@ -66,7 +68,8 @@ export function useRecordingContext(
       // Depends on the result's context, because when we overwrite
       // a previous journey we need to discard its result status
       setResult(undefined);
-      await ipc.callMain('record-journey', { url });
+      // await ipc.callMain('record-journey', { url });
+      await window.electronAPI.recordJourney(url);
       setRecordingStatus(RecordingStatus.NotRecording);
     }
   }, [ipc, recordingStatus, setResult, setSteps, url]);
@@ -75,9 +78,11 @@ export function useRecordingContext(
     if (recordingStatus === RecordingStatus.NotRecording) return;
     if (recordingStatus !== RecordingStatus.Paused) {
       setRecordingStatus(RecordingStatus.Paused);
-      await ipc.callMain('set-mode', 'none');
+      // await ipc.callMain('set-mode', 'none');
+      await window.electronAPI.pauseRecording();
     } else {
-      await ipc.callMain('set-mode', 'recording');
+      // await ipc.callMain('set-mode', 'recording');
+      await window.electronAPI.resumeRecording();
       setRecordingStatus(RecordingStatus.Recording);
     }
   };

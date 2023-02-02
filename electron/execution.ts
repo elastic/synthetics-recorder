@@ -22,13 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { chromium } from 'playwright';
 import { join, resolve } from 'path';
-import { existsSync } from 'fs';
 import { writeFile, rm, mkdir } from 'fs/promises';
 import { ipcMain as ipc } from 'electron-better-ipc';
 import { EventEmitter, once } from 'events';
-import { dialog, shell, BrowserWindow, ipcMain } from 'electron';
+import { dialog, shell, BrowserWindow, ipcMain, IpcMainInvokeEvent } from 'electron';
 import { fork, ChildProcess } from 'child_process';
 import logger from 'electron-log';
 import isDev from 'electron-is-dev';
@@ -38,121 +36,24 @@ import type {
   ActionInContext,
   GenerateCodeOptions,
   RecorderSteps,
-  RecordJourneyOptions,
   RunJourneyOptions,
   StepEndEvent,
   StepStatus,
   TestEvent,
 } from '../common/types';
 import { SyntheticsGenerator } from './syntheticsGenerator';
+import { onRecordJourneys, onSetMode } from './api/recordJourney';
 
 const SYNTHETICS_CLI = require.resolve('@elastic/synthetics/dist/cli');
-const IS_TEST_ENV = process.env.NODE_ENV === 'test';
-const CDP_TEST_PORT = parseInt(process.env.TEST_PORT ?? '61337') + 1;
 
+// TODO: setting isBrowserRunning from onRecordJourney is broken
 export enum MainWindowEvent {
   MAIN_CLOSE = 'main-close',
+  BROWSER_STARTED = 'browser-started',
+  BROWSER_STOPPED = 'browser-stopped',
 }
 
-async function launchContext() {
-  const browser = await chromium.launch({
-    headless: IS_TEST_ENV,
-    executablePath: EXECUTABLE_PATH,
-    chromiumSandbox: true,
-    args: IS_TEST_ENV ? [`--remote-debugging-port=${CDP_TEST_PORT}`] : [],
-  });
-
-  const context = await browser.newContext();
-
-  let closingBrowser = false;
-  async function closeBrowser() {
-    if (closingBrowser) return;
-    closingBrowser = true;
-    await browser.close();
-  }
-
-  context.on('page', page => {
-    page.on('close', () => {
-      const hasPage = browser.contexts().some(context => context.pages().length > 0);
-      if (hasPage) return;
-      closeBrowser().catch(_e => null);
-    });
-  });
-  return { browser, context };
-}
-
-async function openPage(context: BrowserContext, url: string) {
-  const page = await context.newPage();
-  if (url) {
-    if (existsSync(url)) url = 'file://' + resolve(url);
-    else if (!url.startsWith('http') && !url.startsWith('file://') && !url.startsWith('about:'))
-      url = 'http://' + url;
-    await page.goto(url);
-  }
-  return page;
-}
-
-let browserContext: BrowserContext | null = null;
-let actionListener = new EventEmitter();
 let isBrowserRunning = false;
-
-function onRecordJourneys(mainWindowEmitter: EventEmitter) {
-  return async function (data: { url: string }, browserWindow: BrowserWindow) {
-    if (isBrowserRunning) {
-      throw new Error(
-        'Cannot start recording a journey, a browser operation is already in progress.'
-      );
-    }
-    isBrowserRunning = true;
-    try {
-      const { browser, context } = await launchContext();
-      const closeBrowser = async () => {
-        browserContext = null;
-        actionListener.removeListener('actions', actionsHandler);
-        try {
-          await browser.close();
-        } catch (e) {
-          logger.error('Browser close threw an error', e);
-        }
-      };
-      ipc.addListener('stop', closeBrowser);
-      // Listen to actions from Playwright recording session
-      const actionsHandler = (actions: ActionInContext[]) => {
-        ipc.callRenderer(browserWindow, 'change', { actions });
-      };
-      browserContext = context;
-      actionListener = new EventEmitter();
-      actionListener.on('actions', actionsHandler);
-
-      const handleMainClose = () => {
-        actionListener.removeAllListeners();
-        ipc.removeListener('stop', closeBrowser);
-        browser.close().catch(() => {
-          isBrowserRunning = false;
-        });
-      };
-
-      mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
-
-      // _enableRecorder is private method, not defined in BrowserContext type
-      await (context as any)._enableRecorder({
-        launchOptions: {},
-        contextOptions: {},
-        mode: 'recording',
-        showRecorder: false,
-        actionListener,
-      });
-      await openPage(context, data.url);
-      await once(browser, 'disconnected');
-
-      mainWindowEmitter.removeListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
-    } catch (e) {
-      logger.error(e);
-    } finally {
-      isBrowserRunning = false;
-    }
-  };
-}
 
 /**
  * Attempts to find the step associated with a `step/end` event.
@@ -351,7 +252,7 @@ function onTest(mainWindowEmitter: EventEmitter) {
   };
 }
 
-async function onFileSave(_event, code: string) {
+async function onExportScript(_event, code: string) {
   const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
   const { filePath, canceled } = await dialog.showSaveDialog(window, {
     filters: [
@@ -375,21 +276,6 @@ async function onGenerateCode(data: { isProject: boolean; actions: RecorderSteps
   return generator.generateFromSteps(data.actions);
 }
 
-async function onSetMode(mode: string) {
-  if (!browserContext) return;
-  const page = browserContext.pages()[0];
-  if (!page) return;
-  await page.mainFrame().evaluate(
-    ([mode]) => {
-      // `_playwrightSetMode` is a private function
-      (window as any).__pw_setMode(mode);
-    },
-    [mode]
-  );
-  if (mode !== 'inspecting') return;
-  const [selector] = await once(actionListener, 'selector');
-  return selector;
-}
 
 async function onLinkExternal(url: string) {
   try {
@@ -409,13 +295,15 @@ async function onLinkExternal(url: string) {
  * is destroyed or they will leak/block the next window from interacting with top-level app state.
  */
 export default function setupListeners(mainWindowEmitter: EventEmitter) {
-  ipcMain.handle('export-script', onFileSave);
+  ipcMain.handle('record-journey', onRecordJourneys(mainWindowEmitter, isBrowserRunning))
+  ipcMain.handle('export-script', onExportScript);
+  ipcMain.handle('set-mode', onSetMode)
   return [
-    ipc.answerRenderer<RecordJourneyOptions>('record-journey', onRecordJourneys(mainWindowEmitter)),
+    // ipc.answerRenderer<RecordJourneyOptions>('record-journey', onRecordJourneys(mainWindowEmitter)),
     ipc.answerRenderer<RunJourneyOptions>('run-journey', onTest(mainWindowEmitter)),
     ipc.answerRenderer<GenerateCodeOptions>('actions-to-code', onGenerateCode),
-    // ipc.answerRenderer<string>('save-file', onFileSave),
-    ipc.answerRenderer<string>('set-mode', onSetMode),
+    // ipc.answerRenderer<string>('save-file', onSaveFile),
+    // ipc.answerRenderer<string>('set-mode', onSetMode),
     ipc.answerRenderer<string>('link-to-external', onLinkExternal),
   ];
 }
