@@ -135,6 +135,7 @@ function ActionComponent({
           arrowDisplay="none"
           buttonProps={{ style: { display: 'none' } }}
           paddingSize="m"
+          data-testid={`step-accordion-${actionContext.title}`}
           id={`step-accordion-${actionContext.title}`}
           initialIsOpen={actionContext.isOpen}
           forceState={actionContext.isOpen ? 'open' : 'closed'}
