@@ -23,6 +23,9 @@ THE SOFTWARE.
 */
 
 import type { MenuItemConstructorOptions } from 'electron';
+import path from 'path';
+import { BrowserWindow, shell } from 'electron';
+import isDev from 'electron-is-dev';
 
 export function buildMenu(appName: string, initMain: () => void): MenuItemConstructorOptions[] {
   return [
@@ -72,5 +75,45 @@ export function buildMenu(appName: string, initMain: () => void): MenuItemConstr
         { role: 'front' },
       ],
     },
+    {
+      role: 'help',
+      submenu: [
+        {
+          label: 'Learn More',
+          click: async () => {
+            await shell.openExternal(
+              'https://www.elastic.co/guide/en/observability/current/synthetics-recorder.html'
+            );
+          },
+        },
+        {
+          label: 'Acknowledgements',
+          click: async () => {
+            await showNotice();
+          },
+        },
+      ],
+    },
   ];
+}
+
+async function showNotice() {
+  const parent = BrowserWindow.getFocusedWindow();
+  if (parent == null) {
+    return;
+  }
+  const { x, y } = parent.getBounds();
+  const child = new BrowserWindow({
+    parent,
+    title: 'Acknowledgements',
+    x: x + 50,
+    y: y + 50,
+  });
+  child.menuBarVisible = false;
+  const resourceDir = isDev ? path.join(__dirname, '../../') : process.resourcesPath;
+  const pathToNotice = path.join(resourceDir, 'NOTICE.txt');
+  child.loadFile(pathToNotice);
+  child.once('ready-to-show', () => {
+    child.show();
+  });
 }
