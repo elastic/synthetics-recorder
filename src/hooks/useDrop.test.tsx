@@ -22,10 +22,61 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import React from 'react';
+import { act, renderHook } from '@testing-library/react-hooks';
 import { createSteps } from '../../common/helper/test/createAction';
-import { computeIsDroppable } from './useDrop';
+import { TestContextWrapper } from '../helpers/test/render';
+import { computeIsDroppable, useDrop } from './useDrop';
 
 describe('useDrop', () => {
+  describe(useDrop.name, () => {
+    it('should update the isDragOver state when the dragIndex changes', () => {
+      const steps = createSteps([['Step 1', 'Step 2'], ['Step 3'], ['Step 4', 'Step 5']]);
+      const { result } = renderHook(() => useDrop(0, 0), {
+        wrapper: ({ children, dragIndex }) => (
+          <TestContextWrapper
+            component={children}
+            contextOverrides={{
+              dragAndDrop: {
+                dragIndex,
+              },
+              steps: {
+                steps,
+              },
+            }}
+          />
+        ),
+        initialProps: { dragIndex: undefined },
+      });
+
+      expect(result.current.isDragOver).toBe(false);
+    });
+
+    it('calls `onSplitStep`', async () => {
+      const steps = createSteps([['Step 1', 'Step 2'], ['Step 3'], ['Step 4', 'Step 5']]);
+      const onSplitStep = jest.fn();
+      const { rerender, result } = renderHook(() => useDrop(0, 0), {
+        wrapper: ({ children }) => (
+          <TestContextWrapper
+            component={children}
+            contextOverrides={{
+              steps: {
+                steps,
+                onSplitStep,
+              },
+            }}
+          />
+        ),
+      });
+
+      act(() => result.current.splitStepAtAction());
+
+      rerender();
+
+      expect(onSplitStep).toHaveBeenCalled();
+    });
+  });
+
   describe(computeIsDroppable.name, () => {
     it(`is not droppable if there is no action in front or behind`, () => {
       expect(computeIsDroppable(0, 0, createSteps([['action-1'], ['action-2']]))).toBe(false);

@@ -25,6 +25,7 @@ THE SOFTWARE.
 import { render as rtlRender, RenderResult, RenderOptions } from '@testing-library/react';
 import React from 'react';
 import { CommunicationContext, ICommunicationContext } from '../../contexts/CommunicationContext';
+import { DragAndDropContext, IDragAndDropContext } from '../../contexts/DragAndDropContext';
 import { IRecordingContext, RecordingContext } from '../../contexts/RecordingContext';
 import { IStepsContext, StepsContext } from '../../contexts/StepsContext';
 import { StyledComponentsEuiProvider } from '../../contexts/StyledComponentsEuiProvider';
@@ -38,6 +39,7 @@ import {
   getCommunicationContextDefaults,
   getToastContextDefaults,
   getTestContextDefaults,
+  getDragAndDropContextDefaults,
 } from './defaults';
 import { RenderContexts } from './RenderContexts';
 
@@ -50,6 +52,7 @@ export function TestContextWrapper<ComponentType>({
     | React.ReactElement<ComponentType, string | React.JSXElementConstructor<any>>;
   contextOverrides?: {
     communication?: Partial<ICommunicationContext>;
+    dragAndDrop?: Partial<IDragAndDropContext>;
     recording?: Partial<IRecordingContext>;
     steps?: Partial<IStepsContext>;
     url?: Partial<IUrlContext>;
@@ -87,6 +90,11 @@ export function TestContextWrapper<ComponentType>({
       defaults: getToastContextDefaults(),
       Context: ToastContext,
       overrides: contextOverrides?.toast,
+    },
+    {
+      defaults: getDragAndDropContextDefaults(),
+      Context: DragAndDropContext,
+      overrides: contextOverrides?.dragAndDrop,
     },
   ];
 
