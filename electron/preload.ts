@@ -21,7 +21,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import type { ActionContext, IElectronAPI } from '../common/types';
+import type {
+  ActionContext,
+  GenerateCodeOptions,
+  IElectronAPI,
+  RunJourneyOptions,
+  TestEvent,
+} from '../common/types';
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
 const electronAPI: IElectronAPI = {
@@ -47,6 +53,23 @@ const electronAPI: IElectronAPI = {
     return () => {
       ipcRenderer.removeAllListeners('change');
     };
+  },
+  generateCode: async (params: GenerateCodeOptions) => {
+    return ipcRenderer.invoke('actions-to-code', params);
+  },
+  openExternalLink: async (url: string) => {
+    await ipcRenderer.invoke('link-to-external', url);
+  },
+  runTest: async (
+    params: RunJourneyOptions,
+    callback: (_event: IpcRendererEvent, data: TestEvent) => void
+  ) => {
+    ipcRenderer.on('test-event', callback);
+    await ipcRenderer.invoke('run-journey', params);
+  },
+
+  removeOnTestListener: () => {
+    ipcRenderer.removeAllListeners('test-event');
   },
 };
 

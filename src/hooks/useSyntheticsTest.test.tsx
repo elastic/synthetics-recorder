@@ -35,23 +35,25 @@ THE SOFTWARE.
 
 import React from 'react';
 import { act, renderHook } from '@testing-library/react-hooks';
-import { RendererProcessIpc } from 'electron-better-ipc';
-import { getMockIpc } from '../helpers/test/ipc';
+import { getMockElectronApi } from '../helpers/test/ipc';
 import { TestContextWrapper } from '../helpers/test/render';
 import { useSyntheticsTest } from './useSyntheticsTest';
-import { RecorderSteps, Result } from '../../common/types';
+import { IElectronAPI, RecorderSteps, Result } from '../../common/types';
 import { createSteps } from '../../common/helper/test/createAction';
 import * as communicationHelpers from '../common/shared';
 
 describe('useSyntheticsTest', () => {
-  let ipc: RendererProcessIpc;
+  let electronAPI: IElectronAPI;
 
   beforeEach(() => {
-    ipc = getMockIpc();
+    electronAPI = getMockElectronApi();
   });
 
   const wrapper = ({ children }: { children?: React.ReactNode }) => (
-    <TestContextWrapper component={children} contextOverrides={{ communication: { ipc } }} />
+    <TestContextWrapper
+      component={children}
+      contextOverrides={{ communication: { electronAPI } }}
+    />
   );
 
   it('should initiailize the test context with the correct state', () => {

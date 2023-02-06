@@ -63,7 +63,6 @@ export class BrowserManager {
       page.on('close', async () => {
         const hasPage = browser.contexts().some(context => context.pages().length > 0);
         if (hasPage) {
-          console.log('it has page');
           return;
         }
         await this.closeBrowser();

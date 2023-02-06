@@ -23,9 +23,8 @@ THE SOFTWARE.
 */
 
 import type { Action /* , Steps */ } from '@elastic/synthetics';
-import { RendererProcessIpc } from 'electron-better-ipc';
 import React from 'react';
-import type { ActionContext, Journey, JourneyType, Steps } from '../../common/types';
+import type { ActionContext, IElectronAPI, Journey, JourneyType, Steps } from '../../common/types';
 
 export const COMMAND_SELECTOR_OPTIONS = [
   {
@@ -72,11 +71,11 @@ export const PLAYWRIGHT_ASSERTION_DOCS_LINK = 'https://playwright.dev/docs/asser
 export const SMALL_SCREEN_BREAKPOINT = 850;
 
 export async function getCodeFromActions(
-  ipc: RendererProcessIpc,
+  electronAPI: IElectronAPI,
   steps: Steps,
   type: JourneyType
 ): Promise<string> {
-  return await ipc.callMain('actions-to-code', {
+  return electronAPI.generateCode({
     actions: steps.map(({ actions, ...rest }) => ({
       ...rest,
       actions: actions.filter(action => !(action as ActionContext)?.isSoftDeleted),
@@ -86,12 +85,12 @@ export async function getCodeFromActions(
 }
 
 export function createExternalLinkHandler(
-  ipc: RendererProcessIpc,
+  electronAPI: IElectronAPI,
   url: string
 ): React.MouseEventHandler<HTMLAnchorElement> {
   return async e => {
     e.preventDefault();
-    await ipc.callMain('link-to-external', url);
+    await electronAPI.openExternalLink(url);
   };
 }
 
@@ -102,7 +101,7 @@ export function createExternalLinkHandler(
  * @returns code string
  */
 export async function getCodeForFailedResult(
-  ipc: RendererProcessIpc,
+  electronAPI: IElectronAPI,
   steps: Steps,
   journey?: Journey
 ): Promise<string> {
@@ -118,7 +117,7 @@ export async function getCodeForFailedResult(
 
   if (!failedStep) return '';
 
-  return getCodeFromActions(ipc, [failedStep], journey.type);
+  return getCodeFromActions(electronAPI, [failedStep], journey.type);
 }
 
 export function actionTitle(action: Action) {

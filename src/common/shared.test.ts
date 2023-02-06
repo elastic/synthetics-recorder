@@ -23,29 +23,27 @@ THE SOFTWARE.
 */
 
 // import type { Step } from '@elastic/synthetics';
-import type { Step } from '../../common/types';
-import { RendererProcessIpc } from 'electron-better-ipc';
+import type { IElectronAPI, Step } from '../../common/types';
 import { getCodeForFailedResult } from './shared';
 
 describe('shared', () => {
   describe('getCodeForFailedResult', () => {
-    let mockIpc: RendererProcessIpc;
+    let mockApi: IElectronAPI;
 
     beforeEach(() => {
       const mock = {
-        answerMain: jest.fn(),
-        callMain: jest.fn(),
+        generateCode: jest.fn(),
       };
-      mockIpc = mock as unknown as RendererProcessIpc;
+      mockApi = mock as unknown as IElectronAPI;
     });
 
     it('returns empty string for undefined journey', async () => {
-      expect(await getCodeForFailedResult(mockIpc, [])).toBe('');
+      expect(await getCodeForFailedResult(mockApi, [])).toBe('');
     });
 
     it('returns an empty string if there are no failed steps in the journey', async () => {
       expect(
-        await getCodeForFailedResult(mockIpc, [], {
+        await getCodeForFailedResult(mockApi, [], {
           status: 'succeeded',
           type: 'inline',
           steps: [
@@ -61,7 +59,7 @@ describe('shared', () => {
 
     it('returns an empty string if there is no step title matching journey name', async () => {
       expect(
-        await getCodeForFailedResult(mockIpc, [], {
+        await getCodeForFailedResult(mockApi, [], {
           status: 'failed',
           type: 'inline',
           steps: [
@@ -93,7 +91,7 @@ describe('shared', () => {
         ],
       };
 
-      await getCodeForFailedResult(mockIpc, [failedStep], {
+      await getCodeForFailedResult(mockApi, [failedStep], {
         status: 'failed',
         type: 'inline',
         steps: [
@@ -105,8 +103,8 @@ describe('shared', () => {
         ],
       });
 
-      expect(mockIpc.callMain).toHaveBeenCalledTimes(1);
-      expect(mockIpc.callMain).toHaveBeenCalledWith('actions-to-code', {
+      expect(mockApi.generateCode).toHaveBeenCalledTimes(1);
+      expect(mockApi.generateCode).toHaveBeenCalledWith({
         actions: [failedStep],
         isProject: false,
       });

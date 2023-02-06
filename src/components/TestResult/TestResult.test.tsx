@@ -26,6 +26,7 @@ import { fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { createStep } from '../../../common/helper/test/createAction';
 import { render } from '../../helpers/test';
+import { getMockElectronApi } from '../../helpers/test/ipc';
 import { TestResult } from './TestResult';
 
 describe('TestResult', () => {
@@ -161,8 +162,8 @@ describe('TestResult', () => {
 
   it('renders the flyout with error message and code for failed step', async () => {
     const errorMessage = 'Save button timeout expired';
-    const callMain = jest.fn();
-    callMain.mockImplementation((arg: string, obj: any) => {
+    const generateCode = jest.fn();
+    generateCode.mockImplementation((arg: string, obj: any) => {
       return `
 step('Click save', () => {
 	await page.click('my button');
@@ -170,7 +171,7 @@ step('Click save', () => {
     });
     const { getByText, queryByText } = render(<TestResult />, {
       contextOverrides: {
-        communication: { ipc: { callMain } },
+        communication: { electronAPI: getMockElectronApi({ generateCode }) },
         steps: { steps: [createStep(['Click save'])] },
         test: {
           isResultFlyoutVisible: true,

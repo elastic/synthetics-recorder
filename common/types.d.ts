@@ -126,4 +126,12 @@ export interface IElectronAPI {
     callback: (event: IpcRendererEvent, actions: ActionContext[]) => void
   ) => () => void;
   /* for recordJourney --> */
+  generateCode: (params: GenerateCodeOptions) => Promise<string>;
+  openExternalLink: (url: string) => Promise<void>;
+
+  runTest: (
+    params: RunJourneyOptions,
+    callback: (_event: IpcRendererEvent, data: TestEvent) => void
+  ) => Promise<void>;
+  removeOnTestListener: () => void;
 }

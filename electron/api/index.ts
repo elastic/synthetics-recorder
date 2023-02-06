@@ -23,3 +23,4 @@ THE SOFTWARE.
 */
 export * from './recordJourney';
 export * from './setMode';
+export * from './exportScript';

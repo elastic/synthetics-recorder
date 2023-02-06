@@ -35,7 +35,7 @@ export function useSyntheticsTest(steps: RecorderSteps): ITestContext {
   const [isResultFlyoutVisible, setIsResultFlyoutVisible] = useState(false);
   const [codeBlocks, setCodeBlocks] = useState('');
   const [isTestInProgress, setIsTestInProgress] = useState(false);
-  const { ipc } = useContext(CommunicationContext);
+  const { electronAPI } = useContext(CommunicationContext);
 
   const setResult = useCallback((data: Result | undefined) => {
     dispatch({
@@ -56,7 +56,7 @@ export function useSyntheticsTest(steps: RecorderSteps): ITestContext {
 
   const onTest = useCallback(
     async function () {
-      const code = await getCodeFromActions(ipc, steps, 'inline');
+      const code = await getCodeFromActions(electronAPI, steps, 'inline');
       if (!isTestInProgress) {
         // destroy stale state
         dispatch({ data: undefined, event: 'override' });
@@ -64,14 +64,17 @@ export function useSyntheticsTest(steps: RecorderSteps): ITestContext {
           dispatch(data);
         };
 
-        ipc.on('test-event', onTestEvent);
+        // electronAPI.on('test-event', onTestEvent);
 
         try {
-          const promise = ipc.callMain('run-journey', {
-            steps,
-            code,
-            isProject: false,
-          });
+          const promise = electronAPI.runTest(
+            {
+              steps,
+              code,
+              isProject: false,
+            },
+            onTestEvent
+          );
           setIsTestInProgress(true);
           setIsResultFlyoutVisible(true);
           await promise;
@@ -79,19 +82,19 @@ export function useSyntheticsTest(steps: RecorderSteps): ITestContext {
           // eslint-disable-next-line no-console
           console.error(e);
         } finally {
-          ipc.removeListener('test-event', onTestEvent);
+          electronAPI.removeOnTestListener();
           setIsTestInProgress(false);
         }
       }
     },
-    [ipc, isTestInProgress, steps]
+    [electronAPI, isTestInProgress, steps]
   );
 
   useEffect(() => {
     if (result?.journey.status === 'failed') {
-      getCodeForFailedResult(ipc, steps, result?.journey).then(code => setCodeBlocks(code));
+      getCodeForFailedResult(electronAPI, steps, result?.journey).then(code => setCodeBlocks(code));
     }
-  }, [ipc, result?.journey, steps]);
+  }, [electronAPI, result?.journey, steps]);
 
   return {
     codeBlocks,

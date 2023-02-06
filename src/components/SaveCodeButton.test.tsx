@@ -27,20 +27,17 @@ import { render } from '../helpers/test';
 import { SaveCodeButton } from './SaveCodeButton';
 import { createSteps } from '../../common/helper/test/createAction';
 import { fireEvent, waitFor } from '@testing-library/react';
+import { getMockElectronApi } from '../helpers/test/ipc';
 
 describe('SaveCodeButton', () => {
   it('calls ipc on click', async () => {
-    const callMain = jest.fn();
-    callMain.mockImplementation(() => 'this would be generated code');
+    const exportScript = jest.fn();
+    exportScript.mockImplementation(() => 'this would be generated code');
     const sendToast = jest.fn();
     const { getByLabelText } = render(<SaveCodeButton type="project" />, {
       contextOverrides: {
         communication: {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore partial implementation for test
-          ipc: {
-            callMain,
-          },
+          electronAPI: getMockElectronApi({ exportScript }),
         },
         steps: {
           steps: createSteps([['action1', 'action2', 'action3'], ['action4']]),
@@ -56,7 +53,7 @@ describe('SaveCodeButton', () => {
     fireEvent.click(button);
 
     await waitFor(() => {
-      expect(callMain).toHaveBeenCalled();
+      expect(exportScript).toHaveBeenCalled();
       expect(sendToast).toHaveBeenCalledTimes(1);
       const mockExportObject = sendToast.mock.calls[0][0];
       expect(mockExportObject.color).toBe('success');

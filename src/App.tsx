@@ -66,12 +66,12 @@ export default function App() {
   const [url, setUrl] = useState('');
   const [isCodeFlyoutVisible, setIsCodeFlyoutVisible] = useState(false);
 
-  const { ipc } = useContext(CommunicationContext);
+  const { electronAPI } = useContext(CommunicationContext);
   const stepsContextUtils = useStepsContext();
   const { steps, setSteps } = stepsContextUtils;
   const syntheticsTestUtils = useSyntheticsTest(steps);
   const recordingContextUtils = useRecordingContext(
-    ipc,
+    electronAPI,
     url,
     steps.length,
     syntheticsTestUtils.setResult,
@@ -92,9 +92,9 @@ export default function App() {
       });
     };
     // ipc.answerMain('change', listener);
-    const removeListener = window.electronAPI.onActionGenerated(listener);
+    const removeListener = electronAPI.onActionGenerated(listener);
     return removeListener;
-  }, [ipc, setSteps]);
+  }, [electronAPI, setSteps]);
 
   return (
     <EuiProvider cache={cache} colorMode="light">

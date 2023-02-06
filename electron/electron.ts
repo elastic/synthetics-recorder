@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 import path from 'path';
-import { app, BrowserWindow, ipcMain, Menu } from 'electron';
+import { app, BrowserWindow, Menu } from 'electron';
 import isDev from 'electron-is-dev';
 import unhandled from 'electron-unhandled';
 import debug from 'electron-debug';
@@ -85,10 +85,8 @@ function createMenu() {
 async function createMainWindow() {
   if (BrowserWindow.getAllWindows().length === 0) {
     const mainWindowEmitter = await createWindow();
-    const ipcListenerDestructors = setupListeners(mainWindowEmitter);
-    mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, () =>
-      ipcListenerDestructors.forEach(f => f())
-    );
+    const ipcListenerDestructor = setupListeners(mainWindowEmitter);
+    mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, () => ipcListenerDestructor());
     createMenu();
   }
 }

@@ -82,10 +82,17 @@ export const getToastContextDefaults = (): IToastContext => ({
 });
 
 export const getCommunicationContextDefaults = (): ICommunicationContext => ({
-  ipc: {
-    answerMain: jest.fn(),
-    callMain: jest.fn(),
-    removeListener: jest.fn(),
+  electronAPI: {
+    exportScript: jest.fn(),
+    recordJourney: jest.fn(),
+    stopRecording: jest.fn(),
+    pauseRecording: jest.fn(),
+    resumeRecording: jest.fn(),
+    onActionGenerated: jest.fn(),
+    generateCode: jest.fn(),
+    openExternalLink: jest.fn(),
+    runTest: jest.fn(),
+    removeOnTestListener: jest.fn(),
   },
 });
 

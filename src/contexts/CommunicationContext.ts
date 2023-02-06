@@ -23,18 +23,12 @@ THE SOFTWARE.
 */
 // @ts-nocheck
 import { createContext } from 'react';
-
-// const { ipcRenderer } = window.require('electron-better-ipc');
+import { IElectronAPI } from '../../common/types';
 
 export interface ICommunicationContext {
-  ipc: any;
+  electronAPI: IElectronAPI;
 }
+
 export const CommunicationContext = createContext<ICommunicationContext>({
-  ipc: {
-    callMain: () => {},
-    send: () => {},
-    on: () => {},
-    removeListener(channel: any, listener: any) {},
-    answerMain: () => {},
-  },
+  electronAPI: window.electronAPI,
 });

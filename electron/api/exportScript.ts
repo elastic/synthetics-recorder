@@ -21,21 +21,24 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+import { BrowserWindow, dialog, IpcMainInvokeEvent } from 'electron';
+import { writeFile } from 'fs/promises';
 
-import { IElectronAPI } from '../../../common/types';
+export async function onExportScript(_event: IpcMainInvokeEvent, code: string) {
+  const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
+  const { filePath, canceled } = await dialog.showSaveDialog(window, {
+    filters: [
+      {
+        name: 'JavaScript',
+        extensions: ['js'],
+      },
+    ],
+    defaultPath: 'recorded.journey.js',
+  });
 
-export function getMockElectronApi(overrides?: Partial<IElectronAPI>): IElectronAPI {
-  return {
-    exportScript: jest.fn(),
-    recordJourney: jest.fn(),
-    stopRecording: jest.fn(),
-    pauseRecording: jest.fn(),
-    resumeRecording: jest.fn(),
-    onActionGenerated: jest.fn(),
-    generateCode: jest.fn(),
-    openExternalLink: jest.fn(),
-    runTest: jest.fn(),
-    removeOnTestListener: jest.fn(),
-    ...overrides,
-  };
+  if (!canceled && filePath) {
+    await writeFile(filePath, code);
+    return true;
+  }
+  return false;
 }

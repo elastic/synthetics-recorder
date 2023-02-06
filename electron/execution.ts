@@ -24,16 +24,14 @@ THE SOFTWARE.
 
 import { join } from 'path';
 import { writeFile, rm, mkdir } from 'fs/promises';
-import { ipcMain as ipc } from 'electron-better-ipc';
 import { EventEmitter } from 'events';
-import { dialog, shell, BrowserWindow, ipcMain, IpcMainInvokeEvent } from 'electron';
+import { shell, BrowserWindow, ipcMain, IpcMainInvokeEvent } from 'electron';
 import { fork, ChildProcess } from 'child_process';
 import logger from 'electron-log';
 import isDev from 'electron-is-dev';
-import { JOURNEY_DIR, PLAYWRIGHT_BROWSERS_PATH, EXECUTABLE_PATH } from './config';
+import { JOURNEY_DIR, PLAYWRIGHT_BROWSERS_PATH } from './config';
 import type {
   ActionInContext,
-  GenerateCodeOptions,
   RecorderSteps,
   RunJourneyOptions,
   StepEndEvent,
@@ -41,8 +39,8 @@ import type {
   TestEvent,
 } from '../common/types';
 import { SyntheticsGenerator } from './syntheticsGenerator';
-import { browserManager } from './browserManager';
-import { onRecordJourneys, onSetMode } from './api';
+import { BrowserManager, browserManager } from './browserManager';
+import { onRecordJourneys, onSetMode, onExportScript } from './api';
 
 const SYNTHETICS_CLI = require.resolve('@elastic/synthetics/dist/cli');
 
@@ -50,8 +48,6 @@ const SYNTHETICS_CLI = require.resolve('@elastic/synthetics/dist/cli');
 export enum MainWindowEvent {
   MAIN_CLOSE = 'main-close',
 }
-
-let isBrowserRunning = false;
 
 /**
  * Attempts to find the step associated with a `step/end` event.
@@ -81,14 +77,15 @@ function addActionsToStepResult(steps: RecorderSteps, event: StepEndEvent): Test
   };
 }
 
-function onTest(mainWindowEmitter: EventEmitter) {
-  return async function (data: RunJourneyOptions, browserWindow: BrowserWindow) {
-    if (isBrowserRunning) {
+function onTest(browserManager: BrowserManager) {
+  return async function (_event: IpcMainInvokeEvent, data: RunJourneyOptions) {
+    if (browserManager.isRunning()) {
       throw new Error(
         'Cannot start testing a journey, a browser operation is already in progress.'
       );
     }
-    isBrowserRunning = true;
+    // TODO: connect onTest with browserManager and refactor
+    // browserManager.isRunning() = true;
     const parseOrSkip = (chunk: string): Array<Record<string, any>> => {
       // at times stdout ships multiple steps in one chunk, broken by newline,
       // so here we split on the newline
@@ -156,7 +153,8 @@ function onTest(mainWindowEmitter: EventEmitter) {
       }
       return null;
     };
-
+    // TODO: de-deup browserWindow getter
+    const browserWindow = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
     const sendTestEvent = (event: TestEvent) => {
       browserWindow.webContents.send('test-event', event);
     };
@@ -210,7 +208,7 @@ function onTest(mainWindowEmitter: EventEmitter) {
           logger.warn('Unable to abort Synthetics test proceess.');
         }
       }
-      mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
+      // mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
 
       const { stdout, stdin, stderr } = synthCliProcess as ChildProcess;
       if (!isProject) {
@@ -229,7 +227,7 @@ function onTest(mainWindowEmitter: EventEmitter) {
         await rm(filePath, { recursive: true, force: true });
       }
 
-      mainWindowEmitter.removeListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
+      // mainWindowEmitter.removeListener(MainWindowEvent.MAIN_CLOSE, handleMainClose);
     } catch (error: unknown) {
       logger.error(error);
       sendTestEvent({
@@ -245,36 +243,20 @@ function onTest(mainWindowEmitter: EventEmitter) {
           `Attempted to send SIGTERM to synthetics process, but did not receive exit signal. Process ID is ${synthCliProcess.pid}.`
         );
       }
-      isBrowserRunning = false;
+      // isBrowserRunning = false;
     }
   };
 }
 
-async function onExportScript(_event: IpcMainInvokeEvent, code: string) {
-  const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
-  const { filePath, canceled } = await dialog.showSaveDialog(window, {
-    filters: [
-      {
-        name: 'JavaScript',
-        extensions: ['js'],
-      },
-    ],
-    defaultPath: 'recorded.journey.js',
-  });
-
-  if (!canceled && filePath) {
-    await writeFile(filePath, code);
-    return true;
-  }
-  return false;
-}
-
-async function onGenerateCode(data: { isProject: boolean; actions: RecorderSteps }) {
+async function onGenerateCode(
+  _event: IpcMainInvokeEvent,
+  data: { isProject: boolean; actions: RecorderSteps }
+) {
   const generator = new SyntheticsGenerator(data.isProject);
   return generator.generateFromSteps(data.actions);
 }
 
-async function onLinkExternal(url: string) {
+async function onLinkExternal(_event: IpcMainInvokeEvent, url: string) {
   try {
     await shell.openExternal(url);
   } catch (e) {
@@ -297,16 +279,12 @@ export default function setupListeners(mainWindowEmitter: EventEmitter) {
       await browserManager.closeBrowser();
     }
   });
-
   ipcMain.handle('record-journey', onRecordJourneys(browserManager));
+  ipcMain.handle('run-journey', onTest(browserManager));
+  ipcMain.handle('actions-to-code', onGenerateCode);
   ipcMain.handle('export-script', onExportScript);
   ipcMain.handle('set-mode', onSetMode(browserManager));
-  return [
-    // ipc.answerRenderer<RecordJourneyOptions>('record-journey', onRecordJourneys(mainWindowEmitter)),
-    ipc.answerRenderer<RunJourneyOptions>('run-journey', onTest(mainWindowEmitter)),
-    ipc.answerRenderer<GenerateCodeOptions>('actions-to-code', onGenerateCode),
-    // ipc.answerRenderer<string>('save-file', onSaveFile),
-    // ipc.answerRenderer<string>('set-mode', onSetMode),
-    ipc.answerRenderer<string>('link-to-external', onLinkExternal),
-  ];
+  ipcMain.handle('link-to-external', onLinkExternal);
+
+  return () => ipcMain.removeAllListeners();
 }
