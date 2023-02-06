@@ -22,16 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { join, resolve } from 'path';
+import { join } from 'path';
 import { writeFile, rm, mkdir } from 'fs/promises';
 import { ipcMain as ipc } from 'electron-better-ipc';
-import { EventEmitter, once } from 'events';
+import { EventEmitter } from 'events';
 import { dialog, shell, BrowserWindow, ipcMain, IpcMainInvokeEvent } from 'electron';
 import { fork, ChildProcess } from 'child_process';
 import logger from 'electron-log';
 import isDev from 'electron-is-dev';
 import { JOURNEY_DIR, PLAYWRIGHT_BROWSERS_PATH, EXECUTABLE_PATH } from './config';
-import type { BrowserContext } from 'playwright-core';
 import type {
   ActionInContext,
   GenerateCodeOptions,
@@ -42,15 +41,14 @@ import type {
   TestEvent,
 } from '../common/types';
 import { SyntheticsGenerator } from './syntheticsGenerator';
-import { onRecordJourneys, onSetMode } from './api/recordJourney';
+import { browserManager } from './browserManager';
+import { onRecordJourneys, onSetMode } from './api';
 
 const SYNTHETICS_CLI = require.resolve('@elastic/synthetics/dist/cli');
 
 // TODO: setting isBrowserRunning from onRecordJourney is broken
 export enum MainWindowEvent {
   MAIN_CLOSE = 'main-close',
-  BROWSER_STARTED = 'browser-started',
-  BROWSER_STOPPED = 'browser-stopped',
 }
 
 let isBrowserRunning = false;
@@ -252,7 +250,7 @@ function onTest(mainWindowEmitter: EventEmitter) {
   };
 }
 
-async function onExportScript(_event, code: string) {
+async function onExportScript(_event: IpcMainInvokeEvent, code: string) {
   const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
   const { filePath, canceled } = await dialog.showSaveDialog(window, {
     filters: [
@@ -276,7 +274,6 @@ async function onGenerateCode(data: { isProject: boolean; actions: RecorderSteps
   return generator.generateFromSteps(data.actions);
 }
 
-
 async function onLinkExternal(url: string) {
   try {
     await shell.openExternal(url);
@@ -295,9 +292,15 @@ async function onLinkExternal(url: string) {
  * is destroyed or they will leak/block the next window from interacting with top-level app state.
  */
 export default function setupListeners(mainWindowEmitter: EventEmitter) {
-  ipcMain.handle('record-journey', onRecordJourneys(mainWindowEmitter, isBrowserRunning))
+  mainWindowEmitter.once(MainWindowEvent.MAIN_CLOSE, async () => {
+    if (browserManager.isRunning()) {
+      await browserManager.closeBrowser();
+    }
+  });
+
+  ipcMain.handle('record-journey', onRecordJourneys(browserManager));
   ipcMain.handle('export-script', onExportScript);
-  ipcMain.handle('set-mode', onSetMode)
+  ipcMain.handle('set-mode', onSetMode(browserManager));
   return [
     // ipc.answerRenderer<RecordJourneyOptions>('record-journey', onRecordJourneys(mainWindowEmitter)),
     ipc.answerRenderer<RunJourneyOptions>('run-journey', onTest(mainWindowEmitter)),

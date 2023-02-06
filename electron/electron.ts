@@ -51,7 +51,7 @@ async function createWindow() {
     minWidth: 800,
     webPreferences: {
       devTools: isDev || IS_TEST,
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
     },
   });
 

@@ -116,12 +116,14 @@ export type GenerateCodeOptions = {
   isProject: boolean;
 };
 export interface IElectronAPI {
-  exportScript: (string) => Promise<boolean>,
+  exportScript: (string) => Promise<boolean>;
   /* <-- for recordJourney */
-  recordJourney: (url: string) => Promise<void>,
-  stopRecording: () => void,
-  pauseRecording: () => void,
-  resumeRecording: () => void,
-  onActionGenerated: (callback: (event: IpcRendererEvent, actions: ActionContext[]) => void) => (() => void),
+  recordJourney: (url: string) => Promise<void>;
+  stopRecording: () => void;
+  pauseRecording: () => Promise<void>;
+  resumeRecording: () => Promise<void>;
+  onActionGenerated: (
+    callback: (event: IpcRendererEvent, actions: ActionContext[]) => void
+  ) => () => void;
   /* for recordJourney --> */
 }

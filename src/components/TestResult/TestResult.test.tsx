@@ -170,7 +170,6 @@ step('Click save', () => {
     });
     const { getByText, queryByText } = render(<TestResult />, {
       contextOverrides: {
-        // @ts-expect-error partial implementation for testing
         communication: { ipc: { callMain } },
         steps: { steps: [createStep(['Click save'])] },
         test: {

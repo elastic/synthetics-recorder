@@ -21,33 +21,25 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import type { ActionContext, IElectronAPI } from '../common/types';
-import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import { IpcMainInvokeEvent } from 'electron';
+import { BrowserManager } from '../browserManager';
 
-const electronAPI: IElectronAPI = {
-  exportScript: async contents => {
-    return await ipcRenderer.invoke('export-script', contents);
-  },
-  recordJourney: async url => {
-    return await ipcRenderer.invoke('record-journey', url);
-  },
-  stopRecording: async () => {
-    await ipcRenderer.invoke('stop-recording');
-  },
-  pauseRecording: async () => {
-    await ipcRenderer.invoke('set-mode', 'none');
-  },
-  resumeRecording: async () => {
-    await ipcRenderer.invoke('set-mode', 'recording');
-  },
-  onActionGenerated: (
-    callback: (_event: IpcRendererEvent, actions: ActionContext[]) => void
-  ): (() => void) => {
-    ipcRenderer.on('change', callback);
-    return () => {
-      ipcRenderer.removeAllListeners('change');
-    };
-  },
-};
-
-contextBridge.exposeInMainWorld('electronAPI', electronAPI);
+export function onSetMode(browserManager: BrowserManager) {
+  return async function (_event: IpcMainInvokeEvent, mode: string) {
+    const browserContext = browserManager.getContext();
+    if (!browserContext) return;
+    const page = browserContext.pages()[0];
+    if (!page) return;
+    await page.mainFrame().evaluate(
+      ([mode]) => {
+        // `__pw_setMode` is a private function
+        (window as any).__pw_setMode(mode);
+      },
+      [mode]
+    );
+    if (mode !== 'inspecting') return;
+    // TODO: see if deleting code below doesn't have any affects
+    // const [selector] = await once(actionListener, 'selector');
+    // return selector;
+  };
+}

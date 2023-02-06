@@ -82,7 +82,6 @@ export const getToastContextDefaults = (): IToastContext => ({
 });
 
 export const getCommunicationContextDefaults = (): ICommunicationContext => ({
-  // @ts-expect-error partial implementation for testing
   ipc: {
     answerMain: jest.fn(),
     callMain: jest.fn(),

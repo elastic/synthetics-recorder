@@ -21,33 +21,5 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import type { ActionContext, IElectronAPI } from '../common/types';
-import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
-
-const electronAPI: IElectronAPI = {
-  exportScript: async contents => {
-    return await ipcRenderer.invoke('export-script', contents);
-  },
-  recordJourney: async url => {
-    return await ipcRenderer.invoke('record-journey', url);
-  },
-  stopRecording: async () => {
-    await ipcRenderer.invoke('stop-recording');
-  },
-  pauseRecording: async () => {
-    await ipcRenderer.invoke('set-mode', 'none');
-  },
-  resumeRecording: async () => {
-    await ipcRenderer.invoke('set-mode', 'recording');
-  },
-  onActionGenerated: (
-    callback: (_event: IpcRendererEvent, actions: ActionContext[]) => void
-  ): (() => void) => {
-    ipcRenderer.on('change', callback);
-    return () => {
-      ipcRenderer.removeAllListeners('change');
-    };
-  },
-};
-
-contextBridge.exposeInMainWorld('electronAPI', electronAPI);
+export * from './recordJourney';
+export * from './setMode';
