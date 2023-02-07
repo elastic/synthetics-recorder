@@ -24,3 +24,6 @@ THE SOFTWARE.
 export * from './recordJourney';
 export * from './setMode';
 export * from './exportScript';
+export * from './runJourney';
+export * from './openExternalLink';
+export * from './generateCode';

@@ -21,21 +21,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import { IpcMainInvokeEvent } from 'electron';
-import { BrowserManager } from '../browserManager';
+import { IpcMainInvokeEvent, shell } from 'electron';
+import logger from 'electron-log';
 
-export function onSetMode(browserManager: BrowserManager) {
-  return async function (_event: IpcMainInvokeEvent, mode: string) {
-    const browserContext = browserManager.getContext();
-    if (!browserContext) return;
-    const page = browserContext.pages()[0];
-    if (!page) return;
-    await page.mainFrame().evaluate(
-      ([mode]) => {
-        // `__pw_setMode` is a private function
-        (window as any).__pw_setMode(mode);
-      },
-      [mode]
-    );
-  };
+export async function onOpenExternalLink(_event: IpcMainInvokeEvent, url: string) {
+  try {
+    await shell.openExternal(url);
+  } catch (e) {
+    logger.error(e);
+  }
 }

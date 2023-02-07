@@ -58,7 +58,7 @@ const electronAPI: IElectronAPI = {
     return ipcRenderer.invoke('actions-to-code', params);
   },
   openExternalLink: async (url: string) => {
-    await ipcRenderer.invoke('link-to-external', url);
+    await ipcRenderer.invoke('open-external-link', url);
   },
   runTest: async (
     params: RunJourneyOptions,

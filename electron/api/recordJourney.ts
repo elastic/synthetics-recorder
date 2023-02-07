@@ -31,47 +31,43 @@ import logger from 'electron-log';
 import { ActionInContext } from '../../common/types';
 import { BrowserManager } from '../browserManager';
 
-export function onRecordJourneys(browserManager: BrowserManager) {
-  return async function (_event: IpcMainInvokeEvent, url: string) {
-    const browserWindow = BrowserWindow.getFocusedWindow()!;
-    if (browserManager.isRunning()) {
-      throw new Error(
-        'Cannot start recording a journey, a browser operation is already in progress.'
-      );
-    }
+export async function recordJourney(
+  _event: IpcMainInvokeEvent,
+  url: string,
+  browserManager: BrowserManager
+) {
+  const browserWindow = BrowserWindow.getFocusedWindow()!;
+  try {
+    const { browser, context } = await browserManager.launchBrowser();
+    const actionListener = new EventEmitter();
 
-    try {
-      const { browser, context } = await browserManager.launchBrowser();
-      const actionListener = new EventEmitter();
+    ipcMain.handleOnce('stop-recording', async () => {
+      actionListener.removeListener('actions', actionsHandler);
+      await browserManager.closeBrowser();
+    });
 
-      ipcMain.handleOnce('stop-recording', async () => {
-        actionListener.removeListener('actions', actionsHandler);
-        await browserManager.closeBrowser();
-      });
+    // Listen to actions from Playwright recording session
+    const actionsHandler = (actions: ActionInContext[]) => {
+      // ipcMain.callRenderer(browserWindow, 'change', { actions });
+      browserWindow.webContents.send('change', actions);
+    };
+    actionListener.on('actions', actionsHandler);
 
-      // Listen to actions from Playwright recording session
-      const actionsHandler = (actions: ActionInContext[]) => {
-        // ipcMain.callRenderer(browserWindow, 'change', { actions });
-        browserWindow.webContents.send('change', actions);
-      };
-      actionListener.on('actions', actionsHandler);
-
-      // _enableRecorder is private method, not defined in BrowserContext type
-      await (context as any)._enableRecorder({
-        launchOptions: {},
-        contextOptions: {},
-        mode: 'recording',
-        showRecorder: false,
-        actionListener,
-      });
-      await openPage(context, url);
-      await once(browser, 'disconnected');
-    } catch (e) {
-      logger.error(e);
-    } finally {
-      ipcMain.removeHandler('stop-recording');
-    }
-  };
+    // _enableRecorder is private method, not defined in BrowserContext type
+    await (context as any)._enableRecorder({
+      launchOptions: {},
+      contextOptions: {},
+      mode: 'recording',
+      showRecorder: false,
+      actionListener,
+    });
+    await openPage(context, url);
+    await once(browser, 'disconnected');
+  } catch (e) {
+    logger.error(e);
+  } finally {
+    ipcMain.removeHandler('stop-recording');
+  }
 }
 
 async function openPage(context: BrowserContext, url: string) {

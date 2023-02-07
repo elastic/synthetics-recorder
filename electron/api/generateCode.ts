@@ -22,20 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 import { IpcMainInvokeEvent } from 'electron';
-import { BrowserManager } from '../browserManager';
+import { RecorderSteps } from '../../common/types';
+import { SyntheticsGenerator } from '../syntheticsGenerator';
 
-export function onSetMode(browserManager: BrowserManager) {
-  return async function (_event: IpcMainInvokeEvent, mode: string) {
-    const browserContext = browserManager.getContext();
-    if (!browserContext) return;
-    const page = browserContext.pages()[0];
-    if (!page) return;
-    await page.mainFrame().evaluate(
-      ([mode]) => {
-        // `__pw_setMode` is a private function
-        (window as any).__pw_setMode(mode);
-      },
-      [mode]
-    );
-  };
+export async function onGenerateCode(
+  _event: IpcMainInvokeEvent,
+  data: { isProject: boolean; actions: RecorderSteps }
+) {
+  const generator = new SyntheticsGenerator(data.isProject);
+  return generator.generateFromSteps(data.actions);
 }
