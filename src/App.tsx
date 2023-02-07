@@ -91,7 +91,6 @@ export default function App() {
         return generateMergedIR(prevSteps, nextSteps);
       });
     };
-    // ipc.answerMain('change', listener);
     const removeListener = electronAPI.onActionGenerated(listener);
     return removeListener;
   }, [electronAPI, setSteps]);

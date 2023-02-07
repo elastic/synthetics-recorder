@@ -21,12 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import { BrowserWindow, ipcMain, IpcMainInvokeEvent } from 'electron';
-import type { BrowserContext } from 'playwright-core';
-
 import path from 'path';
 import { EventEmitter, once } from 'events';
 import { existsSync } from 'fs';
+import { BrowserWindow, ipcMain, IpcMainInvokeEvent } from 'electron';
+import type { BrowserContext } from 'playwright-core';
 import logger from 'electron-log';
 import { ActionInContext } from '../../common/types';
 import { BrowserManager } from '../browserManager';
@@ -48,7 +47,6 @@ export async function recordJourney(
 
     // Listen to actions from Playwright recording session
     const actionsHandler = (actions: ActionInContext[]) => {
-      // ipcMain.callRenderer(browserWindow, 'change', { actions });
       browserWindow.webContents.send('change', actions);
     };
     actionListener.on('actions', actionsHandler);
