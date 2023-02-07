@@ -117,7 +117,6 @@ export type GenerateCodeOptions = {
 };
 export interface IElectronAPI {
   exportScript: (string) => Promise<boolean>;
-  /* <-- for recordJourney */
   recordJourney: (url: string) => Promise<void>;
   stopRecording: () => void;
   pauseRecording: () => Promise<void>;
@@ -125,13 +124,11 @@ export interface IElectronAPI {
   onActionGenerated: (
     callback: (event: IpcRendererEvent, actions: ActionContext[]) => void
   ) => () => void;
-  /* for recordJourney --> */
   generateCode: (params: GenerateCodeOptions) => Promise<string>;
   openExternalLink: (url: string) => Promise<void>;
-
   runTest: (
     params: RunJourneyOptions,
-    callback: (_event: IpcRendererEvent, data: TestEvent) => void
+    callback: (event: IpcRendererEvent, data: TestEvent) => void
   ) => Promise<void>;
   removeOnTestListener: () => void;
 }

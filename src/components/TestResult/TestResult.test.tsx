@@ -26,7 +26,7 @@ import { fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { createStep } from '../../../common/helper/test/createAction';
 import { render } from '../../helpers/test';
-import { getMockElectronApi } from '../../helpers/test/ipc';
+import { getMockElectronApi } from '../../helpers/test/mockApi';
 import { TestResult } from './TestResult';
 
 describe('TestResult', () => {

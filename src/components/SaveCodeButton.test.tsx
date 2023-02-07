@@ -27,7 +27,7 @@ import { render } from '../helpers/test';
 import { SaveCodeButton } from './SaveCodeButton';
 import { createSteps } from '../../common/helper/test/createAction';
 import { fireEvent, waitFor } from '@testing-library/react';
-import { getMockElectronApi } from '../helpers/test/ipc';
+import { getMockElectronApi } from '../helpers/test/mockApi';
 
 describe('SaveCodeButton', () => {
   it('calls ipc on click', async () => {

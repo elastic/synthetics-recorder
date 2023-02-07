@@ -35,7 +35,7 @@ THE SOFTWARE.
 
 import React from 'react';
 import { act, renderHook } from '@testing-library/react-hooks';
-import { getMockElectronApi } from '../helpers/test/ipc';
+import { getMockElectronApi } from '../helpers/test/mockApi';
 import { TestContextWrapper } from '../helpers/test/render';
 import { useSyntheticsTest } from './useSyntheticsTest';
 import { IElectronAPI, RecorderSteps, Result } from '../../common/types';
