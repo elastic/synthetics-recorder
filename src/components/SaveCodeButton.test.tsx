@@ -28,7 +28,7 @@ import { SaveCodeButton } from './SaveCodeButton';
 import { createSteps } from '../../common/helper/test/createAction';
 import { fireEvent, waitFor } from '@testing-library/react';
 
-describe('<SaveCodeButton />', () => {
+describe('SaveCodeButton', () => {
   it('calls ipc on click', async () => {
     const callMain = jest.fn();
     callMain.mockImplementation(() => 'this would be generated code');

@@ -27,7 +27,7 @@ import { RecordingStatus } from '../../common/types';
 import { HeaderControls } from './HeaderControls';
 import { render } from '../../helpers/test';
 
-describe('<HeaderControls />', () => {
+describe('HeaderControls', () => {
   it('displays start text when not recording', async () => {
     const { getByLabelText } = render(<HeaderControls setIsCodeFlyoutVisible={jest.fn()} />);
 

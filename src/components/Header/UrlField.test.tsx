@@ -27,7 +27,7 @@ import React from 'react';
 import { RecordingStatus } from '../../common/types';
 import { IUrlField, UrlField, URL_FIELD_LABEL } from './UrlField';
 
-describe('<UrlField />', () => {
+describe('UrlField', () => {
   let setUrlMock: jest.Mock;
   let toggleRecordingMock: jest.Mock;
   const TEST_URL = 'https://www.elastic.co';

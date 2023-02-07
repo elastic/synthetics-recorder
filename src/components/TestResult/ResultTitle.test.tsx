@@ -27,7 +27,7 @@ import React from 'react';
 import { render } from '../../helpers/test';
 import { ResultTitle } from './ResultTitle';
 
-describe('<ResultTitle />', () => {
+describe('ResultTitle', () => {
   const titleText = 'Test Result';
   const stepIndex = 1;
   const maxTitleLength = 20;
