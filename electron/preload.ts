@@ -67,7 +67,6 @@ const electronAPI: IElectronAPI = {
     ipcRenderer.on('test-event', callback);
     await ipcRenderer.invoke('run-journey', params);
   },
-
   removeOnTestListener: () => {
     ipcRenderer.removeAllListeners('test-event');
   },
