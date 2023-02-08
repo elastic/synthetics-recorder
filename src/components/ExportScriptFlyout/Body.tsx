@@ -43,6 +43,7 @@ export function Body({ code, exportAsProject, setExportAsProject }: Props) {
       />
       <EuiSpacer />
       <EuiCodeBlock
+        aria-label="Code to export"
         id="export-code-block"
         isCopyable
         language="js"
