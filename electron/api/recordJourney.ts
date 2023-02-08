@@ -47,7 +47,7 @@ export async function recordJourney(
 
     // Listen to actions from Playwright recording session
     const actionsHandler = (actions: ActionInContext[]) => {
-      browserWindow.webContents.send('change', actions);
+      browserWindow.webContents.send('actions-generated', actions);
     };
     actionListener.on('actions', actionsHandler);
 

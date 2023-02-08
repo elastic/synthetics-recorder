@@ -21,14 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import type {
-  ActionContext,
-  GenerateCodeOptions,
-  IElectronAPI,
-  RunJourneyOptions,
-  TestEvent,
-} from '../common/types';
-import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import type { IElectronAPI } from '../common/types';
+import { contextBridge, ipcRenderer } from 'electron';
 
 const electronAPI: IElectronAPI = {
   exportScript: async contents => {
@@ -46,25 +40,20 @@ const electronAPI: IElectronAPI = {
   resumeRecording: async () => {
     await ipcRenderer.invoke('set-mode', 'recording');
   },
-  onActionGenerated: (
-    callback: (_event: IpcRendererEvent, actions: ActionContext[]) => void
-  ): (() => void) => {
-    ipcRenderer.on('change', callback);
+  addActionGeneratedListener: listener => {
+    ipcRenderer.on('actions-generated', listener);
     return () => {
-      ipcRenderer.removeAllListeners('change');
+      ipcRenderer.removeAllListeners('actions-generated');
     };
   },
-  generateCode: async (params: GenerateCodeOptions) => {
+  generateCode: async params => {
     return ipcRenderer.invoke('actions-to-code', params);
   },
-  openExternalLink: async (url: string) => {
+  openExternalLink: async url => {
     await ipcRenderer.invoke('open-external-link', url);
   },
-  runTest: async (
-    params: RunJourneyOptions,
-    callback: (_event: IpcRendererEvent, data: TestEvent) => void
-  ) => {
-    ipcRenderer.on('test-event', callback);
+  runTest: async (params, listener) => {
+    ipcRenderer.on('test-event', listener);
     await ipcRenderer.invoke('run-journey', params);
   },
   removeOnTestListener: () => {

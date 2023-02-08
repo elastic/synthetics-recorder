@@ -31,7 +31,7 @@ export function getMockElectronApi(overrides?: Partial<IElectronAPI>): IElectron
     stopRecording: jest.fn(),
     pauseRecording: jest.fn(),
     resumeRecording: jest.fn(),
-    onActionGenerated: jest.fn(),
+    addActionGeneratedListener: jest.fn(),
     generateCode: jest.fn(),
     openExternalLink: jest.fn(),
     runTest: jest.fn(),

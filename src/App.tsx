@@ -91,7 +91,7 @@ export default function App() {
         return generateMergedIR(prevSteps, nextSteps);
       });
     };
-    const removeListener = electronAPI.onActionGenerated(listener);
+    const removeListener = electronAPI.addActionGeneratedListener(listener);
     return removeListener;
   }, [electronAPI, setSteps]);
 

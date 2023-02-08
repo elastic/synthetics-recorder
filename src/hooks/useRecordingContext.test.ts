@@ -68,8 +68,9 @@ describe('useRecordingContext', () => {
   });
 
   it('should toggle the recording status when toggleRecording is called', async () => {
+    const url = 'https://elastic.co';
     const renderHookResponse = renderHook(() =>
-      useRecordingContext(electronApi, '', 0, setResult, setSteps)
+      useRecordingContext(electronApi, url, 0, setResult, setSteps)
     );
     const recordingContext = renderHookResponse.result.current;
 
@@ -77,7 +78,7 @@ describe('useRecordingContext', () => {
 
     renderHookResponse.rerender();
 
-    expect(recordJourney).toHaveBeenCalledWith('');
+    expect(recordJourney).toHaveBeenCalledWith(url);
   });
 
   it('sets start over modal visible if a step exists', async () => {

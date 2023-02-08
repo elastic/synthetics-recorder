@@ -64,7 +64,6 @@ export function useSyntheticsTest(steps: RecorderSteps): ITestContext {
           dispatch(data);
         };
 
-
         try {
           const promise = electronAPI.runTest(
             {
