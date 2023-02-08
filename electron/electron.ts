@@ -86,7 +86,7 @@ async function createMainWindow() {
   if (BrowserWindow.getAllWindows().length === 0) {
     const mainWindowEmitter = await createWindow();
     const ipcListenerDestructor = setupListeners(mainWindowEmitter);
-    mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, () => ipcListenerDestructor());
+    mainWindowEmitter.addListener(MainWindowEvent.MAIN_CLOSE, ipcListenerDestructor);
     createMenu();
   }
 }
