@@ -22,11 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { IpcRendererEvent } from 'electron';
 import { useCallback, useContext, useEffect, useReducer, useState } from 'react';
 import { getCodeFromActions, getCodeForFailedResult } from '../common/shared';
 import { CommunicationContext } from '../contexts/CommunicationContext';
-import type { RecorderSteps, Result, TestEvent } from '../../common/types';
+import type { RecorderSteps, Result, TestEventListener } from '../../common/types';
 import type { ITestContext } from '../contexts/TestContext';
 import { resultReducer } from '../helpers/resultReducer';
 
@@ -60,7 +59,7 @@ export function useSyntheticsTest(steps: RecorderSteps): ITestContext {
       if (!isTestInProgress) {
         // destroy stale state
         dispatch({ data: undefined, event: 'override' });
-        const onTestEvent = (_event: IpcRendererEvent, data: TestEvent) => {
+        const onTestEventListener: TestEventListener = (_event, data) => {
           dispatch(data);
         };
 
@@ -71,7 +70,7 @@ export function useSyntheticsTest(steps: RecorderSteps): ITestContext {
               code,
               isProject: false,
             },
-            onTestEvent
+            onTestEventListener
           );
           setIsTestInProgress(true);
           setIsResultFlyoutVisible(true);

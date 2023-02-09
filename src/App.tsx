@@ -49,8 +49,7 @@ import { StyledComponentsEuiProvider } from './contexts/StyledComponentsEuiProvi
 import { ExportScriptFlyout } from './components/ExportScriptFlyout';
 import { useRecordingContext } from './hooks/useRecordingContext';
 import { StartOverWarningModal } from './components/StartOverWarningModal';
-import { ActionContext, RecorderSteps, Steps } from '../common/types';
-import type { IpcRendererEvent } from 'electron';
+import { ActionGeneratedListener, RecorderSteps, Steps } from '../common/types';
 
 /**
  * This is the prescribed workaround to some internal EUI issues that occur
@@ -85,7 +84,7 @@ export default function App() {
 
   useEffect(() => {
     // `actions` here is a set of `ActionInContext`s that make up a `Step`
-    const listener = (_event: IpcRendererEvent, actions: ActionContext[]) => {
+    const listener: ActionGeneratedListener = (_event, actions) => {
       setSteps((prevSteps: RecorderSteps) => {
         const nextSteps: Steps = generateIR([{ actions }]);
         return generateMergedIR(prevSteps, nextSteps);
