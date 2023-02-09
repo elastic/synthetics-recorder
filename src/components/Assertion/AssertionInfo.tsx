@@ -52,7 +52,7 @@ const AssertionInfoText = styled(EuiText)`
 
 export function AssertionInfo() {
   const [isInfoPopoverOpen, setIsInfoPopoverOpen] = useState(false);
-  const { ipc } = useContext(CommunicationContext);
+  const { electronAPI } = useContext(CommunicationContext);
   return (
     <EuiPopover
       button={
@@ -79,7 +79,7 @@ export function AssertionInfo() {
           <EuiFlexItem grow={false}>
             <EuiButtonEmpty
               href={PLAYWRIGHT_ASSERTION_DOCS_LINK}
-              onClick={createExternalLinkHandler(ipc, PLAYWRIGHT_ASSERTION_DOCS_LINK)}
+              onClick={createExternalLinkHandler(electronAPI, PLAYWRIGHT_ASSERTION_DOCS_LINK)}
             >
               Read more
             </EuiButtonEmpty>

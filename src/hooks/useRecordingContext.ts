@@ -24,8 +24,7 @@ THE SOFTWARE.
 
 import { useCallback, useState } from 'react';
 import { RecordingStatus, Setter } from '../common/types';
-import { RecorderSteps } from '../../common/types';
-import { RendererProcessIpc } from 'electron-better-ipc';
+import { IElectronAPI, RecorderSteps } from '../../common/types';
 import { IRecordingContext } from '../contexts/RecordingContext';
 
 /**
@@ -37,7 +36,7 @@ import { IRecordingContext } from '../contexts/RecordingContext';
  * @returns state/functions to manage recording.
  */
 export function useRecordingContext(
-  ipc: RendererProcessIpc,
+  electronAPI: IElectronAPI,
   url: string,
   stepCount: number,
   setResult: (data: undefined) => void,
@@ -51,13 +50,13 @@ export function useRecordingContext(
     } else if (recordingStatus === RecordingStatus.Recording) {
       setRecordingStatus(RecordingStatus.NotRecording);
       // Stop browser process
-      ipc.send('stop');
+      electronAPI.stopRecording();
     } else {
       setRecordingStatus(RecordingStatus.Recording);
-      await ipc.callMain('record-journey', { url });
+      await electronAPI.recordJourney(url);
       setRecordingStatus(RecordingStatus.NotRecording);
     }
-  }, [ipc, recordingStatus, stepCount, url]);
+  }, [electronAPI, recordingStatus, stepCount, url]);
 
   const startOver = useCallback(async () => {
     setSteps([]);
@@ -66,18 +65,18 @@ export function useRecordingContext(
       // Depends on the result's context, because when we overwrite
       // a previous journey we need to discard its result status
       setResult(undefined);
-      await ipc.callMain('record-journey', { url });
+      await electronAPI.recordJourney(url);
       setRecordingStatus(RecordingStatus.NotRecording);
     }
-  }, [ipc, recordingStatus, setResult, setSteps, url]);
+  }, [electronAPI, recordingStatus, setResult, setSteps, url]);
 
   const togglePause = async () => {
     if (recordingStatus === RecordingStatus.NotRecording) return;
     if (recordingStatus !== RecordingStatus.Paused) {
       setRecordingStatus(RecordingStatus.Paused);
-      await ipc.callMain('set-mode', 'none');
+      await electronAPI.pauseRecording();
     } else {
-      await ipc.callMain('set-mode', 'recording');
+      await electronAPI.resumeRecording();
       setRecordingStatus(RecordingStatus.Recording);
     }
   };

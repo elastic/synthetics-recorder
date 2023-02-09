@@ -38,7 +38,7 @@ export function TestResult() {
   const { steps } = useContext(StepsContext);
   const { isResultFlyoutVisible, result, setResult, setIsResultFlyoutVisible } =
     useContext(TestContext);
-  const { ipc } = useContext(CommunicationContext);
+  const { electronAPI } = useContext(CommunicationContext);
   const [stepCodeToDisplay, setStepCodeToDisplay] = useState('');
 
   /**
@@ -54,7 +54,7 @@ export function TestResult() {
         return;
       }
 
-      const failedCode = await getCodeFromActions(ipc, [failedStep], 'inline');
+      const failedCode = await getCodeFromActions(electronAPI, [failedStep], 'inline');
       setStepCodeToDisplay(failedCode);
     }
 
@@ -62,7 +62,7 @@ export function TestResult() {
     if (isResultFlyoutVisible && steps.length && result?.failed) {
       fetchCodeForFailure(result);
     }
-  }, [ipc, result, setResult, steps, isResultFlyoutVisible]);
+  }, [electronAPI, result, setResult, steps, isResultFlyoutVisible]);
 
   const maxLineLength = useMemo(
     () => stepCodeToDisplay.split('\n').reduce((prev, cur) => Math.max(prev, cur.length), 0),

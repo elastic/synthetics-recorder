@@ -21,13 +21,33 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import { createContext } from 'react';
-import { IElectronAPI } from '../../common/types';
+import { fork, ChildProcess, ForkOptions } from 'child_process';
+import logger from 'electron-log';
+const SYNTHETICS_CLI = require.resolve('@elastic/synthetics/dist/cli');
 
-export interface ICommunicationContext {
-  electronAPI: IElectronAPI;
+export class SyntheticsManager {
+  protected _cliProcess: ChildProcess | null = null;
+
+  isRunning() {
+    return !!this._cliProcess;
+  }
+
+  /**
+   * Fork the Synthetics CLI with correct browser path and
+   * cwd correctly spawns the process
+   */
+  run(args: string[], options: ForkOptions) {
+    const ps = fork(`${SYNTHETICS_CLI}`, args, options);
+    this._cliProcess = ps;
+    return ps;
+  }
+
+  stop() {
+    if (this._cliProcess && !this._cliProcess.kill()) {
+      logger.warn('Unable to abort Synthetics test process.');
+    }
+    this._cliProcess = null;
+  }
 }
 
-export const CommunicationContext = createContext<ICommunicationContext>({
-  electronAPI: window.electronAPI,
-});
+export const syntheticsManager = new SyntheticsManager();

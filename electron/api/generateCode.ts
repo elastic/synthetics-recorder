@@ -21,13 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import { createContext } from 'react';
-import { IElectronAPI } from '../../common/types';
+import { IpcMainInvokeEvent } from 'electron';
+import { RecorderSteps } from '../../common/types';
+import { SyntheticsGenerator } from '../syntheticsGenerator';
 
-export interface ICommunicationContext {
-  electronAPI: IElectronAPI;
+export async function onGenerateCode(
+  _event: IpcMainInvokeEvent,
+  data: { isProject: boolean; actions: RecorderSteps }
+) {
+  const generator = new SyntheticsGenerator(data.isProject);
+  return generator.generateFromSteps(data.actions);
 }
-
-export const CommunicationContext = createContext<ICommunicationContext>({
-  electronAPI: window.electronAPI,
-});

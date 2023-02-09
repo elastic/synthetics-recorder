@@ -26,7 +26,7 @@ import React from 'react';
 import { fireEvent } from '@testing-library/react';
 import { ExportScriptFlyout } from './Flyout';
 import { render } from '../../helpers/test';
-import { getMockIpc } from '../../helpers/test/ipc';
+import { getMockElectronApi } from '../../helpers/test/mockApi';
 import { createSteps } from '../../../common/helper/test/createAction';
 
 jest.mock('../../common/shared', () => ({
@@ -41,7 +41,7 @@ describe('ExportScriptFlyout', () => {
     const { getByText } = render(<ExportScriptFlyout setVisible={setVisible} steps={steps} />, {
       contextOverrides: {
         communication: {
-          ipc: getMockIpc(),
+          electronAPI: getMockElectronApi(),
         },
       },
     });
@@ -53,7 +53,7 @@ describe('ExportScriptFlyout', () => {
     const { findByText } = render(<ExportScriptFlyout setVisible={setVisible} steps={steps} />, {
       contextOverrides: {
         communication: {
-          ipc: getMockIpc(),
+          electronAPI: getMockElectronApi(),
         },
       },
     });
@@ -65,7 +65,7 @@ describe('ExportScriptFlyout', () => {
     const { getByText } = render(<ExportScriptFlyout setVisible={setVisible} steps={steps} />, {
       contextOverrides: {
         communication: {
-          ipc: getMockIpc(),
+          electronAPI: getMockElectronApi(),
         },
       },
     });
@@ -80,7 +80,7 @@ describe('ExportScriptFlyout', () => {
       {
         contextOverrides: {
           communication: {
-            ipc: getMockIpc(),
+            electronAPI: getMockElectronApi(),
           },
         },
       }

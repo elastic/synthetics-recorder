@@ -35,12 +35,12 @@ interface ISaveCodeButton {
 }
 
 export function SaveCodeButton({ type }: ISaveCodeButton) {
-  const { ipc } = useContext(CommunicationContext);
+  const { electronAPI } = useContext(CommunicationContext);
   const { steps } = useContext(StepsContext);
   const { sendToast } = useContext(ToastContext);
   const onSave = async () => {
-    const codeFromActions = await getCodeFromActions(ipc, steps, type);
-    const exported = await ipc.callMain('save-file', codeFromActions);
+    const codeFromActions = await getCodeFromActions(electronAPI, steps, type);
+    const exported = await electronAPI.exportScript(codeFromActions);
     if (exported) {
       sendToast({
         id: `file-export-${new Date().valueOf()}`,

@@ -44,7 +44,7 @@ const LARGE_FLYOUT_SIZE_LINE_LENGTH = 100;
 
 export function ExportScriptFlyout({ setVisible, steps }: IExportScriptFlyout) {
   const [code, setCode] = useState('');
-  const { ipc } = useContext(CommunicationContext);
+  const { electronAPI } = useContext(CommunicationContext);
   const [exportAsProject, setExportAsProject] = useState(false);
 
   const type: JourneyType = exportAsProject ? 'project' : 'inline';
@@ -57,10 +57,10 @@ export function ExportScriptFlyout({ setVisible, steps }: IExportScriptFlyout) {
 
   useEffect(() => {
     (async function getCode() {
-      const codeFromActions = await getCodeFromActions(ipc, steps, type);
+      const codeFromActions = await getCodeFromActions(electronAPI, steps, type);
       setCode(codeFromActions);
     })();
-  }, [ipc, steps, setCode, type]);
+  }, [electronAPI, steps, setCode, type]);
 
   return (
     <EuiFlyout

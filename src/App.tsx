@@ -49,7 +49,7 @@ import { StyledComponentsEuiProvider } from './contexts/StyledComponentsEuiProvi
 import { ExportScriptFlyout } from './components/ExportScriptFlyout';
 import { useRecordingContext } from './hooks/useRecordingContext';
 import { StartOverWarningModal } from './components/StartOverWarningModal';
-import { ActionContext, RecorderSteps, Steps } from '../common/types';
+import { ActionGeneratedListener, RecorderSteps, Steps } from '../common/types';
 
 /**
  * This is the prescribed workaround to some internal EUI issues that occur
@@ -65,12 +65,12 @@ export default function App() {
   const [url, setUrl] = useState('');
   const [isCodeFlyoutVisible, setIsCodeFlyoutVisible] = useState(false);
 
-  const { ipc } = useContext(CommunicationContext);
+  const { electronAPI } = useContext(CommunicationContext);
   const stepsContextUtils = useStepsContext();
   const { steps, setSteps } = stepsContextUtils;
   const syntheticsTestUtils = useSyntheticsTest(steps);
   const recordingContextUtils = useRecordingContext(
-    ipc,
+    electronAPI,
     url,
     steps.length,
     syntheticsTestUtils.setResult,
@@ -84,17 +84,15 @@ export default function App() {
 
   useEffect(() => {
     // `actions` here is a set of `ActionInContext`s that make up a `Step`
-    const listener = ({ actions }: { actions: ActionContext[] }) => {
+    const listener: ActionGeneratedListener = (_event, actions) => {
       setSteps((prevSteps: RecorderSteps) => {
         const nextSteps: Steps = generateIR([{ actions }]);
         return generateMergedIR(prevSteps, nextSteps);
       });
     };
-    ipc.answerMain('change', listener);
-    return () => {
-      ipc.removeListener('change', listener);
-    };
-  }, [ipc, setSteps]);
+    const removeListener = electronAPI.addActionGeneratedListener(listener);
+    return removeListener;
+  }, [electronAPI, setSteps]);
 
   return (
     <EuiProvider cache={cache} colorMode="light">

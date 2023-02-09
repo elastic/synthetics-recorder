@@ -37,32 +37,30 @@ THE SOFTWARE.
  */
 
 import { act, renderHook } from '@testing-library/react-hooks';
-import { RendererProcessIpc } from 'electron-better-ipc';
-import { RecorderSteps } from '../../common/types';
+import { IElectronAPI, RecorderSteps } from '../../common/types';
 import { RecordingStatus, Setter } from '../common/types';
-import { getMockIpc } from '../helpers/test/ipc';
+import { getMockElectronApi } from '../helpers/test/mockApi';
 import { useRecordingContext } from './useRecordingContext';
 
 describe('useRecordingContext', () => {
-  let ipc: RendererProcessIpc;
+  let electronApi: IElectronAPI;
   let setResult: (data: undefined) => void;
   let setSteps: Setter<RecorderSteps>;
-  let callMainMock: jest.Mock;
-  let sendMock: jest.Mock;
+  let recordJourney: jest.Mock;
 
   beforeEach(() => {
-    callMainMock = jest.fn();
-    sendMock = jest.fn();
-    ipc = getMockIpc({
-      callMain: callMainMock,
-      send: sendMock,
+    recordJourney = jest.fn();
+    electronApi = getMockElectronApi({
+      recordJourney,
     });
     setResult = jest.fn();
     setSteps = jest.fn();
   });
 
   it('should initialize the recording context with the correct initial state', () => {
-    const { result } = renderHook(() => useRecordingContext(ipc, '', 0, setResult, setSteps));
+    const { result } = renderHook(() =>
+      useRecordingContext(electronApi, '', 0, setResult, setSteps)
+    );
     const recordingContext = result.current;
 
     expect(recordingContext.recordingStatus).toEqual(RecordingStatus.NotRecording);
@@ -70,8 +68,9 @@ describe('useRecordingContext', () => {
   });
 
   it('should toggle the recording status when toggleRecording is called', async () => {
+    const url = 'https://elastic.co';
     const renderHookResponse = renderHook(() =>
-      useRecordingContext(ipc, '', 0, setResult, setSteps)
+      useRecordingContext(electronApi, url, 0, setResult, setSteps)
     );
     const recordingContext = renderHookResponse.result.current;
 
@@ -79,12 +78,12 @@ describe('useRecordingContext', () => {
 
     renderHookResponse.rerender();
 
-    expect(callMainMock).toHaveBeenCalledWith('record-journey', { url: '' });
+    expect(recordJourney).toHaveBeenCalledWith(url);
   });
 
   it('sets start over modal visible if a step exists', async () => {
     const renderHookResponse = renderHook(() =>
-      useRecordingContext(ipc, '', 1, setResult, setSteps)
+      useRecordingContext(electronApi, '', 1, setResult, setSteps)
     );
     const recordingContext = renderHookResponse.result.current;
 
@@ -97,7 +96,7 @@ describe('useRecordingContext', () => {
 
   it('startOver resets steps and runs a new recording session', async () => {
     const renderHookResponse = renderHook(() =>
-      useRecordingContext(ipc, 'https://test.com', 1, setResult, setSteps)
+      useRecordingContext(electronApi, 'https://test.com', 1, setResult, setSteps)
     );
     const recordingContext = renderHookResponse.result.current;
 
@@ -105,13 +104,13 @@ describe('useRecordingContext', () => {
 
     renderHookResponse.rerender();
 
-    expect(callMainMock).toHaveBeenCalledWith('record-journey', { url: 'https://test.com' });
+    expect(recordJourney).toHaveBeenCalledWith('https://test.com');
     expect(setSteps).toHaveBeenCalledWith([]);
   });
 
   it('togglePause does nothing when not recording', async () => {
     const renderHookResponse = renderHook(() =>
-      useRecordingContext(ipc, 'https://test.com', 1, setResult, setSteps)
+      useRecordingContext(electronApi, 'https://test.com', 1, setResult, setSteps)
     );
     const recordingContext = renderHookResponse.result.current;
 
@@ -119,6 +118,6 @@ describe('useRecordingContext', () => {
 
     renderHookResponse.rerender();
 
-    expect(callMainMock).not.toHaveBeenCalled();
+    expect(recordJourney).not.toHaveBeenCalled();
   });
 });

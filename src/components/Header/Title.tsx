@@ -36,7 +36,7 @@ import { createExternalLinkHandler, SYNTHETICS_DISCUSS_FORUM_URL } from '../../c
 import { CommunicationContext } from '../../contexts/CommunicationContext';
 
 export function Title() {
-  const { ipc } = useContext(CommunicationContext);
+  const { electronAPI } = useContext(CommunicationContext);
   const euiTheme = useContext(EuiThemeContext);
 
   return (
@@ -72,7 +72,7 @@ export function Title() {
             iconSide="left"
             iconType="popout"
             key="link-to-synthetics-help"
-            onClick={createExternalLinkHandler(ipc, SYNTHETICS_DISCUSS_FORUM_URL)}
+            onClick={createExternalLinkHandler(electronAPI, SYNTHETICS_DISCUSS_FORUM_URL)}
           >
             Send feedback
           </EuiButtonEmpty>

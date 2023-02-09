@@ -115,3 +115,18 @@ export type GenerateCodeOptions = {
   actions: Steps;
   isProject: boolean;
 };
+
+export type ActionGeneratedListener = (event: IpcRendererEvent, actions: ActionContext[]) => void;
+export type TestEventListener = (event: IpcRendererEvent, data: TestEvent) => void;
+export interface IElectronAPI {
+  exportScript: (string) => Promise<boolean>;
+  recordJourney: (url: string) => Promise<void>;
+  stopRecording: () => void;
+  pauseRecording: () => Promise<void>;
+  resumeRecording: () => Promise<void>;
+  addActionGeneratedListener(listener: ActionGeneratedListener): () => void;
+  generateCode: (params: GenerateCodeOptions) => Promise<string>;
+  openExternalLink: (url: string) => Promise<void>;
+  runTest: (params: RunJourneyOptions, listener: TestEventListener) => Promise<void>;
+  removeOnTestListener: () => void;
+}

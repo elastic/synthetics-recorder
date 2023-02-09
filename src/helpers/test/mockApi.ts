@@ -21,13 +21,21 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import { createContext } from 'react';
-import { IElectronAPI } from '../../common/types';
 
-export interface ICommunicationContext {
-  electronAPI: IElectronAPI;
+import { IElectronAPI } from '../../../common/types';
+
+export function getMockElectronApi(overrides?: Partial<IElectronAPI>): IElectronAPI {
+  return {
+    exportScript: jest.fn(),
+    recordJourney: jest.fn(),
+    stopRecording: jest.fn(),
+    pauseRecording: jest.fn(),
+    resumeRecording: jest.fn(),
+    addActionGeneratedListener: jest.fn(),
+    generateCode: jest.fn(),
+    openExternalLink: jest.fn(),
+    runTest: jest.fn(),
+    removeOnTestListener: jest.fn(),
+    ...overrides,
+  };
 }
-
-export const CommunicationContext = createContext<ICommunicationContext>({
-  electronAPI: window.electronAPI,
-});

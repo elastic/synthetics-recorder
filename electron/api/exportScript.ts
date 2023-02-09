@@ -21,13 +21,24 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import { createContext } from 'react';
-import { IElectronAPI } from '../../common/types';
+import { BrowserWindow, dialog, IpcMainInvokeEvent } from 'electron';
+import { writeFile } from 'fs/promises';
 
-export interface ICommunicationContext {
-  electronAPI: IElectronAPI;
+export async function onExportScript(_event: IpcMainInvokeEvent, code: string) {
+  const window = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
+  const { filePath, canceled } = await dialog.showSaveDialog(window, {
+    filters: [
+      {
+        name: 'JavaScript',
+        extensions: ['js'],
+      },
+    ],
+    defaultPath: 'recorded.journey.js',
+  });
+
+  if (!canceled && filePath) {
+    await writeFile(filePath, code);
+    return true;
+  }
+  return false;
 }
-
-export const CommunicationContext = createContext<ICommunicationContext>({
-  electronAPI: window.electronAPI,
-});

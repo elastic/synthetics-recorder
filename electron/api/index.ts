@@ -21,13 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import { createContext } from 'react';
-import { IElectronAPI } from '../../common/types';
-
-export interface ICommunicationContext {
-  electronAPI: IElectronAPI;
-}
-
-export const CommunicationContext = createContext<ICommunicationContext>({
-  electronAPI: window.electronAPI,
-});
+export * from './recordJourney';
+export * from './setMode';
+export * from './exportScript';
+export * from './runJourney';
+export * from './openExternalLink';
+export * from './generateCode';

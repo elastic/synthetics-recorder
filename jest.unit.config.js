@@ -38,7 +38,6 @@ module.exports = {
       coveragePathIgnorePatterns: ['.test.ts', '.test.js', '.test.tsx', '.test.jsx'],
       testEnvironment: 'jsdom',
       testMatch: ['**/?(*.)+(spec|test).[tj]sx'],
-      setupFilesAfterEnv: ['./jest.unit.setup.js'],
       testPathIgnorePatterns: [`node_modules`, `\\.cache`, `e2e`, `build`],
       resolver: `./tests/common/resolver.js`,
     },

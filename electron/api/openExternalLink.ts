@@ -21,34 +21,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+import { IpcMainInvokeEvent, shell } from 'electron';
+import logger from 'electron-log';
 
-import type { RendererProcessIpc } from 'electron-better-ipc';
-
-export function getMockIpc(overrides?: Partial<RendererProcessIpc>): RendererProcessIpc {
-  return {
-    addListener: jest.fn(),
-    answerMain: jest.fn(),
-    callMain: jest.fn(),
-    emit: jest.fn(),
-    eventNames: jest.fn(),
-    getMaxListeners: jest.fn(),
-    invoke: jest.fn(),
-    listenerCount: jest.fn(),
-    listeners: jest.fn(),
-    off: jest.fn(),
-    on: jest.fn(),
-    once: jest.fn(),
-    postMessage: jest.fn(),
-    prependListener: jest.fn(),
-    prependOnceListener: jest.fn(),
-    rawListeners: jest.fn(),
-    removeAllListeners: jest.fn(),
-    removeListener: jest.fn(),
-    send: jest.fn(),
-    sendSync: jest.fn(),
-    sendTo: jest.fn(),
-    sendToHost: jest.fn(),
-    setMaxListeners: jest.fn(),
-    ...overrides,
-  };
+export async function onOpenExternalLink(_event: IpcMainInvokeEvent, url: string) {
+  try {
+    await shell.openExternal(url);
+  } catch (e) {
+    logger.error(e);
+  }
 }
