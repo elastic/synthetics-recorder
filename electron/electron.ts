@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 import path from 'path';
-import { app, BrowserWindow, Menu } from 'electron';
+import { app, BrowserWindow, globalShortcut, Menu, webContents } from 'electron';
 import isDev from 'electron-is-dev';
 import unhandled from 'electron-unhandled';
 import debug from 'electron-debug';
@@ -41,6 +41,7 @@ const BUILD_DIR = path.join(__dirname, '..', '..', 'build');
 // so we must access the process env directly
 const IS_TEST = process.env.NODE_ENV === 'test';
 const TEST_PORT = process.env.TEST_PORT;
+const isMac = process.platform === 'darwin';
 
 async function createWindow() {
   const mainWindowEmitter = new EventEmitter();
@@ -78,7 +79,7 @@ async function initMainWindow() {
 }
 
 function createMenu() {
-  const menuTemplate = buildMenu(app.name, initMainWindow);
+  const menuTemplate = buildMenu(app.name);
   Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
 }
 
@@ -91,10 +92,10 @@ async function createMainWindow() {
   }
 }
 app.setName('Elastic Synthetics Recorder');
-app.on('activate', createMainWindow);
+app.on('activate', createWindow);
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+  if (!isMac) {
     app.quit();
   }
 });
@@ -102,5 +103,10 @@ app.on('window-all-closed', () => {
 // kick off the main process when electron is ready
 (async function () {
   await app.whenReady();
-  return createMainWindow();
+  createMainWindow();
+  if (isMac) {
+    globalShortcut.register('CommandOrControl+N', async () => {
+      await createWindow();
+    });
+  }
 })();
