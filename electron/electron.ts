@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 import path from 'path';
-import { app, BrowserWindow, globalShortcut, Menu, webContents } from 'electron';
+import { app, BrowserWindow, globalShortcut, Menu } from 'electron';
 import isDev from 'electron-is-dev';
 import unhandled from 'electron-unhandled';
 import debug from 'electron-debug';
@@ -92,7 +92,7 @@ async function createMainWindow() {
   }
 }
 app.setName('Elastic Synthetics Recorder');
-app.on('activate', createWindow);
+app.on('activate', createMainWindow);
 
 app.on('window-all-closed', () => {
   if (!isMac) {
@@ -106,7 +106,7 @@ app.on('window-all-closed', () => {
   createMainWindow();
   if (isMac) {
     globalShortcut.register('CommandOrControl+N', async () => {
-      await createWindow();
+      await initMainWindow();
     });
   }
 })();
