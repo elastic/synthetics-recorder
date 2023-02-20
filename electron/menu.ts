@@ -27,21 +27,12 @@ import path from 'path';
 import { BrowserWindow, shell } from 'electron';
 import isDev from 'electron-is-dev';
 
-export function buildMenu(appName: string, initMain: () => void): MenuItemConstructorOptions[] {
-  return [
+export function buildMenu(appName: string): MenuItemConstructorOptions[] {
+  const isMac = process.platform === 'darwin';
+  const template: MenuItemConstructorOptions[] = [
     {
-      label: appName,
-      submenu: [
-        { role: 'about' },
-        { type: 'separator' },
-        { role: 'services', submenu: [] },
-        { type: 'separator' },
-        { role: 'hide' },
-        { role: 'hideOthers' },
-        { role: 'unhide' },
-        { type: 'separator' },
-        { role: 'quit' },
-      ],
+      label: 'File',
+      submenu: [isMac ? { role: 'close' } : { role: 'quit' }],
     },
     {
       label: 'Edit',
@@ -62,18 +53,8 @@ export function buildMenu(appName: string, initMain: () => void): MenuItemConstr
     },
     {
       role: 'window',
-      submenu: [
-        {
-          label: 'New Main Window',
-          accelerator: 'CommandOrControl+N',
-          click: initMain,
-        },
-        { role: 'close' },
-        { role: 'minimize' },
-        { role: 'zoom' },
-        { type: 'separator' },
-        { role: 'front' },
-      ],
+      label: 'Window',
+      submenu: [{ role: 'minimize' }, { role: 'zoom' }, { type: 'separator' }, { role: 'front' }],
     },
     {
       role: 'help',
@@ -95,6 +76,26 @@ export function buildMenu(appName: string, initMain: () => void): MenuItemConstr
       ],
     },
   ];
+
+  if (isMac) {
+    template.unshift({
+      role: 'appMenu',
+      label: appName,
+      submenu: [
+        { role: 'about' },
+        { type: 'separator' },
+        { role: 'services', submenu: [] },
+        { type: 'separator' },
+        { role: 'hide' },
+        { role: 'hideOthers' },
+        { role: 'unhide' },
+        { type: 'separator' },
+        { role: 'quit' },
+      ],
+    });
+  }
+
+  return template;
 }
 
 async function showNotice() {
