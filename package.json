@@ -75,7 +75,7 @@
     "react-test-renderer": "^17.0.2",
     "ts-jest": "^28.0.6",
     "ts-unused-exports": "^8.0.0",
-    "undici": "^5.16.0",
+    "undici": "^5.19.1",
     "wait-on": "^6.0.1"
   },
   "dependencies": {
