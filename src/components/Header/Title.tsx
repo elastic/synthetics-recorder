@@ -43,10 +43,11 @@ export function Title() {
     <EuiPageHeader
       style={{
         backgroundColor: euiTheme.colors.emptyShade,
-        padding: 4,
+        borderBottom: euiTheme.border.thin,
+        paddingLeft: 4,
+        paddingRight: 4,
         boxShadow: `0px 2px ${euiTheme.colors.lightestShade}`,
       }}
-      bottomBorder
       paddingSize="xs"
     >
       <EuiFlexGroup alignItems="center" gutterSize="s" justifyContent="spaceBetween">
@@ -64,7 +65,7 @@ export function Title() {
           </h1>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
-          <EuiBetaBadge label="BETA" />
+          <EuiBetaBadge alignment="middle" label="BETA" />
         </EuiFlexItem>
         <EuiFlexItem />
         <EuiFlexItem grow={false}>
