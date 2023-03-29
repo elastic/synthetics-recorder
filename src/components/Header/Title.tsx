@@ -47,6 +47,7 @@ export function Title() {
         boxShadow: `0px 2px ${euiTheme.colors.lightestShade}`,
       }}
       bottomBorder
+      paddingSize="xs"
     >
       <EuiFlexGroup alignItems="center" gutterSize="s" justifyContent="spaceBetween">
         <EuiFlexItem grow={false}>
