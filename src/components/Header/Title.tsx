@@ -23,7 +23,6 @@ THE SOFTWARE.
 */
 
 import {
-  EuiBetaBadge,
   EuiButtonEmpty,
   EuiFlexGroup,
   EuiFlexItem,
@@ -63,9 +62,6 @@ export function Title() {
           >
             Elastic Synthetics Recorder
           </h1>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiBetaBadge alignment="middle" label="BETA" />
         </EuiFlexItem>
         <EuiFlexItem />
         <EuiFlexItem grow={false}>
