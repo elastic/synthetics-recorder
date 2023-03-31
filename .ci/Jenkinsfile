@@ -24,9 +24,6 @@ pipeline {
     rateLimitBuilds(throttle: [count: 60, durationName: 'hour', userBoost: true])
     quietPeriod(10)
   }
-  triggers {
-    issueCommentTrigger("(${obltGitHubComments()}|^/test all)")
-  }
   stages {
     stage('Checkout') {
       options { skipDefaultCheckout() }
@@ -38,9 +35,6 @@ pipeline {
         deleteDir()
         gitCheckout(basedir: "${BASE_DIR}", githubNotifyFirstTimeContributor: true)
         stash(allowEmpty: true, name: 'source', useDefaultExcludes: false)
-        dir("${BASE_DIR}") {
-          setEnvVar('DOCKER_CHANGES', isGitRegionMatch(patterns: [ '^e2e/Dockerfile.jenkins' ], shouldMatchAll: false).toString())
-        }
       }
     }
     stage('Release') {
@@ -99,7 +93,7 @@ pipeline {
             unstash('exe')
             withAzureSigningCreds {
               dir("${env.DIST_FOLDER}") {
-                getFirstExeFileName()                
+                getFirstExeFileName()
                 bat(label: 'ACS signing', script: "${env.WORKSPACE}\\${BASE_DIR_WIN}\\.ci\\scripts\\acs-signing.bat ${env.WORKSPACE}\\${env.DIST_FOLDER}\\${env.EXE_FILE_NAME}")
                 stash(includes: "${env.EXE_FILE_NAME}", name: 'signed_exe', allowEmpty: false)
               }
@@ -155,15 +149,6 @@ pipeline {
       }
     }
   }
-  post {
-    cleanup {
-      // Reporting disables in the `internal-ci` since credentials are not in place
-      // OTOH it avoids duplicated notifications
-      whenFalse(isInternalCI()){
-        notifyBuildResult(prComment: true)
-      }
-    }
-  }
 }
 
 def notifyStatus(def args = [:]) {
@@ -182,7 +167,7 @@ def downloadSignedBinaries() {
                         pathPrefix: "${env.BUCKET_SUBFOLDER_SIGNED_ARTIFACTS}")
   dir("${env.DIST_FOLDER}") {
     unstash 'signed_exe'
-  }                      
+  }
   archiveArtifacts(allowEmptyArchive: false, artifacts: "${DIST_FOLDER}/*.*")
 }
 
@@ -222,18 +207,18 @@ def withAzureSigningCreds(Closure body) {
   if (!vault.containsKey('vault_secret_id') || !vault.containsKey('vault_role_id') || !vault.containsKey('vault_addr')) {
     error("withAzureSigningCreds: ${syntheticsRecorderWindowsVault} secert must contain vault_secret_id, vault_role_id and vault_addr entries")
   }
-  def token = getVaultSecret.getVaultToken(vault.vault_addr, vault.vault_role_id, vault.vault_secret_id)  
+  def token = getVaultSecret.getVaultToken(vault.vault_addr, vault.vault_role_id, vault.vault_secret_id)
   def cloudHsmPath = 'secret/release/cloud-hsm'
   def azureSecrets = getVaultSecret.getVaultSecretObject(vault.vault_addr, cloudHsmPath, token).data
   if (!azureSecrets.containsKey('azure-tenant-id') || !azureSecrets.containsKey('azure-client-id') || !azureSecrets.containsKey('azure-client-secret')) {
     error("withAzureSigningCreds: ${cloudHsmPath} must contain azure-tenant-id, azure-client-id and azure-client-secret entries")
   }
-  
+
   withEnvMask(vars: [
     [var: "AZURE_TENANT_ID", password: azureSecrets['azure-tenant-id']],
     [var: "AZURE_CLIENT_ID", password: azureSecrets['azure-client-id']],
     [var: "AZURE_CLIENT_SECRET", password: azureSecrets['azure-client-secret']]
-    ]) {        
+    ]) {
       body()
   }
 }
