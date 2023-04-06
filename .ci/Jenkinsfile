@@ -201,7 +201,7 @@ def runReleaseWithKeychain() {
     error("runReleaseWithKeychain: macos secret could not be accessed correctly")
   }
   def token = getVaultSecret.getVaultToken(vault.vault_addr, vault.vault_role_id, vault.vault_secret_id)
-  def apple = getVaultSecret.getVaultSecretObject(vault.vault_addr, 'secret/release/apple', token).data
+  def apple = getVaultSecret.getVaultSecretObject(vault.vault_addr, 'secret/release/apple-2023', token).data
   if (!apple.containsKey('keychain-password') || !apple.containsKey('username') || !apple.containsKey('app-specific-password')) {
     error("runReleaseWithKeychain: apple secret must contain username, app-specific-password")
   }
