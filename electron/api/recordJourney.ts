@@ -25,7 +25,7 @@ import path from 'path';
 import { EventEmitter, once } from 'events';
 import { existsSync } from 'fs';
 import { BrowserWindow, ipcMain, IpcMainInvokeEvent } from 'electron';
-import type { BrowserContext } from 'playwright-core';
+import type { BrowserContext } from 'playwright';
 import logger from 'electron-log';
 import { ActionInContext } from '../../common/types';
 import { BrowserManager } from '../browserManager';
