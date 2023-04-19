@@ -38,8 +38,8 @@ import { UrlField } from './UrlField';
 const Header = styled(EuiFlexGroup)`
   background-color: ${props => props.theme.colors.emptyShade};
   border-bottom: ${props => props.theme.border.thin};
+  padding: 65px 16px 16px 16px;
   margin: 0px;
-  padding: 16px;
 `;
 
 const TestButtonDivider = styled(EuiFlexItem)`
