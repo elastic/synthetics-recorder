@@ -35,6 +35,7 @@ export class ElectronServiceFactory {
     if (this.#instance) return this.#instance;
 
     try {
+      console.log('launching an electron application');
       this.#instance = await _electron.launch({
         args: [
           path.join(__dirname, '..', '..', 'build', 'electron', 'electron.js'),
@@ -43,7 +44,7 @@ export class ElectronServiceFactory {
         ],
         env: {
           DISPLAY: env.DISPLAY,
-          TEST_PORT: env.TEST_PORT,
+          TEST_PORT: env.TEST_PORT ?? '61337',
           PW_DEBUG: 'console',
           NODE_ENV: process.env.NODE_ENV,
         },
@@ -62,11 +63,28 @@ export class ElectronServiceFactory {
     return this.#instance.firstWindow();
   }
 
+  async closeAllWindows() {
+    const instance = await this.getInstance();
+    for (const window of instance.windows()) {
+      await window.close();
+    }
+  }
+
   async terminate() {
+    console.log('in terminate function');
     if (!this.#instance) return;
+    console.log('got past the falsey check');
     await TestBrowserService.closeRemoteBrowser();
+    console.log('got past the remote browser call');
+    // for (const window of this.#instance.windows()) {
+    //   console.log('closing a window');
+    //   await window.close();
+    // }
+    // await this.#instance.context().close()
+
     await this.#instance.close();
-    this.#instance = null;
+    console.log('got past the instance close');
+    // this.#instance = null;
   }
 
   async enterTestUrl(testUrl: string) {

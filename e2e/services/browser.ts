@@ -98,12 +98,11 @@ export class TestBrowserService {
     // when `start` button is not clicked for the test case, terminate call will hang
     // because the recording browser isn't started but we try to connect to it with loop
     if (TestBrowserService.#remoteBrowser == null) return;
-    const browser = await TestBrowserService.getRemoteBrowser(connectParams);
-    const ctxs = await browser.contexts();
+    const ctxs = await TestBrowserService.#remoteBrowser.contexts();
     for (const ctx of ctxs) {
       await ctx.close();
     }
-    await browser.close();
+    await TestBrowserService.#remoteBrowser.close();
     // it tries to use previous test's connection if we don't assign null to it
     TestBrowserService.#remoteBrowser = null;
     // with this timeout, it will make sure the browser to be closed before terminating electron (it's an issue to mac).

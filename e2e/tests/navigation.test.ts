@@ -59,5 +59,6 @@ describe('Navigation', () => {
     expect(await electronWindow.$('text=Step 1')).toBeTruthy();
     expect(await electronWindow.$(`text=navigate ${env.DEMO_APP_URL}`)).toBeTruthy();
     expect(await electronWindow.$(`text=navigate ${url}`)).toBeTruthy();
+    await electronService.clickStopRecording();
   });
 });

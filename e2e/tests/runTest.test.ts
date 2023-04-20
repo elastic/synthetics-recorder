@@ -54,6 +54,7 @@ describe('Run test', () => {
       const testButton = await electronWindow.$(`[aria-label="Test"]`);
       expect(testButton).toBeTruthy();
       expect(await testButton.isEnabled()).toBeFalsy();
+      await electronService.clickStopRecording();
     });
   });
 
