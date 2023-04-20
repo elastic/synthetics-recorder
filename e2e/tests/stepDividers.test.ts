@@ -67,6 +67,10 @@ describe('Step Divider', () => {
     await electronService.navigateRecordingBrowser(url);
     await electronService.recordClick('text=Hello Elastic Synthetics Recorder');
 
+    const page = await electronService.getWindow();
+    await page.getByText('Hello Elastic Synthetics Recorder').waitFor();
+    await electronService.clickStopRecording();
+
     await (await electronWindow.$('id=insert-divider-0-1')).click();
     await (await electronWindow.$('id=step-1')).hover();
     await electronWindow.mouse.down();
@@ -90,6 +94,10 @@ describe('Step Divider', () => {
     await electronService.navigateRecordingBrowser(url);
     await electronService.waitForPageToBeIdle();
     await electronService.recordClick('text=Hello Elastic Synthetics Recorder');
+
+    const page = await electronService.getWindow();
+    await page.getByText('Hello Elastic Synthetics Recorder').waitFor();
+    await electronService.clickStopRecording();
 
     await (await electronWindow.$('id=insert-divider-0-1')).click();
     await (await electronWindow.$('id=step-1')).hover();
