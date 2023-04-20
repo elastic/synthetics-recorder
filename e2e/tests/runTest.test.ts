@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import { Page } from 'playwright';
 import { ElectronServiceFactory, env } from '../services';
 
 let electronService;
@@ -37,10 +38,10 @@ afterEach(async () => {
 describe('Run test', () => {
   describe('Test Button', () => {
     it('is disabled when scripts are not recorded', async () => {
-      const electronWindow = await electronService.getWindow();
+      const electronWindow: Page = await electronService.getWindow();
 
-      const testButton = await electronWindow.$(`[aria-label="Test"]`);
-      expect(testButton).toBeTruthy();
+      const testButton = await electronWindow.getByLabel('Test');
+      expect(await testButton.count()).toBe(1);
       expect(await testButton.isEnabled()).toBeFalsy();
     });
 

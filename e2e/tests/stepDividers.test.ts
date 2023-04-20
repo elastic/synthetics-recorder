@@ -31,11 +31,8 @@ let hostname: string;
 let port: number;
 let url: string;
 
-beforeAll(() => {
-  electronService = new ElectronServiceFactory();
-});
-
 beforeEach(() => {
+  electronService = new ElectronServiceFactory();
   const { server: s, hostname: h, port: p } = createTestHttpServer();
   server = s;
   hostname = h;
@@ -43,16 +40,10 @@ beforeEach(() => {
   url = `http://${hostname}:${port}`;
 });
 
-afterEach(() => {
-  console.log('i am in the after each hook');
-  server.close();
-  electronService.closeAllWindows();
-});
-
-afterAll(async () => {
-  console.log('server has closed');
+afterEach(async () => {
+  await server.close();
+  await electronService.closeAllWindows();
   await electronService.terminate();
-  console.log('electron service has termianted');
 });
 
 function getCoordinates({
@@ -82,8 +73,12 @@ describe('Step Divider', () => {
     await page.getByText('Hello Elastic Synthetics Recorder').waitFor();
     await electronService.clickStopRecording();
 
-    await (await electronWindow.$('id=insert-divider-0-1')).click();
-    await (await electronWindow.$('id=step-1')).hover();
+    const divider = await electronWindow.locator('id=insert-divider-0-1');
+    await divider.click();
+    // await (await electronWindow.$('id=insert-divider-0-1')).click();
+    const step = await electronWindow.locator('id=step-1');
+    await step.hover();
+    // await (await electronWindow.$('id=step-1')).hover();
     await electronWindow.mouse.down();
     await electronWindow.mouse.move(100, 100, { steps: 5 });
     const dropZone = await (await electronWindow.locator('id=action-element-1-0')).boundingBox();
@@ -113,8 +108,12 @@ describe('Step Divider', () => {
     await page.getByText('Hello Elastic Synthetics Recorder').waitFor();
     await electronService.clickStopRecording();
 
-    await (await electronWindow.$('id=insert-divider-0-1')).click();
-    await (await electronWindow.$('id=step-1')).hover();
+    const divider = await electronWindow.locator('id=insert-divider-0-1');
+    await divider.click();
+    // await (await electronWindow.$('id=insert-divider-0-1')).click();
+    const step = await electronWindow.locator('id=step-1');
+    await step.hover();
+    // await (await electronWindow.$('id=step-1')).hover();
     const elems = await electronWindow.$$('[data-test-subj="step-div"]');
     expect(elems.length).toEqual(2);
     const isVisible = await electronWindow.locator('text=Step 2').isVisible();
