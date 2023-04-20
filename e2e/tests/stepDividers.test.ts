@@ -42,7 +42,6 @@ beforeEach(() => {
 
 afterEach(async () => {
   await server.close();
-  await electronService.closeAllWindows();
   await electronService.terminate();
 });
 
@@ -75,10 +74,8 @@ describe('Step Divider', () => {
 
     const divider = await electronWindow.locator('id=insert-divider-0-1');
     await divider.click();
-    // await (await electronWindow.$('id=insert-divider-0-1')).click();
     const step = await electronWindow.locator('id=step-1');
     await step.hover();
-    // await (await electronWindow.$('id=step-1')).hover();
     await electronWindow.mouse.down();
     await electronWindow.mouse.move(100, 100, { steps: 5 });
     const dropZone = await (await electronWindow.locator('id=action-element-1-0')).boundingBox();
@@ -110,10 +107,8 @@ describe('Step Divider', () => {
 
     const divider = await electronWindow.locator('id=insert-divider-0-1');
     await divider.click();
-    // await (await electronWindow.$('id=insert-divider-0-1')).click();
     const step = await electronWindow.locator('id=step-1');
     await step.hover();
-    // await (await electronWindow.$('id=step-1')).hover();
     const elems = await electronWindow.$$('[data-test-subj="step-div"]');
     expect(elems.length).toEqual(2);
     const isVisible = await electronWindow.locator('text=Step 2').isVisible();

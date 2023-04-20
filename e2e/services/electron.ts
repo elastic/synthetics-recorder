@@ -64,13 +64,6 @@ export class ElectronServiceFactory {
     return window;
   }
 
-  async closeAllWindows() {
-    const instance = await this.getInstance();
-    for (const window of instance.windows()) {
-      await window.close();
-    }
-  }
-
   async terminate() {
     if (!this.#instance) return;
     await TestBrowserService.closeRemoteBrowser();
