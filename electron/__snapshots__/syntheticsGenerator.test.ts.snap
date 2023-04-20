@@ -18,7 +18,7 @@ journey('Recorded journey', async ({ page, context }) => {
       page.waitForEvent('popup'),
       page.locator('text=Babel Minify').click()
     ]);
-    await page1.locator('a:has-text(\\"smoke\\")').click();
+    await page1.locator('a:has-text("smoke")').click();
     expect(page1.url()).toContain('https://github.com/babel/minify/tree/master/smoke');
   });
   step('Close page', async () => {
@@ -91,7 +91,7 @@ step('Click text=Babel Minify', async () => {
     page.waitForEvent('popup'),
     page.locator('text=Babel Minify').click()
   ]);
-  await page2.locator(':nth-match(a:has-text(\\"babel-minify\\"), 3)').click();
+  await page2.locator(':nth-match(a:has-text("babel-minify"), 3)').click();
   expect(page2.url()).toContain('https://github.com/topics/babel-minify');
 });
 step('Close page', async () => {
