@@ -17,7 +17,7 @@
     "release-ci": "npm run pack -- -mwl --publish=never",
     "fix-sharp": "node node_modules/sharp/install/libvips && node node_modules/sharp/install/dll-copy",
     "clean": "rm -rf ./build && rm -rf ./dist",
-    "lint": "eslint .",
+    "lint": "DEBUG=eslint:cli-engine eslint .",
     "format": "prettier --write .",
     "unused-exports": "node dev-tools/find-unused-exports.js",
     "lint:fix": "npm run lint -- --fix",
