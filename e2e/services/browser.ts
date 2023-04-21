@@ -25,7 +25,7 @@ THE SOFTWARE.
 import { chromium, Browser } from 'playwright';
 import { env } from '../services';
 
-type ConnectRetryParams = { url?: string; timeout?: number; interval?: number };
+type ConnectRetryParams = { url: string; timeout: number; interval: number };
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -63,7 +63,7 @@ export class TestBrowserService {
     return connectLoop();
   }
 
-  static async getRemoteBrowserContext(connectParams?: ConnectRetryParams) {
+  static async getRemoteBrowserContext(connectParams: ConnectRetryParams) {
     const browserContexts = (await TestBrowserService.getRemoteBrowser(connectParams)).contexts();
 
     if (browserContexts.length > 1) throw new Error('More than one browser context detected.');
@@ -94,7 +94,7 @@ export class TestBrowserService {
     return browserContext.pages()[0];
   }
 
-  static async closeRemoteBrowser(connectParams?: ConnectRetryParams) {
+  static async closeRemoteBrowser() {
     // when `start` button is not clicked for the test case, terminate call will hang
     // because the recording browser isn't started but we try to connect to it with loop
     if (TestBrowserService.#remoteBrowser == null) return;

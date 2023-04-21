@@ -43,9 +43,13 @@ export class ElectronServiceFactory {
         ],
         env: {
           DISPLAY: env.DISPLAY,
-          TEST_PORT: env.TEST_PORT ?? '61337',
+          /* we are casting this as a string to satisfy the `launch` params requirement,
+           * but there are cases where it is important that this value is undefined rather than
+           * any other value, and we can't control this interface.
+           */
+          TEST_PORT: env.TEST_PORT as string,
           PW_DEBUG: 'console',
-          NODE_ENV: process.env.NODE_ENV || '',
+          NODE_ENV: process.env.NODE_ENV,
         },
       });
 
