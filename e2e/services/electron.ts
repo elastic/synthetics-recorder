@@ -43,7 +43,11 @@ export class ElectronServiceFactory {
         ],
         env: {
           DISPLAY: env.DISPLAY,
-          TEST_PORT: env.TEST_PORT,
+          /* we are casting this as a string to satisfy the `launch` params requirement,
+           * but there are cases where it is important that this value is undefined rather than
+           * any other value, and we can't control this interface.
+           */
+          TEST_PORT: env.TEST_PORT as string,
           PW_DEBUG: 'console',
           NODE_ENV: process.env.NODE_ENV,
         },
@@ -58,15 +62,16 @@ export class ElectronServiceFactory {
   }
 
   async getWindow() {
-    await this.getInstance();
-    return this.#instance.firstWindow();
+    const instance = await this.getInstance();
+    const window = await instance.firstWindow();
+    await window.waitForLoadState('networkidle');
+    return window;
   }
 
   async terminate() {
     if (!this.#instance) return;
     await TestBrowserService.closeRemoteBrowser();
     await this.#instance.close();
-    this.#instance = null;
   }
 
   async enterTestUrl(testUrl: string) {
@@ -92,7 +97,10 @@ export class ElectronServiceFactory {
 
   async clickRunTest() {
     const electronWindow = await this.getWindow();
-    await electronWindow.click('text=Test');
+    const testButton = await electronWindow.getByLabel('Test');
+    if ((await testButton.count()) !== 1)
+      throw Error('There should be only one element labeled `Test`');
+    await testButton.click();
   }
 
   async clickStopRecording() {

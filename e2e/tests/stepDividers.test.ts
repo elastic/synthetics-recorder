@@ -25,13 +25,14 @@ import type { Server } from 'http';
 import { ElectronServiceFactory, env } from '../services';
 import { createTestHttpServer } from './testServer';
 
-const electronService = new ElectronServiceFactory();
+let electronService: ElectronServiceFactory;
 let server: Server;
 let hostname: string;
 let port: number;
 let url: string;
 
 beforeEach(() => {
+  electronService = new ElectronServiceFactory();
   const { server: s, hostname: h, port: p } = createTestHttpServer();
   server = s;
   hostname = h;
@@ -40,8 +41,8 @@ beforeEach(() => {
 });
 
 afterEach(async () => {
+  await server.close();
   await electronService.terminate();
-  server.close();
 });
 
 function getCoordinates({
@@ -67,19 +68,28 @@ describe('Step Divider', () => {
     await electronService.navigateRecordingBrowser(url);
     await electronService.recordClick('text=Hello Elastic Synthetics Recorder');
 
-    await (await electronWindow.$('id=insert-divider-0-1')).click();
-    await (await electronWindow.$('id=step-1')).hover();
+    const page = await electronService.getWindow();
+    await page.getByText('Hello Elastic Synthetics Recorder').waitFor();
+    await electronService.clickStopRecording();
+
+    const divider = await electronWindow.locator('id=insert-divider-0-1');
+    await divider.click();
+    const step = await electronWindow.locator('id=step-1');
+    await step.hover();
     await electronWindow.mouse.down();
     await electronWindow.mouse.move(100, 100, { steps: 5 });
-    const dropZone = await (await electronWindow.$('id=action-element-1-0')).boundingBox();
-    const [dzx, dzy] = getCoordinates(dropZone);
-    await electronWindow.mouse.move(dzx, dzy, { steps: 5 });
-    await electronWindow.mouse.up();
-    /**
-     * There was originally only one action in this step, so the targeted insert button would only be
-     * rendered if Playwright successfully dragged the step separator over drop zone and released it.
-     */
-    expect(await electronWindow.$('id=insert-divider-0-1')).toBeTruthy();
+    const dropZone = await (await electronWindow.locator('id=action-element-1-0')).boundingBox();
+    if (!dropZone) expect(dropZone).not.toBeNull();
+    else {
+      const [dzx, dzy] = getCoordinates(dropZone);
+      await electronWindow.mouse.move(dzx, dzy, { steps: 5 });
+      await electronWindow.mouse.up();
+      /**
+       * There was originally only one action in this step, so the targeted insert button would only be
+       * rendered if Playwright successfully dragged the step separator over drop zone and released it.
+       */
+      expect(await electronWindow.$('id=insert-divider-0-1')).toBeTruthy();
+    }
   });
 
   it('deletes a step', async () => {
@@ -91,8 +101,14 @@ describe('Step Divider', () => {
     await electronService.waitForPageToBeIdle();
     await electronService.recordClick('text=Hello Elastic Synthetics Recorder');
 
-    await (await electronWindow.$('id=insert-divider-0-1')).click();
-    await (await electronWindow.$('id=step-1')).hover();
+    const page = await electronService.getWindow();
+    await page.getByText('Hello Elastic Synthetics Recorder').waitFor();
+    await electronService.clickStopRecording();
+
+    const divider = await electronWindow.locator('id=insert-divider-0-1');
+    await divider.click();
+    const step = await electronWindow.locator('id=step-1');
+    await step.hover();
     const elems = await electronWindow.$$('[data-test-subj="step-div"]');
     expect(elems.length).toEqual(2);
     const isVisible = await electronWindow.locator('text=Step 2').isVisible();

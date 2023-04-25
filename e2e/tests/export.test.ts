@@ -27,7 +27,7 @@ import * as fs from 'fs/promises';
 import { ElectronServiceFactory, env } from '../services';
 
 const electronService = new ElectronServiceFactory();
-afterEach(async () => {
+afterAll(async () => {
   await electronService.terminate();
 });
 
