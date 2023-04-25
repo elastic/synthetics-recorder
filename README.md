@@ -92,7 +92,7 @@ git fetch upstream --tags
 git checkout -b 1.20.1-recorder v1.20.1
 ```
 
-4. Cherry-pick the commit from `synthetics-recorder` branch, then run `npm run build`. Make sure you've uncommented [packages/playwright-core/lib/ is commented out](https://github.com/elastic/playwright/blob/f3441b1d93091725ba929e2ec8dbc70cefc081ef/.gitignore#L14) in `.gitignore` to include all the generated libs file. Check all the files under `packages/playwright-core/lib` are staged, then commit and push it to elastic remote:
+4. Cherry-pick the commit from `synthetics-recorder` branch, then run `npm run build`.Make sure you've uncommented [packages/playwright-core/lib](https://github.com/elastic/playwright/blob/f3441b1d93091725ba929e2ec8dbc70cefc081ef/.gitignore#L14) in `.gitignore` to include all the generated libs file. Check all the files under `packages/playwright-core/lib` are staged, then commit and push it to elastic remote:
 
 ```
 git cherry-pick 84309bf
