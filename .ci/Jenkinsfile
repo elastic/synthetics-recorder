@@ -247,7 +247,7 @@ def withS3Creds(Closure body) {
     error("withS3Creds: s3 secret could not be accessed correctly")
   }
   def token = getVaultSecret.getVaultToken(vault.vault_addr, vault.vault_role_id, vault.vault_secret_id)
-  def s3 = getVaultSecret.getVaultSecretObject(vault.vault_addr, 'aws-elastic/sts/synthetics-recorder', token).data
+  def s3 = readAWS(vault.vault_addr, 'aws-elastic/sts/synthetics-recorder', token).data
   if (!s3.containsKey('access_key') || !s3.containsKey('secret_key')) {
     error("withS3Creds: s3 secret must contain access_key and secret_key")
   }
@@ -257,5 +257,25 @@ def withS3Creds(Closure body) {
     [var: 'AWS_SECRET_ACCESS_KEY', password: s3.get('secret_key')],
   ]){
     body()
+  }
+}
+
+def readAWS(addr, secret, token) {
+  wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [
+    [var: 'VAULT_SECRET', password: secret],
+    [var: 'VAULT_TOKEN', password: token],
+    [var: 'VAULT_ADDR', password: addr],
+  ]]) {
+    // sts secrets use write rather than read
+    // vault write -f <sts-secret>
+    def retJson =  httpRequest(url: "${addr}/v1/${secret}",
+                               method: 'POST',
+                               headers: ['X-Vault-Token': "${token}", 'Content-Type': 'application/json'],
+                               data: data)
+    def obj = toJSON(retJson)
+    if(!(obj instanceof net.sf.json.JSONObject)){
+      error("readAWS: Unable to get the secret.")
+    }
+    return obj
   }
 }
