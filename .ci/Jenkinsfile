@@ -131,7 +131,16 @@ pipeline {
         }
         stage('Publish S3 Artifacts') {
           options { skipDefaultCheckout() }
+          agent { label 'ubuntu-20.04 && immutable' }  // Required to run within the context of an ephemeral worker so docker is available
           steps {
+            deleteDir()
+            retryWithSleep(retries: 3, seconds: 10, backoff: true) {
+              dockerLogin(secret: "${DOCKER_ELASTIC_SECRET}", registry: "${DOCKER_REGISTRY}")
+            }
+            unstash 'source'
+            dir("${BASE_DIR}/${SIGNED_ARTIFACTS}") {
+              downloadSignedBinaries()
+            }
             dir("${BASE_DIR}") {
               withS3Creds {
                 sh(label: 'publish-s3-artifacts.sh', script: '.ci/scripts/publish-s3-artifacts.sh "${SIGNED_ARTIFACTS}/${DIST_FOLDER}"')
