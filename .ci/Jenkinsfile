@@ -36,6 +36,10 @@ pipeline {
         deleteDir()
         gitCheckout(basedir: "${BASE_DIR}", githubNotifyFirstTimeContributor: true)
         stash(allowEmpty: true, name: 'source', useDefaultExcludes: false)
+        // Fail fast if no access to docker login
+        retryWithSleep(retries: 3, seconds: 10, backoff: true) {
+          dockerLogin(secret: "${DOCKER_ELASTIC_SECRET}", registry: "${DOCKER_REGISTRY}")
+        }
       }
     }
     stage('Release') {
