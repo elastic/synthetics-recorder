@@ -270,8 +270,7 @@ def readAWS(addr, secret, token) {
     // vault write -f <sts-secret>
     def retJson =  httpRequest(url: "${addr}/v1/${secret}",
                                method: 'POST',
-                               headers: ['X-Vault-Token': "${token}", 'Content-Type': 'application/json'],
-                               data: data)
+                               headers: ['X-Vault-Token': "${token}", 'Content-Type': 'application/json'])
     def obj = toJSON(retJson)
     if(!(obj instanceof net.sf.json.JSONObject)){
       error("readAWS: Unable to get the secret.")
