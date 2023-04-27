@@ -7,12 +7,14 @@ ls -l "${DIST_LOCATION}"/*.* || true
 
 echo "Publish artifacts to S3"
 cd "${DIST_LOCATION}"
-docker run \
-  -e AWS_ACCESS_KEY_ID \
-  -e AWS_SECRET_ACCESS_KEY \
-  -v "$(pwd)":/root \
-  docker.elastic.co/infra/aws-cli:latest \
-    aws s3 cp ./*.* s3://download.elasticsearch.org/synthetics-recorder/
+for artifact in ./*; do
+  docker run \
+    -e AWS_ACCESS_KEY_ID \
+    -e AWS_SECRET_ACCESS_KEY \
+    -v "$(pwd)":/root \
+    docker.elastic.co/infra/aws-cli:latest \
+    aws s3 cp $artifact s3://download.elasticsearch.org/synthetics-recorder/
+done
 
 echo "List artifacts from S3"
 docker run \
