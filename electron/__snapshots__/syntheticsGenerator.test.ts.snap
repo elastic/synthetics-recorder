@@ -14,12 +14,10 @@ journey('Recorded journey', async ({ page, context }) => {
   });
   step('Assert text=Babel Minify textContent', async () => {
     expect(await page.textContent('text=Babel Minify')).toMatch('Babel');
-    [page1] = await Promise.all([
-      page.waitForEvent('popup'),
-      page.locator('text=Babel Minify').click()
-    ]);
+    const page1Promise = page.waitForEvent('popup');
+    await page.locator('text=Babel Minify').click();
+    page1 = await page1Promise;
     await page1.locator('a:has-text("smoke")').click();
-    expect(page1.url()).toContain('https://github.com/babel/minify/tree/master/smoke');
   });
   step('Close page', async () => {
     await page1.close();
@@ -32,17 +30,14 @@ exports[`Synthetics JavaScript formatter does not hoist when all accesses are in
 let page2;
 step('Go to https://vigneshh.in/', async () => {
   await page.goto('https://vigneshh.in/');
-  [page1] = await Promise.all([
-    page.waitForEvent('popup'),
-    page.locator('text=Tailor').click()
-  ]);
+  const page1Promise = page.waitForEvent('popup');
+  await page.locator('text=Tailor').click();
+  page1 = await page1Promise;
   await page1.locator('text=Packages 0').click();
-  expect(page1.url()).toContain('https://github.com/orgs/zalando/packages');
   await page1.close();
-  [page2] = await Promise.all([
-    page.waitForEvent('popup'),
-    page.locator('text=Babel Minify').click()
-  ]);
+  const page2Promise = page.waitForEvent('popup');
+  await page.locator('text=Babel Minify').click();
+  page2 = await page2Promise;
   await page2.close();
 });"
 `;
@@ -52,19 +47,16 @@ exports[`Synthetics JavaScript formatter hoist accounts for popup alias 1`] = `
 let page2;
 step('Go to https://vigneshh.in/', async () => {
   await page.goto('https://vigneshh.in/');
-  [page1] = await Promise.all([
-    page.waitForEvent('popup'),
-    page.locator('text=Tailor').click()
-  ]);
+  const page1Promise = page.waitForEvent('popup');
+  await page.locator('text=Tailor').click();
+  page1 = await page1Promise;
   await page1.locator('text=Packages 0').click();
-  expect(page1.url()).toContain('https://github.com/orgs/zalando/packages');
 });
 step('Close page', async () => {
   await page1.close();
-  [page2] = await Promise.all([
-    page.waitForEvent('popup'),
-    page.locator('text=Babel Minify').click()
-  ]);
+  const page2Promise = page.waitForEvent('popup');
+  await page.locator('text=Babel Minify').click();
+  page2 = await page2Promise;
 });
 step('Close page', async () => {
   await page2.close();
@@ -76,23 +68,19 @@ exports[`Synthetics JavaScript formatter hoists page objects to prevent undefine
 let page2;
 step('Go to https://vigneshh.in/', async () => {
   await page.goto('https://vigneshh.in/');
-  [page1] = await Promise.all([
-    page.waitForEvent('popup'),
-    page.locator('text=Tailor').click()
-  ]);
+  const page1Promise = page.waitForEvent('popup');
+  await page.locator('text=Tailor').click();
+  page1 = await page1Promise;
   await page1.locator('text=Packages 0').click();
-  expect(page1.url()).toContain('https://github.com/orgs/zalando/packages');
 });
 step('Close page', async () => {
   await page1.close();
 });
 step('Click text=Babel Minify', async () => {
-  [page2] = await Promise.all([
-    page.waitForEvent('popup'),
-    page.locator('text=Babel Minify').click()
-  ]);
+  const page2Promise = page.waitForEvent('popup');
+  await page.locator('text=Babel Minify').click();
+  page2 = await page2Promise;
   await page2.locator(':nth-match(a:has-text("babel-minify"), 3)').click();
-  expect(page2.url()).toContain('https://github.com/topics/babel-minify');
 });
 step('Close page', async () => {
   await page2.close();

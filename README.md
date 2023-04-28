@@ -115,6 +115,9 @@ git push  --set-upstream elastic 1.20.1-recorder
 
 For now, we are doing it all manually, However, we should consider automating the process.
 
+##### Javascript Codegen
+We generate tailored javascript file for synthetics agent, and we keep that piece of code in the recorder([temporarily](https://github.com/elastic/synthetics-recorder/issues/295)) so this can be outdated even though we've updated the Playwright fork. When we update the Playwright, it is also advisable to review the [JavascriptLanguageGenerator](https://github.com/elastic/playwright/blob/main/packages/playwright-core/src/server/recorder/javascript.ts#L28) and update our [codegen code](https://github.com/elastic/synthetics-recorder/blob/main/electron/syntheticsGenerator.ts#L151) inherited the class, especially `generateAction` function that we overrides.
+
 ### Build
 
 Build and Package the app for all platforms

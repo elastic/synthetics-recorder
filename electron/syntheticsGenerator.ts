@@ -171,6 +171,7 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
     if (action.name === 'openPage') {
       return '';
     }
+
     // Don't cleanup page object managed by Synthetics
     const isCleanUp = action.name === 'closePage' && pageAlias === 'page';
     if (isCleanUp) {
@@ -186,7 +187,7 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
       subject = pageAlias;
     } else if (actionInContext.frame.selectorsChain && action.name !== 'navigate') {
       const locators = actionInContext.frame.selectorsChain.map(
-        selector => '.' + asLocator(selector, 'frameLocator')
+        selector => `.frameLocator(${quote(selector)})`
       );
       subject = `${pageAlias}${locators.join('')}`;
     } else if (actionInContext.frame.name) {
@@ -204,48 +205,30 @@ export class SyntheticsGenerator extends PlaywrightGenerator.JavaScriptLanguageG
   });`);
     }
 
-    const emitPromiseAll = signals.popup || signals.download;
-    if (emitPromiseAll) {
-      const isVarHoisted = signals.popup?.popupAlias && this.isVarHoisted(signals.popup.popupAlias);
-      // Generate either await Promise.all([]) or
-      // const [popup1] = await Promise.all([]).
-      let leftHandSide = '';
-      if (signals.popup) {
-        leftHandSide = isVarHoisted
-          ? `[${signals.popup?.popupAlias}] = `
-          : `const [${signals.popup.popupAlias}] = `;
-      } else if (signals.download) {
-        leftHandSide = `const [download] = `;
-      }
-      formatter.add(`${leftHandSide}await Promise.all([`);
-    }
+    if (signals.popup)
+      formatter.add(
+        `const ${signals.popup.popupAlias}Promise = ${pageAlias}.waitForEvent('popup');`
+      );
+    if (signals.download)
+      formatter.add(
+        `const download${signals.download.downloadAlias}Promise = ${pageAlias}.waitForEvent('download');`
+      );
 
-    // Popup signals.
-    if (signals.popup) formatter.add(`${pageAlias}.waitForEvent('popup'),`);
-
-    // Download signals.
-    if (signals.download) formatter.add(`${pageAlias}.waitForEvent('download'),`);
-
-    const prefix = signals.popup || signals.download ? '' : 'await ';
-    const actionCall = super._generateActionCall(action);
     // Add assertion from Synthetics.
     const isAssert = action.name === 'assert' && action.isAssert;
-
-    if (!isAssert) {
-      const suffix = emitPromiseAll ? '' : ';';
-      formatter.add(`${prefix}${subject}.${actionCall}${suffix}`);
-
-      if (emitPromiseAll) {
-        formatter.add(']);');
-      } else if (signals.assertNavigation?.url) {
-        // original code uses the full URL including query strings which often contains randomly generated value(cashbusting)
-        // when replaying the script it will fail so we will check only baseurl and path
-        const url = new URL(signals.assertNavigation.url);
-        formatter.add(`expect(${pageAlias}.url()).toContain(${quote(url.origin + url.pathname)});`);
-      }
-    } else if (action.command) {
+    if (isAssert && action.command) {
       formatter.add(toAssertCall(pageAlias, action));
+    } else {
+      const actionCall = super._generateActionCall(action);
+      formatter.add(`await ${subject}.${actionCall};`);
     }
+
+    if (signals.popup)
+      formatter.add(`${signals.popup.popupAlias} = await ${signals.popup.popupAlias}Promise;`);
+    if (signals.download)
+      formatter.add(
+        `download${signals.download.downloadAlias} = await download${signals.download.downloadAlias}Promise;`
+      );
 
     this.previousContext = actionInContext;
     return formatter.format();
