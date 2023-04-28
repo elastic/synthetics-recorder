@@ -87,13 +87,6 @@ function isFormattable(value: unknown): value is Formattable {
   );
 }
 
-function asLocator(selector: string, locatorFn = 'locator') {
-  const match = selector.match(/(.*)\s+>>\s+nth=(\d+)$/);
-  if (!match) return `${locatorFn}(${quote(selector)})`;
-  if (+match[2] === 0) return `${locatorFn}(${quote(match[1])}).first()`;
-  return `${locatorFn}(${quote(match[1])}).nth(${match[2]})`;
-}
-
 function formatObject(value: Formattable, indent = '  '): string {
   if (typeof value === 'string') return quote(value);
   if (Array.isArray(value)) return `[${value.map(o => formatObject(o)).join(', ')}]`;
