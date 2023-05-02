@@ -3,7 +3,7 @@
 @Library('apm@current') _
 
 pipeline {
-  agent { label 'ubuntu-20.04 && linux-immutable-docker' }
+  agent { label 'ubuntu-20.04 && immutable' }
   environment {
     REPO = "synthetics-recorder"
     BASE_DIR = "src/github.com/elastic/${env.REPO}"
