@@ -276,6 +276,9 @@ def withS3Creds(Closure body) {
     [var: 'AWS_ACCESS_KEY_ID', password: s3.get('access_key')],
     [var: 'AWS_SECRET_ACCESS_KEY', password: s3.get('secret_key')],
   ]){
+    // Fixes An error occurred (InvalidAccessKeyId) when calling the ListObjectsV2 operation: The AWS Access Key Id you provided does not exist in our records.
+    log(level: 'INFO', text: "As long as vault secrets are not synced let's wait for a few seconds until they are available")
+    sleep 15
     body()
   }
 }
