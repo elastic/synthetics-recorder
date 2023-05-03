@@ -21,13 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
+import { ActionInContext } from '@elastic/synthetics';
 import path from 'path';
 import { writeFile, rm, mkdir } from 'fs/promises';
 import { BrowserWindow, IpcMainInvokeEvent } from 'electron';
 import logger from 'electron-log';
 import isDev from 'electron-is-dev';
 import type {
-  ActionInContext,
   RecorderSteps,
   RunJourneyOptions,
   StepEndEvent,
@@ -132,7 +133,7 @@ export async function runJourney(
   try {
     const isProject = data.isProject;
     const args = [
-      '--no-headless',
+      // '--no-headless',
       '--reporter=json',
       '--screenshots=off',
       '--no-throttling',

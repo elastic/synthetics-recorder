@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 import { IpcMainInvokeEvent } from 'electron';
 import { RecorderSteps } from '../../common/types';
-import { SyntheticsGenerator } from '@elastic/synthetics';
+import { SyntheticsGenerator } from '@elastic/synthetics/dist/formatter/javascript';
 
 export async function onGenerateCode(
   _event: IpcMainInvokeEvent,
