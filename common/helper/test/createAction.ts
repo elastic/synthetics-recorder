@@ -22,10 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { Action /* Step */ } from '@elastic/synthetics';
+import { Action } from '@elastic/synthetics';
 import { ActionContext, FrameDescription, RecorderSteps, Step } from '../../types';
 
-type OptionalActionContext = Omit<ActionContext, 'action' | 'frame'>;
+type OptionalActionContext = Omit<
+  ActionContext,
+  'action' | 'frame' | 'frameUrl' | 'isMainFrame' | 'pageAlias'
+>;
 type ActionContextOverride = OptionalActionContext & {
   frame?: Partial<FrameDescription>;
   action?: Partial<Action>;
@@ -37,6 +40,9 @@ type CreateStepActionOverride = OptionalActionContext & {
 
 export const createAction = (name: string, overrides?: ActionContextOverride): ActionContext => {
   const baseAction = {
+    pageAlias: 'alias',
+    frameUrl: 'https://frame.url',
+    isMainFrame: true,
     frame: {
       url: 'https://www.elastic.co',
       isMainFrame: true,
@@ -46,6 +52,7 @@ export const createAction = (name: string, overrides?: ActionContextOverride): A
   };
   return overrides
     ? {
+        ...baseAction,
         ...overrides,
         action: {
           name,

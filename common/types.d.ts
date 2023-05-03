@@ -22,22 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { /* Step, Steps, */ Action } from '@elastic/synthetics';
+import type { /* Step, Steps, */ Action, ActionInContext } from '@elastic/synthetics';
 
 export type Step = {
-  actions: ActionInContext[];
+  actions: ActionContext[];
   name?: string;
 };
 
 export type Steps = Step[];
-
-export type ActionInContext = {
-  frame: FrameDescription;
-  action: Action;
-  committed?: boolean;
-  modified?: boolean;
-  title?: string;
-};
 
 // from playwright-core
 export type FrameDescription = {
@@ -48,6 +40,11 @@ export type FrameDescription = {
   selectorsChain?: string[];
 };
 export interface ActionContext extends ActionInContext {
+  frame: FrameDescription;
+  action: Action;
+  committed?: boolean;
+  modified?: boolean;
+  title?: string;
   isOpen?: boolean;
   isSoftDeleted?: boolean;
 }
