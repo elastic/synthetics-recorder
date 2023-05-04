@@ -46,7 +46,7 @@ export function Title() {
         paddingLeft: 4,
         paddingRight: 4,
         position: 'fixed',
-        zIndex: 9000,
+        zIndex: 999,
       }}
       paddingSize="xs"
     >
