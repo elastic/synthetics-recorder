@@ -35,6 +35,16 @@ pipeline {
         deleteDir()
         gitCheckout(basedir: "${BASE_DIR}", githubNotifyFirstTimeContributor: true)
         stash(allowEmpty: true, name: 'source', useDefaultExcludes: false)
+        // Fail fast if no access to docker login
+        retryWithSleep(retries: 3, seconds: 10, backoff: true) {
+          dockerLogin(secret: "${DOCKER_ELASTIC_SECRET}", registry: "${DOCKER_REGISTRY}")
+        }
+        // Fail fast if no access to AWS
+        dir("${BASE_DIR}") {
+          withS3Creds {
+            sh(label: 'list-s3-artifacts.sh', script: '.ci/scripts/list-s3-artifacts.sh')
+          }
+        }
       }
     }
     stage('Release') {
@@ -125,12 +135,31 @@ pipeline {
             }
           }
         }
+        stage('Publish S3 Artifacts') {
+          options { skipDefaultCheckout() }
+          agent { label 'ubuntu-20.04 && immutable' }  // Required to run within the context of an ephemeral worker so docker is available
+          steps {
+            deleteDir()
+            retryWithSleep(retries: 3, seconds: 10, backoff: true) {
+              dockerLogin(secret: "${DOCKER_ELASTIC_SECRET}", registry: "${DOCKER_REGISTRY}")
+            }
+            unstash 'source'
+            dir("${BASE_DIR}/${SIGNED_ARTIFACTS}") {
+              downloadSignedBinaries()
+            }
+            dir("${BASE_DIR}") {
+              withS3Creds {
+                sh(label: 'publish-s3-artifacts.sh', script: '.ci/scripts/publish-s3-artifacts.sh "${SIGNED_ARTIFACTS}/${DIST_FOLDER}"')
+              }
+            }
+          }
+        }
         stage('Publish GitHub Release') {
           options { skipDefaultCheckout() }
           steps {
             dir("${BASE_DIR}") {
               withCredentials([string(credentialsId: '2a9602aa-ab9f-4e52-baf3-b71ca88469c7', variable: 'GITHUB_TOKEN')]) {
-                sh(label: 'create-github-release.sh', script: '.ci/scripts/create-github-release.sh "${SIGNED_ARTIFACTS}/${DIST_FOLDER}"')
+                sh(label: 'create-github-release.sh', script: '.ci/scripts/create-github-release.sh')
               }
             }
           }
@@ -188,7 +217,7 @@ def runReleaseWithKeychain() {
     error("runReleaseWithKeychain: macos secret could not be accessed correctly")
   }
   def token = getVaultSecret.getVaultToken(vault.vault_addr, vault.vault_role_id, vault.vault_secret_id)
-  def apple = getVaultSecret.getVaultSecretObject(vault.vault_addr, 'secret/release/apple', token).data
+  def apple = getVaultSecret.getVaultSecretObject(vault.vault_addr, 'secret/release/apple-2023', token).data
   if (!apple.containsKey('keychain-password') || !apple.containsKey('username') || !apple.containsKey('app-specific-password')) {
     error("runReleaseWithKeychain: apple secret must contain username, app-specific-password")
   }
@@ -229,4 +258,45 @@ Sets EXE_FILE_NAME env var as first found exe file in current dir
 def getFirstExeFileName() {
   def files = findFiles(glob: '*.exe')
   env.EXE_FILE_NAME = "${files[0].name}"
+}
+
+def withS3Creds(Closure body) {
+  def vault = getVaultSecret(secret: 'secret/observability-team/ci/synthetics-recorder-macos-vault').data
+  if (!vault.containsKey('vault_secret_id') || !vault.containsKey('vault_role_id') || !vault.containsKey('vault_addr')) {
+    error("withS3Creds: s3 secret could not be accessed correctly")
+  }
+  def token = getVaultSecret.getVaultToken(vault.vault_addr, vault.vault_role_id, vault.vault_secret_id)
+  def s3 = readAWS(vault.vault_addr, 'aws-elastic/sts/synthetics-recorder', token).data
+  if (!s3.containsKey('access_key') || !s3.containsKey('secret_key')) {
+    error("withS3Creds: s3 secret must contain access_key and secret_key")
+  }
+
+  withEnvMask(vars: [
+    [var: 'AWS_ACCESS_KEY_ID', password: s3.get('access_key')],
+    [var: 'AWS_SECRET_ACCESS_KEY', password: s3.get('secret_key')],
+  ]){
+    // Fixes An error occurred (InvalidAccessKeyId) when calling the ListObjectsV2 operation: The AWS Access Key Id you provided does not exist in our records.
+    log(level: 'INFO', text: "As long as vault secrets are not synced let's wait for a few seconds until they are available")
+    sleep 15
+    body()
+  }
+}
+
+def readAWS(addr, secret, token) {
+  wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [
+    [var: 'VAULT_SECRET', password: secret],
+    [var: 'VAULT_TOKEN', password: token],
+    [var: 'VAULT_ADDR', password: addr],
+  ]]) {
+    // sts secrets use write rather than read
+    // vault write -f <sts-secret>
+    def retJson =  httpRequest(url: "${addr}/v1/${secret}",
+                               method: 'POST',
+                               headers: ['X-Vault-Token': "${token}", 'Content-Type': 'application/json'])
+    def obj = toJSON(retJson)
+    if(!(obj instanceof net.sf.json.JSONObject)){
+      error("readAWS: Unable to get the secret.")
+    }
+    return obj
+  }
 }
