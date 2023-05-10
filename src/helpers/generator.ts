@@ -24,7 +24,6 @@ THE SOFTWARE.
 
 import type { ActionInContext, Step, Steps } from '@elastic/synthetics';
 import { actionTitle } from '../common/shared';
-import type { RecorderSteps } from '../../common/types';
 
 /**
  * Creates an intermediate representation of the steps Playwright has recorded from
@@ -61,7 +60,7 @@ function isOpenOrCloseAction(name: string, pageAlias: string) {
  * the actions generated/modified by the UI and merges them
  * to display the correct modified actions on the UI
  */
-export function generateMergedIR(prevSteps: RecorderSteps, pwInput: Steps): RecorderSteps {
+export function generateMergedIR(prevSteps: Steps, pwInput: Steps): Steps {
   const nextSteps: Steps = pwInput.map(step => ({
     ...step,
     actions: step.actions.filter(
@@ -77,7 +76,7 @@ export function generateMergedIR(prevSteps: RecorderSteps, pwInput: Steps): Reco
     return nextSteps;
   }
 
-  const mergedSteps: RecorderSteps = [];
+  const mergedSteps: Steps = [];
   let pwActionCount = 0;
   for (const step of prevSteps) {
     const actions: ActionInContext[] = [];

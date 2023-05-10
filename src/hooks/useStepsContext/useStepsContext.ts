@@ -22,14 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { ActionInContext, Step } from '@elastic/synthetics';
+import type { ActionInContext, Step, Steps } from '@elastic/synthetics';
 import { useCallback, useState } from 'react';
-import type { RecorderSteps } from '../../../common/types';
 import type { IStepsContext } from '../../contexts/StepsContext';
 import { onDropStep } from './onDropStep';
 
 export function useStepsContext(): IStepsContext {
-  const [steps, setSteps] = useState<RecorderSteps>([]);
+  const [steps, setSteps] = useState<Steps>([]);
 
   const setStepName = useCallback((idx: number, name?: string) => {
     setSteps(oldSteps =>

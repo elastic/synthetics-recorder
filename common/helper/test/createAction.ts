@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Action, ActionInContext, Step } from '@elastic/synthetics';
-import type { FrameDescription, RecorderSteps } from '../../types';
+import type { Action, ActionInContext, Step, Steps } from '@elastic/synthetics';
+import type { FrameDescription } from '@elastic/synthetics/src/formatter/javascript';
 
 type OptionalActionContext = Omit<
   ActionInContext,
@@ -86,7 +86,7 @@ export const createStep = (actionNames: string[]): Step => ({
   actions: actionNames.map(name => createAction(name)),
 });
 
-export const createStepsWithOverrides = (steps: CreateStepActionOverride[][]): RecorderSteps =>
+export const createStepsWithOverrides = (steps: CreateStepActionOverride[][]): Steps =>
   steps.map(s => createStepWithOverrides(s));
 
 export const createSteps = (stepList: string[][]) =>

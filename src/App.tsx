@@ -24,7 +24,7 @@ THE SOFTWARE.
 import React, { useContext } from 'react';
 import { useEffect, useState } from 'react';
 import { EuiCode, EuiEmptyPrompt, EuiGlobalToastList, EuiProvider } from '@elastic/eui';
-// import type { Steps } from '@elastic/synthetics';
+import type { Steps } from '@elastic/synthetics';
 import createCache from '@emotion/cache';
 import '@elastic/eui/dist/eui_theme_light.css';
 import { Title } from './components/Header/Title';
@@ -49,7 +49,7 @@ import { StyledComponentsEuiProvider } from './contexts/StyledComponentsEuiProvi
 import { ExportScriptFlyout } from './components/ExportScriptFlyout';
 import { useRecordingContext } from './hooks/useRecordingContext';
 import { StartOverWarningModal } from './components/StartOverWarningModal';
-import { ActionGeneratedListener, RecorderSteps, Steps } from '../common/types';
+import type { ActionGeneratedListener } from '../common/types';
 
 /**
  * This is the prescribed workaround to some internal EUI issues that occur
@@ -85,7 +85,7 @@ export default function App() {
   useEffect(() => {
     // `actions` here is a set of `ActionInContext`s that make up a `Step`
     const listener: ActionGeneratedListener = (_event, actions) => {
-      setSteps((prevSteps: RecorderSteps) => {
+      setSteps((prevSteps: Steps) => {
         const nextSteps: Steps = generateIR([{ actions }]);
         return generateMergedIR(prevSteps, nextSteps);
       });

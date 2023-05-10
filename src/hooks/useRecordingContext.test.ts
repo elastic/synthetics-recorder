@@ -37,7 +37,8 @@ THE SOFTWARE.
  */
 
 import { act, renderHook } from '@testing-library/react-hooks';
-import { IElectronAPI, RecorderSteps } from '../../common/types';
+import type { Steps } from '@elastic/synthetics';
+import { IElectronAPI } from '../../common/types';
 import { RecordingStatus, Setter } from '../common/types';
 import { getMockElectronApi } from '../helpers/test/mockApi';
 import { useRecordingContext } from './useRecordingContext';
@@ -45,7 +46,7 @@ import { useRecordingContext } from './useRecordingContext';
 describe('useRecordingContext', () => {
   let electronApi: IElectronAPI;
   let setResult: (data: undefined) => void;
-  let setSteps: Setter<RecorderSteps>;
+  let setSteps: Setter<Steps>;
   let recordJourney: jest.Mock;
 
   beforeEach(() => {

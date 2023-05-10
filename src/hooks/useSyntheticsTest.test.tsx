@@ -33,12 +33,13 @@ THE SOFTWARE.
  * is one of the key things covered in our e2e tests.
  */
 
-import React from 'react';
+import type { Steps } from '@elastic/synthetics';
 import { act, renderHook } from '@testing-library/react-hooks';
+import React from 'react';
 import { getMockElectronApi } from '../helpers/test/mockApi';
 import { TestContextWrapper } from '../helpers/test/render';
 import { useSyntheticsTest } from './useSyntheticsTest';
-import { IElectronAPI, RecorderSteps, Result } from '../../common/types';
+import { IElectronAPI, Result } from '../../common/types';
 import { createSteps } from '../../common/helper/test/createAction';
 import * as communicationHelpers from '../common/shared';
 
@@ -109,7 +110,7 @@ describe('useSyntheticsTest', () => {
         type: 'inline',
       },
     };
-    const response = renderHook((steps: RecorderSteps) => useSyntheticsTest(steps), {
+    const response = renderHook((steps: Steps) => useSyntheticsTest(steps), {
       initialProps: createSteps([['step1']]),
       wrapper,
     });
@@ -141,7 +142,7 @@ describe('useSyntheticsTest', () => {
       },
     };
     const initialProps = createSteps([['step1']]);
-    const response = renderHook((steps: RecorderSteps) => useSyntheticsTest(steps), {
+    const response = renderHook((steps: Steps) => useSyntheticsTest(steps), {
       initialProps,
       wrapper,
     });

@@ -22,20 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Step, Steps, ActionInContext } from '@elastic/synthetics';
+import type { Steps, ActionInContext } from '@elastic/synthetics';
 
-// from playwright-core
-export type FrameDescription = {
-  pageAlias: string;
-  isMainFrame?: boolean;
-  url: string;
-  name?: string;
-  selectorsChain?: string[];
-};
-export interface RecorderStep extends Step {
-  actions: ActionInContext[];
-}
-export type RecorderSteps = RecorderStep[];
 export type StepStatus = 'succeeded' | 'failed' | 'skipped';
 export type JourneyType = 'project' | 'inline';
 

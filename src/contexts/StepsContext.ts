@@ -22,10 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { ActionInContext, Step } from '@elastic/synthetics';
+import type { ActionInContext, Step, Steps } from '@elastic/synthetics';
 import { createContext } from 'react';
 import type { Setter } from '../common/types';
-import type { RecorderSteps } from '../../common/types';
 
 function notImplemented() {
   throw Error('Step context not initialized');
@@ -35,11 +34,11 @@ export interface IStepsContext {
   /**
    * Represents the actions and assertions that the user has recorded.
    */
-  steps: RecorderSteps;
+  steps: Steps;
   /**
    * Updates the steps.
    */
-  setSteps: Setter<RecorderSteps>;
+  setSteps: Setter<Steps>;
   /**
    * Sets the name of the step at the given index.
    */

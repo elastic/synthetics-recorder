@@ -23,7 +23,6 @@ THE SOFTWARE.
 */
 
 import type { ActionInContext, Step, Steps } from '@elastic/synthetics';
-import type { RecorderSteps } from '../../common/types';
 import { generateIR, generateMergedIR } from './generator';
 import {
   createAction,
@@ -147,7 +146,7 @@ describe('generator', () => {
     });
   });
   describe('generateMergedIR', () => {
-    const prev: RecorderSteps = createStepsWithOverrides([
+    const prev: Steps = createStepsWithOverrides([
       [
         {
           action: {
@@ -532,7 +531,7 @@ describe('generator', () => {
 
     it('preserves soft deletes', () => {
       const softDeletedAction = createAction('click', { isSoftDeleted: true, modified: true });
-      const recorderActions: RecorderSteps = [
+      const recorderActions: Steps = [
         {
           actions: [createAction('press'), softDeletedAction],
         },

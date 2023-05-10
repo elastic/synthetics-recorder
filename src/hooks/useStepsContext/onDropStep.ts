@@ -22,12 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Step } from '@elastic/synthetics';
-import type { RecorderSteps } from '../../../common/types';
+import type { Step, Steps } from '@elastic/synthetics';
 import type { Setter } from '../../common/types';
 
 export const onDropStep =
-  (steps: RecorderSteps, setSteps: Setter<RecorderSteps>) =>
+  (steps: Steps, setSteps: Setter<Steps>) =>
   /**
    * Used in conjunction with the drag/drop functionality for
    * moving a step separator in the UI to reorganize the bucketing
@@ -69,7 +68,7 @@ interface DropHandlerProps {
   actionIndex: number;
   targetIndex: number;
   initiatorIndex: number;
-  setSteps: Setter<RecorderSteps>;
+  setSteps: Setter<Steps>;
 }
 
 /**

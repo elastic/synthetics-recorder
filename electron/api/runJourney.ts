@@ -22,19 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { ActionInContext } from '@elastic/synthetics';
+import type { ActionInContext, Steps } from '@elastic/synthetics';
 import path from 'path';
 import { writeFile, rm, mkdir } from 'fs/promises';
 import { BrowserWindow, IpcMainInvokeEvent } from 'electron';
 import logger from 'electron-log';
 import isDev from 'electron-is-dev';
-import type {
-  RecorderSteps,
-  RunJourneyOptions,
-  StepEndEvent,
-  StepStatus,
-  TestEvent,
-} from '../../common/types';
+import type { RunJourneyOptions, StepEndEvent, StepStatus, TestEvent } from '../../common/types';
 
 import { JOURNEY_DIR, PLAYWRIGHT_BROWSERS_PATH } from '../config';
 import { SyntheticsManager } from '../syntheticsManager';
@@ -195,7 +189,7 @@ export async function runJourney(
  * @param {*} event the result data from Playwright
  * @returns the event data combined with action titles in a new object
  */
-function addActionsToStepResult(steps: RecorderSteps, event: StepEndEvent): TestEvent {
+function addActionsToStepResult(steps: Steps, event: StepEndEvent): TestEvent {
   const step = steps.find(
     s =>
       s.actions.length &&
