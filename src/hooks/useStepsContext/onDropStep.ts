@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-// import { Step } from '@elastic/synthetics';
-import { RecorderSteps, Step } from '../../../common/types';
-import { Setter } from '../../common/types';
+import type { Step } from '@elastic/synthetics';
+import type { RecorderSteps } from '../../../common/types';
+import type { Setter } from '../../common/types';
 
 export const onDropStep =
   (steps: RecorderSteps, setSteps: Setter<RecorderSteps>) =>

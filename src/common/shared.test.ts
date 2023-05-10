@@ -22,8 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import type { Step } from '@elastic/synthetics';
 import { createStepWithOverrides } from '../../common/helper/test/createAction';
-import type { IElectronAPI, Step } from '../../common/types';
+import type { IElectronAPI } from '../../common/types';
 import { getCodeForFailedResult } from './shared';
 
 describe('shared', () => {

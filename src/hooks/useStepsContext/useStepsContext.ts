@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-// import type { Step } from '@elastic/synthetics';
+import type { ActionInContext, Step } from '@elastic/synthetics';
 import { useCallback, useState } from 'react';
-import { ActionContext, RecorderSteps, Step } from '../../../common/types';
+import type { RecorderSteps } from '../../../common/types';
 import type { IStepsContext } from '../../contexts/StepsContext';
 import { onDropStep } from './onDropStep';
 
@@ -187,7 +187,7 @@ export function useStepsContext(): IStepsContext {
       ]);
     },
     onStepDetailChange,
-    onUpdateAction: (action: ActionContext, stepIndex: number, actionIndex: number) => {
+    onUpdateAction: (action: ActionInContext, stepIndex: number, actionIndex: number) => {
       const step = steps[stepIndex];
       onStepDetailChange(
         {

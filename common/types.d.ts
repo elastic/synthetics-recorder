@@ -22,14 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { /* Step, Steps, */ Action, ActionInContext } from '@elastic/synthetics';
-
-export type Step = {
-  actions: ActionContext[];
-  name?: string;
-};
-
-export type Steps = Step[];
+import type { Step, Steps, ActionInContext } from '@elastic/synthetics';
 
 // from playwright-core
 export type FrameDescription = {
@@ -39,17 +32,8 @@ export type FrameDescription = {
   name?: string;
   selectorsChain?: string[];
 };
-export interface ActionContext extends ActionInContext {
-  frame: FrameDescription;
-  action: Action;
-  committed?: boolean;
-  modified?: boolean;
-  title?: string;
-  isOpen?: boolean;
-  isSoftDeleted?: boolean;
-}
 export interface RecorderStep extends Step {
-  actions: ActionContext[];
+  actions: ActionInContext[];
 }
 export type RecorderSteps = RecorderStep[];
 export type StepStatus = 'succeeded' | 'failed' | 'skipped';
@@ -113,7 +97,7 @@ export type GenerateCodeOptions = {
   isProject: boolean;
 };
 
-export type ActionGeneratedListener = (event: IpcRendererEvent, actions: ActionContext[]) => void;
+export type ActionGeneratedListener = (event: IpcRendererEvent, actions: ActionInContext[]) => void;
 export type TestEventListener = (event: IpcRendererEvent, data: TestEvent) => void;
 export interface IElectronAPI {
   exportScript: (string) => Promise<boolean>;

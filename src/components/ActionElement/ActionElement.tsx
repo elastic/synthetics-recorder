@@ -23,11 +23,11 @@ THE SOFTWARE.
 */
 
 import { EuiFlexGroup, EuiFlexItem, EuiAccordion } from '@elastic/eui';
+import type { ActionInContext } from '@elastic/synthetics';
 import React, { useCallback, useContext, useState } from 'react';
 import styled from 'styled-components';
 import { SMALL_SCREEN_BREAKPOINT } from '../../common/shared';
 import { ResultCategory } from '../../common/types';
-import { ActionContext } from '../../../common/types';
 import { StepsContext } from '../../contexts/StepsContext';
 import { useDrop } from '../../hooks/useDrop';
 import { ActionDetail } from '../ActionDetail';
@@ -81,7 +81,7 @@ interface IActionElement {
   actionIndex: number;
   className?: string;
   isDragging?: boolean;
-  actionContext: ActionContext;
+  actionContext: ActionInContext;
   isLast?: boolean;
   stepIndex: number;
   testStatus?: ResultCategory;
@@ -172,7 +172,7 @@ function ActionComponent({
               actionContext={actionContext}
               close={close}
               onDeleteAction={onDeleteAction}
-              saveAssertion={(updatedAction: ActionContext) => {
+              saveAssertion={(updatedAction: ActionInContext) => {
                 onUpdateAction(updatedAction, stepIndex, actionIndex);
               }}
               stepIndex={stepIndex}

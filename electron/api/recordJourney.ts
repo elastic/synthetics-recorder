@@ -26,9 +26,9 @@ import { EventEmitter, once } from 'events';
 import { existsSync } from 'fs';
 import { BrowserWindow, ipcMain, IpcMainInvokeEvent } from 'electron';
 import type { BrowserContext } from 'playwright';
+import type { ActionInContext } from '@elastic/synthetics';
 import logger from 'electron-log';
 import { BrowserManager } from '../browserManager';
-import { ActionContext } from '../../common/types';
 
 export async function recordJourney(
   _event: IpcMainInvokeEvent,
@@ -46,7 +46,7 @@ export async function recordJourney(
     });
 
     // Listen to actions from Playwright recording session
-    const actionsHandler = (actions: ActionContext[]) => {
+    const actionsHandler = (actions: ActionInContext[]) => {
       browserWindow.webContents.send('actions-generated', actions);
     };
     actionListener.on('actions', actionsHandler);

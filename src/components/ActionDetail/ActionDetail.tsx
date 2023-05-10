@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import type { ActionInContext } from '@elastic/synthetics';
 import React, { useContext, useState } from 'react';
 import {
   EuiButton,
@@ -34,10 +35,9 @@ import {
 } from '@elastic/eui';
 import { StepsContext } from '../../contexts/StepsContext';
 import { FormControl } from './FormControl';
-import { ActionContext } from '../../../common/types';
 import { actionTitle } from '../../common/shared';
 
-function createUpdatedAction(fields: IActionUpdateFields, context: ActionContext) {
+function createUpdatedAction(fields: IActionUpdateFields, context: ActionInContext) {
   const action = {
     ...context.action,
     url: fields.url,
@@ -59,7 +59,7 @@ interface IActionUpdateFields {
   text?: string;
 }
 interface IActionDetail {
-  actionContext: ActionContext;
+  actionContext: ActionInContext;
   actionIndex: number;
   stepIndex: number;
   close?: () => void;

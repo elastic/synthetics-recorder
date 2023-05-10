@@ -22,11 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { Action } from '@elastic/synthetics';
-import { ActionContext, FrameDescription, RecorderSteps, Step } from '../../types';
+import type { Action, ActionInContext, Step } from '@elastic/synthetics';
+import type { FrameDescription, RecorderSteps } from '../../types';
 
 type OptionalActionContext = Omit<
-  ActionContext,
+  ActionInContext,
   'action' | 'frame' | 'frameUrl' | 'isMainFrame' | 'pageAlias'
 >;
 type ActionContextOverride = OptionalActionContext & {
@@ -38,7 +38,7 @@ type CreateStepActionOverride = OptionalActionContext & {
   action: Partial<Action> & { name: string };
 };
 
-export const createAction = (name: string, overrides?: ActionContextOverride): ActionContext => {
+export const createAction = (name: string, overrides?: ActionContextOverride): ActionInContext => {
   const baseAction = {
     pageAlias: 'alias',
     frameUrl: 'https://frame.url',
