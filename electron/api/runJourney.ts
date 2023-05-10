@@ -127,7 +127,8 @@ export async function runJourney(
   try {
     const isProject = data.isProject;
     const args = [
-      // '--no-headless',
+      '--playwright-options',
+      '{"headless": false}',
       '--reporter=json',
       '--screenshots=off',
       '--no-throttling',
