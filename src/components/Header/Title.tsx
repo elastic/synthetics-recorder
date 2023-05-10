@@ -45,7 +45,8 @@ export function Title() {
         borderBottom: euiTheme.border.thin,
         paddingLeft: 4,
         paddingRight: 4,
-        boxShadow: `0px 2px ${euiTheme.colors.lightestShade}`,
+        position: 'fixed',
+        zIndex: 999,
       }}
       paddingSize="xs"
     >
