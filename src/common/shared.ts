@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import type { Action /* , Steps */ } from '@elastic/synthetics';
+import type { Action, ActionInContext, Steps } from '@elastic/synthetics';
 import React from 'react';
-import type { ActionContext, IElectronAPI, Journey, JourneyType, Steps } from '../../common/types';
+import type { IElectronAPI, Journey, JourneyType } from '../../common/types';
 
 export const COMMAND_SELECTOR_OPTIONS = [
   {
@@ -78,7 +78,7 @@ export async function getCodeFromActions(
   return electronAPI.generateCode({
     actions: steps.map(({ actions, ...rest }) => ({
       ...rest,
-      actions: actions.filter(action => !(action as ActionContext)?.isSoftDeleted),
+      actions: actions.filter(action => !(action as ActionInContext)?.isSoftDeleted),
     })),
     isProject: type === 'project',
   });

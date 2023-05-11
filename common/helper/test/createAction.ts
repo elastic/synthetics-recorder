@@ -22,10 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { Action /* Step */ } from '@elastic/synthetics';
-import { ActionContext, FrameDescription, RecorderSteps, Step } from '../../types';
+import type { Action, ActionInContext, Step, Steps } from '@elastic/synthetics';
+import type { FrameDescription } from '@elastic/synthetics/src/formatter/javascript';
 
-type OptionalActionContext = Omit<ActionContext, 'action' | 'frame'>;
+type OptionalActionContext = Omit<
+  ActionInContext,
+  'action' | 'frame' | 'frameUrl' | 'isMainFrame' | 'pageAlias'
+>;
 type ActionContextOverride = OptionalActionContext & {
   frame?: Partial<FrameDescription>;
   action?: Partial<Action>;
@@ -35,8 +38,11 @@ type CreateStepActionOverride = OptionalActionContext & {
   action: Partial<Action> & { name: string };
 };
 
-export const createAction = (name: string, overrides?: ActionContextOverride): ActionContext => {
+export const createAction = (name: string, overrides?: ActionContextOverride): ActionInContext => {
   const baseAction = {
+    pageAlias: 'alias',
+    frameUrl: 'https://frame.url',
+    isMainFrame: true,
     frame: {
       url: 'https://www.elastic.co',
       isMainFrame: true,
@@ -46,6 +52,7 @@ export const createAction = (name: string, overrides?: ActionContextOverride): A
   };
   return overrides
     ? {
+        ...baseAction,
         ...overrides,
         action: {
           name,
@@ -79,7 +86,7 @@ export const createStep = (actionNames: string[]): Step => ({
   actions: actionNames.map(name => createAction(name)),
 });
 
-export const createStepsWithOverrides = (steps: CreateStepActionOverride[][]): RecorderSteps =>
+export const createStepsWithOverrides = (steps: CreateStepActionOverride[][]): Steps =>
   steps.map(s => createStepWithOverrides(s));
 
 export const createSteps = (stepList: string[][]) =>

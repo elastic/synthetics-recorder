@@ -21,13 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import { IpcMainInvokeEvent } from 'electron';
-import { RecorderSteps } from '../../common/types';
-import { SyntheticsGenerator } from '../syntheticsGenerator';
+
+import type { Steps } from '@elastic/synthetics';
+import { SyntheticsGenerator } from '@elastic/synthetics/dist/formatter/javascript';
+import type { IpcMainInvokeEvent } from 'electron';
 
 export async function onGenerateCode(
   _event: IpcMainInvokeEvent,
-  data: { isProject: boolean; actions: RecorderSteps }
+  data: { isProject: boolean; actions: Steps }
 ) {
   const generator = new SyntheticsGenerator(data.isProject);
   return generator.generateFromSteps(data.actions);

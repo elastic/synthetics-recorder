@@ -22,10 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-// import type { Step, Steps } from '@elastic/synthetics';
+import type { ActionInContext, Step, Steps } from '@elastic/synthetics';
 import { act, renderHook, RenderHookResult } from '@testing-library/react-hooks';
-import { ActionContext, Step, Steps } from '../../../common/types';
-import { IStepsContext } from '../../contexts/StepsContext';
+import type { IStepsContext } from '../../contexts/StepsContext';
 import { createAction, createStep, createSteps } from '../../../common/helper/test/createAction';
 import { useStepsContext } from './useStepsContext';
 
@@ -199,7 +198,7 @@ describe('useStepsContext', () => {
       ]);
     });
 
-    const mapActionName = (a: ActionContext) => a.action.name;
+    const mapActionName = (a: ActionInContext) => a.action.name;
 
     it('throws an error if target index is less than 0', () => {
       expect(() => defaultResult.result.current.onDropStep(-1, 0, 1)).toThrowError();

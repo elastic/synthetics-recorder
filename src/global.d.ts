@@ -22,28 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
-import type { ActionInContext } from '@elastic/synthetics';
-import React from 'react';
-import { COMMAND_SELECTOR_OPTIONS } from '../../common/shared';
-import { Bold } from './styles';
-
-interface IAssertionHeadingText {
-  actionContext: ActionInContext;
-}
-
-export function AssertionHeadingText({ actionContext }: IAssertionHeadingText) {
-  return (
-    <EuiFlexGroup gutterSize="xs">
-      <Bold grow={false}>{actionContext.action.name}</Bold>
-      <EuiFlexItem grow={false}>
-        {
-          COMMAND_SELECTOR_OPTIONS.find(option => option.value === actionContext.action.command)
-            ?.text
-        }
-      </EuiFlexItem>
-      <EuiFlexItem grow={false}>{actionContext.action.selector}</EuiFlexItem>
-      <EuiFlexItem grow={false}>{actionContext.action.value}</EuiFlexItem>
-    </EuiFlexGroup>
-  );
-}
+/**
+ * Without this declaration, TypeScript will scream about the import Synthetics does
+ * here: https://github.com/elastic/synthetics/blob/12f1ed83a842809caeadd802e36ce6c0b099ca0d/src/formatter/javascript.ts#L27.
+ *
+ * In the future it would be good to resolve this issue within Synthetics itself, but for now,
+ * in order to consume the generator exported by the lib this somewhat hacky solution is required.
+ *
+ * If you're interested in fixing this, the issue is tracked here: https://github.com/elastic/synthetics-recorder/issues/413.
+ */
+declare module '*';

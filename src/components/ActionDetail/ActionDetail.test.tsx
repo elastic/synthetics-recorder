@@ -21,12 +21,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
+import type { ActionInContext } from '@elastic/synthetics';
 import React from 'react';
 import { fireEvent } from '@testing-library/react';
 import { createAction } from '../../../common/helper/test/createAction';
 import { render } from '../../helpers/test';
 import { ActionDetail } from './ActionDetail';
-import { ActionContext } from '../../../common/types';
 
 describe('ActionDetail', () => {
   let onUpdateActionMock: jest.Mock;
@@ -43,7 +44,7 @@ describe('ActionDetail', () => {
 
   describe('navigate', () => {
     const url = 'https://example.com';
-    let navigateAction: ActionContext;
+    let navigateAction: ActionInContext;
     beforeEach(() => {
       navigateAction = createAction('navigate', { action: { url } });
     });
@@ -75,7 +76,7 @@ describe('ActionDetail', () => {
   });
 
   describe('click', () => {
-    let clickAction: ActionContext;
+    let clickAction: ActionInContext;
     beforeEach(() => {
       clickAction = createAction('click', { action: { selector: '#elem-id', url: '' } });
     });
@@ -108,7 +109,7 @@ describe('ActionDetail', () => {
   });
 
   describe('fill', () => {
-    let fillAction: ActionContext;
+    let fillAction: ActionInContext;
     beforeEach(() => {
       fillAction = createAction('fill', {
         action: { selector: '#elem-id', url: '', text: 'Hello world' },

@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+import type { Steps } from '@elastic/synthetics';
 import { fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { createAction, createSteps } from '../../../common/helper/test/createAction';
-import { RecorderSteps } from '../../../common/types';
 import { render } from '../../helpers/test';
 import { ActionElement } from './ActionElement';
 
@@ -33,7 +33,7 @@ describe('ActionElement', () => {
   let onDeleteAction: jest.Mock;
   let onUpdateAction: jest.Mock;
   let onSetActionIsOpen: jest.Mock;
-  let steps: RecorderSteps;
+  let steps: Steps;
 
   beforeEach(() => {
     onDeleteAction = jest.fn();
@@ -122,7 +122,10 @@ describe('ActionElement', () => {
             pageAlias: 'page',
             url: 'https://www.elastic.co',
           },
+          frameUrl: 'https://frame.url',
+          isMainFrame: true,
           isOpen: false,
+          pageAlias: 'alias',
           title: 'Action 1',
         },
         0,
@@ -173,8 +176,11 @@ describe('ActionElement', () => {
             pageAlias: 'page',
             url: 'https://www.elastic.co',
           },
+          frameUrl: 'https://frame.url',
+          isMainFrame: true,
           isOpen: false,
           modified: true,
+          pageAlias: 'alias',
           title: 'Action 1',
         },
         1,

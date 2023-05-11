@@ -22,8 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-// import type { Step } from '@elastic/synthetics';
-import type { IElectronAPI, Step } from '../../common/types';
+import type { Step } from '@elastic/synthetics';
+import { createStepWithOverrides } from '../../common/helper/test/createAction';
+import type { IElectronAPI } from '../../common/types';
 import { getCodeForFailedResult } from './shared';
 
 describe('shared', () => {
@@ -74,22 +75,20 @@ describe('shared', () => {
     });
 
     it('calls `getCodeFromActions` when a matching step for the failed journey step is found', async () => {
-      const failedStep: Step = {
-        actions: [
-          {
-            title: 'I failed',
-            action: {
-              name: 'click',
-              signals: [],
-            },
-            frame: {
-              isMainFrame: true,
-              url: 'https://www.elastic.co',
-              pageAlias: 'page alias',
-            },
+      const failedStep: Step = createStepWithOverrides([
+        {
+          title: 'I failed',
+          action: {
+            name: 'click',
+            signals: [],
           },
-        ],
-      };
+          frame: {
+            isMainFrame: true,
+            url: 'https://www.elastic.co',
+            pageAlias: 'page alias',
+          },
+        },
+      ]);
 
       await getCodeForFailedResult(mockApi, [failedStep], {
         status: 'failed',

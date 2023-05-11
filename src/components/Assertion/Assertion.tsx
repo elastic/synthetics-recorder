@@ -32,26 +32,26 @@ import {
   EuiFormRow,
   EuiSpacer,
 } from '@elastic/eui';
+import type { ActionInContext } from '@elastic/synthetics';
 import { AssertionSelect } from './Select';
 import { AssertionInfo } from './AssertionInfo';
-import { ActionContext } from '../../../common/types';
 import { actionTitle } from '../../common/shared';
 
 interface IAssertion {
-  actionContext: ActionContext;
+  actionContext: ActionInContext;
   actionIndex: number;
   close?: () => void;
   onDeleteAction: (stepIndex: number, actionIndex: number) => void;
-  saveAssertion: (updatedAction: ActionContext) => void;
+  saveAssertion: (updatedAction: ActionInContext) => void;
   stepIndex: number;
 }
 
 function updateAction(
-  oldAction: ActionContext,
+  oldAction: ActionInContext,
   command?: string,
   selector?: string,
   value?: string
-): ActionContext {
+): ActionInContext {
   const { action } = oldAction;
   const title = actionTitle(action);
   return {
