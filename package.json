@@ -74,13 +74,13 @@
     "react-scripts": "^5.0.1",
     "react-test-renderer": "^17.0.2",
     "ts-jest": "^29.1.0",
-    "ts-unused-exports": "^8.0.0",
+    "ts-unused-exports": "^9.0.4",
     "undici": "^5.19.1",
     "wait-on": "^6.0.1"
   },
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
-    "@elastic/eui": "^78.0.0",
+    "@elastic/eui": "^80.0.0",
     "@elastic/synthetics": "^1.0.0",
     "@emotion/cache": "^11.9.3",
     "@emotion/react": "^11.9.3",
