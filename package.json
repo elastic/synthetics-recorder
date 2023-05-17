@@ -5,7 +5,7 @@
   "repository": "https://github.com/elastic/synthetics-recorder",
   "scripts": {
     "install:pw": "node scripts/install-pw.js",
-    "postinstall": "npm run install:pw && electron-builder install-app-deps && node dev-tools/dep-info.js && npm run prepare-demo-app --legacy-peer-deps",
+    "postinstall": "npm run install:pw && electron-builder install-app-deps && node dev-tools/dep-info.js && npm run prepare-demo-app --legacy-peer-deps && node postinstall.js",
     "prepare-demo-app": "npm install --prefix demo-app && npm run build --prefix demo-app",
     "react:start": "react-scripts start",
     "react:build": "react-scripts build",
