@@ -57,12 +57,14 @@ async function download(platform, arch, revision, directory) {
     }
     // eslint-disable-next-line no-console
     console.info('Downloading browser ', title);
+    const downloadConnectionTimeout = 60_000;
     await downloadBrowserWithProgressBar(
       title,
       directory,
       executablePath,
-      downloadURL,
-      downloadFileName
+      [downloadURL],
+      downloadFileName,
+      downloadConnectionTimeout
     );
   } catch (e) {
     throw new Error(`Failed to download ${title}, caused by\n${e.stack}`);
