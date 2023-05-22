@@ -16,8 +16,5 @@ Download Links:
 **Supported Systems:**
 
 - macOS (High Sierra and up): 64-bit Intel and ARM (Apple Silicon M1 & M2) for macOS. 
-- Windows (Windows 10 and up): ia32 (x86), x64 (amd64), and arm64 binaries for Windows. 
-- Linux: *Verified to work on*
-	- Ubuntu 14.04 and newer
-	- Fedora 24 and newer
-	- Debian 8 and newer
+- Windows (Windows 10 and up): x64. 
+- Linux: *Verified to work on* Ubuntu 14.04 and newer.
