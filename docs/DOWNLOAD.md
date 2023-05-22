@@ -4,13 +4,10 @@ Current Version: 1.0 Released 18 May 2023
 
 Download Links:
 
-[MacOS (Intel)](https://download.elasticsearch.org/synthetics-recorder/synthetics-recorder-1.0.0-mac-x64.dmg)
-
-[MacOS (Apple Silicon)](https://download.elasticsearch.org/synthetics-recorder/synthetics-recorder-1.0.0-mac-arm64.dmg)
-
-[Windows](https://download.elasticsearch.org/synthetics-recorder/synthetics-recorder-1.0.0-win-x64.exe)
-
-[Linux](https://download.elasticsearch.org/synthetics-recorder/synthetics-recorder-1.0.0-linux-amd64.deb) 
+- [MacOS (Intel)](https://download.elasticsearch.org/synthetics-recorder/synthetics-recorder-1.0.0-mac-x64.dmg)
+- [MacOS (Apple Silicon)](https://download.elasticsearch.org/synthetics-recorder/synthetics-recorder-1.0.0-mac-arm64.dmg)
+- [Windows](https://download.elasticsearch.org/synthetics-recorder/synthetics-recorder-1.0.0-win-x64.exe)
+- [Linux](https://download.elasticsearch.org/synthetics-recorder/synthetics-recorder-1.0.0-linux-amd64.deb) 
 
 
 **Supported Systems:**
