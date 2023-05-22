@@ -29,19 +29,22 @@ mac:
   hardenedRuntime: true
   target:
     - target: default
-      arch: 
-        - x64 
+      arch:
+        - x64
         - arm64
 win:
   target:
     - target: nsis
       arch:
+        - x86
         - x64
+        - arm64
   icon: public/elastic.png
 linux:
   target:
     - target: deb
       arch:
+        - x86
         - x64
   icon: public/elastic.png
   category: Utility
