@@ -36,7 +36,7 @@ win:
   target:
     - target: nsis
       arch:
-        - x86
+        - ia32
         - x64
         - arm64
   icon: public/elastic.png
@@ -44,7 +44,8 @@ linux:
   target:
     - target: deb
       arch:
-        - x86
+        - arm64
+        - ia32
         - x64
   icon: public/elastic.png
   category: Utility
