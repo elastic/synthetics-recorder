@@ -46,7 +46,6 @@ const DOWNLOAD_URLS = {
 async function download(platform, arch, revision, directory) {
   const platformAndArch = `${platform}-${arch}`;
   const executablePath = findExecutablePath(directory, platform);
-  console.log('the executable path', executablePath);
   const downloadHost =
     process.env['PLAYWRIGHT_DOWNLOAD_HOST'] || 'https://playwright.azureedge.net';
   const url = DOWNLOAD_URLS[platformAndArch] ?? DOWNLOAD_URLS[platform];
