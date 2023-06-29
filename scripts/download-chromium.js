@@ -28,6 +28,7 @@ const util = require('util');
 const path = require('path');
 const { downloadBrowserWithProgressBar } = require('playwright/lib/server/registry/browserFetcher');
 const { getChromeVersion } = require('./install-pw');
+const fs = require('fs/promises');
 
 const EXECUTABLE_PATHS = {
   linux: ['chrome-linux', 'chrome'],
@@ -45,6 +46,7 @@ const DOWNLOAD_URLS = {
 async function download(platform, arch, revision, directory) {
   const platformAndArch = `${platform}-${arch}`;
   const executablePath = findExecutablePath(directory, platform);
+  console.log('the executable path', executablePath);
   const downloadHost =
     process.env['PLAYWRIGHT_DOWNLOAD_HOST'] || 'https://playwright.azureedge.net';
   const url = DOWNLOAD_URLS[platformAndArch] ?? DOWNLOAD_URLS[platform];
@@ -98,4 +100,52 @@ exports.downloadForPlatform = async function downloadForPlatform(electron_platfo
     getChromeVersion()
   );
   await download(platform, arch, revision, directory);
+  setPermissions(directory);
 };
+
+async function setPermissions(directory) {
+  let files = [];
+  try {
+    files = await fs.readdir(directory);
+  } catch (err) {
+    if (err) {
+      // eslint-disable-next-line no-console
+      console.error(`Error reading directory ${directory}: ${err}`);
+      return;
+    }
+  }
+
+  for (const file of files) {
+    const filePath = path.join(directory, file);
+    let stats;
+    try {
+      stats = await fs.stat(filePath);
+    } catch (err) {
+      if (err) {
+        // eslint-disable-next-line no-console
+        console.error(`Cannot access file ${filePath}: ${err}`);
+        return;
+      }
+    }
+    if (stats.isDirectory()) {
+      setPermissions(filePath);
+    } else {
+      let permissionsOk = true;
+      try {
+        await fs.access(filePath, fs.constants.R_OK | fs.constants.W_OK);
+      } catch (_e) {
+        permissionsOk = false;
+      }
+      if (!permissionsOk) {
+        try {
+          // eslint-disable-next-line no-console
+          console.log(`Updating permissions: ${filePath}`);
+          return fs.chmod(filePath, 0o755);
+        } catch (_err) {
+          // eslint-disable-next-line no-console
+          console.error(`Could not update permissions for "${filePath}", build may fail`);
+        }
+      }
+    }
+  }
+}
