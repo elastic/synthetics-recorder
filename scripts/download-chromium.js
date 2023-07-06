@@ -99,29 +99,52 @@ exports.downloadForPlatform = async function downloadForPlatform(electron_platfo
     getChromeVersion()
   );
   await download(platform, arch, revision, directory);
-  await setPermissions(directory);
+  setPermissions(directory);
 };
 
 async function setPermissions(directory) {
+  let files = [];
   try {
-    const files = await fs.readdir(directory);
-    for (const file of files) {
-      const filePath = path.join(directory, file);
-      const stats = await fs.stat(filePath);
-      if (stats.isDirectory()) {
-        return setPermissions(filePath);
-      } else {
-        if (!(await fs.access(filePath, fs.constants.R_OK | fs.constants.W_OK))) {
-          // eslint-disable-next-line no-console
-          console.log(`Updating permissions: ${filePath}`);
-          return fs.chmod(filePath, 0o755);
-        }
-      }
-    }
+    files = await fs.readdir(directory);
   } catch (err) {
     if (err) {
       // eslint-disable-next-line no-console
-      console.error(`Error resolving permissions for ${directory}: ${err}`);
+      console.error(`Error reading directory ${directory}: ${err}`);
+      return;
+    }
+  }
+
+  for (const file of files) {
+    const filePath = path.join(directory, file);
+    let stats;
+    try {
+      stats = await fs.stat(filePath);
+    } catch (err) {
+      if (err) {
+        // eslint-disable-next-line no-console
+        console.error(`Cannot access file ${filePath}: ${err}`);
+        return;
+      }
+    }
+    if (stats.isDirectory()) {
+      setPermissions(filePath);
+    } else {
+      let permissionsOk = true;
+      try {
+        await fs.access(filePath, fs.constants.R_OK | fs.constants.W_OK);
+      } catch (_e) {
+        permissionsOk = false;
+      }
+      if (!permissionsOk) {
+        try {
+          // eslint-disable-next-line no-console
+          console.log(`Updating permissions: ${filePath}`);
+          return fs.chmod(filePath, 0o755);
+        } catch (_err) {
+          // eslint-disable-next-line no-console
+          console.error(`Could not update permissions for "${filePath}", build may fail`);
+        }
+      }
     }
   }
 }
