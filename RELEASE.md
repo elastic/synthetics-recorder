@@ -11,7 +11,7 @@ Be sure you have checked out the `main` branch and have pulled the latest change
 
 #### Ensure package-lock.json is clean
 
-```
+```bash
 # package-lock.json file should have no unstaged changes
 npm install
 ```
@@ -20,7 +20,7 @@ npm install
 
 Ensure the tests pass for you locally.
 
-```
+```bash
 npm test
 ```
 
@@ -32,7 +32,7 @@ npm test
 
 #### Push commits and tags upstream
 
-```
+```bash
   # update code
   git push upstream main
 
