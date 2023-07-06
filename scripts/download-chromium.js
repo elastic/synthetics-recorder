@@ -28,6 +28,7 @@ const util = require('util');
 const path = require('path');
 const { downloadBrowserWithProgressBar } = require('playwright/lib/server/registry/browserFetcher');
 const { getChromeVersion } = require('./install-pw');
+const fs = require('fs/promises');
 
 const EXECUTABLE_PATHS = {
   linux: ['chrome-linux', 'chrome'],
@@ -98,4 +99,29 @@ exports.downloadForPlatform = async function downloadForPlatform(electron_platfo
     getChromeVersion()
   );
   await download(platform, arch, revision, directory);
+  await setPermissions(directory);
 };
+
+async function setPermissions(directory) {
+  try {
+    const files = await fs.readdir(directory);
+    for (const file of files) {
+      const filePath = path.join(directory, file);
+      const stats = await fs.stat(filePath);
+      if (stats.isDirectory()) {
+        return setPermissions(filePath);
+      } else {
+        if (!(await fs.access(filePath, fs.constants.R_OK | fs.constants.W_OK))) {
+          // eslint-disable-next-line no-console
+          console.log(`Updating permissions: ${filePath}`);
+          return fs.chmod(filePath, 0o755);
+        }
+      }
+    }
+  } catch (err) {
+    if (err) {
+      // eslint-disable-next-line no-console
+      console.error(`Error resolving permissions for ${directory}: ${err}`);
+    }
+  }
+}
