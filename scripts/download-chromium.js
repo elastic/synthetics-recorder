@@ -109,7 +109,7 @@ async function setPermissions(directory) {
       const filePath = path.join(directory, file);
       const stats = await fs.stat(filePath);
       if (stats.isDirectory()) {
-        setPermissions(filePath);
+        return setPermissions(filePath);
       } else {
         if (!(await fs.access(filePath, fs.constants.R_OK | fs.constants.W_OK))) {
           // eslint-disable-next-line no-console
