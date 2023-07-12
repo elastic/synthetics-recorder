@@ -9,16 +9,35 @@ Be sure you have checked out the `main` branch and have pulled the latest change
   git pull upstream main
 ```
 
-Bump the beta version
+#### Ensure package-lock.json is clean
 
 ```bash
-  npm version prerelease --preid=beta
+# package-lock.json file should have no unstaged changes
+npm install
 ```
 
-Push commits and tags upstream
+#### Run tests
 
+Ensure the tests pass for you locally.
+
+```bash
+npm test
 ```
-  git push upstream main && git push upstream --tags
+
+#### Bump the project version
+
+```bash
+  npm version minor
+```
+
+#### Push commits and tags upstream
+
+```bash
+  # update code
+  git push upstream main
+
+  # new tag will trigger a release build
+  git push upstream --tags
 ```
 
 This will start the release process. Wait for an email/slack to confirm the release is done.
