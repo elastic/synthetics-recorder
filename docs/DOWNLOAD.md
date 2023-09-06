@@ -1,6 +1,8 @@
 # Elastic Synthetic Monitoring Point and Click Script Recorder Download Page
 
-**Current Version:** 1.2.0 Released 7 September 2023
+**Current Version:** 1.2.0 
+
+**Released:** 7 September 2023
 
 ## Download Links
 
