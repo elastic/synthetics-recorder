@@ -62,7 +62,7 @@ export function StepSeparator({ index, step }: IStepSeparator) {
         }
         id={`step-separator-${index}`}
         initialIsOpen
-        onToggle={isOpen => setCanDelete(isOpen)}
+        onToggle={(isOpen: boolean) => setCanDelete(isOpen)}
       >
         {step.actions.map((actionContext, actionIndex) => (
           <ActionElement
