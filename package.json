@@ -80,7 +80,7 @@
   },
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
-    "@elastic/eui": "^82.1.0",
+    "@elastic/eui": "^89.1.0",
     "@elastic/synthetics": "^1.4.0",
     "@emotion/cache": "^11.9.3",
     "@emotion/react": "^11.9.3",
@@ -93,7 +93,7 @@
     "playwright": "https://gitpkg.now.sh/elastic/playwright/packages/playwright-core?1.37.0-recorder",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "styled-components": "^5.3.11",
+    "styled-components": "^6.1.0",
     "typescript": "^4.5.3"
   },
   "browserslist": [
