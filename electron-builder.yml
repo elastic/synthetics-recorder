@@ -38,6 +38,7 @@ win:
       arch:
         - x64
   icon: public/elastic.png
+  rfc3161TimeStampServer: http://timestamp.apple.com/ts1
 linux:
   target:
     - target: deb
