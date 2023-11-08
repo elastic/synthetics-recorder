@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import { chromium, Browser, BrowserContext } from 'playwright';
+import { chromium, Browser, BrowserContext } from 'playwright-core';
 import logger from 'electron-log';
 import { EXECUTABLE_PATH } from './config';
 
