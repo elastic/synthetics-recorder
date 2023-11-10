@@ -63,12 +63,12 @@ When updating the version of [@elastic/synthetics](https://github.com/elastic/sy
 
 ##### Summary
 
-You are going to create a custom version of the released version of Playwright. A condensed explanation of this process follows:
+You are going to create a custom version of the released Playwright. Here is a condensed explanation of this process:
 
 1. Pull latest Playwright changes from Microsoft -> Elastic fork.
 1. Rebase the `synthetics-recorder` branch off of latest main and resolve conflicts.
 1. Identify the Playwright version(s) we will need to build.
-1. Spawn custom branch(es) off of the release tag(s) for the version(s) used by the target version of Synthetics
+1. Spawn custom branch(es) off of the release tag(s) for the version(s) used by the target version of Synthetics.
 1. `git cherry-pick` our custom commit off of the `synthetics-recorder` branch into the branches you created from Playwright release tags.
 1. Build Playwright and commit the updated src and lib files, push to Elastic remote.
 1. Update the dependencies in the Recorder's `package.json` to reference the branch(es) you have pushed.
@@ -76,9 +76,13 @@ You are going to create a custom version of the released version of Playwright. 
 
 ##### Detailed steps
 
-1. Go to [@elastic/playwright](https://github.com/elastic/playwright), fetch upstream microsoft:main into main if needed. We keep our modifications in `synthetics-recorder` branch. It is supposed to have only one extra commit[(84309bf)](https://github.com/elastic/playwright/commit/84309bf44d2a97889b178f2f2da2bc9f30e5aff8)) compared to the main branch. If main branch has new commits, fetch the changes into `synthetics-recorder` branch by pulling it with [rebase](https://git-scm.com/docs/git-pull#Documentation/git-pull.txt---rebasefalsetruemergesinteractive) option
+##### Fetch latest Playwright commits
 
-2. Pull the remote changes to your machine. If necessary, set the remote as follows:
+Go to [@elastic/playwright](https://github.com/elastic/playwright), fetch upstream microsoft:main into main if needed. We keep our modifications in `synthetics-recorder` branch. It is supposed to have only one extra commit[(84309bf)](https://github.com/elastic/playwright/commit/84309bf44d2a97889b178f2f2da2bc9f30e5aff8)) compared to the main branch. If main branch has new commits, fetch the changes into `synthetics-recorder` branch by pulling it with [rebase](https://git-scm.com/docs/git-pull#Documentation/git-pull.txt---rebasefalsetruemergesinteractive) option
+
+##### Prepare to update the Elastic Playwright fork
+
+Pull the remote changes to your machine. If necessary, set the remote as follows:
 
 ```bash
 git remote add upstream https://github.com/microsoft/playwright.git
@@ -91,16 +95,34 @@ git remote -v
 // elastic  https://github.com/elastic/playwright.git (push)
 ```
 
-3. The Recorder depends on custom versions of the `playwright` and `playwright-core` packages.
-   Confirm the Playwright version from Synthetics agent's `package.json`:
+##### Identify which versions of Playwright and Playwright-Core are needed
+
+The Recorder depends on custom versions of the `playwright` and `playwright-core` packages.
+Confirm the Playwright version from Synthetics agent's `package.json`:
 
 ```json
 // @elastic/synthetics's package.json
     "playwright": "=1.38.0",
-    "playwright-core": "=1.37.1",
+    "playwright-core": "=1.38.1",
 ```
 
-4. If `playwright` and `playwright-core` are the exact same version, you only need to create one new branch. If these do not match, like in the example shown in step 3 where Synthetics depends on `1.38.0` and `1.38.1`, you'll need to build both of those tags. Without doing this, `@elastic/synthetics` will pull in the vanilla version of the package in question when installed in the Recorder, and the app will break when it runs. Fetch the tags from upstream, checkout to the version, and create a new branch:
+##### Create branches for the target Playwright packages
+
+If `playwright` and `playwright-core` are the exact same version, you only need to create one new branch.
+
+###### What does this mean?
+
+If you look at the [Synthetics `package.json`](https://github.com/elastic/synthetics/blob/417b111de15f7ea6be2f59bc46fdb931e2404f8e/package.json#L54) and see that the version for `playwright` and `playwright-core` are the same, you only need to branch off of the release tag for that version. Example:
+
+```json
+  // you only need to branch off of tag v1.38.0
+  "playwright": "=1.38.0",
+  "playwright-core": "=1.38.0"
+```
+
+If these do not match, like in the first example shown in the section, where Synthetics depends on `1.38.0` and `1.38.1`, you'll need to build both of those tags.
+If we fail to provide corresponding custom builds for both versions, the `@elastic/synthetics` package will pull in the vanilla version of the missing package when installed in the Recorder, and the app will break when it runs because it is missing functionality.
+Fetch the tags from upstream, checkout to the version, and create a new branch:
 
 ```bash
 git fetch upstream --tags
@@ -111,28 +133,58 @@ git checkout -b 1.38.0-recorder v1.38.0
 git checkout -b 1.38.1-recorder v1.38.1
 ```
 
-5. Cherry-pick the commit from `synthetics-recorder` branch, then run `npm run build`. Make sure you've uncommented [!packages/playwright-core/lib](https://github.com/elastic/playwright/blob/f3441b1d93091725ba929e2ec8dbc70cefc081ef/.gitignore#L14) and `!packages/playwright/lib` in `.gitignore`. This will cause `git` to let us stage all the `lib` files that Playwright will build. Check all the files under `packages/playwright-core/lib` are staged, then commit and push it to elastic remote:
+##### Overlay our custom changes to your new release branches
 
-**NOTE:** it is possible you will need to do some additional cleanup, as the `cherry-pick` described below does not always transfer the changes perfectly. You can reference the diff from [this commit](https://github.com/elastic/playwright/commit/d4e68eb0467e9ac9409ca42b55cafbb36d3dc7f3) to the `1.37.0` version bump to see some of the additional changes.
+Cherry-pick the final commit from the `synthetics-recorder` branch.
+It is likely you will need to resolve some merge conflicts. You can reference older release branches if you have any confusion with conflicts.
+
+Once you have finished the `cherry-pick`, run `npm run build`. This will run the script Playwright uses to generate its lib files.
+
+After the build runs, uncomment the package ignore lines in the `.gitignore`.
+Depending on which packages your branch needs (`playwright`, `playwright-core`, or both), you'll need to uncomment the corresponding lines.
+Here's a link to an example: [!packages/playwright-core/lib](https://github.com/elastic/playwright/blob/f3441b1d93091725ba929e2ec8dbc70cefc081ef/.gitignore#L14).
+If you don't see the package lib directory for your target package in the `.gitignore`, you must add it, as all lib directories are ignored by default.
+
+After uncommenting/adding the ignore lines, `git status` should now show the `lib` files you built for your target packages. Check all the `lib` files are staged, and commit/push it to elastic remote:
 
 ```bash
 # example:
 git cherry-pick 84309bf
 # solve conflicts if necessary
-# uncomment `!packages/playwright-core/lib/` in .gitignore (L14)
+# if building for `playwright-core`, uncomment/add `!packages/playwright-core/lib/` in .gitignore
+# if building for `playwright`, uncomment/add `!packages/playwright/lib/` in .gitignore
 npm run build
 git add .
 git commit -m "feat: generate libs"
+# if you're reusing these commands, replace the semver with the version you're targeting
 git push --set-upstream elastic 1.38.0-recorder
 ```
 
-6. Test new changes in the Recorder by updating Recorder's package.json. Update `playwright` dependency to the branch you pushed from above step:
+##### Build the Recorder and test your changes
+
+Test new changes in the Recorder by updating Recorder's package.json. Update the `playwright` and `playwright-core` dependencies with the branch you pushed from above step:
 
 ```json
 // @elastic/synthetics-recorder's package.json
-...
-    "playwright": "https://gitpkg.now.sh/elastic/playwright/packages/playwright-core?1.38.0-recorder",
-...
+// replace the semver in the fields with the one that matches your package targets.
+// (they should correspond to the versions used by the Synthetics version you are using)
+{
+  "dependencies": {
+    // whichever versions of `playwright` and `playwright-core` used by Synthetics must match the versions specified below
+    "@elastic/synthetics": "^1.5.2",
+    // these links will cause our custom builds of Playwright and Playwright-Core to be used instead of the official releases
+    "playwright": "https://gitpkg.now.sh/elastic/playwright/packages/playwright?1.38.0-recorder",
+    "playwright-core": "https://gitpkg.now.sh/elastic/playwright/packages/playwright-core?1.38.0-recorder"
+  }
+}
+```
+
+```bash
+# run your install to update `package-lock.json` and install your target synthetics and playwright packages
+npm install
+
+# you can now run the Recorder and make sure that you can record and test journeys
+npm run dev
 ```
 
 ##### Javascript Codegen
