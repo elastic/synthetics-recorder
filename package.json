@@ -81,7 +81,7 @@
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "^89.1.0",
-    "@elastic/synthetics": "=1.5.2",
+    "@elastic/synthetics": "=1.5.3",
     "@emotion/cache": "^11.9.3",
     "@emotion/react": "^11.9.3",
     "dotenv": "^16.0.3",
@@ -90,7 +90,7 @@
     "electron-log": "^4.4.8",
     "electron-unhandled": "^4.0.1",
     "moment": "^2.29.4",
-    "playwright": "https://gitpkg.now.sh/elastic/playwright/packages/playwright?1.38.0-recorder",
+    "playwright": "https://gitpkg.now.sh/elastic/playwright/packages/playwright?1.38.1-recorder",
     "playwright-core": "https://gitpkg.now.sh/elastic/playwright/packages/playwright-core?1.38.1-recorder",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
