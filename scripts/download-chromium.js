@@ -26,7 +26,9 @@ require('dotenv').config();
 
 const util = require('util');
 const path = require('path');
-const { downloadBrowserWithProgressBar } = require('playwright/lib/server/registry/browserFetcher');
+const {
+  downloadBrowserWithProgressBar,
+} = require('playwright-core/lib/server/registry/browserFetcher');
 const { getChromeVersion } = require('./install-pw');
 const fs = require('fs/promises');
 

@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { Page } from 'playwright';
+import { Page } from 'playwright-core';
 import { ElectronServiceFactory, env } from '../services';
 
 const electronService = new ElectronServiceFactory();

@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { chromium, Browser } from 'playwright';
+import { chromium, Browser } from 'playwright-core';
 import { env } from '../services';
 
 type ConnectRetryParams = { url: string; timeout: number; interval: number };

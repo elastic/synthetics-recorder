@@ -5,7 +5,7 @@
   "repository": "https://github.com/elastic/synthetics-recorder",
   "scripts": {
     "install:pw": "node scripts/install-pw.js",
-    "postinstall": "npm run install:pw && electron-builder install-app-deps && node dev-tools/dep-info.js && npm run prepare-demo-app --legacy-peer-deps && node postinstall.js",
+    "postinstall": "npm run install:pw && electron-builder install-app-deps && node dev-tools/dep-info.js && npm run prepare-demo-app --legacy-peer-deps",
     "prepare-demo-app": "npm install --prefix demo-app && npm run build --prefix demo-app",
     "react:start": "react-scripts start",
     "react:build": "react-scripts build",
@@ -81,7 +81,7 @@
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "^89.1.0",
-    "@elastic/synthetics": "^1.4.0",
+    "@elastic/synthetics": "=1.5.3",
     "@emotion/cache": "^11.9.3",
     "@emotion/react": "^11.9.3",
     "dotenv": "^16.0.3",
@@ -90,7 +90,8 @@
     "electron-log": "^4.4.8",
     "electron-unhandled": "^4.0.1",
     "moment": "^2.29.4",
-    "playwright": "https://gitpkg.now.sh/elastic/playwright/packages/playwright-core?1.37.0-recorder",
+    "playwright": "https://gitpkg.now.sh/elastic/playwright/packages/playwright?1.38.1-recorder",
+    "playwright-core": "https://gitpkg.now.sh/elastic/playwright/packages/playwright-core?1.38.1-recorder",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "styled-components": "^6.1.0",
