@@ -80,7 +80,7 @@
   },
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
-    "@elastic/eui": "^89.1.0",
+    "@elastic/eui": "^91.0.0",
     "@elastic/synthetics": "=1.5.3",
     "@emotion/cache": "^11.9.3",
     "@emotion/react": "^11.9.3",
