@@ -27,7 +27,7 @@ import { env } from '../services';
 
 type ConnectRetryParams = { url: string; timeout: number; interval: number };
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const DEFAULT_TIMEOUT = 10000;
 const DEFAULT_INTERVAL = 250;
@@ -47,7 +47,7 @@ export class TestBrowserService {
     }
 
     const startTime = Date.now();
-    async function connectLoop() {
+    async function connectLoop(): Promise<Browser> {
       try {
         const remoteChromium = await chromium.connectOverCDP(url);
         TestBrowserService.#remoteBrowser = remoteChromium;
