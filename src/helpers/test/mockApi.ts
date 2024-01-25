@@ -36,6 +36,15 @@ export function getMockElectronApi(overrides?: Partial<IElectronAPI>): IElectron
     openExternalLink: jest.fn(),
     runTest: jest.fn(),
     removeOnTestListener: jest.fn(),
+    makeProject: jest.fn(),
+    findProjects: jest.fn(),
+    fetchProject: jest.fn(),
+    openFile: jest.fn(),
+    openInVsCode: jest.fn(),
+    pushProjectToKibana: jest.fn(),
+    deleteProject: jest.fn(),
+    getProjectConfig: jest.fn(),
+    pollProjectStatus: jest.fn(),
     ...overrides,
   };
 }

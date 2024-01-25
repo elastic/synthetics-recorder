@@ -59,6 +59,33 @@ const electronAPI: IElectronAPI = {
   removeOnTestListener: () => {
     ipcRenderer.removeAllListeners('test-event');
   },
+  makeProject: (args: string) => {
+    return ipcRenderer.invoke('make-project', args);
+  },
+  findProjects: () => {
+    return ipcRenderer.invoke('find-projects');
+  },
+  fetchProject: project => {
+    return ipcRenderer.invoke('fetch-project', project);
+  },
+  openFile: async path => {
+    return ipcRenderer.invoke('open-file', path);
+  },
+  openInVsCode: async path => {
+    return ipcRenderer.invoke('open-in-vs-code', path);
+  },
+  pushProjectToKibana: async project => {
+    return ipcRenderer.invoke('push', project);
+  },
+  deleteProject: async project => {
+    return ipcRenderer.invoke('delete-project', project);
+  },
+  getProjectConfig: async project => {
+    return ipcRenderer.invoke('get-project-config', project);
+  },
+  pollProjectStatus: async project => {
+    return ipcRenderer.invoke('poll-project-status', project);
+  },
 };
 
 contextBridge.exposeInMainWorld('electronAPI', electronAPI);
