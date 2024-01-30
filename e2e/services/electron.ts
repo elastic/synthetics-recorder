@@ -28,8 +28,13 @@ import path from 'path';
 import { env } from '.';
 
 export class ElectronServiceFactory {
-  #instance: ElectronApplication;
-  #recordingBrowserPage: Page;
+  #instance: ElectronApplication | null;
+  #recordingBrowserPage: Page | null;
+
+  constructor() {
+    this.#instance = null;
+    this.#recordingBrowserPage = null;
+  }
 
   async getInstance() {
     if (this.#instance) return this.#instance;
@@ -87,7 +92,7 @@ export class ElectronServiceFactory {
   }
 
   async recordClick(selector: string) {
-    await this.#recordingBrowserPage.click(selector);
+    await this.#recordingBrowserPage?.click(selector);
     return this.#recordingBrowserPage;
   }
 
@@ -116,13 +121,13 @@ export class ElectronServiceFactory {
   }
 
   async waitForPageToBeIdle(timeout = 45000) {
-    await this.#recordingBrowserPage.waitForLoadState('networkidle', {
+    await this.#recordingBrowserPage?.waitForLoadState('networkidle', {
       timeout,
     });
   }
 
-  async navigateRecordingBrowser(url, timeout = 4500) {
-    await this.#recordingBrowserPage.goto(url, {
+  async navigateRecordingBrowser(url: string, timeout = 4500) {
+    await this.#recordingBrowserPage?.goto(url, {
       timeout,
       waitUntil: 'networkidle',
     });

@@ -22,13 +22,4 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import ProjectManager from './Main';
-
-ReactDOM.render(
-  <React.StrictMode>
-    <ProjectManager />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+export { ProjectsList } from './ProjectsList';

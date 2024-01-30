@@ -98,4 +98,13 @@ export interface IElectronAPI {
   openExternalLink: (url: string) => Promise<void>;
   runTest: (params: RunJourneyOptions, listener: TestEventListener) => Promise<void>;
   removeOnTestListener: () => void;
+  makeProject: (args: string) => Promise<string>;
+  findProjects: () => Promise<string>;
+  fetchProject: (project: string) => Promise<string>;
+  openFile: (path: string) => Promise<string>;
+  openInVsCode: (path: string) => Promise<string>;
+  pushProjectToKibana: (project: string) => Promise<string>;
+  deleteProject: (project: string) => Promise<string>;
+  getProjectConfig: (project: string) => Promise<string>;
+  pollProjectStatus: (project: string) => Promise<string>;
 }

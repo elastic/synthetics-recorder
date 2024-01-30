@@ -34,7 +34,11 @@ import React, { useContext } from 'react';
 import { createExternalLinkHandler, SYNTHETICS_DISCUSS_FORUM_URL } from '../../common/shared';
 import { CommunicationContext } from '../../contexts/CommunicationContext';
 
-export function Title() {
+interface Props {
+  closeRecording?: () => void;
+}
+
+export function Title({ closeRecording }: Props) {
   const { electronAPI } = useContext(CommunicationContext);
   const euiTheme = useContext(EuiThemeContext);
 
@@ -65,6 +69,11 @@ export function Title() {
           </h1>
         </EuiFlexItem>
         <EuiFlexItem />
+        <EuiFlexItem grow={false}>
+          <EuiButtonEmpty key="close-recording" onClick={closeRecording}>
+            Back to management
+          </EuiButtonEmpty>
+        </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiButtonEmpty
             href={SYNTHETICS_DISCUSS_FORUM_URL}

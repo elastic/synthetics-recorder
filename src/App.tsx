@@ -61,7 +61,11 @@ const cache = createCache({
   container: document.querySelector<HTMLElement>('meta[name="global-style-insert"]') ?? undefined,
 });
 
-export default function App() {
+interface Props {
+  cancel?: () => void;
+}
+
+export default function App({ cancel }: Props) {
   const [url, setUrl] = useState('');
   const [isCodeFlyoutVisible, setIsCodeFlyoutVisible] = useState(false);
 
@@ -105,7 +109,7 @@ export default function App() {
                   <ToastContext.Provider
                     value={{ dismissToast, sendToast, setToastLifeTimeMs, toasts, toastLifeTimeMs }}
                   >
-                    <Title />
+                    <Title closeRecording={cancel} />
                     <HeaderControls setIsCodeFlyoutVisible={setIsCodeFlyoutVisible} />
                     <AppPageBody>
                       {steps.length === 0 && (
