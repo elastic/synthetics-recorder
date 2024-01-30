@@ -5,9 +5,11 @@ name: OpenTelemetry Export Trace
 
 on:
   workflow_run:
-    workflows:
-      - Test
+    workflows: [ "*" ]
     types: [completed]
+
+permissions:
+  contents: read
 
 jobs:
   otel-export-trace:
