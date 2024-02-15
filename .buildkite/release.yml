@@ -12,6 +12,14 @@ steps:
   - label: "Sign linux :linux:"
     command: "true"
 
+  - label: Sign artifacts
+    trigger: unified-release-gpg-signing
+    # If you change 'key: sign-service' then change .buildkite/scripts/download-signed-artifacts.sh
+    key: sign-service
+    build:
+      env:
+        INPUT_PATH: buildkite://
+
   - label: "Sign macos :mac:"
     command: "true"
 
@@ -19,6 +27,11 @@ steps:
     command: "true"
 
   - wait: ~
+
+  - label: Download signed artifacts
+    commands:
+      - .buildkite/scripts/download-signed-artifacts.sh
+      - .buildkite/scripts/download-signed-artifacts.sh | buildkite-agent pipeline upload
 
   - label: "Publish S3 Artifacts :s3:"
     command: "true"

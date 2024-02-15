@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+##  This script prepares the secret context
+##
+##  NOTE: *_SECRET or *_TOKEN env variables are masked, hence if you'd like to avoid any
+##        surprises please use the suffix _SECRET or _TOKEN for those values that contain
+##        any sensitive data. Buildkite can mask those values automatically
+
+set -eo pipefail
+
+# To help with testing the GPG signing
+# TODO: shared secret
+BUILDKITE_TOKEN_SECRET=$(vault read -field=buildkite_token secret/ci/elastic-observability-robots/buildkite-read-build-access)
+export BUILDKITE_TOKEN_SECRET
