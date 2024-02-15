@@ -1,14 +1,41 @@
 ---
 # $yaml-language-server: $schema=https://raw.githubusercontent.com/buildkite/pipeline-schema/main/schema.json
 steps:
-  - label: "Build"
+  - label: "Package :package:"
+    command: "true"
+    agents:
+      provider: orka
+      imagePrefix: generic-13-ventura-x64
+
+  - wait: ~
+
+  - label: "Sign linux :linux:"
     command: "true"
 
-  - label: "Test"
+  - label: "Sign macos :mac:"
     command: "true"
 
-  - label: "Deploy"
+  - label: "Sign windows :windows:"
     command: "true"
 
-  - label: "Publish"
+  - wait: ~
+
+  - label: "Publish S3 Artifacts :s3:"
     command: "true"
+
+  - wait: ~
+
+  - label: "Publish GitHub Release :github:"
+    command: "true"
+
+notify:
+  - slack: "#observablt-bots"
+    if: 'build.state != "passed"'
+
+# Review the message format for noting when it failed or not.
+notify:
+  - slack:
+      channels:
+        - "#on-week-oblt-productivity"
+      message: |
+        Release done.
