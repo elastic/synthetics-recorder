@@ -5,11 +5,10 @@ apiVersion: backstage.io/v1alpha1
 kind: Resource
 metadata:
   name: buildkite-pipeline-synthetics-recorder
-  description: Buildkite Pipeline for synthetics-recorder
+  description: Buildkite Pipeline for Releasing the synthetics-recorder
   links:
     - title: Pipeline
-      url: https://buildkite.com/elastic/synthetics-recorder
-
+      url: https://buildkite.com/elastic/synthetics-recorder-release
 spec:
   type: buildkite-pipeline
   owner: group:observablt-robots
@@ -22,9 +21,16 @@ spec:
       description: 
     spec:
       repository: elastic/synthetics-recorder
-      pipeline_file: ".buildkite/pipeline.yml"
+      pipeline_file: ".buildkite/release.yml"
+      allow_rebuilds: true
+      cancel_intermediate_builds: false
+      skip_intermediate_builds: false
+      provider_settings:
+        trigger_mode: none
       teams:
         observablt-robots:
+          access_level: MANAGE_BUILD_AND_READ
+        uptime:
           access_level: MANAGE_BUILD_AND_READ
         everyone:
           access_level: READ_ONLY
