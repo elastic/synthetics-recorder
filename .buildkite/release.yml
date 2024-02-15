@@ -2,7 +2,7 @@
 # $yaml-language-server: $schema=https://raw.githubusercontent.com/buildkite/pipeline-schema/main/schema.json
 steps:
   - label: "Package :package:"
-    command: "true"
+    command: ".buildkite/scripts/package.sh"
     agents:
       provider: orka
       imagePrefix: generic-13-ventura-x64
