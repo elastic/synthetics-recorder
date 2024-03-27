@@ -27,22 +27,16 @@ import { createTestHttpServer } from './testServer';
 
 let electronService: ElectronServiceFactory;
 let server: Server;
-let hostname: string;
-let port: number;
 let url: string;
 
-beforeEach(() => {
-  electronService = new ElectronServiceFactory();
-  const { server: s, hostname: h, port: p } = createTestHttpServer();
+beforeAll(async () => {
+  const { server: s, port } = await createTestHttpServer();
   server = s;
-  hostname = h;
-  port = p;
-  url = `http://${hostname}:${port}`;
+  url = `http://localhost:${port}`;
 });
 
-afterEach(async () => {
-  await server.close();
-  await electronService.terminate();
+afterAll(async () => {
+  await new Promise(resolve => server.close(resolve));
 });
 
 function getCoordinates({
@@ -60,16 +54,23 @@ function getCoordinates({
 }
 
 describe('Step Divider', () => {
+  beforeEach(async () => {
+    electronService = new ElectronServiceFactory();
+  });
+  afterEach(async () => {
+    await electronService.terminate();
+  });
+
   it('creates a step and drags to a new position', async () => {
     const electronWindow = await electronService.getWindow();
     await electronService.enterTestUrl(env.DEMO_APP_URL);
     await electronService.clickStartRecording();
     await electronService.waitForPageToBeIdle();
     await electronService.navigateRecordingBrowser(url);
-    await electronService.recordClick('text=Hello Elastic Synthetics Recorder');
+    await electronService.recordClick('Hello Elastic Synthetics Recorder');
 
     const page = await electronService.getWindow();
-    await page.getByText('Hello Elastic Synthetics Recorder').waitFor();
+    await page.getByText('Hello Elastic Synthetics').waitFor();
     await electronService.clickStopRecording();
 
     const divider = await electronWindow.locator('id=insert-divider-0-1');
@@ -99,10 +100,10 @@ describe('Step Divider', () => {
     await electronService.waitForPageToBeIdle();
     await electronService.navigateRecordingBrowser(url);
     await electronService.waitForPageToBeIdle();
-    await electronService.recordClick('text=Hello Elastic Synthetics Recorder');
+    await electronService.recordClick('Hello Elastic Synthetics Recorder');
 
     const page = await electronService.getWindow();
-    await page.getByText('Hello Elastic Synthetics Recorder').waitFor();
+    await page.getByText('Hello Elastic Synthetics').waitFor();
     await electronService.clickStopRecording();
 
     const divider = await electronWindow.locator('id=insert-divider-0-1');

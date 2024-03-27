@@ -29,21 +29,17 @@ import { createTestHttpServer } from './testServer';
 const electronService = new ElectronServiceFactory();
 
 let server: Server;
-let hostname: string;
-let port: number;
 let url: string;
 
-beforeEach(() => {
-  const { server: s, hostname: h, port: p } = createTestHttpServer();
+beforeAll(async () => {
+  const { server: s, port } = await createTestHttpServer();
   server = s;
-  hostname = h;
-  port = p;
-  url = `http://${hostname}:${port}`;
+  url = `http://localhost:${port}`;
 });
 
-afterEach(async () => {
+afterAll(async () => {
   await electronService.terminate();
-  server.close();
+  await new Promise(resolve => server.close(resolve));
 });
 
 describe('Navigation', () => {

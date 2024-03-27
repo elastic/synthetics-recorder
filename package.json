@@ -92,6 +92,7 @@
     "moment": "^2.29.4",
     "playwright": "https://gitpkg.now.sh/elastic/playwright/packages/playwright?1.41.2-recorder",
     "playwright-core": "https://gitpkg.now.sh/elastic/playwright/packages/playwright-core?1.41.2-recorder",
+    "playwright-chromium": "https://gitpkg.now.sh/elastic/playwright/packages/playwright-chromium?1.41.2-recorder",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "styled-components": "^6.1.0",
