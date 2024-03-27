@@ -87,7 +87,7 @@ export class ElectronServiceFactory {
   }
 
   async recordClick(selector: string) {
-    await this.#recordingBrowserPage.click(selector);
+    await this.#recordingBrowserPage.locator(selector).click();
     return this.#recordingBrowserPage;
   }
 

@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { Page } from 'playwright-core';
+import { ElementHandle, Page } from 'playwright-core';
 import { ElectronServiceFactory, env } from '../services';
 
-let electronService;
+let electronService: ElectronServiceFactory;
 
 beforeEach(() => {
   electronService = new ElectronServiceFactory();
@@ -52,7 +52,7 @@ describe('Run test', () => {
       await electronService.clickStartRecording();
       await electronService.waitForPageToBeIdle();
 
-      const testButton = await electronWindow.$(`[aria-label="Test"]`);
+      const testButton = (await electronWindow.$(`[aria-label="Test"]`)) as ElementHandle;
       expect(testButton).toBeTruthy();
       expect(await testButton.isEnabled()).toBeFalsy();
       await electronService.clickStopRecording();
