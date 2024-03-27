@@ -67,10 +67,10 @@ describe('Step Divider', () => {
     await electronService.clickStartRecording();
     await electronService.waitForPageToBeIdle();
     await electronService.navigateRecordingBrowser(url);
-    await electronService.recordClick('Hello Elastic Synthetics Recorder');
+    const page = await electronService.getRecordingPage();
+    await page.getByRole('button', { name: 'Hello Elastic Synthetics Recorder' }).click();
 
-    const page = await electronService.getWindow();
-    await page.getByText('Hello Elastic Synthetics').waitFor();
+    await electronWindow.getByText('Hello Elastic Synthetics').waitFor();
     await electronService.clickStopRecording();
 
     const divider = await electronWindow.locator('id=insert-divider-0-1');
@@ -100,10 +100,10 @@ describe('Step Divider', () => {
     await electronService.waitForPageToBeIdle();
     await electronService.navigateRecordingBrowser(url);
     await electronService.waitForPageToBeIdle();
-    await electronService.recordClick('Hello Elastic Synthetics Recorder');
+    const page = await electronService.getRecordingPage();
+    await page.getByRole('button', { name: 'Hello Elastic Synthetics Recorder' }).click();
 
-    const page = await electronService.getWindow();
-    await page.getByText('Hello Elastic Synthetics').waitFor();
+    await electronWindow.getByText('Hello Elastic Synthetics').waitFor();
     await electronService.clickStopRecording();
 
     const divider = await electronWindow.locator('id=insert-divider-0-1');
