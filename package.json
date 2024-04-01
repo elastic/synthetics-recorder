@@ -1,6 +1,6 @@
 {
   "name": "synthetics-recorder",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Record synthetics user journey flow of a website",
   "repository": "https://github.com/elastic/synthetics-recorder",
   "scripts": {
@@ -50,6 +50,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@electron/notarize": "^1.2.3",
     "@testing-library/react": "^12.1.4",
     "@testing-library/react-hooks": "^8.0.1",
@@ -81,7 +82,7 @@
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "^89.1.0",
-    "@elastic/synthetics": "=1.5.3",
+    "@elastic/synthetics": "=1.7.2",
     "@emotion/cache": "^11.9.3",
     "@emotion/react": "^11.9.3",
     "dotenv": "^16.0.3",
@@ -90,8 +91,9 @@
     "electron-log": "^4.4.8",
     "electron-unhandled": "^4.0.1",
     "moment": "^2.29.4",
-    "playwright": "https://gitpkg.now.sh/elastic/playwright/packages/playwright?1.38.1-recorder",
-    "playwright-core": "https://gitpkg.now.sh/elastic/playwright/packages/playwright-core?1.38.1-recorder",
+    "playwright": "https://gitpkg.now.sh/elastic/playwright/packages/playwright?1.41.2-recorder",
+    "playwright-chromium": "https://gitpkg.now.sh/elastic/playwright/packages/playwright-chromium?1.41.2-recorder",
+    "playwright-core": "https://gitpkg.now.sh/elastic/playwright/packages/playwright-core?1.41.2-recorder",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "styled-components": "^6.1.0",
