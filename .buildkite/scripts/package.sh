@@ -3,7 +3,8 @@ set -exo pipefail
 
 echo "~~~ Load nvm"
 if [ -n "$BUILDKITE" ] ; then
-# Need to figure out what's the reason NVM is not explictly loaded
+  set +xe
+  # Need to figure out what's the reason NVM is not explictly loaded
   source "$HOME/.zshrc"
 fi
 
