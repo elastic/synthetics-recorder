@@ -10,3 +10,12 @@ set -eo pipefail
 # To help with testing the GPG signing
 BUILDKITE_TOKEN_SECRET=$(vault kv get -field=buildkite_token kv/ci-shared/observability-ci/buildkite-read-build-access)
 export BUILDKITE_TOKEN_SECRET
+
+set +x
+echo "~~~ Install nvm"
+touch ~/.zshrc  # See https://github.com/nvm-sh/nvm?tab=readme-ov-file#troubleshooting-on-macos
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
+# Load NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"

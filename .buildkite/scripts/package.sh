@@ -1,15 +1,5 @@
 #!/usr/bin/env bash
-set -eo pipefail
-
-set +x
-echo "~~~ Install nvm"
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-
-# Load NVM
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
-set -x
+set -exo pipefail
 
 echo "--- Install node and gather dependencies"
 nvm install "$(cat .nvmrc)"
