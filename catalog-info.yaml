@@ -17,8 +17,8 @@ spec:
     apiVersion: buildkite.elastic.dev/v1
     kind: Pipeline
     metadata:
-      name: synthetics-recorder
-      description: 
+      name: synthetics-recorder-release
+      description: Buildkite Pipeline for Releasing the synthetics-recorder
     spec:
       repository: elastic/synthetics-recorder
       pipeline_file: ".buildkite/release.yml"
