@@ -42,13 +42,13 @@ steps:
     command: "true"
 
 notify:
-  - slack: "#observablt-bots"
-    if: 'build.state != "passed"'
-
-# Review the message format for noting when it failed or not.
-notify:
   - slack:
+    if: 'build.state != "passed"'
       channels:
         - "#on-week-oblt-productivity"
-      message: |
-        Release done.
+      message: "Release failed."
+  - slack:
+    if: 'build.state == "passed"'
+      channels:
+        - "#on-week-oblt-productivity"
+      message: "Release done."
