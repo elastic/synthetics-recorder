@@ -22,6 +22,9 @@ echo "~~~ Install nvm"
 touch ~/.zshrc  # See https://github.com/nvm-sh/nvm?tab=readme-ov-file#troubleshooting-on-macos
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 
+ls -ltra $HOME/
+
 # Load NVM
+set +e
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
