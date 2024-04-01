@@ -41,14 +41,7 @@ steps:
   - label: "Publish GitHub Release :github:"
     command: "true"
 
+# Figure out how to notify releases (maybe subscribe the slack channel to the GitHub releases?)
 notify:
-  - slack:
+  - slack: "#on-week-oblt-productivity"
     if: 'build.state != "passed"'
-      channels:
-        - "#on-week-oblt-productivity"
-      message: "Release failed."
-  - slack:
-    if: 'build.state == "passed"'
-      channels:
-        - "#on-week-oblt-productivity"
-      message: "Release done."
