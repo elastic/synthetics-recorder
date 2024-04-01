@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -exo pipefail
 
+echo "~~~ Load nvm"
+if [ -n "$BUILDKITE" ] ; then
+# Need to figure out what's the reason NVM is not explictly loaded
+  source "$HOME/.zshrc"
+fi
+
 echo "--- Install node and gather dependencies"
 nvm install "$(cat .nvmrc)"
 npm ci
