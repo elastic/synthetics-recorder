@@ -78,7 +78,7 @@ You are going to create a custom version of the released Playwright. Here is a c
 
 ##### Fetch latest Playwright commits
 
-Go to [@elastic/playwright](https://github.com/elastic/playwright), fetch upstream microsoft:main into main if needed. We keep our modifications in `synthetics-recorder` branch. It is supposed to have only one extra commit[(84309bf)](https://github.com/elastic/playwright/commit/84309bf44d2a97889b178f2f2da2bc9f30e5aff8)) compared to the main branch. If main branch has new commits, fetch the changes into `synthetics-recorder` branch by pulling it with [rebase](https://git-scm.com/docs/git-pull#Documentation/git-pull.txt---rebasefalsetruemergesinteractive) option
+Go to [@elastic/playwright](https://github.com/elastic/playwright), fetch upstream microsoft:main into main if needed. We keep our modifications in `synthetics-recorder` branch. It is supposed to have only one extra commit[(7f80cfc)](https://github.com/elastic/playwright/commit/7f80cfcaf3e438b528b829d0a3c32f2eebe70865)) compared to the main branch. If main branch has new commits, fetch the changes into `synthetics-recorder` branch by pulling it with [rebase](https://git-scm.com/docs/git-pull#Documentation/git-pull.txt---rebasefalsetruemergesinteractive) option
 
 ##### Prepare to update the Elastic Playwright fork
 

@@ -23,20 +23,22 @@ THE SOFTWARE.
 */
 
 import http from 'http';
+import { AddressInfo } from 'net';
 
-export function createTestHttpServer(hostname = '127.0.0.1', port = 8082) {
+export async function createTestHttpServer(port = 0) {
   const server = http.createServer((_req, res) => {
     res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/plain');
-    res.end('Hello Elastic Synthetics Recorder');
+    res.setHeader('Content-Type', 'text/html');
+    res.end(`
+      <button><div>Hello Elastic Synthetics Recorder</div></button>
+    `);
   });
 
-  server.listen(port, hostname);
-
-  server.on('error', err => {
-    // eslint-disable-next-line no-console
-    console.error(err);
+  server.listen(port);
+  await new Promise((resolve, reject) => {
+    server.once('listening', resolve);
+    server.once('error', reject);
   });
-
-  return { server, hostname, port };
+  const { port: p } = server.address() as AddressInfo;
+  return { server, port: p };
 }

@@ -40,7 +40,8 @@ npm test
   git push upstream --tags
 ```
 
-This will start the release process. Wait for an email/slack to confirm the release is done.
+This will start the release process. Wait for an email/slack to confirm the
+release is done. You can track the progress of the release job in [Jenkins](https://internal-ci.elastic.co/job/elastic+synthetics-recorder+release/view/tags/).
 
 ### Criteria for publishing
 
@@ -68,4 +69,5 @@ Once someone has ensured that the following are true, there's nothing blocking t
      that break the recorder and try to address them in the future.
 1. You are able to export code.
 1. Ideally, you take the code you export and run it in an actual monitor in a Kibana or Project.
-  - **Note:** if you use this in Kibana's Synthetics UI you must export as an `inline` script.
+
+- **Note:** if you use this in Kibana's Synthetics UI you must export as an `inline` script.
