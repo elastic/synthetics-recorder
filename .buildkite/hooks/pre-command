@@ -8,5 +8,5 @@
 set -eo pipefail
 
 # To help with testing the GPG signing
-BUILDKITE_TOKEN_SECRET=$(vault read -field=buildkite_token kv/ci-shared/observability-ci/buildkite-read-build-access)
+BUILDKITE_TOKEN_SECRET=$(vault kv get -field=buildkite_token kv/ci-shared/observability-ci/buildkite-read-build-access)
 export BUILDKITE_TOKEN_SECRET
