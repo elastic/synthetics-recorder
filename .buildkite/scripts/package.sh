@@ -1,16 +1,21 @@
 #!/usr/bin/env bash
-set -eox pipefail
+set -eo pipefail
 
+set +x
+echo "~~~ Install nvm"
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 
 # Load NVM
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-nvm install "$(cat .nvmrc)"
+set -x
 
+echo "--- Install node and gather dependencies"
+nvm install "$(cat .nvmrc)"
 npm ci
 
+echo "--- run release-ci"
 # Disable signing
 # see https://www.electron.build/code-signing#how-to-disable-code-signing-during-the-build-process-on-macos
 export CSC_IDENTITY_AUTO_DISCOVERY=false
@@ -20,6 +25,7 @@ npm run release-ci
 
 # Store unsigned artifacts
 if [ -n "$BUILDKITE" ] ; then
+    echo "--- Upload artifacts"
     mv dist artifacts-to-sign
     # (only *nix)
     # This is the contract with the unified-release-gpg-signing pipeline
