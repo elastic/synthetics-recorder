@@ -17,8 +17,15 @@ steps:
       env:
         INPUT_PATH: buildkite://
 
-  - label: "Sign macos :mac:"
-    command: "true"
+  - label: MacOS Sign artifacts
+    trigger: unified-release-macos-signing
+    # NOTE: If you change 'key: macos-sign-service' then change .buildkite/scripts/download-signed-artifacts.sh
+    key: macos-sign-service
+    build:
+      env:
+        INPUT_PATH: buildkite://
+      # TODO: only for testing purposes
+      branch: "orka-macos-jobs"
 
   - label: Windows Sign artifacts
     trigger: unified-release-windows-signing
