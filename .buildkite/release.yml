@@ -9,13 +9,10 @@ steps:
 
   - wait: ~
 
-  - label: "Sign linux :linux:"
-    command: "true"
-
-  - label: Sign artifacts
+  - label: GPG Sign artifacts
     trigger: unified-release-gpg-signing
-    # NOTE: If you change 'key: sign-service' then change .buildkite/scripts/download-signed-artifacts.sh
-    key: sign-service
+    # NOTE: If you change 'key: gpg-sign-service' then change .buildkite/scripts/download-signed-artifacts.sh
+    key: gpg-sign-service
     build:
       env:
         INPUT_PATH: buildkite://
@@ -23,15 +20,21 @@ steps:
   - label: "Sign macos :mac:"
     command: "true"
 
-  - label: "Sign windows :windows:"
-    command: "true"
+  - label: Windows Sign artifacts
+    trigger: unified-release-windows-signing
+    # NOTE: If you change 'key: windows-sign-service' then change .buildkite/scripts/download-signed-artifacts.sh
+    key: windows-sign-service
+    build:
+      env:
+        DOWNLOAD_ARTIFACTS_FILTER : "*.exe"
+        INPUT_PATH: buildkite://
 
   - wait: ~
 
   - label: Download signed artifacts
     commands:
-      - .buildkite/scripts/download-signed-artifacts.sh
-      - .buildkite/scripts/download-signed-artifacts.sh | buildkite-agent pipeline upload
+      - .buildkite/scripts/download-gpg-signed-artifacts.sh
+      - .buildkite/scripts/download-gpg-signed-artifacts.sh | buildkite-agent pipeline upload
 
   - label: "Publish S3 Artifacts :s3:"
     command: "true"

@@ -28,12 +28,8 @@ if [ -n "$BUILDKITE" ] ; then
     # This is the contract with the unified-release-gpg-signing pipeline
     buildkite-agent artifact upload "artifacts-to-sign/*.deb;artifacts-to-sign/*.dmg;artifacts-to-sign/*.zip"
 
-    mv artifacts-to-sign win-artifacts-to-sign
-    # (only windows)
-    # TODO: need to clarify the contract.
-    buildkite-agent artifact upload "win-artifacts-to-sign/*.exe"
+    buildkite-agent artifact upload "artifacts-to-sign/*.exe"
 
-    mv win-artifacts-to-sign mac-artifacts-to-sign
     # (only mac)
     # TODO: need to clarify the contract.
     buildkite-agent artifact upload "mac-artifacts-to-sign/*.dmg"
