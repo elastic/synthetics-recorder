@@ -33,7 +33,7 @@ steps:
     key: windows-sign-service
     build:
       env:
-        DOWNLOAD_ARTIFACTS_FILTER : "*.exe"
+        DOWNLOAD_ARTIFACTS_FILTER: "*.exe"
         INPUT_PATH: buildkite://
 
   - wait: ~
