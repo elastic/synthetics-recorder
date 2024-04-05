@@ -14,16 +14,11 @@ export BUILDKITE_TOKEN_SECRET
 # Upload should only allow configuring the Buildkite Token ih the pre-command.
 if [[ "$BUILDKITE_COMMAND" =~ .*"upload".* ]]; then
   echo "Skipped pre-command when running the Upload pipeline"
-  exit 0
+  # NOTE: exit 0 with the pre-command does not work!
+else
+  set +x
+  set +e
+  echo "~~~ Install nvm"
+  touch ~/.zshrc  # See https://github.com/nvm-sh/nvm?tab=readme-ov-file#troubleshooting-on-macos
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 fi
-
-set +x
-set +e
-echo "~~~ Install nvm"
-touch ~/.zshrc  # See https://github.com/nvm-sh/nvm?tab=readme-ov-file#troubleshooting-on-macos
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-
-echo "~~~ Debug shell"
-echo "My current shell is $SHELL ($0)"
-ls -ltra $HOME
-cat ~/.zshrc || true
