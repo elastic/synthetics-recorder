@@ -7,15 +7,15 @@
 
 set -eo pipefail
 
-# Upload should not do much with the pre-command.
+# To help with testing the GPG signing
+BUILDKITE_TOKEN_SECRET=$(vault kv get -field=buildkite_token kv/ci-shared/observability-ci/buildkite-read-build-access)
+export BUILDKITE_TOKEN_SECRET
+
+# Upload should only allow configuring the Buildkite Token ih the pre-command.
 if [[ "$BUILDKITE_COMMAND" =~ .*"upload".* ]]; then
   echo "Skipped pre-command when running the Upload pipeline"
   exit 0
 fi
-
-# To help with testing the GPG signing
-BUILDKITE_TOKEN_SECRET=$(vault kv get -field=buildkite_token kv/ci-shared/observability-ci/buildkite-read-build-access)
-export BUILDKITE_TOKEN_SECRET
 
 set +x
 set +e
