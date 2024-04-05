@@ -11,7 +11,7 @@ steps:
 
   - label: GPG Sign artifacts
     trigger: unified-release-gpg-signing
-    # NOTE: If you change 'key: gpg-sign-service' then change .buildkite/scripts/download-signed-artifacts.sh
+    # NOTE: If you change 'key: gpg-sign-service' then change the bellow call for .buildkite/scripts/download-signed-artifacts.sh
     key: gpg-sign-service
     build:
       env:
@@ -19,7 +19,7 @@ steps:
 
   - label: MacOS Sign artifacts
     trigger: unified-release-macos-signing
-    # NOTE: If you change 'key: macos-sign-service' then change .buildkite/scripts/download-signed-artifacts.sh
+    # NOTE: If you change 'key: macos-sign-service' then change the bellow call for .buildkite/scripts/download-signed-artifacts.sh
     key: macos-sign-service
     build:
       env:
@@ -29,7 +29,7 @@ steps:
 
   - label: Windows Sign artifacts
     trigger: unified-release-windows-signing
-    # NOTE: If you change 'key: windows-sign-service' then change .buildkite/scripts/download-signed-artifacts.sh
+    # NOTE: If you change 'key: windows-sign-service' then change the bellow call for .buildkite/scripts/download-signed-artifacts.sh
     key: windows-sign-service
     build:
       env:
@@ -40,8 +40,12 @@ steps:
 
   - label: Download signed artifacts
     commands:
-      - .buildkite/scripts/download-gpg-signed-artifacts.sh
-      - .buildkite/scripts/download-gpg-signed-artifacts.sh | buildkite-agent pipeline upload
+      - .buildkite/scripts/download-signed-artifacts.sh "gpg-sign-service"
+      - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service"
+      - .buildkite/scripts/download-signed-artifacts.sh "windows-sign-service"
+      - .buildkite/scripts/download-signed-artifacts.sh "gpg-sign-service | buildkite-agent pipeline upload
+      - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service" | buildkite-agent pipeline upload
+      - .buildkite/scripts/download-signed-artifacts.sh "windows-sign-service" | buildkite-agent pipeline upload
 
   - wait: ~
 
