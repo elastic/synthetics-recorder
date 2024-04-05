@@ -43,13 +43,19 @@ steps:
       - .buildkite/scripts/download-gpg-signed-artifacts.sh
       - .buildkite/scripts/download-gpg-signed-artifacts.sh | buildkite-agent pipeline upload
 
+  - wait: ~
+
   - label: "Publish S3 Artifacts :s3:"
-    command: "true"
+    commands:
+      - buildkite-agent artifact download "*.*" artifacts/
+      - "true"
 
   - wait: ~
 
   - label: "Publish GitHub Release :github:"
-    command: "true"
+    commands:
+      - buildkite-agent artifact download "*.*" artifacts/
+      - "true"
 
 # Figure out how to notify releases (maybe subscribe the slack channel to the GitHub releases?)
 notify:
