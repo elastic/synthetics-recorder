@@ -39,10 +39,6 @@ cat << EOF
       - buildkite-agent artifact download --build "$GPG_SIGN_BUILD_ID" "*.*" signed-artifacts/
       - cd signed-artifacts
       - ls -ltra *.*
-      - zip -r ../signed-artifacts.zip .
-      - cd ../
-      - ls -ltra signed-artifacts.zip
-      - buildkite-agent artifact upload signed-artifacts.zip
     agents:
       image: docker.elastic.co/ci-agent-images/ubuntu-build-essential
 EOF
