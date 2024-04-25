@@ -24,8 +24,6 @@ steps:
     build:
       env:
         INPUT_PATH: buildkite://
-      # TODO: only for testing purposes
-      branch: "orka-macos-jobs"
 
   - label: Windows Sign artifacts
     trigger: unified-release-windows-signing
