@@ -48,9 +48,13 @@ steps:
   - wait: ~
 
   - label: "Publish S3 Artifacts :s3:"
-    commands:
-      - buildkite-agent artifact download "*.*" artifacts/
-      - "true"
+    trigger: unified-release-publish-s3-artifacts
+    key: publish-s3-service
+    build:
+      env:
+        INPUT_PATH: buildkite://
+        DESTINATION_PATH: "s3://download.elasticsearch.org/synthetics-recorder"
+        DRY_RUN: true
 
   - wait: ~
 
