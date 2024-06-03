@@ -16,6 +16,10 @@ if [[ "$BUILDKITE_COMMAND" =~ .*"upload".* ]]; then
   echo "Skipped pre-command when running the Upload pipeline"
   # NOTE: exit 0 with the pre-command does not work!
 else
+  echo "~~~ Configure ephemeral GitHub token"
+  GITHUB_TOKEN=$VAULT_GITHUB_TOKEN
+  GH_TOKEN=$VAULT_GITHUB_TOKEN
+  export GH_TOKEN GITHUB_TOKEN
   set +x
   set +e
   echo "~~~ Install nvm"
