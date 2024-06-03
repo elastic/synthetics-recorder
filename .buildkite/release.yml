@@ -59,6 +59,7 @@ steps:
 
   - label: "Publish GitHub Release :github:"
     commands:
+      - mkdir -p artifacts
       - buildkite-agent artifact download "*.*" artifacts/
       - ls -l artifacts/
       - "true"
