@@ -52,8 +52,7 @@ steps:
     key: publish-s3-service
     build:
       env:
-        INPUT_PATH: buildkite://
-        DESTINATION_PATH: "s3://download.elasticsearch.org/synthetics-recorder"
+        DESTINATION_PATH: "s3://download.elasticsearch.org/synthetics-recorder/"
         DRY_RUN: true
 
   - wait: ~
@@ -61,6 +60,7 @@ steps:
   - label: "Publish GitHub Release :github:"
     commands:
       - buildkite-agent artifact download "*.*" artifacts/
+      - ls -l artifacts/
       - "true"
 
 # Figure out how to notify releases (maybe subscribe the slack channel to the GitHub releases?)
