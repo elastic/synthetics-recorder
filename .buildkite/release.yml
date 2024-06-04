@@ -38,12 +38,12 @@ steps:
 
   - label: Download signed artifacts
     commands:
-      - .buildkite/scripts/download-signed-artifacts.sh "gpg-sign-service"
-      - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service"
-      - .buildkite/scripts/download-signed-artifacts.sh "windows-sign-service"
-      - .buildkite/scripts/download-signed-artifacts.sh "gpg-sign-service" | buildkite-agent pipeline upload
-      - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service" | buildkite-agent pipeline upload
-      - .buildkite/scripts/download-signed-artifacts.sh "windows-sign-service" | buildkite-agent pipeline upload
+      - .buildkite/scripts/download-signed-artifacts.sh "gpg-sign-service" "gpg"
+      - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service" "macos"
+      - .buildkite/scripts/download-signed-artifacts.sh "windows-sign-service" "windows"
+      - .buildkite/scripts/download-signed-artifacts.sh "gpg-sign-service" "gpg" | buildkite-agent pipeline upload
+      - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service" "macos" | buildkite-agent pipeline upload
+      - .buildkite/scripts/download-signed-artifacts.sh "windows-sign-service" "windows" | buildkite-agent pipeline upload
 
   - wait: ~
 
@@ -61,9 +61,9 @@ steps:
     commands:
       - .buildkite/scripts/create-github-release.sh
     depends_on:
-      - "gpg-sign-service"
-      - "macos-sign-service"
-      - "windows-sign-service"
+      - "gpg"
+      - "macos"
+      - "windows"
 
 # Figure out how to notify releases (maybe subscribe the slack channel to the GitHub releases?)
 notify:

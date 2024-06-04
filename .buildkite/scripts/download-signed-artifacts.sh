@@ -7,6 +7,7 @@
 #
 
 STEP=$1
+DOWNLOAD_STEP_NAME=$2
 
 ## Support main pipeline and downstream pipelines
 if [ -n "$BUILDKITE_TRIGGERED_FROM_BUILD_PIPELINE_SLUG" ] ; then
@@ -35,7 +36,7 @@ fi
 
 cat << EOF
   - label: ":pipeline: Download signed artifacts"
-    key: "$STEP"
+    key: "$DOWNLOAD_STEP_NAME"
     commands:
       - mkdir -p signed-artifacts
       - buildkite-agent artifact download --build "$SIGN_BUILD_ID" "*.*" signed-artifacts/

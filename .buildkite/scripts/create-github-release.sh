@@ -1,4 +1,4 @@
-#!/usr/bin/env bash#
+#!/usr/bin/env bash
 # Download the signed artifacts and run the GitHub release using the GH cli
 #
 # Required environment variables:
