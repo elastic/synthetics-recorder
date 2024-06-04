@@ -26,13 +26,13 @@ fi
 
 echo "--- Run GitHub release"
 if [ -n "${BUILDKITE_TAG}" ] ; then
-  echo "gh release \
+  gh release \
     create \
-    ${BUILDKITE_TAG} \
+    "${BUILDKITE_TAG}" \
     --draft \
-    --title ${BUILDKITE_TAG} \
+    --title "${BUILDKITE_TAG}" \
     --repo elastic/synthetics-recorder \
-    ${DIST_LOCATION}/*.*"
+    "${DIST_LOCATION}/*.*"
 else
   echo "gh release won't be triggered this is not a Git tag release"
 fi
