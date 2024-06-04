@@ -11,6 +11,13 @@ set -eo pipefail
 BUILDKITE_TOKEN_SECRET=$(vault kv get -field=buildkite_token kv/ci-shared/observability-ci/buildkite-read-build-access)
 export BUILDKITE_TOKEN_SECRET
 
+# If not Git tag release then DRY_RUN=true
+DRY_RUN=true
+if [ -n "${BUILDKITE_TAG}" ] ; then
+  DRY_RUN=false
+fi
+export DRY_RUN
+
 # Upload should only allow configuring the Buildkite Token ih the pre-command.
 if [[ "$BUILDKITE_COMMAND" =~ .*"upload".* ]]; then
   echo "Skipped pre-command when running the Upload pipeline"

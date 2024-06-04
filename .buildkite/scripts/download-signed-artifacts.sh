@@ -35,6 +35,7 @@ fi
 
 cat << EOF
   - label: ":pipeline: Download signed artifacts"
+    key: "$STEP"
     commands:
       - mkdir -p signed-artifacts
       - buildkite-agent artifact download --build "$SIGN_BUILD_ID" "*.*" signed-artifacts/

@@ -53,16 +53,17 @@ steps:
     build:
       env:
         DESTINATION_PATH: "s3://download.elasticsearch.org/synthetics-recorder/"
-        DRY_RUN: true
+        DRY_RUN: "${DRY_RUN}"
 
   - wait: ~
 
   - label: "Publish GitHub Release :github:"
     commands:
-      - mkdir -p artifacts-to-upload
-      - buildkite-agent artifact download "*.*" artifacts-to-upload/
-      - ls -l artifacts-to-upload/
-      - .buildkite/scripts/create-github-release.sh artifacts-to-upload
+      - .buildkite/scripts/create-github-release.sh
+    depends_on:
+      - "gpg-sign-service"
+      - "macos-sign-service"
+      - "windows-sign-service"
 
 # Figure out how to notify releases (maybe subscribe the slack channel to the GitHub releases?)
 notify:
