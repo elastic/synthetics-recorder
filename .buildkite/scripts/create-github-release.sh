@@ -9,10 +9,10 @@ set -eox pipefail
 DIST_LOCATION=artifacts-to-upload
 
 echo "--- Download signed artifacts"
-mkdir -p v
-buildkite-agent artifact download --step gpg-sign-service "*.*" "$DIST_LOCATION"/
-buildkite-agent artifact download --step macos-sign-service "*.*" "$DIST_LOCATION"/
-buildkite-agent artifact download --step windows-sign-service "*.*" "$DIST_LOCATION"/
+mkdir -p "$DIST_LOCATION"
+buildkite-agent artifact download --step gpg "*.*" "$DIST_LOCATION"/
+buildkite-agent artifact download --step macos "*.*" "$DIST_LOCATION"/
+buildkite-agent artifact download --step windows "*.*" "$DIST_LOCATION"/
 ls -l "$DIST_LOCATION"/
 
 echo "--- Install gh :github:"
