@@ -53,7 +53,7 @@ steps:
     build:
       env:
         DESTINATION_PATH: "s3://download.elasticsearch.org/synthetics-recorder/"
-        DRY_RUN: "${DRY_RUN}"
+        DRY_RUN: true
 
   - wait: ~
 
