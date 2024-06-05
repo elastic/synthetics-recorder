@@ -40,9 +40,7 @@ cat << EOF
     commands:
       - mkdir -p signed-artifacts
       - buildkite-agent artifact download --build "$SIGN_BUILD_ID" "*.*" signed-artifacts/
-      - cd signed-artifacts
-      - ls -ltra *.*
-      - buildkite-agent artifact upload "*.*"
+      - buildkite-agent artifact upload "signed-artifacts/*.*"
     agents:
       image: docker.elastic.co/ci-agent-images/ubuntu-build-essential
 EOF

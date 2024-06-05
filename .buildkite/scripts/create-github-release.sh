@@ -10,9 +10,9 @@ DIST_LOCATION=artifacts-to-upload
 
 echo "--- Download signed artifacts"
 mkdir -p "$DIST_LOCATION"
-buildkite-agent artifact download --step gpg "*.*" "$DIST_LOCATION"/
-buildkite-agent artifact download --step macos "*.*" "$DIST_LOCATION"/
-buildkite-agent artifact download --step windows "*.*" "$DIST_LOCATION"/
+buildkite-agent artifact download --step gpg "signed-artifacts/*.*" "$DIST_LOCATION"/
+buildkite-agent artifact download --step macos "signed-artifacts/*.*" "$DIST_LOCATION"/
+buildkite-agent artifact download --step windows "signed-artifacts/*.*" "$DIST_LOCATION"/
 ls -l "$DIST_LOCATION"/
 
 echo "--- Install gh :github:"
