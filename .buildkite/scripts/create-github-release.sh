@@ -6,14 +6,14 @@
 #
 set -eox pipefail
 
-DIST_LOCATION=artifacts-to-upload
-
+DIST_LOCATION=signed-artifacts
 echo "--- Download signed artifacts"
-mkdir -p "$DIST_LOCATION"
-buildkite-agent artifact download --step gpg "signed-artifacts/*.*" "$DIST_LOCATION"/
-buildkite-agent artifact download --step macos "signed-artifacts/*.*" "$DIST_LOCATION"/
-buildkite-agent artifact download --step windows "signed-artifacts/*.*" "$DIST_LOCATION"/
-ls -l "$DIST_LOCATION"/
+buildkite-agent artifact download --step gpg "$DIST_LOCATION/*.*" ./
+buildkite-agent artifact download --step macos "$DIST_LOCATION/*.*" ./
+buildkite-agent artifact download --step windows "$DIST_LOCATION/*.*" ./
+
+echo "--- List signed artifacts"
+ls -l "$DIST_LOCATION/"
 
 echo "--- Install gh :github:"
 if ! gh --version &>/dev/null ; then
@@ -26,6 +26,8 @@ fi
 
 echo "--- Run GitHub release"
 if [ -n "${BUILDKITE_TAG}" ] ; then
+  # VAULT_GITHUB_TOKEN is the GitHub ephemeral token created in Buildkite
+  GH_TOKEN=$VAULT_GITHUB_TOKEN \
   gh release \
     create \
     "${BUILDKITE_TAG}" \
@@ -34,5 +36,8 @@ if [ -n "${BUILDKITE_TAG}" ] ; then
     --repo elastic/synthetics-recorder \
     "${DIST_LOCATION}/*.*"
 else
-  echo "gh release won't be triggered this is not a Git tag release"
+  echo "gh release won't be triggered this is not a Git tag release, but let's list the releases"
+  # VAULT_GITHUB_TOKEN is the GitHub ephemeral token created in Buildkite
+  GH_TOKEN=$VAULT_GITHUB_TOKEN \
+  gh release list --repo elastic/synthetics-recorder
 fi
