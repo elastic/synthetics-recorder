@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+##  This script prepares the secret context
+##
+##  NOTE: *_SECRET or *_TOKEN env variables are masked, hence if you'd like to avoid any
+##        surprises please use the suffix _SECRET or _TOKEN for those values that contain
+##        any sensitive data. Buildkite can mask those values automatically
+
+set -eo pipefail
+
+# To help with testing the GPG signing
+BUILDKITE_TOKEN_SECRET=$(vault kv get -field=buildkite_token kv/ci-shared/observability-ci/buildkite-read-build-access)
+export BUILDKITE_TOKEN_SECRET
+
+# If not Git tag release then DRY_RUN=true
+DRY_RUN=true
+if [ -n "${BUILDKITE_TAG}" ] ; then
+  DRY_RUN=false
+fi
+export DRY_RUN
+
+# Upload should only allow configuring the Buildkite Token ih the pre-command.
+if [[ "$BUILDKITE_COMMAND" =~ .*"upload".* ]]; then
+  echo "Skipped pre-command when running the Upload pipeline"
+  # NOTE: exit 0 with the pre-command does not work!
+else
+  echo "~~~ Configure ephemeral GitHub token"
+  GITHUB_TOKEN=$VAULT_GITHUB_TOKEN
+  GH_TOKEN=$VAULT_GITHUB_TOKEN
+  export GH_TOKEN GITHUB_TOKEN
+  set +x
+  set +e
+  echo "~~~ Install nvm"
+  touch ~/.zshrc  # See https://github.com/nvm-sh/nvm?tab=readme-ov-file#troubleshooting-on-macos
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+fi

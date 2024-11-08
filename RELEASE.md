@@ -41,7 +41,7 @@ npm test
 ```
 
 This will start the release process. Wait for an email/slack to confirm the
-release is done. You can track the progress of the release job in [Jenkins](https://internal-ci.elastic.co/job/elastic+synthetics-recorder+release/view/tags/).
+release is done. You can track the progress of the release job in [Buildkite](https://buildkite.com/elastic/synthetics-recorder-release/).
 
 ### Criteria for publishing
 
