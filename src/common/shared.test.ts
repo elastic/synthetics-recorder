@@ -83,8 +83,6 @@ describe('shared', () => {
             signals: [],
           },
           frame: {
-            isMainFrame: true,
-            url: 'https://www.elastic.co',
             pageAlias: 'page alias',
           },
         },
