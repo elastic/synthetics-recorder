@@ -48,7 +48,7 @@ export class ElectronServiceFactory {
            * any other value, and we can't control this interface.
            */
           TEST_PORT: env.TEST_PORT as string,
-          NODE_ENV: process.env.NODE_ENV,
+          NODE_ENV: process.env.NODE_ENV ?? '',
         },
       });
 
