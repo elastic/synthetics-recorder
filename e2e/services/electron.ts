@@ -34,7 +34,6 @@ export class ElectronServiceFactory {
   async getInstance() {
     if (this.#instance) return this.#instance;
 
-    console.log('node env:', process.env.NODE_ENV);
     try {
       this.#instance = await _electron.launch({
         args: [
