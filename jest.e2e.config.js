@@ -41,12 +41,13 @@ module.exports = {
 
   // This option sets the URL for the jsdom environment. It is reflected in properties such as location.href
   // testURL: "http://localhost",
-  transform: {
-    'ts-jest': {
-      isolatedModules: true,
-    },
-  },
+  // transform: {
+  //   'ts-jest': {
+  //     isolatedModules: true,
+  //   },
+  // },
 
   testTimeout: 60000,
-  reporters: ['default', ['jest-junit', { outputName: 'e2e-junit.xml' }]],
+  // reporters: ['default', ['jest-junit', { outputName: 'e2e-junit.xml' }]],
+  // resolver: `./tests/common/resolver.js`,
 };
