@@ -36,6 +36,7 @@ afterEach(async () => {
 });
 
 describe('Run test', () => {
+  //Dummy for tests
   describe('Test Button', () => {
     it('is disabled when scripts are not recorded', async () => {
       const electronWindow: Page = await electronService.getWindow();
