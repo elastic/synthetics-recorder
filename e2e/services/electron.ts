@@ -23,6 +23,7 @@ THE SOFTWARE.
 */
 
 import { _electron, ElectronApplication, Page } from 'playwright-core';
+import fs from 'fs';
 import { TestBrowserService } from './browser';
 import path from 'path';
 import { env } from '.';
@@ -34,13 +35,13 @@ export class ElectronServiceFactory {
   async getInstance() {
     if (this.#instance) return this.#instance;
 
+    const binPath = path.join(__dirname, '..', '..', 'build', 'electron', 'electron.js');
+
+    if (!fs.existsSync(binPath)) throw Error('Electron binary not found');
+
     try {
       this.#instance = await _electron.launch({
-        args: [
-          path.join(__dirname, '..', '..', 'build', 'electron', 'electron.js'),
-          '--no-sandbox',
-          '--enable-logging',
-        ],
+        args: [binPath, '--no-sandbox', '--enable-logging'],
         env: {
           DISPLAY: env.DISPLAY,
           /* we are casting this as a string to satisfy the `launch` params requirement,
@@ -48,8 +49,7 @@ export class ElectronServiceFactory {
            * any other value, and we can't control this interface.
            */
           TEST_PORT: env.TEST_PORT as string,
-          PW_DEBUG: 'console',
-          NODE_ENV: process.env.NODE_ENV,
+          NODE_ENV: process.env.NODE_ENV ?? 'development',
         },
       });
 
