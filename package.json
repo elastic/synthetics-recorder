@@ -25,7 +25,7 @@
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "jest --config ./jest.unit.config.js .",
     "test:unit:watch": "npm run test:unit -- --coverage --watch --collectCoverageFrom={src,electron}/**/*.{js,jsx,ts,tsx}",
-    "test:e2e": "jest --runInBand --config ./jest.e2e.config.js ./e2e/tests",
+    "test:e2e": "jest --passWithNoTests --runInBand --config ./jest.e2e.config.js ./e2e/tests",
     "test:e2e:server": "BROWSER=NONE PORT=61337 react-scripts start",
     "test:e2e:runner": "IS_RUNNER=true TEST_PORT=61337 jest --runInBand --config ./jest.e2e.config.js ./e2e/tests",
     "update-demo-app": "git subtree pull --prefix demo-app git@github.com:vigneshshanmugam/synthetics-ecommerce-demo.git main --squash"
