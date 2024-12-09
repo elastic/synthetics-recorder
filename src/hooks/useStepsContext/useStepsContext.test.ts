@@ -23,13 +23,12 @@ THE SOFTWARE.
 */
 
 import type { ActionInContext, Step, Steps } from '@elastic/synthetics';
-import { act, renderHook, RenderHookResult } from '@testing-library/react-hooks';
-import type { IStepsContext } from '../../contexts/StepsContext';
+import { act, renderHook } from '@testing-library/react-hooks';
 import { createAction, createStep, createSteps } from '../../../common/helper/test/createAction';
 import { useStepsContext } from './useStepsContext';
 
 describe('useStepsContext', () => {
-  let defaultResult: RenderHookResult<unknown, IStepsContext>;
+  let defaultResult: ReturnType<typeof renderHook>;
   let defaultSteps: Steps;
 
   beforeEach(async () => {
@@ -178,10 +177,9 @@ describe('useStepsContext', () => {
 
       expect(steps).toHaveLength(2);
       expect(steps[0].actions).toHaveLength(2);
-      expect(steps[0].actions.map(({ action: { name } }) => name)).toEqual([
-        'first-step-2',
-        'second-step-2',
-      ]);
+      expect(
+        steps[0].actions.map(({ action: { name } }: { action: { name: string } }) => name)
+      ).toEqual(['first-step-2', 'second-step-2']);
       expect(steps[1].actions).toHaveLength(1);
       expect(steps[1].actions[0].action.name).toBe('first-step-1');
     });

@@ -33,7 +33,13 @@ describe('useDrop', () => {
     it('should update the isDragOver state when the dragIndex changes', () => {
       const steps = createSteps([['Step 1', 'Step 2'], ['Step 3'], ['Step 4', 'Step 5']]);
       const { result } = renderHook(() => useDrop(0, 0), {
-        wrapper: ({ children, dragIndex }) => (
+        wrapper: ({
+          children,
+          dragIndex,
+        }: {
+          children: React.ReactNode;
+          dragIndex: number | undefined;
+        }) => (
           <TestContextWrapper
             component={children}
             contextOverrides={{
@@ -56,7 +62,7 @@ describe('useDrop', () => {
       const steps = createSteps([['Step 1', 'Step 2'], ['Step 3'], ['Step 4', 'Step 5']]);
       const onSplitStep = jest.fn();
       const { rerender, result } = renderHook(() => useDrop(0, 0), {
-        wrapper: ({ children }) => (
+        wrapper: ({ children }: { children: React.ReactNode }) => (
           <TestContextWrapper
             component={children}
             contextOverrides={{
