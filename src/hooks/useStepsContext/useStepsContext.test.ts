@@ -37,17 +37,20 @@ describe('useStepsContext', () => {
     defaultResult = renderHook(() => useStepsContext());
 
     act(() => {
-      defaultResult.result.current.setSteps(defaultSteps);
+      (defaultResult.result.current as ReturnType<typeof useStepsContext>).setSteps(defaultSteps);
     });
   });
 
   describe('setStepName', () => {
     it('sets the target step name', () => {
       act(() => {
-        defaultResult.result.current.setStepName(0, 'test-name');
+        (defaultResult.result.current as ReturnType<typeof useStepsContext>).setStepName(
+          0,
+          'test-name'
+        );
       });
 
-      const { steps } = defaultResult.result.current;
+      const { steps } = defaultResult.result.current as ReturnType<typeof useStepsContext>;
 
       expect(steps[0].name).toEqual('test-name');
       expect(steps[1].name).toBeUndefined();
@@ -59,10 +62,13 @@ describe('useStepsContext', () => {
       const testStep: Step = createStep(['new-action']);
 
       act(() => {
-        defaultResult.result.current.onStepDetailChange(testStep, 1);
+        (defaultResult.result.current as ReturnType<typeof useStepsContext>).onStepDetailChange(
+          testStep,
+          1
+        );
       });
 
-      const { steps } = defaultResult.result.current;
+      const { steps } = defaultResult.result.current as ReturnType<typeof useStepsContext>;
 
       expect(steps[0].actions).toEqual(defaultSteps[0].actions);
       expect(steps[1]).toEqual(testStep);
@@ -73,10 +79,10 @@ describe('useStepsContext', () => {
   describe('onDeleteAction', () => {
     it('deletes the targeted action', () => {
       act(() => {
-        defaultResult.result.current.onDeleteAction(1, 1);
+        (defaultResult.result.current as ReturnType<typeof useStepsContext>).onDeleteAction(1, 1);
       });
 
-      const { steps } = defaultResult.result.current;
+      const { steps } = defaultResult.result.current as ReturnType<typeof useStepsContext>;
 
       expect(steps).toHaveLength(2);
       expect(steps[0]).toEqual(defaultSteps[0]);
@@ -88,10 +94,13 @@ describe('useStepsContext', () => {
   describe('onSoftDeleteAction', () => {
     it('applies a soft delete to a targeted action', () => {
       act(() => {
-        defaultResult.result.current.onSoftDeleteAction(1, 1);
+        (defaultResult.result.current as ReturnType<typeof useStepsContext>).onSoftDeleteAction(
+          1,
+          1
+        );
       });
 
-      const { steps } = defaultResult.result.current;
+      const { steps } = defaultResult.result.current as ReturnType<typeof useStepsContext>;
 
       expect(steps).toHaveLength(2);
       expect(steps[0]).toEqual(defaultSteps[0]);
@@ -104,10 +113,10 @@ describe('useStepsContext', () => {
   describe('onDeleteStep', () => {
     it('deletes the targeted step', () => {
       act(() => {
-        defaultResult.result.current.onDeleteStep(1);
+        (defaultResult.result.current as ReturnType<typeof useStepsContext>).onDeleteStep(1);
       });
 
-      const { steps } = defaultResult.result.current;
+      const { steps } = defaultResult.result.current as ReturnType<typeof useStepsContext>;
 
       expect(steps).toHaveLength(1);
       expect(steps[0]).toEqual(defaultSteps[0]);
@@ -119,10 +128,14 @@ describe('useStepsContext', () => {
       const insertedAction = createAction('inserted-step');
 
       act(() => {
-        defaultResult.result.current.onInsertAction(insertedAction, 1, 2);
+        (defaultResult.result.current as ReturnType<typeof useStepsContext>).onInsertAction(
+          insertedAction,
+          1,
+          2
+        );
       });
 
-      const { steps } = defaultResult.result.current;
+      const { steps } = defaultResult.result.current as ReturnType<typeof useStepsContext>;
 
       expect(steps).toHaveLength(2);
       expect(steps[0]).toEqual(defaultSteps[0]);
@@ -136,10 +149,14 @@ describe('useStepsContext', () => {
       const updatedAction = createAction('updated-action');
 
       act(() => {
-        defaultResult.result.current.onUpdateAction(updatedAction, 0, 0);
+        (defaultResult.result.current as ReturnType<typeof useStepsContext>).onUpdateAction(
+          updatedAction,
+          0,
+          0
+        );
       });
 
-      const { steps } = defaultResult.result.current;
+      const { steps } = defaultResult.result.current as ReturnType<typeof useStepsContext>;
 
       expect(steps).toHaveLength(2);
       expect(steps[0].actions).toHaveLength(1);
@@ -170,10 +187,10 @@ describe('useStepsContext', () => {
   describe('onRearrangeSteps', () => {
     it('rearranges steps to correct indexes', () => {
       act(() => {
-        defaultResult.result.current.onRearrangeSteps(0, 1);
+        (defaultResult.result.current as ReturnType<typeof useStepsContext>).onRearrangeSteps(0, 1);
       });
 
-      const { steps } = defaultResult.result.current;
+      const { steps } = defaultResult.result.current as ReturnType<typeof useStepsContext>;
 
       expect(steps).toHaveLength(2);
       expect(steps[0].actions).toHaveLength(2);
@@ -199,29 +216,37 @@ describe('useStepsContext', () => {
     const mapActionName = (a: ActionInContext) => a.action.name;
 
     it('throws an error if target index is less than 0', () => {
-      expect(() => defaultResult.result.current.onDropStep(-1, 0, 1)).toThrowError();
+      expect(() =>
+        (defaultResult.result.current as ReturnType<typeof useStepsContext>).onDropStep(-1, 0, 1)
+      ).toThrowError();
     });
 
     it('throws an error if target index does not exist in the list', () => {
-      expect(() => defaultResult.result.current.onDropStep(50, 0, 1)).toThrowError();
+      expect(() =>
+        (defaultResult.result.current as ReturnType<typeof useStepsContext>).onDropStep(50, 0, 1)
+      ).toThrowError();
     });
 
     it('throws an error if the initiator index is less than or equal to 0', () => {
-      expect(() => defaultResult.result.current.onDropStep(0, 0, 3)).toThrowError();
+      expect(() =>
+        (defaultResult.result.current as ReturnType<typeof useStepsContext>).onDropStep(0, 0, 3)
+      ).toThrowError();
     });
 
     it('throws an error if the initiator index does not exist in the list', () => {
-      expect(() => defaultResult.result.current.onDropStep(0, 50, 2)).toThrowError();
+      expect(() =>
+        (defaultResult.result.current as ReturnType<typeof useStepsContext>).onDropStep(0, 50, 2)
+      ).toThrowError();
     });
 
     it('performs merge with previous step data', () => {
       act(() => {
-        defaultResult.result.current.setSteps(dropSteps);
+        (defaultResult.result.current as ReturnType<typeof useStepsContext>).setSteps(dropSteps);
       });
       act(() => {
-        defaultResult.result.current.onDropStep(0, 1, 1);
+        (defaultResult.result.current as ReturnType<typeof useStepsContext>).onDropStep(0, 1, 1);
       });
-      const { steps } = defaultResult.result.current;
+      const { steps } = defaultResult.result.current as ReturnType<typeof useStepsContext>;
       expect(steps[0].actions).toHaveLength(2);
       expect(steps[1].actions).toHaveLength(4);
       expect(steps[2].actions).toHaveLength(3);
@@ -236,12 +261,12 @@ describe('useStepsContext', () => {
 
     it('performs merge with next step data', () => {
       act(() => {
-        defaultResult.result.current.setSteps(dropSteps);
+        (defaultResult.result.current as ReturnType<typeof useStepsContext>).setSteps(dropSteps);
       });
       act(() => {
-        defaultResult.result.current.onDropStep(2, 1, 0);
+        (defaultResult.result.current as ReturnType<typeof useStepsContext>).onDropStep(2, 1, 0);
       });
-      const { steps } = defaultResult.result.current;
+      const { steps } = defaultResult.result.current as ReturnType<typeof useStepsContext>;
       expect(steps[0].actions).toHaveLength(3);
       expect(steps[1].actions).toHaveLength(4);
       expect(steps[2].actions).toHaveLength(2);
@@ -256,12 +281,12 @@ describe('useStepsContext', () => {
 
     it('performs a split when dragging step over itself', () => {
       act(() => {
-        defaultResult.result.current.setSteps(dropSteps);
+        (defaultResult.result.current as ReturnType<typeof useStepsContext>).setSteps(dropSteps);
       });
       act(() => {
-        defaultResult.result.current.onDropStep(1, 1, 0);
+        (defaultResult.result.current as ReturnType<typeof useStepsContext>).onDropStep(1, 1, 0);
       });
-      const { steps } = defaultResult.result.current;
+      const { steps } = defaultResult.result.current as ReturnType<typeof useStepsContext>;
       expect(steps).toEqual(
         createSteps([
           ['step-0-action-0', 'step-0-action-1', 'step-0-action-2', 'step-1-action-0'],

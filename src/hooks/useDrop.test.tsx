@@ -37,7 +37,7 @@ describe('useDrop', () => {
           children,
           dragIndex,
         }: {
-          children: React.ReactNode;
+          children?: React.ReactNode;
           dragIndex: number | undefined;
         }) => (
           <TestContextWrapper
