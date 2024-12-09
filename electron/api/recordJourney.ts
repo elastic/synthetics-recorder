@@ -56,7 +56,6 @@ export async function recordJourney(
       launchOptions: {},
       contextOptions: {},
       mode: 'recording',
-      codegenMode: 'actions',
       showRecorder: false,
       actionListener,
     });
