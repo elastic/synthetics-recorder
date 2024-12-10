@@ -36,9 +36,6 @@ describe('generator', () => {
     beforeEach(() => {
       step = createStepWithOverrides([
         {
-          frame: {
-            url: 'about:blank',
-          },
           action: {
             name: 'openPage',
             url: 'about:blank',
