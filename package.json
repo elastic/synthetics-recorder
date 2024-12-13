@@ -21,7 +21,7 @@
     "unused-exports": "node dev-tools/find-unused-exports.js",
     "lint:fix": "npm run lint -- --fix",
     "prepare": "husky install",
-    "test": "npm run test:unit",
+    "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "jest --config ./jest.unit.config.js .",
     "test:unit:watch": "npm run test:unit -- --coverage --watch --collectCoverageFrom={src,electron}/**/*.{js,jsx,ts,tsx}",
     "test:e2e": "jest --runInBand --config ./jest.e2e.config.js ./e2e/tests",
