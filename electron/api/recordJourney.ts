@@ -60,8 +60,6 @@ export async function recordJourney(
       actionListener,
     });
     await openPage(context, url);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore TODO: fix this type
     await once(browser, 'disconnected');
   } catch (e) {
     logger.error(e);

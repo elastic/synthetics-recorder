@@ -33,7 +33,6 @@ beforeAll(async () => {
   const { server: s, port } = await createTestHttpServer();
   server = s;
   url = `http://localhost:${port}`;
-  console.log('url port', url);
 });
 
 afterAll(async () => {
