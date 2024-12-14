@@ -118,6 +118,7 @@ describe('ActionElement', () => {
           },
           frame: {
             committed: true,
+            framePath: [],
             isMainFrame: true,
             pageAlias: 'page',
             url: 'https://www.elastic.co',
@@ -172,6 +173,7 @@ describe('ActionElement', () => {
           },
           frame: {
             committed: true,
+            framePath: [],
             isMainFrame: true,
             pageAlias: 'page',
             url: 'https://www.elastic.co',

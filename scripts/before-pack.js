@@ -21,41 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-const { spawn } = require('child_process');
 const { Arch } = require('electron-builder');
 const { downloadForPlatform } = require('./download-chromium');
 
 exports.default = function beforePack(ctx) {
   const arch = Arch[ctx.arch];
   const platform = ctx.electronPlatformName;
-  return Promise.all([downloadForPlatform(platform, arch), fixSharp(platform, arch)]);
+  return Promise.all([downloadForPlatform(platform, arch)]);
 };
-
-function fixSharp(platform, arch) {
-  const filteredEnvs = {};
-  for (const [k, v] of Object.entries(process.env)) {
-    if (!k.startsWith('APPLE_') && !k.includes('PASSWORD')) {
-      filteredEnvs[k] = v;
-    }
-  }
-
-  return new Promise((resolve, reject) => {
-    const npmInstall = spawn('npm', ['run', 'fix-sharp'], {
-      stdio: 'inherit',
-      shell: true,
-      env: {
-        ...filteredEnvs,
-        npm_config_arch: arch,
-        npm_config_platform: platform,
-      },
-    });
-    npmInstall.on('close', code => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject(new Error('process finished with error code ' + code));
-      }
-    });
-    npmInstall.on('error', reject);
-  });
-}

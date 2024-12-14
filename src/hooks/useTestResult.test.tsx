@@ -52,7 +52,6 @@ describe('useStepResultStatus', () => {
         }}
       />
     );
-    // return <TestContext.Provider value={testContext}>{children}</TestContext.Provider>;
   };
 
   it('should return undefined if result is not available', () => {
@@ -77,7 +76,9 @@ describe('useStepResultStatus', () => {
 
   it('should return undefined if result is undefined', () => {
     const { result } = renderHook(() => useStepResultStatus('Step 4'), {
-      wrapper: ({ children }) => <TestContextWrapper component={children} />,
+      wrapper: ({ children }: { children?: React.ReactNode }) => (
+        <TestContextWrapper component={children} />
+      ),
     });
     expect(result.current).toBe(undefined);
   });
