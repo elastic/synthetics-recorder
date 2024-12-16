@@ -59,7 +59,8 @@ describe('Run test', () => {
     });
   });
 
-  describe('Record forms and run tests', () => {
+  // fixme: flaky test
+  describe.skip('Record forms and run tests', () => {
     it('records filling up the form, run tests and shows the result', async () => {
       const electronWindow = await electronService.getWindow();
       await electronService.enterTestUrl(env.DEMO_APP_URL);

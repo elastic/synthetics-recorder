@@ -48,6 +48,7 @@ export const createAction = (name: string, overrides?: ActionContextOverride): A
       isMainFrame: true,
       committed: true,
       pageAlias: 'page',
+      framePath: [],
     },
   };
   return overrides

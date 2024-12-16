@@ -30,7 +30,12 @@ export async function createTestHttpServer(port = 0) {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/html');
     res.end(`
+      <html>
+      <div>
       <button><div>Hello Elastic Synthetics Recorder</div></button>
+      <input type="text"></input>
+      </div>
+      </html>
     `);
   });
 

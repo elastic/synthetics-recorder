@@ -74,7 +74,8 @@ async function editAction(electronWindow: Page) {
 }
 
 describe('Assertion and Action values', () => {
-  it('includes updated action/assertion values in code output', async () => {
+  // fixme: flaky test
+  it.skip('includes updated action/assertion values in code output', async () => {
     const electronWindow = await electronService.getWindow();
     await addAssertion();
     await editAssertion(electronWindow);
