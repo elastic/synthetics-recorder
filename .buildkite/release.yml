@@ -2,40 +2,70 @@
 # $yaml-language-server: $schema=https://raw.githubusercontent.com/buildkite/pipeline-schema/main/schema.json
 steps:
   - label: "Package :package:"
-    command: "true"
+    command: ".buildkite/scripts/package.sh"
     agents:
       provider: orka
       imagePrefix: generic-13-ventura-x64
 
   - wait: ~
 
-  - label: "Sign linux :linux:"
-    command: "true"
+  - label: GPG Sign artifacts
+    trigger: unified-release-gpg-signing
+    # NOTE: If you change 'key: gpg-sign-service' then change the bellow call for .buildkite/scripts/download-signed-artifacts.sh
+    key: gpg-sign-service
+    build:
+      env:
+        INPUT_PATH: buildkite://
 
-  - label: "Sign macos :mac:"
-    command: "true"
+  - label: MacOS Sign artifacts
+    trigger: unified-release-macos-signing
+    # NOTE: If you change 'key: macos-sign-service' then change the bellow call for .buildkite/scripts/download-signed-artifacts.sh
+    key: macos-sign-service
+    build:
+      env:
+        INPUT_PATH: buildkite://
 
-  - label: "Sign windows :windows:"
-    command: "true"
+  - label: Windows Sign artifacts
+    trigger: unified-release-windows-signing
+    # NOTE: If you change 'key: windows-sign-service' then change the bellow call for .buildkite/scripts/download-signed-artifacts.sh
+    key: windows-sign-service
+    build:
+      env:
+        DOWNLOAD_ARTIFACTS_FILTER: "*.exe"
+        INPUT_PATH: buildkite://
+
+  - wait: ~
+
+  - label: Download signed artifacts
+    commands:
+      - .buildkite/scripts/download-signed-artifacts.sh "gpg-sign-service" "gpg"
+      - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service" "macos"
+      - .buildkite/scripts/download-signed-artifacts.sh "windows-sign-service" "windows"
+      - .buildkite/scripts/download-signed-artifacts.sh "gpg-sign-service" "gpg" | buildkite-agent pipeline upload
+      - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service" "macos" | buildkite-agent pipeline upload
+      - .buildkite/scripts/download-signed-artifacts.sh "windows-sign-service" "windows" | buildkite-agent pipeline upload
 
   - wait: ~
 
   - label: "Publish S3 Artifacts :s3:"
-    command: "true"
+    trigger: unified-release-publish-s3-artifacts
+    key: publish-s3-service
+    build:
+      env:
+        DESTINATION_PATH: "s3://download.elasticsearch.org/synthetics-recorder/"
+        DRY_RUN: ${DRY_RUN}
 
   - wait: ~
 
   - label: "Publish GitHub Release :github:"
-    command: "true"
+    commands:
+      - .buildkite/scripts/create-github-release.sh
+    depends_on:
+      - "gpg"
+      - "macos"
+      - "windows"
 
+# Figure out how to notify releases (maybe subscribe the slack channel to the GitHub releases?)
 notify:
-  - slack: "#observablt-bots"
+  - slack: "#on-week-oblt-productivity"
     if: 'build.state != "passed"'
-
-# Review the message format for noting when it failed or not.
-notify:
-  - slack:
-      channels:
-        - "#on-week-oblt-productivity"
-      message: |
-        Release done.
