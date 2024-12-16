@@ -23,6 +23,7 @@ THE SOFTWARE.
 */
 
 module.exports = {
+  verbose: true,
   preset: 'ts-jest',
   bail: true,
 
@@ -41,12 +42,15 @@ module.exports = {
 
   // This option sets the URL for the jsdom environment. It is reflected in properties such as location.href
   // testURL: "http://localhost",
+  transform: {
+    '^.+\\.tsx?$': 'ts-jest',
+  },
   globals: {
     'ts-jest': {
       isolatedModules: true,
     },
   },
-
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   testTimeout: 60000,
   reporters: ['default', ['jest-junit', { outputName: 'e2e-junit.xml' }]],
 };

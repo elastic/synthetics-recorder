@@ -28,11 +28,12 @@ import { SMALL_SCREEN_BREAKPOINT } from '../../common/shared';
 
 interface IControlsWrapper {
   isGrabbing: boolean | null;
+  draggable?: boolean;
 }
 
 export const ControlsWrapper = styled(EuiFlexGroup)<IControlsWrapper>`
-  cursor: ${({ isGrabbing }) =>
-    isGrabbing === null ? 'default' : isGrabbing ? 'grabbing' : 'grab'};
+  cursor: ${({ isGrabbing, draggable }) =>
+    isGrabbing === null || !draggable ? 'default' : isGrabbing ? 'grabbing' : 'grab'};
 `;
 
 export const StepSeparatorTopBorder = styled(EuiFlexItem)`
