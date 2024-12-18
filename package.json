@@ -10,7 +10,8 @@
     "react:start": "react-scripts start",
     "react:build": "react-scripts build",
     "dev": "concurrently -k \"BROWSER=none npm run react:start\" \"npm run tsc-electron -- -w\" \"wait-on http://127.0.0.1:3000 && nodemon --exec electron build/electron/electron.js\"",
-    "build": "npm run clean && npm run react:build && npm run tsc-electron",
+    "rebuild": "node node_modules/.bin/electron-rebuild",
+    "build": "npm run clean && npm run react:build && npm run tsc-electron && npm run rebuild",
     "tsc-electron": "tsc -p tsconfig.node.json",
     "pack": "npm run build && electron-builder",
     "release": "npm run pack -- -mwl --publish=always",
@@ -51,6 +52,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@electron/notarize": "^1.2.3",
+    "@electron/rebuild": "^3.7.1",
     "@testing-library/react": "^12.1.4",
     "@testing-library/react-hooks": "^8.0.1",
     "@types/jest": "^29.5.14",
