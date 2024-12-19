@@ -27,10 +27,6 @@ mac:
   entitlementsInherit: assets/entitlements.mac.plist
   gatekeeperAssess: false
   hardenedRuntime: true
-  asarUnpack:
-    - "**\\*.{node,dll}"
-    - "**/node_modules/sharp/**"
-    - "**/node_modules/@elastic/synthetics/**"
   target:
     - target: default
       arch: 
