@@ -41,6 +41,7 @@ function fixSharp(platform, arch) {
   }
 
   return new Promise((resolve, reject) => {
+    console.info('Fixing sharp for platform', platform, 'arch', arch);
     const npmInstall = spawn('npm', ['install', `--cpu=${arch}`, `--os=${platform}`, 'sharp'], {
       stdio: 'inherit',
       shell: true,
@@ -52,11 +53,15 @@ function fixSharp(platform, arch) {
     });
     npmInstall.on('close', code => {
       if (code === 0) {
+        console.info('fix sharp resolved without error');
         resolve();
       } else {
         reject(new Error('process finished with error code ' + code));
       }
     });
-    npmInstall.on('error', reject);
+    npmInstall.on('error', reason => {
+      console.error('error fixing sharp', reason);
+      reject(reason);
+    });
   });
 }
