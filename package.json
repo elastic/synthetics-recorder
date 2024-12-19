@@ -13,7 +13,7 @@
     "rebuild": "node node_modules/.bin/electron-rebuild",
     "build": "npm run clean && npm run react:build && npm run tsc-electron && npm run rebuild",
     "tsc-electron": "tsc -p tsconfig.node.json",
-    "pack": "npm run build && electron-builder",
+    "pack": "npm run build && DEBUG=electron-builder electron-builder",
     "release": "npm run pack -- -mwl --publish=always",
     "release-ci": "npm run pack -- -mwl --publish=never",
     "clean": "rm -rf ./build && rm -rf ./dist",

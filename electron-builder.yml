@@ -34,7 +34,7 @@ mac:
   target:
     - target: default
       arch: 
-        # - x64 
+        - x64 
         - arm64
 win:
   target:
