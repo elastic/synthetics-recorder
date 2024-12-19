@@ -27,6 +27,10 @@ mac:
   entitlementsInherit: assets/entitlements.mac.plist
   gatekeeperAssess: false
   hardenedRuntime: true
+  asar: true
+  asarUnpack:
+    - "**/node_modules/sharp/**/*"
+    - "**/node_modules/@img/**/*"
   target:
     - target: default
       arch: 

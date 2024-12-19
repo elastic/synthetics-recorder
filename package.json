@@ -1,6 +1,6 @@
 {
   "name": "synthetics-recorder",
-  "version": "1.4.0",
+  "version": "1.5.14",
   "description": "Record synthetics user journey flow of a website",
   "repository": "https://github.com/elastic/synthetics-recorder",
   "scripts": {
@@ -12,7 +12,7 @@
     "dev": "concurrently -k \"BROWSER=none npm run react:start\" \"npm run tsc-electron -- -w\" \"wait-on http://127.0.0.1:3000 && nodemon --exec electron build/electron/electron.js\"",
     "build": "npm run clean && npm run react:build && npm run tsc-electron",
     "tsc-electron": "tsc -p tsconfig.node.json",
-    "pack": "npm run build && electron-builder",
+    "pack": "npm run build && DEBUG=electron-builder electron-builder",
     "release": "npm run pack -- -mwl --publish=always",
     "release-ci": "npm run pack -- -mwl --publish=never",
     "clean": "rm -rf ./build && rm -rf ./dist",
@@ -86,6 +86,7 @@
     "@elastic/synthetics": "=1.16.2",
     "@emotion/cache": "^11.9.3",
     "@emotion/react": "^11.9.3",
+    "archiver-utils": "^5.0.2",
     "dotenv": "^16.0.3",
     "electron-debug": "^3.2.0",
     "electron-is-dev": "^2.0.0",
