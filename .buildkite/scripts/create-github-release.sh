@@ -26,15 +26,21 @@ fi
 
 echo "--- Run GitHub release"
 if [ -n "${BUILDKITE_TAG}" ] ; then
+
+  if [ ! -d "$DIST_LOCATION" ] ; then
+    echo "No signed artifacts found in ${DIST_LOCATION}"
+    exit 1
+  fi
+
   # VAULT_GITHUB_TOKEN is the GitHub ephemeral token created in Buildkite
   GH_TOKEN=$VAULT_GITHUB_TOKEN \
   gh release \
     create \
     "${BUILDKITE_TAG}" \
     --draft \
-    --title "${BUILDKITE_TAG}" \
-    --repo elastic/synthetics-recorder \
-    "${DIST_LOCATION}/*.*"
+    --generate-notes \
+    --repo "elastic/synthetics-recorder" \
+    "${DIST_LOCATION}"/*.*
 else
   echo "gh release won't be triggered this is not a Git tag release, but let's list the releases"
   # VAULT_GITHUB_TOKEN is the GitHub ephemeral token created in Buildkite
