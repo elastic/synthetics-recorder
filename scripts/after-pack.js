@@ -39,7 +39,7 @@ const libNames = {
 const platformDirs = {
   darwin_x64: 'mac/Elastic Synthetics Recorder.app/Contents/Resources',
   darwin_arm64: 'mac-arm64/Elastic Synthetics Recorder.app/Contents/Resources',
-  linux_x64: 'inux-unpacked/resources',
+  linux_x64: 'linux-unpacked/resources',
   win32_x64: 'win-unpacked/resources',
 };
 

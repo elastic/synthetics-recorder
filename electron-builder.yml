@@ -42,6 +42,11 @@ win:
       arch:
         - x64
   icon: public/elastic.png
+  asarUnpack:
+    - "**\\*.{node,dll}"
+    - "**/node_modules/sharp/**"
+    - "**/node_modules/@img/**"
+    - "**/node_modules/@elastic/synthetics/**"
 linux:
   target:
     - target: deb
@@ -54,4 +59,5 @@ linux:
   asarUnpack:
     - "**\\*.{node,dll}"
     - "**/node_modules/sharp/**"
+    - "**/node_modules/@img/**"
     - "**/node_modules/@elastic/synthetics/**"
