@@ -26,10 +26,29 @@ const { spawn } = require('child_process');
 const { Arch } = require('electron-builder');
 const { downloadForPlatform } = require('./download-chromium');
 
-exports.default = function beforePack(ctx) {
+exports.default = async function beforePack(ctx) {
   const arch = Arch[ctx.arch];
   const platform = ctx.electronPlatformName;
-  return Promise.all([downloadForPlatform(platform, arch), fixSharp(platform, arch)]);
+  console.info('electron-builder arch', arch, 'electron platform name', ctx.electronPlatformName);
+  await Promise.all([downloadForPlatform(platform, arch), fixSharp(platform, arch)]);
+  return new Promise((resolve, reject) => {
+    const ls = spawn('ls', ['-la', 'node_modules/@img'], {
+      stdio: 'inherit',
+      shell: true,
+    });
+    ls.on('close', code => {
+      if (code === 0) {
+        console.info('ls resolved without error');
+        resolve();
+      } else {
+        reject(new Error('process finished with error code ' + code));
+      }
+    });
+    ls.on('error', reason => {
+      console.error('error ls', reason);
+      reject(reason);
+    });
+  });
 };
 
 function fixSharp(platform, arch) {
