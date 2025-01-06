@@ -23,14 +23,72 @@ THE SOFTWARE.
 */
 const { spawn } = require('child_process');
 const path = require('path');
+const { Arch } = require('electron-builder');
+const { version } = require('../package.json');
+const fsPromises = require('fs').promises;
 
-exports.default = function afterPack(ctx) {
+const resourcesSubpath = path.join('app.asar.unpacked', 'node_modules', '@img');
+
+const libNames = {
+  darwin_x64: 'darwin-x64',
+  darwin_arm64: 'darwin-arm64',
+  linux_x64: 'linux-x64',
+  win32_x64: 'win32-x64',
+};
+
+const platformDirs = {
+  darwin_x64: 'mac/Elastic Synthetics Recorder.app/Contents/Resources',
+  darwin_arm64: 'mac-arm64/Elastic Synthetics Recorder.app/Contents/Resources',
+  linux_x64: 'inux-unpacked/resources',
+  win32_x64: 'win-unpacked/resources',
+};
+
+exports.default = async function afterPack(ctx) {
   const platform = ctx.electronPlatformName;
+  console.log('package version', version, platform, Arch[ctx.arch]);
+  await checkSharpResources(platform, Arch[ctx.arch]);
   if (platform === 'linux') {
     const resourcesPath = path.join(ctx.appOutDir, 'resources');
     return changePermission(resourcesPath);
   }
 };
+
+function formatPlatformArch(platform, arch) {
+  return `${platform}_${arch}`;
+}
+
+function sharpBinName(platform, arch) {
+  return `sharp-${libNames[formatPlatformArch(platform, arch)]}`;
+}
+
+function libvipsBinName(platform, arch) {
+  return `sharp-libvips-${libNames[formatPlatformArch(platform, arch)]}`;
+}
+
+async function checkSharpResources(platform, arch) {
+  console.log('dir name', __dirname);
+  const resourcePath = path.join(
+    __dirname,
+    '..',
+    'dist',
+    platformDirs[formatPlatformArch(platform, arch)],
+    resourcesSubpath
+  );
+  try {
+    const contents = await fsPromises.readdir(resourcePath);
+    console.log('contents', contents);
+    console.log('searching for', sharpBinName(platform, arch), libvipsBinName(platform, arch));
+    if (!contents.some(file => file === sharpBinName(platform, arch))) {
+      console.warn('sharp resources not found for platform/arch', platform, arch);
+    }
+    if (!contents.some(file => file === libvipsBinName(platform, arch))) {
+      console.warn('libvips resources not found for platform/arch', platform, arch);
+    }
+    console.info('sharp resources postbuild check complete');
+  } catch (err) {
+    console.error(err);
+  }
+}
 
 function changePermission(resourcesPath) {
   return new Promise((resolve, reject) => {

@@ -29,6 +29,7 @@ const { downloadForPlatform } = require('./download-chromium');
 exports.default = async function beforePack(ctx) {
   const arch = Arch[ctx.arch];
   const platform = ctx.electronPlatformName;
+  console.info('Beginning prebuild for platform', platform, 'arch', arch);
   console.info('electron-builder arch', arch, 'electron platform name', ctx.electronPlatformName);
   await Promise.all([downloadForPlatform(platform, arch), fixSharp(platform, arch)]);
   return new Promise((resolve, reject) => {
