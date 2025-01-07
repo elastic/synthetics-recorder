@@ -49,6 +49,17 @@ function libvipsBinName(platform, arch) {
 function formatPlatformArch(platform, arch) {
   return `${platform}_${arch}`;
 }
+async function dirExist(path, name) {
+  try {
+    await fsPromises.access(path);
+    console.info(`Check: ${name} exists, true.`);
+  } catch (_err) {
+    console.info(`Check: ${name} exists, false.`);
+    return false;
+  }
+  return true;
+}
+
 exports.default = async function checkSharpResources(ctx) {
   const platform = ctx.electronPlatformName;
   const arch = Arch[ctx.arch];
@@ -59,19 +70,23 @@ exports.default = async function checkSharpResources(ctx) {
     platformDirs[formatPlatformArch(platform, arch)],
     resourcesSubpath
   );
+  const rootNodeModules = path.join(__dirname, '..', 'node_modules', '@img');
   try {
-    try {
-      await fsPromises.access(resourcePath);
-      console.info('Check: sharp resource path exists, true.');
-    } catch (_err) {
-      console.info('Check: sharp resource path exists, false.');
-      return;
-    }
+    if (!(await dirExist(resourcePath, 'sharp resource path'))) return;
     const contents = await fsPromises.readdir(resourcePath);
     console.log('contents', contents);
     console.log('searching for', sharpBinName(platform, arch), libvipsBinName(platform, arch));
     if (!contents.some(file => file === sharpBinName(platform, arch))) {
       console.warn('sharp resources not found for platform/arch', platform, arch);
+      if (await dirExist(rootNodeModules, 'root node_modules path')) {
+        console.log('root node_modules path exists');
+        const rootContents = await fsPromises.readdir(rootNodeModules);
+        console.log('root contents:', rootContents);
+        console.info('copying contents from node modules to resources');
+        await fsPromises.cp(rootNodeModules, resourcePath, { recursive: true, force: false });
+        const updated = await fsPromises.readdir(resourcePath);
+        console.info('updated contents:', updated);
+      }
     }
     if (!contents.some(file => file === libvipsBinName(platform, arch))) {
       console.warn('libvips resources not found for platform/arch', platform, arch);
