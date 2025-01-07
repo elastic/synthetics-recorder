@@ -83,7 +83,17 @@ exports.default = async function checkSharpResources(ctx) {
         const rootContents = await fsPromises.readdir(rootNodeModules);
         console.log('root contents:', rootContents);
         console.info('copying contents from node modules to resources');
-        await fsPromises.cp(rootNodeModules, resourcePath, { recursive: true, force: false });
+        const contentsSet = new Set(contents);
+        const toCopy = rootContents.filter(file => !contentsSet.has(file));
+
+        for (const file of toCopy) {
+          const sourcePath = path.join(rootNodeModules, file);
+          console.info('copying sharp resource from', sourcePath, 'to', resourcePath);
+          await fsPromises.cp(sourcePath, resourcePath, {
+            recursive: true,
+            force: false,
+          });
+        }
         const updated = await fsPromises.readdir(resourcePath);
         console.info('updated contents:', updated);
       }
