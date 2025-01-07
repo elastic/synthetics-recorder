@@ -60,6 +60,13 @@ exports.default = async function checkSharpResources(ctx) {
     resourcesSubpath
   );
   try {
+    try {
+      await fsPromises.access(resourcePath);
+      console.info('Check: sharp resource path exists, true.');
+    } catch (_err) {
+      console.info('Check: sharp resource path exists, false.');
+      return;
+    }
     const contents = await fsPromises.readdir(resourcePath);
     console.log('contents', contents);
     console.log('searching for', sharpBinName(platform, arch), libvipsBinName(platform, arch));
