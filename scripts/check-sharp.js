@@ -74,8 +74,8 @@ exports.default = async function checkSharpResources(ctx) {
   );
   const rootNodeModules = path.join(__dirname, '..', 'node_modules', '@img');
   try {
-    if (!(await dirExist(resourcePath, 'sharp resource path'))) return;
-    await fsPromises.mkdir(resourcePath, { recursive: true });
+    if (!(await dirExist(resourcePath, 'sharp resource path')))
+      await fsPromises.mkdir(resourcePath, { recursive: true });
     const contents = await fsPromises.readdir(resourcePath);
     console.log('contents', contents);
     console.log('searching for', sharpBinName(platform, arch), libvipsBinName(platform, arch));
