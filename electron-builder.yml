@@ -13,6 +13,8 @@ files:
 extraResources:
   - from: local-browsers/_releases/${os}-${arch}
     to: local-browsers
+  - from: node_modules/@img
+    to: node_modules/@img
   - NOTICE.txt
 publish:
   - provider: github
@@ -29,7 +31,6 @@ mac:
   entitlementsInherit: assets/entitlements.mac.plist
   gatekeeperAssess: false
   hardenedRuntime: true
-  asar: false
   asarUnpack:
     - "**/node_modules/sharp/**/*"
     - "**/node_modules/@img/**/*"
@@ -44,7 +45,6 @@ win:
       arch:
         - x64
   icon: public/elastic.png
-  asar: false
   asarUnpack:
     - "**\\*.{node,dll}"
     - "**/node_modules/sharp/**"
@@ -57,7 +57,6 @@ linux:
         - x64
   icon: public/elastic.png
   category: Utility
-  asar: false
   # electron-builder issue:
   # https://github.com/electron-userland/electron-builder/issues/6200#issuecomment-907830847
   asarUnpack:
