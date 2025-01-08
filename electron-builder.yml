@@ -29,7 +29,7 @@ mac:
   entitlementsInherit: assets/entitlements.mac.plist
   gatekeeperAssess: false
   hardenedRuntime: true
-  asar: true
+  asar: false
   asarUnpack:
     - "**/node_modules/sharp/**/*"
     - "**/node_modules/@img/**/*"
@@ -44,6 +44,7 @@ win:
       arch:
         - x64
   icon: public/elastic.png
+  asar: false
   asarUnpack:
     - "**\\*.{node,dll}"
     - "**/node_modules/sharp/**"
@@ -56,6 +57,7 @@ linux:
         - x64
   icon: public/elastic.png
   category: Utility
+  asar: false
   # electron-builder issue:
   # https://github.com/electron-userland/electron-builder/issues/6200#issuecomment-907830847
   asarUnpack:
