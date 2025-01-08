@@ -23,7 +23,6 @@ THE SOFTWARE.
 */
 
 const path = require('path');
-const { Arch } = require('electron-builder');
 const fsPromises = require('fs').promises;
 
 const platformDirs = {
@@ -61,8 +60,11 @@ async function dirExist(path, name) {
 }
 
 exports.default = async function checkSharpResources(ctx) {
-  const platform = ctx.electronPlatformName;
-  const arch = Arch[ctx.arch];
+  // const platform = ctx.electronPlatformName;
+  // const arch = Arch[ctx.arch];
+  const platform = ctx.platform.nodeName;
+  const { arch } = ctx;
+  console.log('compute for ', ctx, platform, arch);
   const resourcePath = path.join(
     __dirname,
     '..',
@@ -73,27 +75,28 @@ exports.default = async function checkSharpResources(ctx) {
   const rootNodeModules = path.join(__dirname, '..', 'node_modules', '@img');
   try {
     if (!(await dirExist(resourcePath, 'sharp resource path'))) return;
+    await fsPromises.mkdir(resourcePath, { recursive: true });
     const contents = await fsPromises.readdir(resourcePath);
     console.log('contents', contents);
     console.log('searching for', sharpBinName(platform, arch), libvipsBinName(platform, arch));
     if (!contents.some(file => file === sharpBinName(platform, arch))) {
       console.warn('sharp resources not found for platform/arch', platform, arch);
       if (await dirExist(rootNodeModules, 'root node_modules path')) {
-        // console.log('root node_modules path exists');
-        // const rootContents = await fsPromises.readdir(rootNodeModules);
-        // console.log('root contents:', rootContents);
-        // console.info('copying contents from node modules to resources');
-        // const contentsSet = new Set(contents);
-        // const toCopy = rootContents.filter(file => !contentsSet.has(file));
+        console.log('root node_modules path exists');
+        const rootContents = await fsPromises.readdir(rootNodeModules);
+        console.log('root contents:', rootContents);
+        console.info('copying contents from node modules to resources');
+        const contentsSet = new Set(contents);
+        const toCopy = rootContents.filter(file => !contentsSet.has(file));
 
-        // for (const file of toCopy) {
-        //   const sourcePath = path.join(rootNodeModules, file);
-        //   console.info('copying sharp resource from', sourcePath, 'to', resourcePath);
-        //   await fsPromises.cp(sourcePath, path.join(resourcePath, file), {
-        //     recursive: true,
-        //     force: false,
-        //   });
-        // }
+        for (const file of toCopy) {
+          const sourcePath = path.join(rootNodeModules, file);
+          console.info('copying sharp resource from', sourcePath, 'to', resourcePath);
+          await fsPromises.cp(sourcePath, path.join(resourcePath, file), {
+            recursive: true,
+            force: false,
+          });
+        }
         const updated = await fsPromises.readdir(resourcePath);
         console.info('updated contents:', updated);
       }

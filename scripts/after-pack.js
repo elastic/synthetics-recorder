@@ -23,11 +23,11 @@ THE SOFTWARE.
 */
 const { spawn } = require('child_process');
 const path = require('path');
-const checkSharpResources = require('./check-sharp');
+// const checkSharpResources = require('./check-sharp');
 
 exports.default = async function afterPack(ctx) {
   const platform = ctx.electronPlatformName;
-  await checkSharpResources.default(ctx);
+  // await checkSharpResources.default(ctx);
   if (platform === 'linux') {
     const resourcesPath = path.join(ctx.appOutDir, 'resources');
     return changePermission(resourcesPath);
