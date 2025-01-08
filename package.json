@@ -1,6 +1,6 @@
 {
   "name": "synthetics-recorder",
-  "version": "1.5.25",
+  "version": "1.5.26",
   "description": "Record synthetics user journey flow of a website",
   "repository": "https://github.com/elastic/synthetics-recorder",
   "scripts": {
