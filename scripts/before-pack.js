@@ -25,13 +25,14 @@ THE SOFTWARE.
 const { spawn } = require('child_process');
 const { Arch } = require('electron-builder');
 const { downloadForPlatform } = require('./download-chromium');
+// const { fixSharp } = require('./fix-sharp');
 
 exports.default = async function beforePack(ctx) {
   const arch = Arch[ctx.arch];
   const platform = ctx.electronPlatformName;
   console.info('Beginning prebuild for platform', platform, 'arch', arch);
   console.info('electron-builder arch', arch, 'electron platform name', ctx.electronPlatformName);
-  await Promise.all([downloadForPlatform(platform, arch), fixSharp(platform, arch)]);
+  await Promise.all([downloadForPlatform(platform, arch)]);
   return new Promise((resolve, reject) => {
     const ls = spawn('ls', ['-la', 'node_modules/@img'], {
       stdio: 'inherit',
@@ -52,36 +53,3 @@ exports.default = async function beforePack(ctx) {
   });
 };
 
-function fixSharp(platform, arch) {
-  const filteredEnvs = {};
-  for (const [k, v] of Object.entries(process.env)) {
-    if (!k.startsWith('APPLE_') && !k.includes('PASSWORD')) {
-      filteredEnvs[k] = v;
-    }
-  }
-
-  return new Promise((resolve, reject) => {
-    console.info('Fixing sharp for platform', platform, 'arch', arch);
-    const npmInstall = spawn('npm', ['install', `--cpu=${arch}`, `--os=${platform}`, 'sharp'], {
-      stdio: 'inherit',
-      shell: true,
-      env: {
-        ...filteredEnvs,
-        npm_config_arch: arch,
-        npm_config_platform: platform,
-      },
-    });
-    npmInstall.on('close', code => {
-      if (code === 0) {
-        console.info('fix sharp resolved without error');
-        resolve();
-      } else {
-        reject(new Error('process finished with error code ' + code));
-      }
-    });
-    npmInstall.on('error', reason => {
-      console.error('error fixing sharp', reason);
-      reject(reason);
-    });
-  });
-}

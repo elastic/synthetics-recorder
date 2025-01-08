@@ -1,17 +1,16 @@
 productName: "Elastic Synthetics Recorder"
 appId: co.elastic.synthetics-recorder
 artifactName: ${name}-${version}-${os}-${arch}.${ext}
+beforeBuild: "./scripts/fix-sharp.js"
 beforePack: "./scripts/before-pack.js"
 afterPack: "./scripts/after-pack.js"
 afterSign: "./scripts/notarize.js"
 afterExtract: "./scripts/check-sharp.js"
 onNodeModuleFile: "./scripts/on-node-module-file.js"
-npmRebuild: true
 files:
   - build/**/*
   - scripts/**/*
   - assets/entitlements.mac.plist
-  - "**/node_modules/@img/**/*"
 extraResources:
   - from: local-browsers/_releases/${os}-${arch}
     to: local-browsers
