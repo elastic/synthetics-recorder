@@ -11,10 +11,11 @@ files:
   - build/**/*
   - scripts/**/*
   - assets/entitlements.mac.plist
-  - node_modules/@img/**/*
 extraResources:
   - from: local-browsers/_releases/${os}-${arch}
     to: local-browsers
+  - from: node_modules/@img/**/*
+    to: app.asar.unpacked/node_modules/@img
   - NOTICE.txt
 publish:
   - provider: github
@@ -31,6 +32,10 @@ mac:
   entitlementsInherit: assets/entitlements.mac.plist
   gatekeeperAssess: false
   hardenedRuntime: true
+  asar: true
+  asarUnpack:
+    - "**/node_modules/sharp/**/*"
+    - "**/node_modules/@img/**/*"
   target:
     - target: default
       arch: 
@@ -42,6 +47,12 @@ win:
       arch:
         - x64
   icon: public/elastic.png
+  asar: true
+  asarUnpack:
+    - "**\\*.{node,dll}"
+    - "**/node_modules/sharp/**"
+    - "**/node_modules/@img/**"
+    - "**/node_modules/@elastic/synthetics/**"
 linux:
   target:
     - target: deb
@@ -51,3 +62,9 @@ linux:
   category: Utility
   # electron-builder issue:
   # https://github.com/electron-userland/electron-builder/issues/6200#issuecomment-907830847
+  asarUnpack:
+    - "**\\*.{node,dll}"
+    - "**/node_modules/sharp/**"
+    - "**/node_modules/@img/**"
+    - "**/node_modules/@elastic/synthetics/**"
+  asar: true
