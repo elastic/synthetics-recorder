@@ -22,11 +22,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-exports.default = function (onNodeModuleFile) {
+const path = require('path');
+const fs = require('fs').promises;
+
+exports.default = async function (onNodeModuleFile) {
   if (onNodeModuleFile === void 0) return;
   // override evaluation of @img module files
   if (typeof onNodeModuleFile === 'string' && onNodeModuleFile.indexOf('node_modules/@img') > -1) {
-    console.info('- onNodeModuleFile build hook: explicit include @img file,', onNodeModuleFile);
+    const directories = onNodeModuleFile.split(path.sep);
+    let cur = '';
+    do {
+      cur = directories.pop();
+    } while (cur !== '@img');
+    const modulePath = path.join(directories.join(path.sep), cur);
+    const contents = await fs.readdir(modulePath);
+    console.info('- onNodeModuleFile build hook: contents of', modulePath, ':', contents);
+    // console.info('node modules @img contents:', await fs.readdir())
+    // console.info('- onNodeModuleFile build hook: explicit include @img file,', onNodeModuleFile);
     return true;
   }
 };
