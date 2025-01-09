@@ -11,6 +11,7 @@ files:
   - build/**/*
   - scripts/**/*
   - assets/entitlements.mac.plist
+  - node_modules/@img/**/*
 extraResources:
   - from: local-browsers/_releases/${os}-${arch}
     to: local-browsers
