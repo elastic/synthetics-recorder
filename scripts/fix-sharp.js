@@ -40,11 +40,13 @@ exports.default = async function fixSharp(ctx) {
 
   await new Promise((resolve, reject) => {
     console.info('Fixing sharp for platform', platform, 'arch', arch);
-    const npmInstall = spawn('npm', ['install', `--cpu=${arch}`, `--os=${platform}`, 'sharp'], {
+    const npmInstall = spawn('npm', ['install', 'sharp'], {
       stdio: 'inherit',
       shell: true,
       env: {
         ...filteredEnvs,
+        npm_config_os: platform,
+        npm_config_cpu: arch,
         npm_config_arch: arch,
         npm_config_platform: platform,
       },

@@ -36,7 +36,14 @@ exports.default = async function (onNodeModuleFile) {
     } while (cur !== '@img');
     const modulePath = path.join(directories.join(path.sep), cur);
     const contents = await fs.readdir(modulePath);
-    console.info('- onNodeModuleFile build hook: contents of', modulePath, ':', contents);
+    console.info(
+      '- onNodeModuleFile build hook:',
+      onNodeModuleFile,
+      'contents of',
+      modulePath,
+      ':',
+      contents
+    );
     // console.info('node modules @img contents:', await fs.readdir())
     // console.info('- onNodeModuleFile build hook: explicit include @img file,', onNodeModuleFile);
     return true;
