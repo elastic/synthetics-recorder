@@ -18,7 +18,7 @@ echo "--- run release-ci"
 export CSC_IDENTITY_AUTO_DISCOVERY=false
 # Disable notarize, see scripts/notarize.js
 export SKIP_NOTARIZATION=true
-npm run release-ci
+npm run release-ci | tee package.log
 
 # Store unsigned artifacts
 if [ -n "$BUILDKITE" ] ; then

@@ -3,6 +3,7 @@
 steps:
   - label: "Package :package:"
     command: ".buildkite/scripts/package.sh"
+    artifact_paths: "package.log"
     agents:
       provider: orka
       imagePrefix: generic-13-ventura-x64
