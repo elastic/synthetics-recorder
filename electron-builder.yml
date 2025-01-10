@@ -36,28 +36,28 @@ mac:
   target:
     - target: default
       arch: 
-        - x64 
+        # - x64 
         - arm64
-win:
-  target:
-    - target: nsis
-      arch:
-        - x64
-  icon: public/elastic.png
-  asar: true
-  asarUnpack:
-    - "**\\*.{node,dll}"
-    - "**/node_modules/@elastic/synthetics/**"
-linux:
-  target:
-    - target: deb
-      arch:
-        - x64
-  icon: public/elastic.png
-  category: Utility
-  # electron-builder issue:
-  # https://github.com/electron-userland/electron-builder/issues/6200#issuecomment-907830847
-  asarUnpack:
-    - "**\\*.{node,dll}"
-    - "**/node_modules/@elastic/synthetics/**"
-  asar: true
+# win:
+#   target:
+#     - target: nsis
+#       arch:
+#         - x64
+#   icon: public/elastic.png
+#   asar: true
+#   asarUnpack:
+#     - "**\\*.{node,dll}"
+#     - "**/node_modules/@elastic/synthetics/**"
+# linux:
+#   target:
+#     - target: deb
+#       arch:
+#         - x64
+#   icon: public/elastic.png
+#   category: Utility
+#   # electron-builder issue:
+#   # https://github.com/electron-userland/electron-builder/issues/6200#issuecomment-907830847
+#   asarUnpack:
+#     - "**\\*.{node,dll}"
+#     - "**/node_modules/@elastic/synthetics/**"
+#   asar: true
