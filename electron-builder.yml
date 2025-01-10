@@ -7,7 +7,6 @@ afterPack: "./scripts/after-pack.js"
 afterSign: "./scripts/notarize.js"
 # afterExtract: "./scripts/check-sharp.js"
 onNodeModuleFile: "./scripts/on-node-module-file.js"
-nativeRebuilder: legacy
 files:
   - build/**/*
   - scripts/**/*
@@ -34,9 +33,6 @@ mac:
   gatekeeperAssess: false
   hardenedRuntime: true
   asar: true
-  asarUnpack:
-    - "**/node_modules/sharp/**/*"
-    - "**/node_modules/@img/**/*"
   target:
     - target: default
       arch: 
@@ -51,8 +47,6 @@ win:
   asar: true
   asarUnpack:
     - "**\\*.{node,dll}"
-    - "**/node_modules/sharp/**"
-    - "**/node_modules/@img/**"
     - "**/node_modules/@elastic/synthetics/**"
 linux:
   target:
@@ -65,7 +59,5 @@ linux:
   # https://github.com/electron-userland/electron-builder/issues/6200#issuecomment-907830847
   asarUnpack:
     - "**\\*.{node,dll}"
-    - "**/node_modules/sharp/**"
-    - "**/node_modules/@img/**"
     - "**/node_modules/@elastic/synthetics/**"
   asar: true
