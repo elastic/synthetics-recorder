@@ -29,6 +29,7 @@ exports.default = async function (onNodeModuleFile) {
   if (onNodeModuleFile === void 0) return;
   // override evaluation of @img module files
   if (typeof onNodeModuleFile === 'string' && onNodeModuleFile.indexOf('node_modules/@img') > -1) {
+    console.info(process.env);
     const directories = onNodeModuleFile.split(path.sep);
     let cur = '';
     do {

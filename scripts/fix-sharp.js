@@ -40,7 +40,7 @@ exports.default = async function fixSharp(ctx) {
 
   await new Promise((resolve, reject) => {
     console.info('Fixing sharp for platform', platform, 'arch', arch);
-    const npmInstall = spawn('npm', ['install', 'sharp'], {
+    const npmInstall = spawn('sh', ['-c', 'env && npm install sharp'], {
       stdio: 'inherit',
       shell: true,
       env: {
