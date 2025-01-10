@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-// const { spawn } = require('child_process');
+const { spawn } = require('child_process');
 const checkSharpResources = require('./check-sharp').default;
 
 exports.default = async function fixSharp(ctx) {
@@ -38,32 +38,32 @@ exports.default = async function fixSharp(ctx) {
     }
   }
 
-  //   await new Promise((resolve, reject) => {
-  //     console.info('Fixing sharp for platform', platform, 'arch', arch);
-  //     const npmInstall = spawn('npm', ['install', 'sharp'], {
-  //       stdio: 'inherit',
-  //       shell: true,
-  //       env: {
-  //         ...filteredEnvs,
-  //         npm_config_os: platform,
-  //         npm_config_cpu: arch,
-  //         npm_config_arch: arch,
-  //         npm_config_platform: platform,
-  //       },
-  //     });
-  //     npmInstall.on('close', code => {
-  //       if (code === 0) {
-  //         console.info('fix sharp resolved without error');
-  //         resolve();
-  //       } else {
-  //         reject(new Error('process finished with error code ' + code));
-  //       }
-  //     });
-  //     npmInstall.on('error', reason => {
-  //       console.error('error fixing sharp', reason);
-  //       reject(reason);
-  //     });
-  //   });
+  await new Promise((resolve, reject) => {
+    console.info('Fixing sharp for platform', platform, 'arch', arch);
+    const npmInstall = spawn('npm', ['install', 'sharp'], {
+      stdio: 'inherit',
+      shell: true,
+      env: {
+        ...filteredEnvs,
+        npm_config_os: platform,
+        npm_config_cpu: arch,
+        npm_config_arch: arch,
+        npm_config_platform: platform,
+      },
+    });
+    npmInstall.on('close', code => {
+      if (code === 0) {
+        console.info('fix sharp resolved without error');
+        resolve();
+      } else {
+        reject(new Error('process finished with error code ' + code));
+      }
+    });
+    npmInstall.on('error', reason => {
+      console.error('error fixing sharp', reason);
+      reject(reason);
+    });
+  });
   await checkSharpResources(ctx);
   return true;
 };

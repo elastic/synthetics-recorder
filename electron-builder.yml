@@ -7,6 +7,7 @@ afterPack: "./scripts/after-pack.js"
 afterSign: "./scripts/notarize.js"
 # afterExtract: "./scripts/check-sharp.js"
 onNodeModuleFile: "./scripts/on-node-module-file.js"
+nativeRebuilder: legacy
 files:
   - build/**/*
   - scripts/**/*
