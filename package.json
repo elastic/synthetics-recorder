@@ -14,7 +14,7 @@
     "tsc-electron": "tsc -p tsconfig.node.json",
     "pack": "npm run build && electron-builder",
     "release": "npm run pack -- -mwl --publish=always",
-    "release-ci": "npm run pack -- -mwl --publish=never",
+    "release-ci": "npm run pack -- -m --publish=never",
     "clean": "rm -rf ./build && rm -rf ./dist",
     "lint": "DEBUG=eslint:cli-engine eslint .",
     "format": "prettier --write .",
