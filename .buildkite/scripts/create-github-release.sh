@@ -8,9 +8,22 @@ set -eox pipefail
 
 DIST_LOCATION=signed-artifacts
 echo "--- Download signed artifacts"
+#
+# Download the signed artifacts from the previous step but using the below order
+# gpg, windows and macos.
+# This should help with the signing process and download the files in the correct
+# order. gpg signing signs all the files, but the dmg files need to be signed
+# separately as part of the Macos BK pipeline helper.
+# As long as, the signing process is split in different types and use the same
+# folder name, we need this hack.
+#
 buildkite-agent artifact download --step gpg "$DIST_LOCATION/*.*" ./
-buildkite-agent artifact download --step macos "$DIST_LOCATION/*.*" ./
+# help with debugging
+ls -ltra "$DIST_LOCATION/"
 buildkite-agent artifact download --step windows "$DIST_LOCATION/*.*" ./
+ls -ltra "$DIST_LOCATION/"
+buildkite-agent artifact download --step macos "$DIST_LOCATION/*.*" ./
+ls -ltra "$DIST_LOCATION/"
 
 echo "--- List signed artifacts"
 ls -l "$DIST_LOCATION/"
