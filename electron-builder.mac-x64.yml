@@ -1,0 +1,39 @@
+productName: "Elastic Synthetics Recorder"
+appId: co.elastic.synthetics-recorder
+artifactName: ${name}-${version}-${os}-${arch}.${ext}
+beforeBuild: "./scripts/fix-sharp.js"
+beforePack: "./scripts/before-pack.js"
+afterPack: "./scripts/after-pack.js"
+afterSign: "./scripts/notarize.js"
+# afterExtract: "./scripts/check-sharp.js"
+onNodeModuleFile: "./scripts/on-node-module-file.js"
+files:
+  - build/**/*
+  - scripts/**/*
+  - assets/entitlements.mac.plist
+extraResources:
+  - from: local-browsers/_releases/${os}-${arch}
+    to: local-browsers
+  - from: node_modules/@img/**/*
+    to: app.asar.unpacked/node_modules/@img
+  - NOTICE.txt
+publish:
+  - provider: github
+extraMetadata:
+  main: build/electron/electron.js
+protocols:
+  - name: elastic-synthetics-recorder
+    schemes:
+      - elastic-synthetics-recorder
+mac:
+  icon: public/elastic.png
+  category: public.app-category.developer-tools
+  entitlements: assets/entitlements.mac.plist
+  entitlementsInherit: assets/entitlements.mac.plist
+  gatekeeperAssess: false
+  hardenedRuntime: true
+  asar: true
+  target:
+    - target: default
+      arch: 
+        - x64 
