@@ -35,11 +35,12 @@ if [ -z "$SIGN_BUILD_ID" ] ; then
 fi
 
 cat << EOF
-  - label: ":pipeline: Download signed artifacts"
+  - label: ":pipeline: Download signed artifacts $DOWNLOAD_STEP_NAME"
     key: "$DOWNLOAD_STEP_NAME"
     commands:
       - mkdir -p signed-artifacts
       - buildkite-agent artifact download --build "$SIGN_BUILD_ID" "*.*" signed-artifacts/
+      - ls -ltra signed-artifacts/
       - buildkite-agent artifact upload "signed-artifacts/*.*"
     agents:
       image: docker.elastic.co/ci-agent-images/ubuntu-build-essential
