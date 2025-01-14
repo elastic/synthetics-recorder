@@ -24,5 +24,13 @@ npm run release-ci | tee package.log
 if [ -n "$BUILDKITE" ] ; then
     echo "--- Upload artifacts"
     mv dist artifacts-to-sign
-    buildkite-agent artifact upload "artifacts-to-sign/*.*"
+    # We cannot upload artifacts-to-sign/*.* since it contains some generated files builder-debug, .blockmap and so on
+    # (only *nix)
+    buildkite-agent artifact upload "artifacts-to-sign/*.deb;artifacts-to-sign/*.dmg;artifacts-to-sign/*.zip"
+
+    # (only windows)
+    buildkite-agent artifact upload "artifacts-to-sign/*.exe"
+
+    # (only mac)
+    buildkite-agent artifact upload "artifacts-to-sign/*.dmg"
 fi
