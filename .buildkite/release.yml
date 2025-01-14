@@ -37,14 +37,21 @@ steps:
 
   - wait: ~
 
-  - label: Download signed artifacts
+  # The order matters here, we need to download the gpg files first, then the windows and macos files
+  # The current BK pipeline helpers use an opinionated folder names (artifacts-to-sign and signed-artifacts) 
+  - label: Download signed artifacts (windows and gpg)
     commands:
       - .buildkite/scripts/download-signed-artifacts.sh "gpg-sign-service" "gpg"
-      - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service" "macos"
       - .buildkite/scripts/download-signed-artifacts.sh "windows-sign-service" "windows"
       - .buildkite/scripts/download-signed-artifacts.sh "gpg-sign-service" "gpg" | buildkite-agent pipeline upload
-      - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service" "macos" | buildkite-agent pipeline upload
       - .buildkite/scripts/download-signed-artifacts.sh "windows-sign-service" "windows" | buildkite-agent pipeline upload
+
+  - wait: ~
+
+  - label: Download signed artifacts (macos)
+    commands:
+      - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service" "macos"
+      - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service" "macos" | buildkite-agent pipeline upload
 
   - wait: ~
 
@@ -61,6 +68,7 @@ steps:
   - label: "Publish GitHub Release :github:"
     commands:
       - .buildkite/scripts/create-github-release.sh
+    # The steps name are set as part of the .buildkite/scripts/download-signed-artifacts.sh script
     depends_on:
       - "gpg"
       - "macos"
