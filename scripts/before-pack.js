@@ -22,33 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-const { spawn } = require('child_process');
 const { Arch } = require('electron-builder');
 const { downloadForPlatform } = require('./download-chromium');
-// const { fixSharp } = require('./fix-sharp');
 
-exports.default = async function beforePack(ctx) {
+exports.default = function beforePack(ctx) {
   const arch = Arch[ctx.arch];
   const platform = ctx.electronPlatformName;
-  console.info('Beginning prebuild for platform', platform, 'arch', arch);
-  console.info('electron-builder arch', arch, 'electron platform name', ctx.electronPlatformName);
-  await Promise.all([downloadForPlatform(platform, arch)]);
-  return new Promise((resolve, reject) => {
-    const ls = spawn('ls', ['-la', 'node_modules/@img'], {
-      stdio: 'inherit',
-      shell: true,
-    });
-    ls.on('close', code => {
-      if (code === 0) {
-        console.info('ls resolved without error');
-        resolve();
-      } else {
-        reject(new Error('process finished with error code ' + code));
-      }
-    });
-    ls.on('error', reason => {
-      console.error('error ls', reason);
-      reject(reason);
-    });
-  });
+  return downloadForPlatform(platform, arch);
 };
