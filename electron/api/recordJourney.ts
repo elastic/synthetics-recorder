@@ -51,6 +51,9 @@ export async function recordJourney(
     };
     actionListener.on('actions', actionsHandler);
 
+    // setting this will prevent the playwright inspector window opening;
+    // we don't use this for anything and it's confusing and cluttering to the user
+    process.env.PWTEST_CLI_HEADLESS = 'true';
     // _enableRecorder is private method, not defined in BrowserContext type
     await (context as any)._enableRecorder({
       launchOptions: {},
