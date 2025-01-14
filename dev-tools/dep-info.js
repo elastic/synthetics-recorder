@@ -52,31 +52,41 @@ function getFileContent(directory, filename) {
   return content;
 }
 
-function generateDependencyInfo(deps) {
+async function generateDependencyInfo(deps) {
   var allLicenses = [];
-  deps.forEach(d => {
-    // we download forked `playwright-core` as playwright. The directory doesn't include NOTICE nor LICENSE
-    // so we need to copy over from the official playwright-core package downloaded for synthetics agent.
-    if (d === 'playwright') {
-      d = 'playwright-core';
-    }
+  await Promise.all(
+    deps.map(async function (d) {
+      const modulesPath = join(ROOT_NODE_MODULES, d);
 
-    const modulesPath = join(ROOT_NODE_MODULES, d);
+      const dep = { name: d };
 
-    const dep = { name: d };
+      const license = getFileContent(modulesPath, 'LICENSE');
+      if (license) {
+        dep.license = license;
+      } else if (d === 'playwright') {
+        const { version: playwrightTag } = require(join(modulesPath, 'package.json'));
+        // playwright-core doesn't ship with a license file in the package,
+        // this pulls the main playwright license file from the repo.
+        const { statusCode, body } = await request(
+          `https://raw.githubusercontent.com/microsoft/playwright/refs/tags/v${playwrightTag}/LICENSE`
+        );
+        const bodyStr = await body.text();
+        if (statusCode !== 200) {
+          throw new Error(
+            `Failed to fetch playwright license info. status: ${statusCode}, reason: ${bodyStr}.`
+          );
+        }
+        dep.license = bodyStr;
+      }
 
-    const license = getFileContent(modulesPath, 'LICENSE');
-    if (license) {
-      dep.license = license;
-    }
+      const notice = getFileContent(modulesPath, 'NOTICE');
+      if (notice) {
+        dep.notice = notice;
+      }
 
-    const notice = getFileContent(modulesPath, 'NOTICE');
-    if (notice) {
-      dep.notice = notice;
-    }
-
-    allLicenses.push(dep);
-  });
+      allLicenses.push(dep);
+    })
+  );
   return allLicenses;
 }
 
@@ -102,7 +112,7 @@ async function getChromiumInfo() {
 async function generateNotice() {
   const { name: pkgName, dependencies } = getPackageInfo(ROOT_DIR);
   const chromiumInfo = await getChromiumInfo();
-  const depInfo = [chromiumInfo, ...generateDependencyInfo(Object.keys(dependencies))];
+  const depInfo = [chromiumInfo, ...(await generateDependencyInfo(Object.keys(dependencies)))];
   let allLicenses = `
 ${pkgName}
 Copyright (c) 2021-present, Elasticsearch BV
