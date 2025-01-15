@@ -7,36 +7,32 @@ steps:
     agents:
       provider: orka
       imagePrefix: generic-13-ventura-x64
-    build:
-      env:
-        PACKAGE_PLATFORM: "macos_arm64"
+    env:
+      PACKAGE_PLATFORM: "macos_arm64"
   - label: "Package mac :mac: x64"
     command: ".buildkite/scripts/package.sh"
     artifact_paths: "package.log"
     agents:
       provider: orka
       imagePrefix: generic-13-ventura-x64
-    build:
-      env:
-        PACKAGE_PLATFORM: "macos_x64"
+    env:
+      PACKAGE_PLATFORM: "macos_x64"
   - label: "Package Linux :linux: x64"
     command: ".buildkite/scripts/package.sh"
     artifact_paths: "package.log"
     agents:
       provider: orka
       imagePrefix: generic-13-ventura-x64
-    build:
-      env:
-        PACKAGE_PLATFORM: "linux"
+    env:
+      PACKAGE_PLATFORM: "linux"
   - label: "Package Windows :linux: x64"
     command: ".buildkite/scripts/package.sh"
     artifact_paths: "package.log"
     agents:
       provider: orka
       imagePrefix: generic-13-ventura-x64
-    build:
-      env:
-        PACKAGE_PLATFORM: "windows"
+    env:
+      PACKAGE_PLATFORM: "windows"
 
   - wait: ~
 
