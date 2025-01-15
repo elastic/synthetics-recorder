@@ -85,7 +85,6 @@ exports.default = async function checkSharpResources(ctx) {
         console.log('root node_modules path exists');
         const rootContents = await fsPromises.readdir(rootNodeModules);
         console.log('root contents:', rootContents);
-        console.info('copying contents from node modules to resources');
         const contentsSet = new Set(contents);
         const toCopy = rootContents.filter(file => !contentsSet.has(file));
 

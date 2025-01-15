@@ -23,7 +23,7 @@ THE SOFTWARE.
 */
 
 const { spawn } = require('child_process');
-const checkSharpResources = require('./check-sharp').default;
+// const checkSharpResources = require('./check-sharp').default;
 
 exports.default = async function fixSharp(ctx) {
   console.log('beginning fix sharp', ctx);
@@ -64,6 +64,6 @@ exports.default = async function fixSharp(ctx) {
       reject(reason);
     });
   });
-  await checkSharpResources(ctx);
+  // await checkSharpResources(ctx);
   return true;
 };
