@@ -10,7 +10,7 @@
     "react:start": "react-scripts start",
     "react:build": "react-scripts build",
     "dev": "concurrently -k \"BROWSER=none npm run react:start\" \"npm run tsc-electron -- -w\" \"wait-on http://127.0.0.1:3000 && nodemon --exec electron build/electron/electron.js\"",
-    "build": "npm run react:build && npm run tsc-electron",
+    "build": "npm run clean && npm run react:build && npm run tsc-electron",
     "tsc-electron": "tsc -p tsconfig.node.json",
     "pack": "npm run build && electron-builder",
     "release": "npm run pack -- -mwl --publish=always",
