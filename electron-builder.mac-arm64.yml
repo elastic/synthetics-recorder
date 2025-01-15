@@ -5,7 +5,6 @@ beforeBuild: "./scripts/fix-sharp.js"
 beforePack: "./scripts/before-pack.js"
 afterPack: "./scripts/after-pack.js"
 afterSign: "./scripts/notarize.js"
-onNodeModuleFile: "./scripts/on-node-module-file.js"
 files:
   - build/**/*
   - scripts/**/*
