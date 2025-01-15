@@ -1,7 +1,7 @@
 ---
 # $yaml-language-server: $schema=https://raw.githubusercontent.com/buildkite/pipeline-schema/main/schema.json
 steps:
-  - label: "Package mac :mac: ARM64"
+  - label: "Package Mac ARM64 :package: :mac:"
     command: ".buildkite/scripts/package.sh"
     artifact_paths: "package.log"
     agents:
@@ -9,7 +9,7 @@ steps:
       imagePrefix: generic-13-ventura-x64
     env:
       PACKAGE_PLATFORM: "macos_arm64"
-  - label: "Package mac :mac: x64"
+  - label: "Package Mac x64 :package: :mac:"
     command: ".buildkite/scripts/package.sh"
     artifact_paths: "package.log"
     agents:
@@ -17,7 +17,7 @@ steps:
       imagePrefix: generic-13-ventura-x64
     env:
       PACKAGE_PLATFORM: "macos_x64"
-  - label: "Package Linux :linux: x64"
+  - label: "Package Linux x64 :package: :linux:"
     command: ".buildkite/scripts/package.sh"
     artifact_paths: "package.log"
     agents:
@@ -25,7 +25,7 @@ steps:
       imagePrefix: generic-13-ventura-x64
     env:
       PACKAGE_PLATFORM: "linux"
-  - label: "Package Windows :linux: x64"
+  - label: "Build Windows x64 :package: :windows:"
     command: ".buildkite/scripts/package.sh"
     artifact_paths: "package.log"
     agents:
