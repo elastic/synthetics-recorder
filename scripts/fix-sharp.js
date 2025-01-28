@@ -23,13 +23,10 @@ THE SOFTWARE.
 */
 
 const { spawn } = require('child_process');
-// const checkSharpResources = require('./check-sharp').default;
 
 exports.default = async function fixSharp(ctx) {
-  console.log('beginning fix sharp', ctx);
   const platform = ctx.platform.nodeName;
   const arch = ctx.arch;
-  console.log('platform:', platform, 'arch:', arch);
 
   const filteredEnvs = {};
   for (const [k, v] of Object.entries(process.env)) {
@@ -39,7 +36,6 @@ exports.default = async function fixSharp(ctx) {
   }
 
   await new Promise((resolve, reject) => {
-    console.info('Fixing sharp for platform', platform, 'arch', arch);
     const npmInstall = spawn('sh', ['-c', 'env && npm install sharp'], {
       stdio: 'inherit',
       shell: true,
@@ -53,17 +49,14 @@ exports.default = async function fixSharp(ctx) {
     });
     npmInstall.on('close', code => {
       if (code === 0) {
-        console.info('fix sharp resolved without error');
         resolve();
       } else {
         reject(new Error('process finished with error code ' + code));
       }
     });
     npmInstall.on('error', reason => {
-      console.error('error fixing sharp', reason);
       reject(reason);
     });
   });
-  // await checkSharpResources(ctx);
   return true;
 };
