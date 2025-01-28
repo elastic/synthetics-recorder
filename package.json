@@ -14,7 +14,7 @@
     "tsc-electron": "tsc -p tsconfig.node.json",
     "pack": "npm run build && electron-builder",
     "release": "npm run pack -- -mwl --publish=always",
-    "release-ci": "npm run release-ci_mac-x64 && npm run release-ci_mac-arm64 && npm run release-ci_linux-x64 && npm run release-ci_windows-x64",
+    "release-ci": "npm ci && npm run release-ci_mac-x64 && npm run release-ci_mac-arm64 && npm run release-ci_linux-x64 && npm run release-ci_windows-x64",
     "release-ci_mac-x64": "npm run pack -- --mac --x64 --config=electron-builder.mac-x64.yml --publish=never",
     "release-ci_mac-arm64": "npm run pack -- --mac --arm64 --config=electron-builder.mac-arm64.yml --publish=never",
     "release-ci_linux-x64": "npm run pack -- --linux --x64 --config=electron-builder.linux-x64.yml --publish=never",
