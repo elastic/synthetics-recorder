@@ -41,30 +41,23 @@ const libNames = {
 function sharpBinName(platform, arch) {
   return `sharp-${libNames[formatPlatformArch(platform, arch)]}`;
 }
-
-function libvipsBinName(platform, arch) {
-  return `sharp-libvips-${libNames[formatPlatformArch(platform, arch)]}`;
-}
 function formatPlatformArch(platform, arch) {
   return `${platform}_${arch}`;
 }
-async function dirExist(path, name) {
+async function dirExist(path) {
   try {
     await fsPromises.access(path);
-    console.info(`Check: ${name} exists, true.`);
   } catch (_err) {
-    console.info(`Check: ${name} exists, false.`);
     return false;
   }
   return true;
 }
 
+// This script is called during the build process to ensure that if sharp binary dependencies are present in node_modules but have
+// not been copied, they will be forcibly included in the package for the appropriate platform.
 exports.default = async function checkSharpResources(ctx) {
-  // const platform = ctx.electronPlatformName;
-  // const arch = Arch[ctx.arch];
   const platform = ctx.platform.nodeName;
   const { arch } = ctx;
-  console.log('compute for ', ctx, platform, arch);
   const resourcePath = path.join(
     __dirname,
     '..',
@@ -73,38 +66,25 @@ exports.default = async function checkSharpResources(ctx) {
     resourcesSubpath
   );
   const rootNodeModules = path.join(__dirname, '..', 'node_modules', '@img');
-  try {
-    if (!(await dirExist(resourcePath, 'sharp resource path')))
-      await fsPromises.mkdir(resourcePath, { recursive: true });
-    const contents = await fsPromises.readdir(resourcePath);
-    console.log('contents', contents);
-    console.log('searching for', sharpBinName(platform, arch), libvipsBinName(platform, arch));
-    if (!contents.some(file => file === sharpBinName(platform, arch))) {
-      console.warn('sharp resources not found for platform/arch', platform, arch);
-      if (await dirExist(rootNodeModules, 'root node_modules path')) {
-        console.log('root node_modules path exists');
-        const rootContents = await fsPromises.readdir(rootNodeModules);
-        console.log('root contents:', rootContents);
-        const contentsSet = new Set(contents);
-        const toCopy = rootContents.filter(file => !contentsSet.has(file));
 
-        for (const file of toCopy) {
-          const sourcePath = path.join(rootNodeModules, file);
-          console.info('copying sharp resource from', sourcePath, 'to', resourcePath);
-          await fsPromises.cp(sourcePath, path.join(resourcePath, file), {
-            recursive: true,
-            force: false,
-          });
-        }
-        const updated = await fsPromises.readdir(resourcePath);
-        console.info('updated contents:', updated);
+  if (!(await dirExist(resourcePath))) {
+    await fsPromises.mkdir(resourcePath, { recursive: true });
+  }
+
+  const contents = await fsPromises.readdir(resourcePath);
+  if (!contents.some(file => file === sharpBinName(platform, arch))) {
+    if (await dirExist(rootNodeModules)) {
+      const rootContents = await fsPromises.readdir(rootNodeModules);
+      const contentsSet = new Set(contents);
+      const toCopy = rootContents.filter(file => !contentsSet.has(file));
+
+      for (const file of toCopy) {
+        const sourcePath = path.join(rootNodeModules, file);
+        await fsPromises.cp(sourcePath, path.join(resourcePath, file), {
+          recursive: true,
+          force: false,
+        });
       }
     }
-    if (!contents.some(file => file === libvipsBinName(platform, arch))) {
-      console.warn('libvips resources not found for platform/arch', platform, arch);
-    }
-    console.info('sharp resources postbuild check complete');
-  } catch (err) {
-    console.error(err);
   }
 };

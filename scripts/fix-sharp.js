@@ -24,6 +24,8 @@ THE SOFTWARE.
 
 const { spawn } = require('child_process');
 
+// This script will forcibly install sharp for the given platform, because
+// at times the electro-builder process seems not to do this.
 exports.default = async function fixSharp(ctx) {
   const platform = ctx.platform.nodeName;
   const arch = ctx.arch;
