@@ -15,7 +15,7 @@ npm ci
 echo "--- run release-ci"
 # Disable signing
 # see https://www.electron.build/code-signing#how-to-disable-code-signing-during-the-build-process-on-macos
-# export CSC_IDENTITY_AUTO_DISCOVERY=false
+export CSC_IDENTITY_AUTO_DISCOVERY=false
 # Disable notarize, see scripts/notarize.js
 export SKIP_NOTARIZATION=true
 
