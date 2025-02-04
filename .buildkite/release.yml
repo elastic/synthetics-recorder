@@ -49,6 +49,7 @@ steps:
     # NOTE: If you change 'key: macos-sign-service' then change the bellow call for .buildkite/scripts/download-signed-artifacts.sh
     key: macos-sign-service
     build:
+      branch: "REL-2114-synthetics-recorder-becomes-uninstallable-and-crashes-after-mac-signing"
       env:
         INPUT_PATH: buildkite://
 
