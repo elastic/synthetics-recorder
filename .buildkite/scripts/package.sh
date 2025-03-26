@@ -10,7 +10,7 @@ fi
 
 echo "--- Install node and gather dependencies"
 nvm install "$(cat .nvmrc)"
-npm ci
+npm ci --legacy-peer-deps
 
 echo "--- run release-ci"
 # Disable signing

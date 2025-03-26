@@ -46,7 +46,7 @@ You can see potential error outputs as a result of using the incorrect version b
 Install the dependencies
 
 ```
-npm install
+npm install --legacy-peer-deps
 ```
 
 Run the recorder app in dev mode.
@@ -179,7 +179,7 @@ Test new changes in the Recorder by updating Recorder's package.json. Update the
 
 ```bash
 # run your install to update `package-lock.json` and install your target synthetics and playwright packages
-npm install
+npm install --legacy-peer-deps
 
 # you can now run the Recorder and make sure that you can record and test journeys
 npm run dev
