@@ -26,7 +26,7 @@ import { useEffect, useState } from 'react';
 import { EuiCode, EuiEmptyPrompt, EuiGlobalToastList, EuiProvider } from '@elastic/eui';
 import type { Steps } from '@elastic/synthetics';
 import createCache from '@emotion/cache';
-import '@elastic/eui/dist/eui_theme_light.css';
+import '@elastic/eui/dist/eui_theme_borealis_light';
 import { Title } from './components/Header/Title';
 import { HeaderControls } from './components/Header/HeaderControls';
 import { CommunicationContext } from './contexts/CommunicationContext';

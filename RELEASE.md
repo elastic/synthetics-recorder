@@ -13,7 +13,7 @@ Be sure you have checked out the `main` branch and have pulled the latest change
 
 ```bash
 # package-lock.json file should have no unstaged changes
-npm install
+npm install --legacy-peer-deps
 ```
 
 #### Run tests
