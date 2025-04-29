@@ -14,6 +14,8 @@ extraResources:
     to: local-browsers
   - from: node_modules/@img/**/*
     to: app.asar.unpacked/node_modules/@img
+  - from: node_modules/color-name/**/*
+    to: app.asar.unpacked/node_modules/color-name
   - NOTICE.txt
 publish:
   - provider: github
