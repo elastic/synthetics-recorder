@@ -91,6 +91,7 @@
     "@emotion/cache": "^11.9.3",
     "@emotion/react": "^11.9.3",
     "archiver-utils": "^5.0.2",
+    "color-name": "^2.0.0",
     "dotenv": "^16.0.3",
     "electron-debug": "^3.2.0",
     "electron-is-dev": "^2.0.0",
