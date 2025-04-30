@@ -31,3 +31,8 @@ jobs:
         run: npm run build
       - name: Run test
         run: npm test
+      - uses: actions/upload-artifact@v4
+        with:
+          name: recordings
+          path: videos/*
+          retention-days: 1
