@@ -33,6 +33,7 @@ jobs:
         run: npm test
       - uses: actions/upload-artifact@v4
         with:
+          if: always()
           name: recordings
           path: videos/*
           retention-days: 1
