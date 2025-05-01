@@ -1,11 +1,38 @@
 ---
 # $yaml-language-server: $schema=https://raw.githubusercontent.com/buildkite/pipeline-schema/main/schema.json
 steps:
-  - label: "Package :package:"
+  - label: "Package Mac ARM64 :package: :mac:"
     command: ".buildkite/scripts/package.sh"
+    artifact_paths: "package.log"
     agents:
       provider: orka
       imagePrefix: generic-13-ventura-x64
+    env:
+      PACKAGE_PLATFORM: "macos_arm64"
+  - label: "Package Mac x64 :package: :mac:"
+    command: ".buildkite/scripts/package.sh"
+    artifact_paths: "package.log"
+    agents:
+      provider: orka
+      imagePrefix: generic-13-ventura-x64
+    env:
+      PACKAGE_PLATFORM: "macos_x64"
+  - label: "Package Linux x64 :package: :linux:"
+    command: ".buildkite/scripts/package.sh"
+    artifact_paths: "package.log"
+    agents:
+      provider: orka
+      imagePrefix: generic-13-ventura-x64
+    env:
+      PACKAGE_PLATFORM: "linux"
+  - label: "Build Windows x64 :package: :windows:"
+    command: ".buildkite/scripts/package.sh"
+    artifact_paths: "package.log"
+    agents:
+      provider: orka
+      imagePrefix: generic-13-ventura-x64
+    env:
+      PACKAGE_PLATFORM: "windows"
 
   - wait: ~
 
@@ -36,14 +63,21 @@ steps:
 
   - wait: ~
 
-  - label: Download signed artifacts
+  # The order matters here, we need to download the gpg files first, then the windows and macos files
+  # The current BK pipeline helpers use an opinionated folder names (artifacts-to-sign and signed-artifacts) 
+  - label: Download signed artifacts (windows and gpg)
     commands:
       - .buildkite/scripts/download-signed-artifacts.sh "gpg-sign-service" "gpg"
-      - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service" "macos"
       - .buildkite/scripts/download-signed-artifacts.sh "windows-sign-service" "windows"
       - .buildkite/scripts/download-signed-artifacts.sh "gpg-sign-service" "gpg" | buildkite-agent pipeline upload
-      - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service" "macos" | buildkite-agent pipeline upload
       - .buildkite/scripts/download-signed-artifacts.sh "windows-sign-service" "windows" | buildkite-agent pipeline upload
+
+  - wait: ~
+
+  - label: Download signed artifacts (macos)
+    commands:
+      - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service" "macos"
+      - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service" "macos" | buildkite-agent pipeline upload
 
   - wait: ~
 
@@ -60,6 +94,7 @@ steps:
   - label: "Publish GitHub Release :github:"
     commands:
       - .buildkite/scripts/create-github-release.sh
+    # The steps name are set as part of the .buildkite/scripts/download-signed-artifacts.sh script
     depends_on:
       - "gpg"
       - "macos"

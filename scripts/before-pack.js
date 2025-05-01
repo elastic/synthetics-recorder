@@ -21,11 +21,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
 const { Arch } = require('electron-builder');
 const { downloadForPlatform } = require('./download-chromium');
 
 exports.default = function beforePack(ctx) {
   const arch = Arch[ctx.arch];
   const platform = ctx.electronPlatformName;
-  return Promise.all([downloadForPlatform(platform, arch)]);
+  return downloadForPlatform(platform, arch);
 };

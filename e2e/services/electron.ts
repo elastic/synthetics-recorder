@@ -63,9 +63,7 @@ export class ElectronServiceFactory {
 
   async getWindow() {
     const instance = await this.getInstance();
-    const window = await instance.firstWindow();
-    await window.waitForLoadState('networkidle');
-    return window;
+    return instance.firstWindow();
   }
 
   async terminate() {

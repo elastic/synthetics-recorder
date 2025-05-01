@@ -1,6 +1,7 @@
 productName: "Elastic Synthetics Recorder"
 appId: co.elastic.synthetics-recorder
 artifactName: ${name}-${version}-${os}-${arch}.${ext}
+beforeBuild: "./scripts/fix-sharp.js"
 beforePack: "./scripts/before-pack.js"
 afterPack: "./scripts/after-pack.js"
 afterSign: "./scripts/notarize.js"
@@ -11,6 +12,8 @@ files:
 extraResources:
   - from: local-browsers/_releases/${os}-${arch}
     to: local-browsers
+  - from: node_modules/@img/**/*
+    to: app.asar.unpacked/node_modules/@img
   - NOTICE.txt
 publish:
   - provider: github
@@ -20,34 +23,13 @@ protocols:
   - name: elastic-synthetics-recorder
     schemes:
       - elastic-synthetics-recorder
-mac:
-  icon: public/elastic.png
-  category: public.app-category.developer-tools
-  entitlements: assets/entitlements.mac.plist
-  entitlementsInherit: assets/entitlements.mac.plist
-  gatekeeperAssess: false
-  hardenedRuntime: true
-  target:
-    - target: default
-      arch: 
-        - x64 
-        - arm64
 win:
   target:
     - target: nsis
       arch:
         - x64
   icon: public/elastic.png
-linux:
-  target:
-    - target: deb
-      arch:
-        - x64
-  icon: public/elastic.png
-  category: Utility
-  # electron-builder issue:
-  # https://github.com/electron-userland/electron-builder/issues/6200#issuecomment-907830847
+  asar: true
   asarUnpack:
     - "**\\*.{node,dll}"
-    - "**/node_modules/sharp/**"
     - "**/node_modules/@elastic/synthetics/**"
