@@ -40,8 +40,6 @@ export class ElectronServiceFactory {
     if (!fs.existsSync(binPath)) throw Error('Electron binary not found');
 
     try {
-      const videoDir = path.join(__dirname, '..', '..', 'videos');
-      console.log('video dir', videoDir);
       this.#instance = await _electron.launch({
         args: [binPath, '--no-sandbox', '--enable-logging'],
         env: {
@@ -52,10 +50,6 @@ export class ElectronServiceFactory {
            */
           TEST_PORT: env.TEST_PORT as string,
           NODE_ENV: process.env.NODE_ENV ?? 'development',
-        },
-        recordVideo: {
-          dir: videoDir,
-          size: { width: 1280, height: 720 },
         },
       });
 
@@ -69,9 +63,7 @@ export class ElectronServiceFactory {
 
   async getWindow() {
     const instance = await this.getInstance();
-    const window = await instance.firstWindow();
-    await window.waitForLoadState('networkidle');
-    return window;
+    return instance.firstWindow();
   }
 
   async terminate() {
