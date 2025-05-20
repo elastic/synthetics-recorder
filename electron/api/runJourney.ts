@@ -109,7 +109,9 @@ export async function runJourney(
       return chunk.split('\n').map(subChunk => {
         try {
           return JSON.parse(subChunk);
-        } catch (_) {
+        } catch (error: unknown) {
+          // eslint-disable-next-line no-console
+          console.debug(error);
           return {};
         }
       });

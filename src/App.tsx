@@ -26,7 +26,6 @@ import { useEffect, useState } from 'react';
 import { EuiCode, EuiEmptyPrompt, EuiGlobalToastList, EuiProvider } from '@elastic/eui';
 import type { Steps } from '@elastic/synthetics';
 import createCache from '@emotion/cache';
-import '@elastic/eui/dist/eui_theme_light.css';
 import { Title } from './components/Header/Title';
 import { HeaderControls } from './components/Header/HeaderControls';
 import { CommunicationContext } from './contexts/CommunicationContext';
@@ -45,7 +44,6 @@ import { StepSeparator } from './components/StepSeparator';
 
 import { TestResult } from './components/TestResult';
 import { AppPageBody } from './components/AppPageBody';
-import { StyledComponentsEuiProvider } from './contexts/StyledComponentsEuiProvider';
 import { ExportScriptFlyout } from './components/ExportScriptFlyout';
 import { useRecordingContext } from './hooks/useRecordingContext';
 import { StartOverWarningModal } from './components/StartOverWarningModal';
@@ -96,61 +94,59 @@ export default function App() {
 
   return (
     <EuiProvider cache={cache} colorMode="light">
-      <StyledComponentsEuiProvider>
-        <StepsContext.Provider value={stepsContextUtils}>
-          <RecordingContext.Provider value={recordingContextUtils}>
-            <TestContext.Provider value={syntheticsTestUtils}>
-              <UrlContext.Provider value={{ url, setUrl }}>
-                <DragAndDropContext.Provider value={dragAndDropContext}>
-                  <ToastContext.Provider
-                    value={{ dismissToast, sendToast, setToastLifeTimeMs, toasts, toastLifeTimeMs }}
-                  >
-                    <Title />
-                    <HeaderControls setIsCodeFlyoutVisible={setIsCodeFlyoutVisible} />
-                    <AppPageBody>
-                      {steps.length === 0 && (
-                        <EuiEmptyPrompt
-                          hasBorder={false}
-                          title={<h3>No steps recorded yet</h3>}
-                          body={
-                            <p>
-                              Click on <EuiCode>Start recording</EuiCode> to get started with your
-                              script.
-                            </p>
-                          }
-                        />
-                      )}
-                      {steps.map((step, index) => (
-                        <StepSeparator
-                          index={index}
-                          key={`step-separator-${index + 1}`}
-                          step={step}
-                        />
-                      ))}
-                      <TestResult />
-                      {isCodeFlyoutVisible && (
-                        <ExportScriptFlyout setVisible={setIsCodeFlyoutVisible} steps={steps} />
-                      )}
-                      {isStartOverModalVisible && (
-                        <StartOverWarningModal
-                          startOver={startOver}
-                          setVisibility={setIsStartOverModalVisible}
-                          stepCount={steps.length}
-                        />
-                      )}
-                    </AppPageBody>
-                    <EuiGlobalToastList
-                      toasts={toasts}
-                      dismissToast={dismissToast}
-                      toastLifeTimeMs={toastLifeTimeMs}
-                    />
-                  </ToastContext.Provider>
-                </DragAndDropContext.Provider>
-              </UrlContext.Provider>
-            </TestContext.Provider>
-          </RecordingContext.Provider>
-        </StepsContext.Provider>
-      </StyledComponentsEuiProvider>
+      <StepsContext.Provider value={stepsContextUtils}>
+        <RecordingContext.Provider value={recordingContextUtils}>
+          <TestContext.Provider value={syntheticsTestUtils}>
+            <UrlContext.Provider value={{ url, setUrl }}>
+              <DragAndDropContext.Provider value={dragAndDropContext}>
+                <ToastContext.Provider
+                  value={{ dismissToast, sendToast, setToastLifeTimeMs, toasts, toastLifeTimeMs }}
+                >
+                  <Title />
+                  <HeaderControls setIsCodeFlyoutVisible={setIsCodeFlyoutVisible} />
+                  <AppPageBody>
+                    {steps.length === 0 && (
+                      <EuiEmptyPrompt
+                        hasBorder={false}
+                        title={<h3>No steps recorded yet</h3>}
+                        body={
+                          <p>
+                            Click on <EuiCode>Start recording</EuiCode> to get started with your
+                            script.
+                          </p>
+                        }
+                      />
+                    )}
+                    {steps.map((step, index) => (
+                      <StepSeparator
+                        index={index}
+                        key={`step-separator-${index + 1}`}
+                        step={step}
+                      />
+                    ))}
+                    <TestResult />
+                    {isCodeFlyoutVisible && (
+                      <ExportScriptFlyout setVisible={setIsCodeFlyoutVisible} steps={steps} />
+                    )}
+                    {isStartOverModalVisible && (
+                      <StartOverWarningModal
+                        startOver={startOver}
+                        setVisibility={setIsStartOverModalVisible}
+                        stepCount={steps.length}
+                      />
+                    )}
+                  </AppPageBody>
+                  <EuiGlobalToastList
+                    toasts={toasts}
+                    dismissToast={dismissToast}
+                    toastLifeTimeMs={toastLifeTimeMs}
+                  />
+                </ToastContext.Provider>
+              </DragAndDropContext.Provider>
+            </UrlContext.Provider>
+          </TestContext.Provider>
+        </RecordingContext.Provider>
+      </StepsContext.Provider>
     </EuiProvider>
   );
 }

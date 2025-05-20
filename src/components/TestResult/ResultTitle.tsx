@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import { EuiFlexGroup, EuiFlexItem, EuiPanel, useEuiTheme } from '@elastic/eui';
 import React from 'react';
-import { ResultContainer, ResultHeader } from './styles';
 import { TruncatedTitle } from './TruncatedTitle';
+import { css } from '@emotion/react';
 
 interface IResultHeader {
   children: React.ReactNode;
@@ -42,17 +42,33 @@ export const ResultTitle: React.FC<IResultHeader> = ({
   stepIndex,
   titleText,
 }) => {
+  const { euiTheme: theme } = useEuiTheme();
   return (
-    <ResultContainer hasShadow={false}>
-      <ResultHeader>
+    <EuiPanel
+      css={css`
+        && {
+          border-radius: ${theme.border.radius.medium};
+        }
+        padding: 0px;
+        margin: 0px 0px 24px 0px;
+        border: ${theme.border.thin};
+      `}
+      hasShadow={false}
+    >
+      <h3
+        css={css`
+          border-bottom: ${theme.border.thin};
+          padding: 8px;
+        `}
+      >
         <EuiFlexGroup>
           <EuiFlexItem>
             <TruncatedTitle maxLength={maxTitleLength} stepIndex={stepIndex} text={titleText} />
           </EuiFlexItem>
           <EuiFlexItem grow={false}>{durationElement}</EuiFlexItem>
         </EuiFlexGroup>
-      </ResultHeader>
+      </h3>
       {children}
-    </ResultContainer>
+    </EuiPanel>
   );
 };

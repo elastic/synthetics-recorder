@@ -29,29 +29,16 @@ import {
   EuiFlexItem,
   EuiPopover,
   EuiText,
-  EuiTitle,
+  useEuiTheme,
 } from '@elastic/eui';
 import React, { useContext, useState } from 'react';
-import styled from 'styled-components';
 import { createExternalLinkHandler, PLAYWRIGHT_ASSERTION_DOCS_LINK } from '../../common/shared';
 import { CommunicationContext } from '../../contexts/CommunicationContext';
-
-const InfoPopoverTitle = styled(EuiTitle)`
-  border-bottom: ${props => props.theme.border.thin};
-  padding: 8px;
-`;
-
-const InfoPopoverTextWrapper = styled(EuiText)`
-  padding: 8px;
-`;
-
-const AssertionInfoText = styled(EuiText)`
-  padding-left: 8px;
-  max-width: 280px;
-`;
+import { css } from '@emotion/react';
 
 export function AssertionInfo() {
   const [isInfoPopoverOpen, setIsInfoPopoverOpen] = useState(false);
+  const { euiTheme: theme } = useEuiTheme();
   const { electronAPI } = useContext(CommunicationContext);
   return (
     <EuiPopover
@@ -66,15 +53,30 @@ export function AssertionInfo() {
       closePopover={() => setIsInfoPopoverOpen(false)}
       panelPaddingSize="none"
     >
-      <InfoPopoverTitle size="xs">
+      <EuiText
+        css={css`
+          border-bottom: ${theme.border.thin};
+          padding: 8px;
+        `}
+        size="xs"
+      >
         <h4>Add assertion</h4>
-      </InfoPopoverTitle>
-      <InfoPopoverTextWrapper>
+      </EuiText>
+      <EuiText
+        css={css`
+          padding: 8px;
+        `}
+      >
         <EuiFlexGroup alignItems="flexStart" direction="column" gutterSize="none">
           <EuiFlexItem grow={false}>
-            <AssertionInfoText>
+            <EuiText
+              css={css`
+                padding-left: 8px;
+                max-width: 280px;
+              `}
+            >
               You can add assertions to validate your page&apos;s content matches your expectations.
-            </AssertionInfoText>
+            </EuiText>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <EuiButtonEmpty
@@ -85,7 +87,7 @@ export function AssertionInfo() {
             </EuiButtonEmpty>
           </EuiFlexItem>
         </EuiFlexGroup>
-      </InfoPopoverTextWrapper>
+      </EuiText>
     </EuiPopover>
   );
 }

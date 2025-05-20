@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem, EuiAccordion } from '@elastic/eui';
+import { EuiFlexGroup, EuiFlexItem, EuiAccordion, useEuiTheme } from '@elastic/eui';
 import type { ActionInContext } from '@elastic/synthetics';
+import { css } from '@emotion/react';
 import React, { useCallback, useContext, useState } from 'react';
-import styled from 'styled-components';
 import { SMALL_SCREEN_BREAKPOINT } from '../../common/shared';
 import { ResultCategory } from '../../common/types';
 import { StepsContext } from '../../contexts/StepsContext';
@@ -37,49 +37,8 @@ import { Behavior } from './Behavior';
 import { ExtraActions } from './ExtraActions';
 import { NewStepDividerButton } from './NewStepDividerButton';
 
-const ActionAccordion = styled(EuiAccordion)<{ isDragOver: boolean }>`
-  padding: 8px 0px;
-  .euiAccordion__triggerWrapper {
-    border-top-left-radius: ${props => props.theme.border.radius.medium};
-    border-top-right-radius: ${props => props.theme.border.radius.medium};
-    border: ${props => props.theme.border.thin};
-    padding: 12px;
-    background-color: ${props => props.theme.colors.emptyShade};
-  }
-
-  border-bottom: ${({ isDragOver, theme }) =>
-    isDragOver ? `${theme.border.width.thick} solid ${theme.colors.success}` : 'inherit'};
-
-  .euiAccordion__padding--m {
-    background-color: ${props => props.theme.colors.emptyShade};
-    border-right: ${props => props.theme.border.thin};
-    border-bottom: ${props => props.theme.border.thin};
-    border-left: ${props => props.theme.border.thin};
-  }
-
-  .euiAccordion-isOpen > .euiAccordion__childWrapper {
-    border-right: ${props => props.theme.border.thin};
-    border-bottom: ${props => props.theme.border.thin};
-    border-left: ${props => props.theme.border.thin};
-    background-color: ${props => props.theme.colors.emptyShade};
-  }
-`;
-
-interface IContainer {
-  isDragOver: boolean;
-}
-
-const Container = styled(EuiFlexGroup)<IContainer>`
-  display: flex;
-  min-height: 50px;
-  min-width: 800px;
-  margin-left: -63px;
-  overflow: visible;
-`;
-
 interface IActionElement {
   actionIndex: number;
-  className?: string;
   isDragging?: boolean;
   actionContext: ActionInContext;
   isLast?: boolean;
@@ -87,9 +46,8 @@ interface IActionElement {
   testStatus?: ResultCategory;
 }
 
-function ActionComponent({
+export function ActionElement({
   actionIndex,
-  className,
   isLast,
   actionContext,
   stepIndex,
@@ -106,15 +64,27 @@ function ActionComponent({
   );
   const close = () => setIsOpen(false);
   const { isDragOver, onDropActions, splitStepAtAction } = useDrop(stepIndex, actionIndex);
+  const { euiTheme: theme } = useEuiTheme();
 
   if (actionContext?.isSoftDeleted) {
     return null;
   }
 
   return (
-    <Container
-      className={className}
-      isDragOver={isDragOver}
+    <EuiFlexGroup
+      css={css`
+        display: flex;
+        min-height: 50px;
+        min-width: 800px;
+        margin-left: -63px;
+        overflow: visible;
+
+        @media (max-width: ${SMALL_SCREEN_BREAKPOINT}px) {
+          .euiAccordion__triggerWrapper {
+            width: 650px;
+          }
+        }
+      `}
       id={`action-element-${stepIndex}-${actionIndex}`}
       gutterSize="none"
       {...onDropActions}
@@ -130,8 +100,35 @@ function ActionComponent({
         <ActionStatusIndicator showRect={isLast} status={testStatus} />
       </EuiFlexItem>
       <Behavior isAssert={isAssertion} omitBorder={isLast}>
-        <ActionAccordion
-          isDragOver={isDragOver}
+        <EuiAccordion
+          css={css`
+            padding: 8px 0px;
+            .euiAccordion__triggerWrapper {
+              border-top-left-radius: ${theme.border.radius.medium};
+              border-top-right-radius: ${theme.border.radius.medium};
+              border: ${theme.border.thin};
+              padding: 12px;
+              background-color: ${theme.colors.emptyShade};
+            }
+
+            border-bottom: ${isDragOver
+              ? `${theme.border.width.thick} solid ${theme.colors.success}`
+              : 'inherit'};
+
+            .euiAccordion__padding--m {
+              background-color: ${theme.colors.emptyShade};
+              border-right: ${theme.border.thin};
+              border-bottom: ${theme.border.thin};
+              border-left: ${theme.border.thin};
+            }
+
+            .euiAccordion-isOpen > .euiAccordion__childWrapper {
+              border-right: ${theme.border.thin};
+              border-bottom: ${theme.border.thin};
+              border-left: ${theme.border.thin};
+              background-color: ${theme.colors.emptyShade};
+            }
+          `}
           arrowDisplay="none"
           buttonProps={{ style: { display: 'none' } }}
           paddingSize="m"
@@ -178,16 +175,8 @@ function ActionComponent({
               stepIndex={stepIndex}
             />
           )}
-        </ActionAccordion>
+        </EuiAccordion>
       </Behavior>
-    </Container>
+    </EuiFlexGroup>
   );
 }
-
-export const ActionElement = styled(ActionComponent)`
-  @media (max-width: ${SMALL_SCREEN_BREAKPOINT}px) {
-    .euiAccordion__triggerWrapper {
-      width: 650px;
-    }
-  }
-`;

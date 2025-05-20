@@ -163,7 +163,7 @@ describe('TestResult', () => {
   it('renders the flyout with error message and code for failed step', async () => {
     const errorMessage = 'Save button timeout expired';
     const generateCode = jest.fn();
-    generateCode.mockImplementation((arg: string, obj: any) => {
+    generateCode.mockImplementation(() => {
       return `
 step('Click save', () => {
 	await page.click('my button');
