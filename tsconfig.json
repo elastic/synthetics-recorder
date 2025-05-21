@@ -4,13 +4,15 @@
     "target": "ES6",
     "module": "ESNext",
     "lib": ["DOM", "ESNext"],
-    "noEmit": true,
+    "noEmit": false,
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react",
     "strict": true,
+    "sourceMap": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["common/helper/**/*", "src/**/*"]
+  "include": ["common", "src"],
+  "exclude": ["node_modules"]
 }

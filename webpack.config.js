@@ -24,28 +24,66 @@ THE SOFTWARE.
 
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const CompressionPlugin = require('compression-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+
 const PORT = process.env.PORT ?? 3000;
+const LAUNCH_ANALYZER = process.env.LAUNCH_ANALYZER ?? false;
+
+const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
   entry: './src/index.tsx',
+  // TODO: target electron-renderer
+  target: 'web',
   output: {
     path: path.resolve(__dirname, 'build'),
-    filename: 'bundle.js',
+    filename: '[name].[contenthash].js',
     clean: true,
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },
+  optimization: {
+    minimize: isProduction,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          keep_fnames: true,
+        },
+      }),
+    ],
+    splitChunks: {
+      chunks: 'all',
+    },
+  },
+  cache: {
+    type: 'filesystem',
+  },
   module: {
     rules: [
       {
-        test: /\.(js|jsx|ts|tsx)$/,
+        test: /\.(|ts|tsx)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'ts-loader',
+          options: {
+            compilerOptions: {
+              sourceMap: true,
+            },
+            transpileOnly: false,
+          },
+        },
+      },
+      {
+        test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: 'babel-loader',
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader'], // Add sass-loader if needed
+        use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.(png|jpg|gif|svg|woff2?|eot|ttf|otf)$/,
@@ -57,6 +95,11 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './public/index.html',
     }),
+    ...(LAUNCH_ANALYZER ? [new BundleAnalyzerPlugin()] : []),
+    new CompressionPlugin({
+      algorithm: 'gzip',
+      test: /\.(js|css|html|svg)$/,
+    }),
   ],
   devServer: {
     static: {
@@ -66,6 +109,6 @@ module.exports = {
     hot: true,
     historyApiFallback: true,
   },
-  mode: 'development',
-  devtool: 'inline-source-map',
+  mode: isProduction ? 'production' : 'development',
+  devtool: isProduction ? 'source-map' : 'inline-source-map',
 };
