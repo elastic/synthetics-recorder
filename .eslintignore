@@ -1,2 +1,7 @@
 # Ignore linting the demo app
+build
+dist
+local-browsers
 demo-app
+coverage
+*.yml
