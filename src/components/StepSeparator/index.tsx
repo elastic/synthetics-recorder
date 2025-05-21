@@ -36,7 +36,7 @@ interface IStepSeparator {
   step: Step;
 }
 
-export function StepSeparator({ index, step }: IStepSeparator) {
+function StepSeparator({ index, step }: IStepSeparator) {
   const testStatus = useStepResultStatus(
     step.actions.length ? step.actions[0].title : undefined,
     step.name
@@ -96,3 +96,5 @@ export function StepSeparator({ index, step }: IStepSeparator) {
     </div>
   );
 }
+
+export default StepSeparator;

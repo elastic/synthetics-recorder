@@ -74,3 +74,5 @@ export function ExportScriptFlyout({ setVisible, steps }: IExportScriptFlyout) {
     </EuiFlyout>
   );
 }
+
+export default ExportScriptFlyout;

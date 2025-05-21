@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import React, { useContext } from 'react';
+import React, { Suspense, useContext } from 'react';
 import { useEffect, useState } from 'react';
 import { EuiCode, EuiEmptyPrompt, EuiGlobalToastList, EuiProvider } from '@elastic/eui';
 import type { Steps } from '@elastic/synthetics';
@@ -40,13 +40,14 @@ import { useGlobalToasts } from './hooks/useGlobalToasts';
 import { useStepsContext } from './hooks/useStepsContext';
 import { useSyntheticsTest } from './hooks/useSyntheticsTest';
 import { generateIR, generateMergedIR } from './helpers/generator';
-import { StepSeparator } from './components/StepSeparator';
 
-import { TestResult } from './components/TestResult';
+const StepSeparator = React.lazy(() => import('./components/StepSeparator'));
+const TestResult = React.lazy(() => import('./components/TestResult/TestResult'));
+const ExportScriptFlyout = React.lazy(() => import('./components/ExportScriptFlyout/Flyout'));
+const StartOverWarningModal = React.lazy(() => import('./components/StartOverWarningModal'));
+
 import { AppPageBody } from './components/AppPageBody';
-import { ExportScriptFlyout } from './components/ExportScriptFlyout';
 import { useRecordingContext } from './hooks/useRecordingContext';
-import { StartOverWarningModal } from './components/StartOverWarningModal';
 import type { ActionGeneratedListener } from '../common/types';
 
 /**
@@ -118,22 +119,30 @@ export default function App() {
                       />
                     )}
                     {steps.map((step, index) => (
-                      <StepSeparator
-                        index={index}
-                        key={`step-separator-${index + 1}`}
-                        step={step}
-                      />
+                      <Suspense key={`step-separator-${index}`} fallback={null}>
+                        <StepSeparator
+                          index={index}
+                          key={`step-separator-${index + 1}`}
+                          step={step}
+                        />
+                      </Suspense>
                     ))}
-                    <TestResult />
+                    <Suspense fallback={null}>
+                      <TestResult />
+                    </Suspense>
                     {isCodeFlyoutVisible && (
-                      <ExportScriptFlyout setVisible={setIsCodeFlyoutVisible} steps={steps} />
+                      <Suspense fallback={null}>
+                        <ExportScriptFlyout setVisible={setIsCodeFlyoutVisible} steps={steps} />
+                      </Suspense>
                     )}
                     {isStartOverModalVisible && (
-                      <StartOverWarningModal
-                        startOver={startOver}
-                        setVisibility={setIsStartOverModalVisible}
-                        stepCount={steps.length}
-                      />
+                      <Suspense fallback={null}>
+                        <StartOverWarningModal
+                          startOver={startOver}
+                          setVisibility={setIsStartOverModalVisible}
+                          stepCount={steps.length}
+                        />
+                      </Suspense>
                     )}
                   </AppPageBody>
                   <EuiGlobalToastList

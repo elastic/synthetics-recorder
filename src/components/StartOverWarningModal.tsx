@@ -45,7 +45,7 @@ function headerCopy(n: number) {
   return `Restart and delete ${n} ${stepCopy}?`;
 }
 
-export function StartOverWarningModal({ setVisibility, startOver, stepCount }: Props) {
+function StartOverWarningModal({ setVisibility, startOver, stepCount }: Props) {
   const close = () => setVisibility(false);
   return (
     <EuiModal onClose={close}>
@@ -74,3 +74,5 @@ export function StartOverWarningModal({ setVisibility, startOver, stepCount }: P
     </EuiModal>
   );
 }
+
+export default StartOverWarningModal;
