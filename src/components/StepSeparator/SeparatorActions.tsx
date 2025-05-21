@@ -95,8 +95,8 @@ export function SeparatorActions({
         cursor: ${isGrabbing === null || !!isDraggable
           ? 'default'
           : isGrabbing
-          ? 'grabbing'
-          : 'grab'};
+            ? 'grabbing'
+            : 'grab'};
       `}
       onMouseDown={() => setIsGrabbing(true)}
       onMouseUp={() => setIsGrabbing(false)}
