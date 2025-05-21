@@ -32,7 +32,7 @@ module.exports = {
     es2021: true,
   },
   plugins: ['header', 'prettier', '@emotion'],
-  extends: ['plugin:react/recommended', 'prettier'],
+  extends: ['plugin:react/recommended', 'plugin:prettier/recommended'],
   ignorePatterns: ['build', 'local-browsers', 'demo-app'],
   settings: {
     react: {
