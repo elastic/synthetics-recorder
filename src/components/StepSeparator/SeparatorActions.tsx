@@ -22,20 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiButtonIcon, EuiFlexItem, EuiToolTip } from '@elastic/eui';
+import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiToolTip, useEuiTheme } from '@elastic/eui';
 import type { Step } from '@elastic/synthetics';
 import React, { useContext, useState } from 'react';
-import { DRAG_AND_DROP_DATA_TRANSFER_TYPE } from '../../common/shared';
+import { DRAG_AND_DROP_DATA_TRANSFER_TYPE, SMALL_SCREEN_BREAKPOINT } from '../../common/shared';
 import type { StepSeparatorDragDropDataTransfer } from '../../common/types';
 import { DragAndDropContext } from '../../contexts/DragAndDropContext';
 import { StepsContext } from '../../contexts/StepsContext';
 import { EditStepNameInput } from './EditStepNameInput';
-import {
-  ControlsWrapper,
-  DeleteButton,
-  StepSeparatorHeading,
-  StepSeparatorTopBorder,
-} from './styles';
+import { css } from '@emotion/react';
 
 interface ISeparatorActions {
   canDelete: boolean;
@@ -63,6 +58,7 @@ export function SeparatorActions({
   showControls,
   step,
 }: ISeparatorActions) {
+  const { euiTheme: theme } = useEuiTheme();
   const [isGrabbing, setIsGrabbing] = useState<boolean | null>(
     isDraggable === null ? isDraggable : false
   );
@@ -91,20 +87,31 @@ export function SeparatorActions({
   const defaultStepName = `Step ${index + 1}`;
   const stepHeadingText = step.name ?? defaultStepName;
   return (
-    <ControlsWrapper
+    <EuiFlexGroup
       alignItems="center"
       aria-label="Drag to reorganize steps"
-      draggable={!!isDraggable}
       gutterSize="s"
-      isGrabbing={isGrabbing}
+      css={css`
+        cursor: ${isGrabbing === null || !!isDraggable
+          ? 'default'
+          : isGrabbing
+            ? 'grabbing'
+            : 'grab'};
+      `}
       onMouseDown={() => setIsGrabbing(true)}
       onMouseUp={() => setIsGrabbing(false)}
       {...dragParams}
     >
       {!isEditingName && (
-        <StepSeparatorHeading id={`step-${index}`} grow={false}>
+        <EuiFlexItem
+          css={css`
+            font-weight: bold;
+          `}
+          id={`step-${index}`}
+          grow={false}
+        >
           {stepHeadingText}
-        </StepSeparatorHeading>
+        </EuiFlexItem>
       )}
       {isEditingName && (
         <EditStepNameInput
@@ -137,18 +144,30 @@ export function SeparatorActions({
       {index > 0 && canDelete && showDeleteButton && !isEditingName && (
         <EuiFlexItem grow={false}>
           <EuiToolTip content="Delete this step divider">
-            <DeleteButton
+            <EuiButtonIcon
               aria-label="Delete step"
+              css={css`
+                visibility: ${showControls ? 'visible' : 'hidden'};
+              `}
               color="text"
               disabled={!canDelete}
               iconType="trash"
-              isVisible={showControls}
               onClick={() => onMergeSteps(index - 1, index)}
             />
           </EuiToolTip>
         </EuiFlexItem>
       )}
-      {!isEditingName && <StepSeparatorTopBorder />}
-    </ControlsWrapper>
+      {!isEditingName && (
+        <EuiFlexItem
+          css={css`
+            border-top: ${theme.border.thin};
+
+            @media (max-width: ${SMALL_SCREEN_BREAKPOINT}px) {
+              max-width: 566px;
+            }
+          `}
+        />
+      )}
+    </EuiFlexGroup>
   );
 }

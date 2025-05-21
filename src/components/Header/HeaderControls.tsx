@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
+import { EuiFlexGroup, EuiFlexItem, useEuiTheme } from '@elastic/eui';
+import { css } from '@emotion/react';
 import React, { useCallback, useContext } from 'react';
-import styled from 'styled-components';
 import { RecordingStatus, Setter } from '../../common/types';
 import { RecordingContext } from '../../contexts/RecordingContext';
 import { StepsContext } from '../../contexts/StepsContext';
@@ -34,18 +34,6 @@ import { ControlButton } from '../ControlButton';
 import { TestButton } from '../TestButton';
 import { RecordingStatusIndicator } from './StatusIndicator';
 import { UrlField } from './UrlField';
-
-const Header = styled(EuiFlexGroup)`
-  background-color: ${props => props.theme.colors.emptyShade};
-  border-bottom: ${props => props.theme.border.thin};
-  padding: 65px 16px 16px 16px;
-  margin: 0px;
-`;
-
-const TestButtonDivider = styled(EuiFlexItem)`
-  border-right: ${props => props.theme.border.thin};
-  padding-right: 12px;
-`;
 
 interface IHeaderControls {
   setIsCodeFlyoutVisible: Setter<boolean>;
@@ -57,6 +45,8 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
   const { url, setUrl } = useContext(UrlContext);
 
   const { steps } = useContext(StepsContext);
+
+  const { euiTheme: theme } = useEuiTheme();
 
   const {
     isTestInProgress,
@@ -72,7 +62,16 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
   }, [setIsTestInProgress, setResult, startTest]);
 
   return (
-    <Header alignItems="center" gutterSize="m">
+    <EuiFlexGroup
+      css={css`
+        background-color: ${theme.colors.emptyShade};
+        border-bottom: ${theme.border.thin};
+        padding: 65px 16px 16px 16px;
+        margin: 0px;
+      `}
+      alignItems="center"
+      gutterSize="m"
+    >
       {recordingStatus === RecordingStatus.NotRecording && (
         <EuiFlexItem>
           <UrlField
@@ -120,7 +119,12 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <EuiFlexGroup gutterSize="m">
-          <TestButtonDivider>
+          <EuiFlexItem
+            css={css`
+              border-right: ${theme.border.thin};
+              padding-right: 12px;
+            `}
+          >
             <TestButton
               isDisabled={
                 isTestInProgress ||
@@ -130,7 +134,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
               showTooltip={steps.length === 0}
               onTest={onTest}
             />
-          </TestButtonDivider>
+          </EuiFlexItem>
           <EuiFlexItem>
             <ControlButton
               aria-label="export"
@@ -144,7 +148,7 @@ export function HeaderControls({ setIsCodeFlyoutVisible }: IHeaderControls) {
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiFlexItem>
-    </Header>
+    </EuiFlexGroup>
   );
 }
 

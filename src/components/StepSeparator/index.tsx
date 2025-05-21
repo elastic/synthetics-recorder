@@ -28,14 +28,15 @@ import { useDragAndDrop } from '../../hooks/useDragAndDrop';
 import { useStepResultStatus } from '../../hooks/useTestResult';
 import { ActionElement } from '../ActionElement';
 import { SeparatorActions } from './SeparatorActions';
-import { StepSeparatorAccordion } from './styles';
+import { EuiAccordion } from '@elastic/eui';
+import { css } from '@emotion/react';
 
 interface IStepSeparator {
   index: number;
   step: Step;
 }
 
-export function StepSeparator({ index, step }: IStepSeparator) {
+function StepSeparator({ index, step }: IStepSeparator) {
   const testStatus = useStepResultStatus(
     step.actions.length ? step.actions[0].title : undefined,
     step.name
@@ -50,7 +51,24 @@ export function StepSeparator({ index, step }: IStepSeparator) {
       onMouseLeave={() => setShowControls(false)}
       data-test-subj="step-div"
     >
-      <StepSeparatorAccordion
+      <EuiAccordion
+        css={css`
+          .euiAccordion__button {
+            width: auto;
+            flex-grow: 0;
+          }
+
+          .euiAccordion__optionalAction {
+            flex-grow: 1;
+            flex-shrink: 1;
+          }
+
+          div[id^='step-separator-'] {
+            overflow: visible;
+          }
+
+          margin: 16px;
+        `}
         extraAction={
           <SeparatorActions
             canDelete={canDelete}
@@ -74,7 +92,9 @@ export function StepSeparator({ index, step }: IStepSeparator) {
             isLast={actionIndex === step.actions.length - 1}
           />
         ))}
-      </StepSeparatorAccordion>
+      </EuiAccordion>
     </div>
   );
 }
+
+export default StepSeparator;

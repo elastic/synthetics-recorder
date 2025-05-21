@@ -129,6 +129,9 @@ export class ElectronServiceFactory {
   async closeRecordingBrowser() {
     try {
       await TestBrowserService.closeRemoteBrowser();
-    } catch (_e) {}
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.debug(e);
+    }
   }
 }
