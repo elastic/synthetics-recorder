@@ -87,7 +87,7 @@
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "^89.1.0",
-    "@elastic/synthetics": "=1.18.2",
+    "@elastic/synthetics": "=1.18.0",
     "@emotion/cache": "^11.9.3",
     "@emotion/react": "^11.9.3",
     "archiver-utils": "^5.0.2",
