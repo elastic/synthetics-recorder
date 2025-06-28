@@ -53,6 +53,8 @@ export class TestBrowserService {
         TestBrowserService.#remoteBrowser = remoteChromium;
         return remoteChromium;
       } catch (e) {
+        // eslint-disable-next-line no-console
+        console.debug(e);
         const elapsedTime = Date.now() - startTime;
         if (elapsedTime > timeout) throw new Error(`Can't connect to a browser at ${url}`);
         await sleep(interval);

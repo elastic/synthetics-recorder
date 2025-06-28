@@ -22,10 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-import { EuiFlexGroup, EuiFlexItem, EuiText, EuiCodeBlock } from '@elastic/eui';
+import { EuiFlexGroup, EuiFlexItem, EuiText, EuiCodeBlock, EuiAccordion } from '@elastic/eui';
 import React from 'react';
 import type { StepStatus } from '../../../common/types';
-import { ResultContentWrapper, ResultErrorAccordion, symbols } from './styles';
+import { symbols } from './styles';
+import { css } from '@emotion/react';
 
 function removeColorCodes(str = '') {
   // eslint-disable-next-line no-control-regex
@@ -53,15 +54,25 @@ export function ResultErrorBody({
     <>
       <EuiFlexGroup direction="column" gutterSize="none">
         {actionTitles.map((name, index) => (
-          <ResultContentWrapper alignItems="center" gutterSize="xs" key={name + index}>
+          <EuiFlexGroup
+            css={css`
+              margin: 8px 8px 4px 8px;
+            `}
+            alignItems="center"
+            gutterSize="xs"
+            key={name + index}
+          >
             <EuiFlexItem grow={false}>{symbols[resultCategory]}</EuiFlexItem>
             <EuiFlexItem>
               <EuiText size="s">{name}</EuiText>
             </EuiFlexItem>
-          </ResultContentWrapper>
+          </EuiFlexGroup>
         ))}
       </EuiFlexGroup>
-      <ResultErrorAccordion
+      <EuiAccordion
+        css={css`
+          margin: 0px 10px 0px 4px;
+        `}
         id={stepName}
         initialIsOpen
         buttonContent="Step code"
@@ -77,7 +88,7 @@ export function ResultErrorBody({
             <EuiCodeBlock paddingSize="m">{removeColorCodes(errorMessage)}</EuiCodeBlock>
           </>
         )}
-      </ResultErrorAccordion>
+      </EuiAccordion>
     </>
   );
 }

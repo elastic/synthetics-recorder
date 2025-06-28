@@ -97,3 +97,5 @@ export function TestResult() {
     </EuiFlyout>
   );
 }
+
+export default TestResult;

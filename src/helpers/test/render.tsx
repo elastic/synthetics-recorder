@@ -28,7 +28,6 @@ import { CommunicationContext, ICommunicationContext } from '../../contexts/Comm
 import { DragAndDropContext, IDragAndDropContext } from '../../contexts/DragAndDropContext';
 import { IRecordingContext, RecordingContext } from '../../contexts/RecordingContext';
 import { IStepsContext, StepsContext } from '../../contexts/StepsContext';
-import { StyledComponentsEuiProvider } from '../../contexts/StyledComponentsEuiProvider';
 import { ITestContext, TestContext } from '../../contexts/TestContext';
 import { IToastContext, ToastContext } from '../../contexts/ToastContext';
 import { IUrlContext, UrlContext } from '../../contexts/UrlContext';
@@ -98,11 +97,7 @@ export function TestContextWrapper<ComponentType>({
     },
   ];
 
-  return (
-    <StyledComponentsEuiProvider>
-      <RenderContexts contexts={contexts}>{component}</RenderContexts>
-    </StyledComponentsEuiProvider>
-  );
+  return <RenderContexts contexts={contexts}>{component}</RenderContexts>;
 }
 
 export function render<ComponentType>(

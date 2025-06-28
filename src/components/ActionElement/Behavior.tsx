@@ -21,20 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import { EuiFlexItem } from '@elastic/eui';
+import { EuiFlexItem, useEuiTheme } from '@elastic/eui';
+import { css } from '@emotion/react';
 import React from 'react';
-import styled from 'styled-components';
-
-const AssertItem = styled(EuiFlexItem)`
-  border-left: ${props => props.theme.border.thick};
-  padding-left: 20px;
-`;
-
-const ActionItem = styled(EuiFlexItem)`
-  border-left: ${props => props.theme.border.thick};
-  padding-left: 20px;
-  margin-left: 0px;
-`;
 
 interface IActionWrapper {
   children: React.ReactNode;
@@ -43,10 +32,42 @@ interface IActionWrapper {
 }
 
 export const Behavior: React.FC<IActionWrapper> = ({ children, isAssert, omitBorder }) => {
-  if (isAssert) return <AssertItem>{children}</AssertItem>;
+  const { euiTheme: theme } = useEuiTheme();
+  if (isAssert)
+    return (
+      <EuiFlexItem
+        css={css`
+          border-left: ${theme.border.thick};
+          padding-left: 20px;
+        `}
+      >
+        {children}
+      </EuiFlexItem>
+    );
   if (omitBorder) {
-    return <ActionItem style={{ borderLeft: 'none', marginLeft: 2 }}>{children}</ActionItem>;
+    return (
+      <EuiFlexItem
+        css={css`
+          border-left: ${theme.border.thick};
+          padding-left: 20px;
+          margin-left: 0px;
+        `}
+        style={{ borderLeft: 'none', marginLeft: 2 }}
+      >
+        {children}
+      </EuiFlexItem>
+    );
   }
 
-  return <ActionItem>{children}</ActionItem>;
+  return (
+    <EuiFlexItem
+      css={css`
+        border-left: ${theme.border.thick};
+        padding-left: 20px;
+        margin-left: 0px;
+      `}
+    >
+      {children}
+    </EuiFlexItem>
+  );
 };

@@ -1,14 +1,18 @@
-/**
-  tsconfig for frontend. It is supposed to be `tsconfig.frontend.json`
-  but react-scripts can only understand `tsconfig.json`(cannot specify tsconfig path)
-*/
-
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "module": "esnext",
-    "noEmit": true,
-    "jsx": "react-jsx"
+    "target": "ES6",
+    "module": "ESNext",
+    "lib": ["DOM", "ESNext"],
+    "noEmit": false,
+    "jsx": "react-jsx",
+    "jsxImportSource": "@emotion/react",
+    "strict": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["common/helper/**/*", "src/**/*"]
+  "include": ["common", "src"],
+  "exclude": ["node_modules"]
 }
