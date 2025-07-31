@@ -21,7 +21,7 @@ spec:
       description: Buildkite Pipeline for Releasing the synthetics-recorder
     spec:
       repository: elastic/synthetics-recorder
-      pipeline_file: ".buildkite/release.yml"
+      pipeline_file: '.buildkite/release.yml'
       allow_rebuilds: true
       cancel_intermediate_builds: false
       skip_intermediate_builds: false

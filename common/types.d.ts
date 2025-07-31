@@ -50,7 +50,7 @@ interface JourneyEndEvent {
     error?: Error;
   };
 }
-export interface StepEndEvent {
+interface StepEndEvent {
   event: 'step/end';
   data: JourneyStep;
 }
@@ -74,13 +74,13 @@ interface ResultOverride {
 }
 
 export type TestEvent = JourneyStartEvent | JourneyEndEvent | StepEndEvent | ResultOverride;
-export type RecordJourneyOptions = { url: string };
-export type RunJourneyOptions = {
+type RecordJourneyOptions = { url: string };
+type RunJourneyOptions = {
   steps: Steps;
   code: string;
   isProject: boolean;
 };
-export type GenerateCodeOptions = {
+type GenerateCodeOptions = {
   actions: Steps;
   isProject: boolean;
 };

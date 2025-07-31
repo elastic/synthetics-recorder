@@ -22,4 +22,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-export { ExportScriptFlyout } from './Flyout';
+module.exports = {
+  presets: [
+    [
+      '@babel/preset-env',
+      {
+        useBuiltIns: 'usage',
+        corejs: 3,
+        targets: '> 0.25%, not dead',
+      },
+    ],
+    '@babel/preset-react',
+    '@babel/preset-typescript',
+    '@emotion/babel-preset-css-prop',
+  ],
+};

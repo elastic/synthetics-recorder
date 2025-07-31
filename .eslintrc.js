@@ -31,9 +31,14 @@ module.exports = {
   env: {
     es2021: true,
   },
-  plugins: ['header', 'prettier'],
-  extends: ['react-app', 'plugin:react/recommended', 'prettier'],
+  plugins: ['header', 'prettier', '@emotion'],
+  extends: ['plugin:react/recommended', 'plugin:prettier/recommended'],
   ignorePatterns: ['build', 'local-browsers', 'demo-app'],
+  settings: {
+    react: {
+      version: 'detect',
+    },
+  },
   overrides: [
     {
       extends: ['eslint:recommended'],
@@ -52,11 +57,33 @@ module.exports = {
         '@typescript-eslint/no-explicit-any': 0,
       },
     },
+    {
+      files: [
+        '.eslintrc.js',
+        'babel.config.js',
+        'dev-tools/*.js',
+        'e2e/**/*.js',
+        'jest.unit.config.js',
+        'jest.e2e.config.js',
+        'scripts/*.js',
+        'tests/common/resolver.js',
+        'webpack.config.js',
+      ],
+      env: {
+        node: true,
+      },
+      rules: {
+        '@typescript-eslint/no-var-requires': 'off',
+        'import/no-commonjs': 'off',
+        'react/no-deprecated': 'off',
+      },
+    },
   ],
   rules: {
     'default-case': 0,
     'header/header': [2, 'block', LICENSE_HEADER],
     'no-console': 1,
     'prettier/prettier': 2,
+    'react/no-unknown-property': ['error', { ignore: ['css'] }],
   },
 };

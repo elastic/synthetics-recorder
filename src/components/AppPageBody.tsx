@@ -23,13 +23,17 @@ THE SOFTWARE.
 */
 
 import { EuiPageBody } from '@elastic/eui';
+import { css } from '@emotion/react';
 import React from 'react';
-import styled from 'styled-components';
-
-const PageBody = styled(EuiPageBody)`
-  padding: 0px 0px 0px 40px;
-`;
 
 export const AppPageBody: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return <PageBody>{children}</PageBody>;
+  return (
+    <EuiPageBody
+      css={css`
+        padding: 0px 0px 0px 40px;
+      `}
+    >
+      {children}
+    </EuiPageBody>
+  );
 };

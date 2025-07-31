@@ -26,7 +26,7 @@ import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui';
 import type { ActionInContext } from '@elastic/synthetics';
 import React from 'react';
 import { COMMAND_SELECTOR_OPTIONS } from '../../common/shared';
-import { Bold } from './styles';
+import { css } from '@emotion/react';
 
 interface IAssertionHeadingText {
   actionContext: ActionInContext;
@@ -35,7 +35,14 @@ interface IAssertionHeadingText {
 export function AssertionHeadingText({ actionContext }: IAssertionHeadingText) {
   return (
     <EuiFlexGroup gutterSize="xs">
-      <Bold grow={false}>{actionContext.action.name}</Bold>
+      <EuiFlexItem
+        css={css`
+          font-weight: bold;
+        `}
+        grow={false}
+      >
+        {actionContext.action.name}
+      </EuiFlexItem>
       <EuiFlexItem grow={false}>
         {
           COMMAND_SELECTOR_OPTIONS.find(option => option.value === actionContext.action.command)

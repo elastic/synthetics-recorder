@@ -23,13 +23,8 @@ THE SOFTWARE.
 */
 
 import { EuiButtonIcon, EuiFieldText, EuiFlexGroup, EuiFlexItem, EuiToolTip } from '@elastic/eui';
+import { css } from '@emotion/react';
 import React, { useState } from 'react';
-import styled from 'styled-components';
-
-const InputWrapper = styled(EuiFlexGroup)`
-  marginleft: 4px;
-  padding: 4px;
-`;
 
 interface IEditStepNameInput {
   defaultValue?: string;
@@ -46,7 +41,14 @@ interface IEditStepNameInput {
 export function EditStepNameInput({ defaultValue, onComplete, placeholder }: IEditStepNameInput) {
   const [editValue, setEditValue] = useState(defaultValue ?? '');
   return (
-    <InputWrapper alignItems="center" gutterSize="xs">
+    <EuiFlexGroup
+      css={css`
+        marginleft: 4px;
+        padding: 4px;
+      `}
+      alignItems="center"
+      gutterSize="xs"
+    >
       <EuiFlexItem>
         <EuiFieldText
           aria-label="Enter a new name for this step"
@@ -84,6 +86,6 @@ export function EditStepNameInput({ defaultValue, onComplete, placeholder }: IEd
           />
         </EuiToolTip>
       </EuiFlexItem>
-    </InputWrapper>
+    </EuiFlexGroup>
   );
 }

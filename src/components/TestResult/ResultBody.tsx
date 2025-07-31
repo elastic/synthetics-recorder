@@ -25,7 +25,8 @@ THE SOFTWARE.
 import { EuiFlexGroup, EuiFlexItem, EuiText } from '@elastic/eui';
 import React from 'react';
 import type { StepStatus } from '../../../common/types';
-import { ResultContentWrapper, symbols } from './styles';
+import { symbols } from './styles';
+import { css } from '@emotion/react';
 
 interface IResultBody {
   actionTitles: string[];
@@ -36,12 +37,19 @@ export function ResultBody({ actionTitles, resultCategory }: IResultBody) {
   return (
     <EuiFlexGroup direction="column" gutterSize="none">
       {actionTitles.map((name, index) => (
-        <ResultContentWrapper alignItems="center" key={name + index} gutterSize="xs">
+        <EuiFlexGroup
+          css={css`
+            margin: 8px 8px 4px 8px;
+          `}
+          alignItems="center"
+          key={name + index}
+          gutterSize="xs"
+        >
           <EuiFlexItem grow={false}>{symbols[resultCategory]}</EuiFlexItem>
           <EuiFlexItem>
             <EuiText size="s">{name}</EuiText>
           </EuiFlexItem>
-        </ResultContentWrapper>
+        </EuiFlexGroup>
       ))}
     </EuiFlexGroup>
   );
