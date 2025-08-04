@@ -1,13 +1,13 @@
 # Elastic Synthetic Monitoring Point and Click Script Recorder Download Page
 
-**Current Version:** 1.3.0 Released 13 November 2023
+**Current Version:** 1.4.14 Released 4 June 2025
 
 ## Download Links
 
-- [MacOS (Intel)](https://download.elasticsearch.org/synthetics-recorder/synthetics-recorder-1.3.0-mac-x64.dmg)
-- [MacOS (Apple Silicon)](https://download.elasticsearch.org/synthetics-recorder/synthetics-recorder-1.3.0-mac-arm64.dmg)
-- [Windows](https://download.elasticsearch.org/synthetics-recorder/synthetics-recorder-1.3.0-win-x64.exe)
-- [Linux](https://download.elasticsearch.org/synthetics-recorder/synthetics-recorder-1.3.0-linux-amd64.deb)
+- [MacOS (Intel)](https://download.elasticsearch.org/synthetics-recorder/synthetics-recorder-1.4.14-mac-x64.dmg)
+- [MacOS (Apple Silicon)](https://download.elasticsearch.org/synthetics-recorder/synthetics-recorder-1.4.14-mac-arm64.dmg)
+- [Windows](https://download.elasticsearch.org/synthetics-recorder/synthetics-recorder-1.4.14-win-x64.exe)
+- [Linux](https://download.elasticsearch.org/synthetics-recorder/synthetics-recorder-1.4.14-linux-amd64.deb)
 
 ## Supported Systems
 
