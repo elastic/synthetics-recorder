@@ -9,6 +9,8 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+    cooldown:
+      days: 14
     allow:
       - dependency-type: "production"
     ignore:
