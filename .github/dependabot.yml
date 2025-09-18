@@ -10,7 +10,7 @@ updates:
     schedule:
       interval: "weekly"
     cooldown:
-      days: 14
+      default-days: 14
     allow:
       - dependency-type: "production"
     ignore:
