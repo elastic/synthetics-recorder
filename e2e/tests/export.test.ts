@@ -34,9 +34,10 @@ afterAll(async () => {
 describe('Export', () => {
   it('shows disabled export button when script is not recorded', async () => {
     const electronWindow = await electronService.getWindow();
-    const exportButton = await electronWindow.$(`[aria-label="export"]`);
-    expect(exportButton).toBeTruthy();
-    expect(await exportButton!.isEnabled()).toBeFalsy();
+    const exportButton = electronWindow.locator('[aria-label="export"]');
+    await exportButton.waitFor({ state: 'attached' });
+    expect(await exportButton.count()).toBe(1);
+    expect(await exportButton.isEnabled()).toBeFalsy();
   });
 
   it('saves a script in filesystem', async () => {

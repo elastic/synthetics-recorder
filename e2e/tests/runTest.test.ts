@@ -40,7 +40,8 @@ describe('Run test', () => {
     it('is disabled when scripts are not recorded', async () => {
       const electronWindow: Page = await electronService.getWindow();
 
-      const testButton = await electronWindow.getByLabel('Test');
+      const testButton = electronWindow.locator('[aria-label="Test"]');
+      await testButton.waitFor({ state: 'attached' });
       expect(await testButton.count()).toBe(1);
       expect(await testButton.isEnabled()).toBeFalsy();
     });
@@ -59,8 +60,7 @@ describe('Run test', () => {
     });
   });
 
-  // fixme: flaky test
-  describe.skip('Record forms and run tests', () => {
+  describe('Record forms and run tests', () => {
     it('records filling up the form, run tests and shows the result', async () => {
       const electronWindow = await electronService.getWindow();
       await electronService.enterTestUrl(env.DEMO_APP_URL);

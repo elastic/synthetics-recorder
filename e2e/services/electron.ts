@@ -103,13 +103,22 @@ export class ElectronServiceFactory {
 
   async clickStopRecording() {
     const electronWindow = await this.getWindow();
-    await electronWindow.click('text=Stop');
+    const stopButton = electronWindow.locator(
+      '[aria-label="Stop recording and clear all recorded actions"]'
+    );
+    await stopButton.waitFor({ state: 'visible' });
+    await stopButton.click();
   }
 
   async clickActionElementSettingsButton(elementSelector: string, buttonSelector: string) {
     const electronWindow = await this.getWindow();
-    await electronWindow.hover(elementSelector);
-    await electronWindow.click(`[aria-label="Expand the settings menu for this action"]`);
+    const element = electronWindow.locator(elementSelector);
+    const settingsButton = element.locator(
+      '[aria-label="Expand the settings menu for this action"]'
+    );
+    // Hover and click in sequence - the button only appears on hover
+    await element.hover();
+    await settingsButton.click({ force: true });
     return electronWindow.click(buttonSelector);
   }
 
