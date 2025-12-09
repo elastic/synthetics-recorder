@@ -57,6 +57,8 @@ npm run dev
 
 #### Managing Playwright dependency
 
+> **📘 See also:** [Updating Dependencies Guide](./docs/UPDATING_DEPENDENCIES.md) for the most up-to-date step-by-step instructions to update `@elastic/synthetics` and Playwright versions.
+
 When updating the version of [@elastic/synthetics](https://github.com/elastic/synthetics)(called _Synthetics agent_ hereafter), it is important to align the version of Playwright that the Synthetics agent uses and the forked Playwright that is installed by the recorder.
 
 ##### Summary

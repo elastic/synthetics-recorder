@@ -42,8 +42,7 @@ afterAll(async () => {
   await new Promise(resolve => server.close(resolve));
 });
 
-// fixme: flaky test
-describe.skip('Navigation', () => {
+describe('Navigation', () => {
   it("records chromium's opened pages", async () => {
     const electronWindow = await electronService.getWindow();
 

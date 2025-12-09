@@ -56,7 +56,7 @@ async function editAssertion(electronWindow: Page) {
   await electronWindow.click(`[data-test-subj="save-0-1"]`);
   // make sure state has been updated by checking the action header's content
   await electronWindow.waitForSelector(`#action-element-0-1 >> div:has-text("Inner Text")`, {
-    timeout: 2000,
+    timeout: 10000,
   });
 }
 
@@ -67,15 +67,15 @@ async function editAction(electronWindow: Page) {
   );
   await electronWindow.fill(`[data-test-subj="edit-url-0-0"]`, ACTION_URL);
   await electronWindow.click(`[data-test-subj="save-action-0-0"]`);
-  // make sure state has been updated by checking the ation header's content
+  // make sure state has been updated by checking the action header's content
   await electronWindow.waitForSelector(`id=action-element-0-0 >> div:has-text("${ACTION_URL}")`, {
-    timeout: 2000,
+    timeout: 10000,
   });
 }
 
 describe('Assertion and Action values', () => {
   // fixme: flaky test
-  it.skip('includes updated action/assertion values in code output', async () => {
+  it('includes updated action/assertion values in code output', async () => {
     const electronWindow = await electronService.getWindow();
     await addAssertion();
     await editAssertion(electronWindow);
@@ -84,7 +84,9 @@ describe('Assertion and Action values', () => {
     // open export flyout
     await electronWindow.click('text=Export');
     // get inner text of code to export
-    const innerText = await (await electronWindow.$('id=export-code-block')).innerText();
+    const codeBlock = electronWindow.locator('#export-code-block');
+    await codeBlock.waitFor({ state: 'attached' });
+    const innerText = await codeBlock.innerText();
 
     /**
      * The outputted code should contain the updated values we have supplied in the edit steps above.

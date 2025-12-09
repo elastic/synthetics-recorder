@@ -98,9 +98,20 @@ export class TestBrowserService {
     // when `start` button is not clicked for the test case, terminate call will hang
     // because the recording browser isn't started but we try to connect to it with loop
     if (TestBrowserService.#remoteBrowser == null) return;
-    const ctxs = await TestBrowserService.#remoteBrowser.contexts();
+
+    // Skip cleanup if browser is already disconnected/closed
+    if (!TestBrowserService.#remoteBrowser.isConnected()) {
+      TestBrowserService.#remoteBrowser = null;
+      return;
+    }
+
+    const ctxs = TestBrowserService.#remoteBrowser.contexts();
     for (const ctx of ctxs) {
-      await ctx.close();
+      try {
+        await ctx.close();
+      } catch (e) {
+        // Context may already be closed, ignore error
+      }
     }
     await TestBrowserService.#remoteBrowser.close();
     // it tries to use previous test's connection if we don't assign null to it

@@ -30,8 +30,7 @@ afterEach(async () => {
   await electronService.terminate();
 });
 
-// fixme: test is flaky
-describe.skip('Pause and Resume', () => {
+describe('Pause and Resume', () => {
   it('pauses and resumes', async () => {
     const electronWindow = await electronService.getWindow();
 
