@@ -20,6 +20,11 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os:
+          - macos-15
+          - macos-15-intel
+    runs-on: ${{ matrix.os }}
     steps:
       - run: 'echo "No build required"'
