@@ -19,7 +19,7 @@ This project uses a custom fork of Playwright maintained at [elastic/playwright]
 
 ## Update Process
 
-> **Note:** The examples in this guide use `${CURRENT_VERSION}` and `${TARGET_VERSION}` as placeholders. Replace these with your actual current and target versions (e.g., `1.56.1` and `1.57.0`).
+> **Note:** The examples in this guide use `${CURRENT_VERSION}` and `${TARGET_VERSION}` as placeholders. Replace these with your actual current and target versions (e.g., `1.56.1` and `1.57.1`).
 
 ### Step 1: Identify the Required Playwright Version
 
