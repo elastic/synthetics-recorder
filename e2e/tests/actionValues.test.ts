@@ -53,11 +53,14 @@ async function editAssertion(electronWindow: Page) {
   await electronWindow.selectOption(`[aria-label="Assertion type select"]`, ACTION_OPTION);
   await electronWindow.fill(`[aria-label="Assertion selector"]`, ASSERTION_SELECTOR);
   await electronWindow.fill(`[aria-label="Assertion value"]`, ASSERTION_VALUE);
-  await electronWindow.click(`[data-test-subj="save-0-1"]`);
-  // make sure state has been updated by checking the action header's content
-  await electronWindow.waitForSelector(`#action-element-0-1 >> div:has-text("Inner Text")`, {
-    timeout: 10000,
-  });
+  const saveButton = electronWindow.locator(`[data-test-subj="save-0-1"]`);
+  await saveButton.click();
+  // Wait for save button to disappear (form closed) before checking updated content
+  await saveButton.waitFor({ state: 'hidden', timeout: 10000 });
+  await electronWindow
+    .locator(`#action-element-0-1`)
+    .getByText('Inner Text', { exact: true })
+    .waitFor({ state: 'visible', timeout: 10000 });
 }
 
 async function editAction(electronWindow: Page) {
@@ -66,15 +69,17 @@ async function editAction(electronWindow: Page) {
     `[data-test-subj="edit-action"]`
   );
   await electronWindow.fill(`[data-test-subj="edit-url-0-0"]`, ACTION_URL);
-  await electronWindow.click(`[data-test-subj="save-action-0-0"]`);
-  // make sure state has been updated by checking the action header's content
-  await electronWindow.waitForSelector(`id=action-element-0-0 >> div:has-text("${ACTION_URL}")`, {
-    timeout: 10000,
-  });
+  const saveButton = electronWindow.locator(`[data-test-subj="save-action-0-0"]`);
+  await saveButton.click();
+  // Wait for save button to disappear (form closed) before checking updated content
+  await saveButton.waitFor({ state: 'hidden', timeout: 10000 });
+  await electronWindow
+    .locator(`id=action-element-0-0`)
+    .getByText(ACTION_URL)
+    .waitFor({ state: 'visible', timeout: 10000 });
 }
 
 describe('Assertion and Action values', () => {
-  // fixme: flaky test
   it('includes updated action/assertion values in code output', async () => {
     const electronWindow = await electronService.getWindow();
     await addAssertion();
