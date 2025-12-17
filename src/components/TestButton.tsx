@@ -35,6 +35,7 @@ export function TestButton({ isDisabled, showTooltip, onTest }: Props) {
   return (
     <ControlButton
       aria-label="Test"
+      data-test-subj="run-test-button"
       tooltipContent={isDisabled && showTooltip ? 'Record a step in order to run a test' : ''}
       color="primary"
       iconType="beaker"

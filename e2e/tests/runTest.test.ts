@@ -82,7 +82,55 @@ describe('Run test', () => {
       await electronService.clickStopRecording();
       await electronService.clickRunTest();
 
-      expect(await electronWindow.$('text=1 success'));
+      // Wait for the result flyout to appear
+      const flyoutHeader = electronWindow.getByRole('heading', { name: 'Journey Test Result' });
+      await flyoutHeader.waitFor({ state: 'visible', timeout: 60000 });
+      expect(await flyoutHeader.isVisible()).toBe(true);
+    });
+
+    it('records multiple steps and shows each step result in the flyout', async () => {
+      const electronWindow = await electronService.getWindow();
+      await electronService.enterTestUrl(env.DEMO_APP_URL);
+      await electronService.clickStartRecording();
+      await electronService.waitForPageToBeIdle();
+
+      // Step 1: Click on a product
+      await electronService.recordClick('text=BuyUSD 12.49 >> button');
+
+      // Wait for action to be recorded
+      await electronWindow.getByText('click').first().waitFor({ state: 'visible' });
+
+      // Stop recording to add step dividers
+      await electronService.clickStopRecording();
+
+      // Insert a step divider after the first action to create Step 2
+      const divider = electronWindow.locator('id=insert-divider-0-1');
+      await divider.waitFor({ state: 'visible' });
+      await divider.click();
+
+      // Verify we now have 2 steps
+      const stepDivCount = await electronWindow.locator('[data-test-subj="step-div"]').count();
+      expect(stepDivCount).toBe(2);
+
+      // Run the test
+      await electronService.clickRunTest();
+
+      // Wait for the result flyout to appear with increased timeout for test execution
+      const flyoutHeader = electronWindow.getByRole('heading', { name: 'Journey Test Result' });
+      await flyoutHeader.waitFor({ state: 'visible', timeout: 120000 });
+
+      // Verify the flyout is visible
+      expect(await flyoutHeader.isVisible()).toBe(true);
+
+      // Check that step 1 result is shown (format is "1: step name")
+      const step1Result = electronWindow.getByText(/^1:/).first();
+      await step1Result.waitFor({ state: 'visible', timeout: 30000 });
+      expect(await step1Result.isVisible()).toBe(true);
+
+      // Check that step 2 result is shown
+      const step2Result = electronWindow.getByText(/^2:/).first();
+      await step2Result.waitFor({ state: 'visible', timeout: 30000 });
+      expect(await step2Result.isVisible()).toBe(true);
     });
   });
 });

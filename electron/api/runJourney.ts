@@ -30,7 +30,7 @@ import logger from 'electron-log';
 import isDev from 'electron-is-dev';
 import type { RunJourneyOptions, StepEndEvent, StepStatus, TestEvent } from '../../common/types';
 
-import { JOURNEY_DIR, PLAYWRIGHT_BROWSERS_PATH } from '../config';
+import { JOURNEY_DIR, PLAYWRIGHT_BROWSERS_PATH, EXECUTABLE_PATH } from '../config';
 import { SyntheticsManager } from '../syntheticsManager';
 
 export async function runJourney(
@@ -126,12 +126,14 @@ export async function runJourney(
 
   try {
     const isProject = data.isProject;
+    const playwrightOptions = JSON.stringify({ executablePath: EXECUTABLE_PATH });
     const args = [
       '--no-headless',
       '--reporter=json',
       '--screenshots=off',
       '--no-throttling',
       '--sandbox',
+      `--playwright-options=${playwrightOptions}`,
     ];
     const filePath = path.join(JOURNEY_DIR, 'recorded.journey.js');
     if (!isProject) {
