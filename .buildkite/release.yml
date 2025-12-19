@@ -100,7 +100,6 @@ steps:
       - "macos"
       - "windows"
 
-# Figure out how to notify releases (maybe subscribe the slack channel to the GitHub releases?)
 notify:
-  - slack: "#on-week-oblt-productivity"
+  - slack: "#synthetics-notify"
     if: 'build.state != "passed"'
