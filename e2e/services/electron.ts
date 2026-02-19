@@ -95,9 +95,12 @@ export class ElectronServiceFactory {
 
   async clickRunTest() {
     const electronWindow = await this.getWindow();
-    const testButton = await electronWindow.getByLabel('Test');
-    if ((await testButton.count()) !== 1)
-      throw Error('There should be only one element labeled `Test`');
+    // Wait for any pending React updates
+    await electronWindow.waitForTimeout(500);
+
+    // Use $ to get ElementHandle like export test does
+    const testButton = await electronWindow.$('[data-test-subj="run-test-button"]');
+    if (!testButton) throw Error('Test button not found');
     await testButton.click();
   }
 

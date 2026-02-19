@@ -67,6 +67,7 @@ describe('Step Divider', () => {
     await electronService.clickStartRecording();
     await electronService.waitForPageToBeIdle();
     await electronService.navigateRecordingBrowser(url);
+    await electronService.waitForPageToBeIdle();
     const page = await electronService.getRecordingPage();
     await page.getByRole('button', { name: 'Hello Elastic Synthetics Recorder' }).click();
     await page.getByRole('textbox').fill('E2E Testing');
