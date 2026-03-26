@@ -5,7 +5,7 @@ steps:
     command: ".buildkite/scripts/package.sh"
     artifact_paths: "package.log"
     agents:
-      provider: orka
+      provider: orka3
       imagePrefix: generic-13-ventura-x64
     env:
       PACKAGE_PLATFORM: "macos_arm64"
@@ -13,7 +13,7 @@ steps:
     command: ".buildkite/scripts/package.sh"
     artifact_paths: "package.log"
     agents:
-      provider: orka
+      provider: orka3
       imagePrefix: generic-13-ventura-x64
     env:
       PACKAGE_PLATFORM: "macos_x64"
@@ -21,7 +21,7 @@ steps:
     command: ".buildkite/scripts/package.sh"
     artifact_paths: "package.log"
     agents:
-      provider: orka
+      provider: orka3
       imagePrefix: generic-13-ventura-x64
     env:
       PACKAGE_PLATFORM: "linux"
@@ -29,7 +29,7 @@ steps:
     command: ".buildkite/scripts/package.sh"
     artifact_paths: "package.log"
     agents:
-      provider: orka
+      provider: orka3
       imagePrefix: generic-13-ventura-x64
     env:
       PACKAGE_PLATFORM: "windows"
@@ -78,27 +78,6 @@ steps:
     commands:
       - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service" "macos"
       - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service" "macos" | buildkite-agent pipeline upload
-
-  - wait: ~
-
-  - label: "Publish S3 Artifacts :s3:"
-    trigger: unified-release-publish-s3-artifacts
-    key: publish-s3-service
-    build:
-      env:
-        DESTINATION_PATH: "s3://download.elasticsearch.org/synthetics-recorder/"
-        DRY_RUN: ${DRY_RUN}
-
-  - wait: ~
-
-  - label: "Publish GitHub Release :github:"
-    commands:
-      - .buildkite/scripts/create-github-release.sh
-    # The steps name are set as part of the .buildkite/scripts/download-signed-artifacts.sh script
-    depends_on:
-      - "gpg"
-      - "macos"
-      - "windows"
 
 # Figure out how to notify releases (maybe subscribe the slack channel to the GitHub releases?)
 notify:
