@@ -4,10 +4,10 @@
 # YAML anchors for reusable plugin configurations
 common:
   - &vault-buildkite-token-plugin
-    elastic/vault-secrets#v0.1.0:
-      path: "kv/ci-shared/observability-ci/buildkite-read-build-access"
-      field: "buildkite_token"
-      env_var: "BUILDKITE_TOKEN_SECRET"
+      elastic/vault-secrets#v0.1.0:
+        path: "kv/ci-shared/observability-ci/buildkite-read-build-access"
+        field: "buildkite_token"
+        env_var: "BUILDKITE_TOKEN_SECRET"
 
 steps:
   - label: "Package Mac ARM64 :package: :mac:"
