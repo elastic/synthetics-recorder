@@ -71,6 +71,11 @@ steps:
       - .buildkite/scripts/download-signed-artifacts.sh "windows-sign-service" "windows"
       - .buildkite/scripts/download-signed-artifacts.sh "gpg-sign-service" "gpg" | buildkite-agent pipeline upload
       - .buildkite/scripts/download-signed-artifacts.sh "windows-sign-service" "windows" | buildkite-agent pipeline upload
+    plugins:
+      - elastic/vault-secrets#v0.1.0:
+          path: "kv/ci-shared/observability-ci/buildkite-read-build-access"
+          field: "buildkite_token"
+          env_var: "BUILDKITE_TOKEN_SECRET"
 
   - wait: ~
 
@@ -78,6 +83,11 @@ steps:
     commands:
       - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service" "macos"
       - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service" "macos" | buildkite-agent pipeline upload
+    plugins:
+      - elastic/vault-secrets#v0.1.0:
+          path: "kv/ci-shared/observability-ci/buildkite-read-build-access"
+          field: "buildkite_token"
+          env_var: "BUILDKITE_TOKEN_SECRET"
 
   - wait: ~
 
@@ -99,6 +109,8 @@ steps:
       - "gpg"
       - "macos"
       - "windows"
+    plugins:
+      - elastic/vault-github-token#v0.2.0:
 
 # Figure out how to notify releases (maybe subscribe the slack channel to the GitHub releases?)
 notify:
