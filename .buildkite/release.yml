@@ -1,5 +1,14 @@
 ---
 # $yaml-language-server: $schema=https://raw.githubusercontent.com/buildkite/pipeline-schema/main/schema.json
+
+# YAML anchors for reusable plugin configurations
+common:
+  - &vault-buildkite-token-plugin
+      elastic/vault-secrets#v0.1.0:
+        path: "kv/ci-shared/observability-ci/buildkite-read-build-access"
+        field: "buildkite_token"
+        env_var: "BUILDKITE_TOKEN_SECRET"
+
 steps:
   - label: "Package Mac ARM64 :package: :mac:"
     command: ".buildkite/scripts/package.sh"
@@ -71,6 +80,8 @@ steps:
       - .buildkite/scripts/download-signed-artifacts.sh "windows-sign-service" "windows"
       - .buildkite/scripts/download-signed-artifacts.sh "gpg-sign-service" "gpg" | buildkite-agent pipeline upload
       - .buildkite/scripts/download-signed-artifacts.sh "windows-sign-service" "windows" | buildkite-agent pipeline upload
+    plugins:
+      - *vault-buildkite-token-plugin
 
   - wait: ~
 
@@ -78,6 +89,8 @@ steps:
     commands:
       - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service" "macos"
       - .buildkite/scripts/download-signed-artifacts.sh "macos-sign-service" "macos" | buildkite-agent pipeline upload
+    plugins:
+      - *vault-buildkite-token-plugin
 
   - wait: ~
 
@@ -99,6 +112,8 @@ steps:
       - "gpg"
       - "macos"
       - "windows"
+    plugins:
+      - elastic/vault-github-token#v0.2.0:
 
 # Figure out how to notify releases (maybe subscribe the slack channel to the GitHub releases?)
 notify:

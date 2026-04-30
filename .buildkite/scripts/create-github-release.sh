@@ -45,8 +45,6 @@ if [ -n "${BUILDKITE_TAG}" ] ; then
     exit 1
   fi
 
-  # VAULT_GITHUB_TOKEN is the GitHub ephemeral token created in Buildkite
-  GH_TOKEN=$VAULT_GITHUB_TOKEN \
   gh release \
     create \
     "${BUILDKITE_TAG}" \
@@ -56,7 +54,5 @@ if [ -n "${BUILDKITE_TAG}" ] ; then
     "${DIST_LOCATION}"/*.*
 else
   echo "gh release won't be triggered this is not a Git tag release, but let's list the releases"
-  # VAULT_GITHUB_TOKEN is the GitHub ephemeral token created in Buildkite
-  GH_TOKEN=$VAULT_GITHUB_TOKEN \
   gh release list --repo elastic/synthetics-recorder
 fi
