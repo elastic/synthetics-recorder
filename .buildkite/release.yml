@@ -115,7 +115,6 @@ steps:
     plugins:
       - elastic/vault-github-token#v0.2.0:
 
-# Figure out how to notify releases (maybe subscribe the slack channel to the GitHub releases?)
 notify:
-  - slack: "#on-week-oblt-productivity"
+  - slack: "#synthetics-notify"
     if: 'build.state != "passed"'
