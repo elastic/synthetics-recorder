@@ -29,7 +29,7 @@ describe('addRecorderCompatibilityScript', () => {
   it('bypasses the Prototype.js override when Playwright serializes binding arguments', async () => {
     const pageContext = createContext({});
     const context = {
-      addInitScript: jest.fn(async (script: Function | string) => {
+      addInitScript: jest.fn(async (script: ((...args: any[]) => any) | string) => {
         if (typeof script === 'function') {
           runInContext(`(${script.toString()})()`, pageContext);
         }
