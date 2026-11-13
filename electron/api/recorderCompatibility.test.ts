@@ -62,11 +62,7 @@ describe('addRecorderCompatibilityScript', () => {
     );
 
     expect(context.addInitScript).toHaveBeenCalledTimes(1);
-    expect(payloadResult).toBe(
-      '{"name":"binding","seq":1,"serializedArgs":[{"value":"button"}]}'
-    );
-    expect(regularPageSerialization).toBe(
-      '"Prototype.js serialized this array as a string"'
-    );
+    expect(payloadResult).toBe('{"name":"binding","seq":1,"serializedArgs":[{"value":"button"}]}');
+    expect(regularPageSerialization).toBe('"Prototype.js serialized this array as a string"');
   });
 });
