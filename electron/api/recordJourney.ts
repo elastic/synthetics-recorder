@@ -29,6 +29,7 @@ import type { BrowserContext } from 'playwright-core';
 import type { ActionInContext } from '@elastic/synthetics';
 import logger from 'electron-log';
 import { BrowserManager } from '../browserManager';
+import { addRecorderCompatibilityScript } from './recorderCompatibility';
 
 export async function recordJourney(
   _event: IpcMainInvokeEvent,
@@ -39,6 +40,10 @@ export async function recordJourney(
   try {
     const { browser, context } = await browserManager.launchBrowser();
     const actionListener = new EventEmitter();
+
+    // Prototype.js adds Array.prototype.toJSON, which makes Playwright's
+    // page-binding payload stringify as a string instead of an array.
+    await addRecorderCompatibilityScript(context);
 
     ipcMain.handleOnce('stop-recording', async () => {
       actionListener.removeListener('actions', actionsHandler);
