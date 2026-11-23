@@ -67,18 +67,26 @@ export function addRecorderCompatibilityScript(
     }
 
     JSON.stringify = function (value: any, replacer?: any, space?: any) {
-      const isPlaywrightBindingPayload =
-        value &&
-        typeof value === 'object' &&
-        typeof value.name === 'string' &&
-        typeof value.seq === 'number' &&
-        isArray(value.serializedArgs);
+      let payloadNormalized = false;
+      let normalizedValue: any;
 
-      if (!isPlaywrightBindingPayload) {
-        return stringify.call(this, value, replacer, space);
+      try {
+        const isPlaywrightBindingPayload =
+          value &&
+          typeof value === 'object' &&
+          typeof value.name === 'string' &&
+          typeof value.seq === 'number' &&
+          isArray(value.serializedArgs);
+
+        if (isPlaywrightBindingPayload) {
+          normalizedValue = withoutPrototype(value);
+          payloadNormalized = true;
+        }
+      } catch {
+        // Fall back to native serialization if page objects interfere with detection.
       }
 
-      return stringify.call(this, withoutPrototype(value), replacer, space);
+      return stringify.call(this, payloadNormalized ? normalizedValue : value, replacer, space);
     };
   });
 }

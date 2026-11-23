@@ -46,7 +46,10 @@ describe('addRecorderCompatibilityScript', () => {
         const payloadPrototype = {
           toJSON: function() { return 'Prototype.js serialized this object as a string'; }
         };
-        const argument = Object.assign(Object.create(payloadPrototype), { value: 'button' });
+        const argument = Object.assign(Object.create(payloadPrototype), {
+          value: 'button',
+          list: ['a', 'b']
+        });
         const payload = Object.assign(Object.create(payloadPrototype), {
           name: 'binding',
           seq: 1,
@@ -62,7 +65,9 @@ describe('addRecorderCompatibilityScript', () => {
     );
 
     expect(context.addInitScript).toHaveBeenCalledTimes(1);
-    expect(payloadResult).toBe('{"name":"binding","seq":1,"serializedArgs":[{"value":"button"}]}');
+    expect(payloadResult).toBe(
+      '{"name":"binding","seq":1,"serializedArgs":[{"value":"button","list":["a","b"]}]}'
+    );
     expect(regularPageSerialization).toBe('"Prototype.js serialized this array as a string"');
   });
 });
